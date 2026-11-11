@@ -76,8 +76,10 @@ and technical writers can ship high-impact work with clear expectations.
 
 ```bash
 node scripts/verify-claims.mjs --manifest-check           # validate the manifest
-node scripts/verify-claims.mjs --claim CG-BTY-003 --pr-url https://github.com/coreguard-global/CoreGuard/pull/52
+node scripts/verify-claims.mjs --claim CG-BTY-001 --pr-url https://github.com/coreguard-global/CoreGuard/pull/51
 ```
+
+An `OPEN` claim intentionally fails verification (fail-closed): the command passes only once the claim's status is `CLAIMED` or `MERGED` and its `pr` matches the submitted PR URL.
 
 ### Acceptance criteria & review SLA
 
