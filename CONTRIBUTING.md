@@ -1,29 +1,40 @@
 # Contributing to CoreGuard
 
-Thanks for your interest. CoreGuard is an execution-truth protocol for Bitcoin DeFi
-on Core. Open source, deterministic, audit-friendly. Zero-dependency Node.js + one
-tiny Solidity contract.
+Thanks for your interest. CoreGuard is an **execution-truth / execution-integrity** project (fail-closed, evidence-first) spanning **Stellar**, **Core DAO**, and **Pi Network** surfaces (each with explicit, evidence-backed status). Contributions should improve correctness, reproducibility, and clarity — without overstating adoption, security, or network status.
 
 ## Ground rules
 
-1. **Determinism above all.** Verification must be reproducible by anyone, anywhere.
-   No heuristics, no network calls inside the verifier, no mutable global state.
-2. **Honesty in claims.** Never claim "100% secure", "audited", "prevents all exploits"
-   or anything that attributes safety to CoreGuard that it does not provably provide.
-3. **Scope discipline.** Guard against feature creep. If a feature belongs in the
-   roadmap, say so instead of silently expanding v0.x.
+1. **Determinism above all.** Verification must be reproducible by anyone, anywhere. No heuristics, no network calls inside the verifier, no hidden mutable global state.
+2. **Honesty in claims.** Never claim "100% secure", "audited", "prevents all exploits", or attribute safety/adoption CoreGuard cannot prove. **VERIFIED ≠ SAFE.** Execution proof ≠ security audit. Do not present proposals, comments, demos, or dry-runs as integration, endorsement, partnership, or adoption.
+3. **Evidence over narrative.** Status labels and metrics must match committed sources (e.g. `docs/STATUS.md`, `docs/state-snapshot.json`, `docs/claims-registry.json`, `docs/surface-status.json`). If a change affects them, update/derive artifacts in the same change as required.
+4. **Scope discipline.** Guard against feature creep. If a feature belongs in the roadmap, propose it explicitly instead of silently expanding scope.
+
+## Network-aware contributions (examples)
+
+- **Stellar:** PSAR/1 pre-sign receipts, agent-gate / signed-envelope flows, Freighter-related evaluation surfaces (technical, boundaries-only), Soroban anchor/gating, DEX integration examples — keep XDR/receipt binding, fail-closed semantics, and `integration NOT_BUILT` labels honest where applicable.
+- **Core DAO (chain 1116):** commitment anchors/evidence registry contracts, Foundry unit/invariant/fuzz proofs, replay/verification tooling — preserve recorded anchor truth and do not claim new broadcasts unless evidenced.
+- **Pi Network:** prepared/DRY_RUN/PLAN_ONLY surfaces — keep cross-network docs consistent without promoting status (no live Pi mainnet tx/anchor/integration/customer claims).
 
 ## Development
 
 ```bash
 npm install
-npm test          # node --test — canonicalization, policy, tamper, P1 suites
-npm run corpus    # regenerate the deterministic benchmark corpus
-npm run benchmark # run all 73 adversarial scenarios
-forge build       # Solidity registry
+git config core.hooksPath .githooks   # recommended: Pages-settle pre-push guard
+npm test                              # full suite (machine-pinned/enforced against docs/state-snapshot.json)
+npm run corpus                        # deterministic adversarial corpus
+npm run benchmark                     # adversarial benchmark (73/73)
+npm run boundary:audit                # boundary/claim hygiene (0 violations expected)
+npm run claims:audit                  # claim registry audit
+forge test --match-path "test/contract/*"  # Foundry contracts/proofs (requires Foundry)
 ```
 
-Tests must stay green and the benchmark count must stay 73/73 before merging.
+Useful targeted checks (when relevant):
+```text
+npm run stellar:presign               # PSAR/1 offline demo (no signing/wallet/network)
+node --test test/ci/doc-numbers.test.js
+```
+
+**Before requesting review:** ensure tests relevant to your change pass, and do not introduce stale counts/claims. The canonical measured totals live in `docs/state-snapshot.json` and are enforced by the test harness; regenerate/update derived artifacts only when your change legitimately affects them and follow the repo’s existing regeneration flow.
 
 ## Conventional commits
 
@@ -36,12 +47,13 @@ Be respectful. Technical disagreement is welcome; personal attacks are not.
 
 ## Review
 
-- **Engine changes** must keep the verifier RPC-free and deterministic.
-- **Spec changes** must update `spec/` in the same commit.
-- **Contract changes** must include the reason the commitment model (not the
-  evidence model) changed.
+- **Engine/verifier changes** must keep verification deterministic and RPC-free where required; fail closed on ambiguity.
+- **Spec/protocol changes** must update the relevant `spec/` or protocol docs in the same change and keep examples/tests consistent.
+- **Contract changes** (EVM/Soroban) must include rationale, preserve commitment/evidence semantics as intended, and include/update tests/proofs (Foundry or project test suites) as applicable.
+- **Docs/claims changes** must not overstate status; run `npm run claims:audit` / `npm run boundary:audit` when applicable.
+- **Security-sensitive changes** (receipts, signatures, XDR/byte binding, anchoring, policy/authorization gates) should include negative/fail-closed cases and, when relevant, note threat-model impact.
 
-Questions? Open an issue before a large PR.
+Questions? Open an issue before a large PR. For vulnerabilities, follow [`SECURITY.md`](SECURITY.md) (do not open a public issue).
 ---
 
 ## Bounty & Contributor Program
