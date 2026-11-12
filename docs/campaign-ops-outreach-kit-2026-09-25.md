@@ -276,6 +276,7 @@ with snapshot-pinned numbers — which is itself the honest pitch.
 | B5a | Core ecosystem | inquire@coredao.org | yes (earlier session) | retained in STATUS | — | — | follow-up = new sign-off |
 | B5b | Core ecosystem | Core Ventures (track B NOT ACTIVATED) | no | — | — | — | separate owner decision required |
 | B6 | Accelerators / grants | application programs | no | — | — | — | sign-off per application |
+| B7 | Stellar / Freighter | `stellar/freighter` issue #3087 (reply to @JakeUrban) | yes — POSTED 2026-11-12 (comment `6834273239`) | 2026-11-12 | — | Technical evaluation comment posted (PSAR/1, feasibility/boundaries only; no endorsement/merge/adoption requested): https://github.com/stellar/freighter/issues/3087#issuecomment-6834273239 | owner explicit approval given before posting |
 
 Every row is written before anything leaves; identical to how the repo treats
 every other claim.
