@@ -35,5 +35,10 @@ if(g.allowed){ /* VERIFIED only - never auto-pay */ }
 - **AI-agent native**: Built for the agent economy
 - **Undeniable**: Anyone can replay and verify
 
+## Measured developments (Nov 10–12 2026, by network)
+- **Stellar:** PSAR/1 pre-sign authorization receipts (BUILT · TEST_EXECUTED · integration NOT_BUILT; `packages/stellar/presign.mjs`, `npm run stellar:presign`, security review/proposal, 90s demo video) + scoped Freighter `#3087` technical-evaluation comment posted/recorded (no endorsement/merge/adoption); AGENT-GATE/1 signed-envelope lane advanced (status unification, AGENT-XDR/1, verifier CLI/bench, field-bound signed-envelope checks, real testnet signature evidence, runnable browser demo, Freighter extension attestation/promotion path — per-surface BUILT/TEST_EXECUTED, integration NOT_BUILT); Stellar DEX integration example (`examples/stellar-dex-integration/`, gated by DEX-GATE/1 + DDE/1, testnet/offline verified).
+- **Core DAO:** Foundry invariant + fuzz proofs over the Evidence Registry (deterministic seed/config, invariants as contract actions, CI `forge test --match-path "test/contract/*invariant*"`), **43/43 Foundry tests pass** (CI-measured); live Core Mainnet anchors remain recorded on chain 1116 (STATUS).
+- **Pi Network:** PREPARED / DRY_RUN / PLAN_ONLY — docs/truth-table kept consistent with measured snapshot; no Pi mainnet TX/anchor, live integration, customer, or revenue claimed.
+
 ## Status
-DRY_RUN / NOT_BUILT. Honest. Production-grade L2 replay. CI green.
+DRY_RUN / NOT_BUILT as a unified Trinity integration surface. Honest. Production-grade L2 replay. CI green. Network-specific evidence is labeled per surface above (see `docs/state-snapshot.json`, `docs/STATUS.md`, `docs/surface-status.json`).

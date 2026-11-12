@@ -196,4 +196,19 @@ claim of world novelty.
 
 ---
 
-*End of CoreGuard Production Roadmap v0.1.0-draft.*
+## 11. Measured addendum — Nov 10–12 2026 developments (by network)
+
+> **Dated addendum (facts only, additive).** This does not revise the 2026-09-19 baseline/gates above; it records later committed developments against the same honesty discipline. Canonical measured state: **1576/1576 tests**, **1143 files / 0 violations**, **docs-node 133/79/30**, **Foundry 43/43** — `docs/state-snapshot.json`, `docs/STATUS.md`. No revenue, customers, partnerships, external adoption, or third-party audit is claimed.
+
+### Stellar (pre-sign receipts, agent-gate signed envelope, Freighter, DEX integration)
+- **PSAR/1 pre-sign authorization receipts (BUILT · TEST_EXECUTED · integration NOT_BUILT):** `packages/stellar/presign.mjs` — receipt bound to exact XDR bytes (sha256 + Ed25519 over canonical JSON, pinned issuer, injected clock/window), fail-closed `PASS`/`BLOCK`, 11 frozen reject codes, `executionProof: NOT_INCLUDED`; `npm run stellar:presign`; `test/integrations/stellar-presign.test.mjs`; hardening + self-review (`docs/psar-security-review-2026-11-12.md`); wallet proposal (`docs/freighter-presign-integration-proposal-2026-11-12.md`); 90s presentation demo video (visual replay of captured clean-clone output) in `docs/PRODUCTS.html` / `docs/STELLAR-INTEGRATION-GUIDE.md` and `assets/`. Scoped technical-evaluation comment **posted** on `stellar/freighter#3087` and recorded (no endorsement/merge/adoption).
+- **AGENT-GATE/1 signed-envelope lane (BUILT / TEST_EXECUTED per surface · integration NOT_BUILT):** three-axis status unification (`docs/surface-status.json`, `docs/STELLAR-STATUS-UNIFICATION.md`, `test/ci/surface-status.test.mjs`); `AGENT-XDR/1` build/decode; Freighter adapter contract; verifier CLI (0/2/3/4) + bench (`docs/evidence/agent-gate-bench.json`); authorized-intent ↔ signed-envelope field binding; real testnet signature evidence (`docs/evidence/agent-gate-testnet-signature.json`); runnable browser demo (`examples/agent-gate-browser/`); Freighter extension-signature attestation/promotion path (`scripts/agent-gate-freighter-attest.mjs`, evidence only after server-verified Ed25519 by declared key). No real extension signed in CI; no external adopter.
+- **DEX integration example (TESTNET/OFFLINE VERIFIED, example):** `examples/stellar-dex-integration/` — Soroban swap calls gated by DEX-GATE/1 and DDE/1 fail-closed escrow (`verify-offline.mjs`, `run-dex-swap.mjs`, tests).
+
+### Core DAO (chain 1116 — evidence-registry proofs)
+- **Invariant + fuzz proofs (SHIPPED / CI-measured):** Foundry invariant suite and fuzz properties over the Evidence Registry with deterministic seed/config (`foundry.toml`); invariants run as the test contract's own actions; CI runs `forge test --match-path "test/contract/*invariant*"`. **43/43 Foundry tests pass** (pinned to `forge` output per STATUS). Live Core Mainnet anchors (V1/V2, Gate 4.1 commit) remain as recorded in `docs/STATUS.md`; no new broadcast claimed.
+
+### Pi Network (cross-network, honesty-preserved)
+- **PREPARED / DRY_RUN / PLAN_ONLY (unchanged):** Pi Network docs/killer-features/Trinity surfaces kept consistent with the measured snapshot and cross-network truth table; no Pi mainnet TX/anchor verified, no live integration, no customer, no revenue claimed in this cycle.
+
+*End of CoreGuard Production Roadmap v0.1.0-draft (addendum 2026-11-12).*

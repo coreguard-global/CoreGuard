@@ -37,14 +37,17 @@ browser a reviewer can open.
 | 3 | Public demo page: proposal, mandate, ALLOW, wallet sign, receipt | demo URL exists; ALLOW and MISMATCH both reproducible by a stranger |
 | 4 | SDK surface: `@coreguard/agent-gate` with `evaluate`, `conform`, `issueReceipt`, `verifyReceipt`; integration guide | an outside developer integrates from the doc alone |
 
-**Deliverables a reviewer runs:** the demo URL, the SDK example, the drill
+**Deliverables a reviewer runs:** the demo URL (local runnable demo), the SDK example, the drill
 outputs (rejected signature, wrong network, expired mandate, tampered receipt).
 
-**Progress at 2026-11-10 (the part that does not need a browser):** built and
-tested — envelope builder/decoder (`AGENT-XDR/1`), the Freighter adapter contract
-with the swapped-bytes refusal, the verifier CLI with 0/2/3/4 exit codes, and
-measured p50/p95 for the four operations. **Still open:** a real Freighter
-extension signing in a browser session, and the SDK packaging in week 4.
+**Progress (measured 2026-11-10 → 2026-11-12, committed):**
+- **Built/tested:** envelope builder/decoder (`AGENT-XDR/1`), Freighter adapter contract (swapped-bytes refusal), verifier CLI (0/2/3/4), signed-envelope conformance and field-level binding of the authorized intent to signed bytes, in-process bench artifact (`docs/evidence/agent-gate-bench.json`).
+- **Executed/testnet evidence:** a real testnet signature carried through the signed-envelope lane (`docs/evidence/agent-gate-testnet-signature.json`, see `docs/AGENT-PAYMENT-GATE.md` for the honest signer/ceiling).
+- **Runnable demo:** browser demo for a judge (`examples/agent-gate-browser/`, `test/integrations/agent-gate-browser-demo.test.mjs`); ALLOW/MISMATCH reproducible locally.
+- **Freighter extension path:** attestation/promotion path exists (`scripts/agent-gate-freighter-attest.mjs`) and writes extension evidence only after a server-verified Ed25519 signature by the declared wallet key; `docs/surface-status.json` still records `agent-gate-freighter` as `code: BUILT_UNVERIFIED` / `execution: TEST_EXECUTED` / `integration: NOT_BUILT` (no real extension signed in CI).
+- **Parallel Stellar/Freighter surface (PSAR/1, 2026-11-12):** pre-sign authorization receipts (`packages/stellar/presign.mjs`, `npm run stellar:presign`, `test/integrations/stellar-presign.test.mjs`), proposal + security self-review + 90s demo video, and a scoped technical-evaluation comment **posted** on `stellar/freighter#3087` and recorded (no endorsement/merge/adoption). `surface-status`: `stellar-presign-receipt` BUILT · TEST_EXECUTED · NOT_BUILT.
+
+**Still open:** a real Freighter **extension** signing in a browser session (and a promoted, committed extension-signature artifact), SDK packaging/publication path, an external pilot, and an independent audit. All integration remains `NOT_BUILT` until a named external project runs it with committed evidence.
 
 **Explicit non-goals:** no mainnet funds, no new chain, no new standard, no new
 product line.
@@ -85,15 +88,15 @@ surface, (c) stop. The repo's own claim rules require the finding to be visible.
 
 ## What can be measured every week (no vanity metrics)
 
-| Metric | Source | Today |
+| Metric | Source | Today (2026-11-12) |
 |---|---|---|
 | External projects running the gate | pilot records | 0 |
-| Signed envelopes refused for drift | gate receipts | 0 (no live signer yet) |
-| Gate latency p50/p95 | performance harness | not measured |
-| Cost per verification | harness + RPC fees | not measured |
-| Audit findings open/closed | review record | not started |
-| Claims without evidence | `npm run claims:audit` | 0 violations |
-| Suite total vs snapshot | `npm run test` drift guard | in sync |
+| Signed envelopes refused for drift (live extension path) | gate receipts | 0 (no real Freighter extension signer in CI; local/testnet evidence exists, not adoption) |
+| Gate latency p50/p95 | performance harness | **in-process measured** (committed `docs/evidence/agent-gate-bench.json`, machine/conditions recorded) — **not** deployed latency, not chain confirmation, not throughput |
+| Cost per verification | harness + RPC fees | not measured as deployed/RPC cost |
+| Audit findings open/closed | review record | not started (self-review committed for PSAR/1; third-party audit not performed) |
+| Claims without evidence | `npm run claims:audit` | 0 violations (per committed registry) |
+| Suite total vs snapshot | `npm run test` drift guard | in sync (1576/1576, snapshot-enforced) |
 
 Stars, followers, impressions and "interest expressed" are deliberately absent:
 none of them is adoption.
