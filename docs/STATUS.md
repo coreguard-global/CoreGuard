@@ -72,7 +72,7 @@ machine-measured, not estimated. Last verified: **2026-11-12**.
 | Verifier version in receipts | `0.1.0` (release boundary locked) |
 | Verification levels | L0 · L1 · L2 claimable; L3/L4 exist but **not claimable** (INCONCLUSIVE, `REQUIRED_BY_LEVEL`). Platform-side protocol ladder (independent of receipt verdicts) ships L0 commitment + L1 chain-confirmed receipt + L2 deterministic replay + L3 merkle proof primitives as AVAILABLE, and L4 frozen as **RESEARCH** — see `docs/verification-and-integration-platform-2026-09-26.md` §1 |
 | EvidenceRegistryV2 | implemented; `forge build` clean (solc 0.8.24) + `forge test` 14/14 (local pass); mirror suite 12/12 |
-| EvidenceRegistryV3 | implemented (`contracts/EvidenceRegistryV3.sol`) — flat `feeWei` commission + treasury; `forge test` 20/20 (part of 34/34); **not deployed** (owner-only decision) |
+| EvidenceRegistryV3 | implemented (`contracts/EvidenceRegistryV3.sol`) — flat `feeWei` commission + treasury; `forge test` 20/20 (part of 43/43); **not deployed** (owner-only decision) |
 | Verification-level truth + Trace Availability | implemented (`levelTruth`, `TRACE_AVAILABILITY`, additive receipt fields); suite 9/9 |
 | Canonicalization hardening | `securityUint` — no security-critical integer as JS `Number`; hex-spelling preserved |
 | Execution Integrity Benchmark | 10,000 generated executions, deterministic (`scripts/benchmark-10k.mjs`) |
