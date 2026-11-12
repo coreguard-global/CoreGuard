@@ -25,7 +25,7 @@ own transaction details:
 | Verdict | `PASS` — authorization receipt verifies |
 | Bound transaction | Exact XDR fingerprint match |
 | Network | Match (receipt was issued for this network) |
-| Policy | Match (the amount/destination the user agreed to) |
+| Policy | Match (the policy record the receipt authorized, canonically equal to the verifier's expected policy — object equality only; no content decode) |
 | Issuer | Signature verifies against the pinned public key |
 | Execution | `NOT_INCLUDED` — nothing executed yet |
 
@@ -58,9 +58,10 @@ none of it. The honest gap is different:
   transaction; a different one is on the screen.
 - PSAR/1 closes exactly that: a receipt binds `authorization decision <->
   exact XDR bytes <-> policy <-> network <-> validity window`, and the wallet
-  re-derives the whole decision itself — sha256 over canonical JSON plus an
-  Ed25519 signature checked against a pinned issuer public key. No CoreGuard
-  server is in the verification path.
+  re-derives what it can verify itself - sha256 over canonical JSON plus an
+  Ed25519 signature checked against a pinned issuer public key; the semantic
+  content check is PSAR/2, not PSAR/1. No CoreGuard server is in the
+  verification path.
 
 ## 3. The separation that matters: pre-sign receipt ≠ execution proof
 
@@ -172,9 +173,9 @@ scanning; and whether this starts dApp-opt-in or wallet-level.
 ## 8. What this closes, and what it does not
 
 **Closes**: a swapped or edited XDR between approval and signing prompt; a
-receipt presented for the wrong network; policy drift (the enforced amount
-not being the approved amount); silent receipt tampering; verifier errors
-surfacing as passes.
+receipt presented for the wrong network; policy drift (the enforced policy
+object differing from the authorized policy object); silent receipt tampering;
+verifier errors surfacing as passes.
 
 **Does not close**: a user deceived into approving a bad transaction in the
 first place (the receipt binds bytes to a decision, not judgment); proof that
