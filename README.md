@@ -82,6 +82,13 @@ Run the offline arc: `npm run stellar:presign` — no signing, no wallet, no net
 |---|---|---|
 | **Documentation/state sync only** | Pi Network surfaces (killer features, Trinity, grant/application docs) kept consistent with the measured snapshot and cross-network truth table; no Pi mainnet transaction, anchor deployment, live integration, customer, or revenue claimed | **PREPARED / DRY_RUN / PLAN_ONLY** as previously evidenced — [PI-KILLER-FEATURES.md](docs/PI-KILLER-FEATURES.md), [TRINITY-CORE-STELLAR-PI.md](docs/TRINITY-CORE-STELLAR-PI.md) (no status promotion) |
 
+#### Cross-network products & ecosystem (shipped artifacts, honesty-labeled)
+
+| Development | What landed (committed) | Honest status / evidence |
+|---|---|---|
+| **ESCROW/1 bounty-escrow mirror + catalog/docs** | `ESCROW/1` bounty-escrow mirror (CG-BTY-007) and owner click-runbook shipped; `PSAR/1` and `ESCROW/1` added to the products catalog and DDE reference i18n/docs refreshed | **SHIPPED (artifacts/docs)** — [PRODUCTS.md](docs/PRODUCTS.md), [PRODUCTS.html](docs/PRODUCTS.html), commits `7be2d5c`, `dee6ef4` |
+| **Contributor / bounty program hub** | Bounty/contributor program hub with issue templates, manifest, and claim verifier to make scoped work and acceptance criteria explicit | **SHIPPED (repo tooling/docs)** — `.github/ISSUE_TEMPLATE/`, `docs/bounties.json` / bounty manifest & claim verifier surfaces, commit `b38969c` (reward funding/payability remains as labeled in the manifest/issues; no funding award claimed) |
+
 ### The Badge Shield — exclusive-source plates · درع الشارات بمصادر حصرية
 
 [![CoreGuard Badge Shield](https://coreguard-global.github.io/CoreGuard/assets/badges/wall-badge-shield.svg)](https://coreguard-global.github.io/CoreGuard/assets/badges/wall-badge-shield.svg)
