@@ -31,6 +31,7 @@ has adopted it.**
 | `stellar-soroban-anchor` — commitment anchor contract | BUILT (soroban-sdk 23) | EXECUTED — deploy + first `commit(proofId, commitment)` INVOKED, owner-authorized; contract `CCKA2GYVILX7YZVSXGVIHOPNLTRBBF2SSWKBTQBIE7M67N5N2QMMXPSP`; tx `69044807410f65027c1227f4e525ad83f23a6cb1a2bb79790d82849c5dbc9fec`, ledger 65,337,373 | NOT_BUILT — the caller is CoreGuard's own script | `docs/evidence/stellar-soroban-commit-executed.json`; `node scripts/stellar-soroban-commit-executed.mjs --verify` |
 | `stellar-dex-gate` — DEX-GATE/1 preflight | BUILT | REAL_BOOK_EXECUTED — five verdicts against the live XLM/USDC book; returns `PLAN_ONLY`, never sends | NOT_BUILT — no wallet or DApp embeds it | `docs/evidence/stellar-dex-gate-executed.json`; `node scripts/stellar-dex-gate-real.mjs --verify` |
 | `stellar-agent-gate` — STELLAR-AGENT/1 policy matrix | BUILT | POLICY_GATE_EXECUTED — VERIFIED / REJECTED / HELD executed offline; `submit: NOT_PERFORMED` | NOT_BUILT — no agent deployment uses it | `docs/evidence/stellar-agent-gate-executed.json`; `node scripts/stellar-agent-gate-executed.mjs --verify` |
+| `stellar-presign-receipt` — pre-sign authorization receipts (PSAR/1) | BUILT | TEST_EXECUTED — offline arc + contract battery; decisions PASS or BLOCK only, every verdict carries `executionProof: NOT_INCLUDED` | NOT_BUILT — no wallet embeds it; the Freighter proposal is a proposal, not an integration | `packages/stellar/presign.mjs`; `test/integrations/stellar-presign.test.mjs`; `npm run stellar:presign` |
 | `agent-gate` — AGENT-GATE/1 gate, receipts, independent verifier | BUILT | TEST_EXECUTED — 14-case walkthrough; receipt tamper and chain-break refusals | NOT_BUILT — prototype, no signer, no submission | `packages/agent-gate/index.mjs`; `test/integrations/agent-payment-gate.test.mjs` |
 | `agent-gate-xdr` — builds unsigned, decodes signed envelopes | BUILT | EXECUTED — an envelope built here was signed and included on Stellar **testnet**, tx `7f863dd2512a82d1d10d6d221d311260698fc018c233113d5e5971fb9741b757` at ledger 5,665,413, then re-decoded offline; secret key, fee-bump and junk refused | NOT_BUILT — no external embedder | `docs/evidence/agent-gate-testnet-signature.json`; `node scripts/agent-gate-testnet-sign.mjs --verify` |
 | `agent-gate-freighter` — wallet signing adapter | BUILT_UNVERIFIED — a real Freighter extension has still never signed here; it was probed in the available browser and is not installed (`window.freighter` undefined) | TEST_EXECUTED — signed / empty / unsigned / swapped-bytes cases against an injected wallet, plus a chain-accepted signature carried through this adapter by a local keypair behind its interface | NOT_BUILT | `packages/agent-gate/adapters/freighter.mjs`; `docs/evidence/agent-gate-testnet-signature.json`; promotion after a real extension signs: `node scripts/agent-gate-freighter-attest.mjs --verify` |
@@ -63,7 +64,7 @@ today and cannot adopt the latter today.
 | `independent-verifier` — offline receipt verifier | BUILT | TEST_EXECUTED | NOT_BUILT — zero third-party runs | `packages/independent-verifier`; `test/independent-verifier/` |
 | C verifier (frozen reference) | BUILT | TEST_EXECUTED | NOT_BUILT | `test/verifier-c/` |
 | Universal DApp Shield (ARM model) | BUILT | POLICY_GATE_EXECUTED — 2 ALLOW, 2 REQUIRE_REVIEW, 1 DENY, 1 REFUSED | NOT_BUILT | `docs/evidence/universal-dapp-shield-executed.json` |
-| Claim registry CG-CL/1 | BUILT | TEST_EXECUTED — 28 claims, 16 VERIFIED, 0 violations | NOT_BUILT | `docs/claims-registry.json`; `npm run claims:audit` |
+| Claim registry CG-CL/1 | BUILT | TEST_EXECUTED — 29 claims, 17 VERIFIED, 0 violations | NOT_BUILT | `docs/claims-registry.json`; `npm run claims:audit` |
 | Release gate CG-RG/1 | BUILT | TEST_EXECUTED — 18/18 legs, self-audit in CI | NOT_BUILT | `docs/release-gate.json`; `npm run release:gate` |
 | Conformance report CG-CR/1 | BUILT | TEST_EXECUTED — `badgeIssuerCount 0`, revenue 0 | NOT_BUILT | `docs/conformance-report.json` |
 
@@ -77,7 +78,7 @@ today and cannot adopt the latter today.
 
 ## Totals
 
-Suite total: **1539 / 1539 pass**, machine-pinned in
+Suite total: **1566 / 1566 pass**, machine-pinned in
 `docs/state-snapshot.json` (the only authoritative count in the repo).
 Boundary audit: **0 violations**; file count lives in the same snapshot.
 
@@ -91,7 +92,7 @@ Boundary audit: **0 violations**; file count lives in the same snapshot.
 |---|---|
 | EXECUTED (on-chain artifacts) | 6 |
 | REAL_BOOK_EXECUTED / POLICY_GATE_EXECUTED | 3 |
-| TEST_EXECUTED | 9 |
+| TEST_EXECUTED | 10 |
 | NONE / not exercised | 5 |
 
 **The sentence this matrix exists to make impossible:** "CoreGuard is a verified

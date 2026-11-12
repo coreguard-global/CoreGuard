@@ -17,16 +17,16 @@
     "NOT_PERFORMED"
   ],
   "counts": {
-    "total": 28,
+    "total": 29,
     "byStatus": {
-      "VERIFIED": 16,
+      "VERIFIED": 17,
       "UNKNOWN": 6,
       "HYPOTHESIS": 0,
       "RESEARCH": 1,
       "GATED": 3,
       "NOT_PERFORMED": 2
     },
-    "verified": 16,
+    "verified": 17,
     "unknown": 6,
     "hypothesis": 0,
     "research": 1,
@@ -310,6 +310,42 @@
       "deriveError": null,
       "downgraded": null,
       "asOf": "2026-11-11T23:45:22Z"
+    },
+    {
+      "id": "CL-STELLAR-PRESIGN-RECEIPT",
+      "area": "integration",
+      "claim": "PSAR/1 pre-sign authorization receipts exist and fail closed: decisions are PASS or BLOCK only, every verdict carries executionProof NOT_INCLUDED, and a receipt binds the exact transaction XDR bytes to one issuer key and one validity window.",
+      "status": "VERIFIED",
+      "verificationLevel": "L1",
+      "evidence": [
+        "packages/stellar/presign.mjs",
+        "test/integrations/stellar-presign.test.mjs"
+      ],
+      "recheck": "npm run stellar:presign",
+      "external": false,
+      "derived": {
+        "decisions": [
+          "PASS",
+          "BLOCK"
+        ],
+        "executionProof": "NOT_INCLUDED",
+        "binding": "sha256 over the exact XDR string + Ed25519 canonical JSON",
+        "rejectCodes": [
+          "MALFORMED_RECEIPT",
+          "MALFORMED_INPUT",
+          "BAD_DIGEST",
+          "BAD_SIGNATURE",
+          "XDR_BINDING_MISMATCH",
+          "NETWORK_MISMATCH",
+          "POLICY_MISMATCH",
+          "NOT_YET_VALID",
+          "RECEIPT_EXPIRED",
+          "VERIFIER_ERROR"
+        ]
+      },
+      "deriveError": null,
+      "downgraded": null,
+      "asOf": "2026-11-11T22:15:56Z"
     },
     {
       "id": "CL-ATTACK-LAB",
@@ -617,7 +653,7 @@
   ],
   "audit": {
     "ok": true,
-    "total": 28,
+    "total": 29,
     "violations": [],
     "downgraded": 0
   }

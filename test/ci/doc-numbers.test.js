@@ -62,6 +62,7 @@ const ALLOWED = new Set([
   "docs/elizaos-thread-replies-record-2026-09-23.md",
   "docs/funding-one-pager-2026-09.md",
   "docs/growth-execution-2026-11-11.md", // dated instrument: funding map + Wave/SCF timing verified 2026-11-11 (this push)
+  "docs/growth-execution-2026-11-12.md", // dated instrument: funding-growth instrument authored 2026-11-12 (landed c5ccb66; allowlist corrected this push - it records its own day's measured state)
   "docs/sep-receipt-semantics-draft-2026-11-11.md", // dated instrument: SEP draft authored under owner delegation 2026-11-11 (this push)
   "docs/ceo-decisions-2026-11-11.md", // dated instrument: CEO delegated decisions - Wave/x402 price/submission policy (this push)
   "docs/owner-click-runbook-2026-11-11.md", // dated instrument: owner click-runbook - possession steps (Wave/SCF/Freighter/npm-release/visibility/deploy) (this push)
@@ -85,12 +86,19 @@ const SHAPES = [
 
 /** #[C19] the scanned surface list comes from the COMMITTED tree, not the disk. */
 function listScannerFiles() {
-  const out = execSync('git ls-files "*.md"', { cwd: repo, encoding: "utf8" })
+  const out = execSync('git ls-files "*.md" "*.html"', { cwd: repo, encoding: "utf8" })
     .split("\n").map((s) => s.trim()).filter(Boolean);
-  return out.filter((f) =>
+  const md = out.filter((f) =>
     f === "README.md" ||
     (f.startsWith("docs/") && f.endsWith(".md") && f !== "docs/STATUS.md")
   );
+  // index.html is a reviewer-facing surface that carried a stale suite count
+  // (1405) for weeks while the snapshot moved — the same defect class the
+  // scanner was built for, hiding in the one non-markdown landing page. It is
+  // scanned explicitly (the glob MUST include "*.html" or this filter reads an
+  // empty list and "scans" nothing — a guard green on zero hits): its
+  // "N tests passing" claim must equal the snapshot.
+  return md.concat(out.filter((f) => f === "index.html"));
 }
 
 /**
@@ -166,6 +174,13 @@ test("[C35] the enumeration is real: the scanner sees claims on the committed tr
   assert.ok(hits >= 20, `scanner found only ${hits} claim hits — the shapes went blind, this green means nothing`);
   assert.ok(readmeHits >= 1, "README must still carry a live suite-total claim (the front door)");
   assert.ok(allowedHits >= 1, "the allowlist must still cover real dated instruments (never silently empty)");
+  // The html leg must carry a REAL hit: the glob gained "*.html" only to scan
+  // index.html, and a filter reading an empty list scans nothing while staying
+  // green ([C30]) — pin the landing page's own claim to the enumeration.
+  const htmlFiles = listScannerFiles().filter((f) => f.endsWith(".html"));
+  assert.ok(htmlFiles.includes("index.html"), "the scanner must enumerate index.html on the committed tree");
+  const htmlHits = scanContent("index.html", readFileSync(join(repo, "index.html"), "utf8"));
+  assert.ok(htmlHits.length >= 1, "index.html must still carry a live suite-total claim for the scanner to see");
 });
 
 // ---- Mutation controls: the guard proves it can fail (applied AND bites) ----

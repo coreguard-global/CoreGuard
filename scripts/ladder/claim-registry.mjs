@@ -255,6 +255,22 @@ export const CLAIMS = Object.freeze([
     derive: () => ({ scenarios: 8, mode: "offline", mock: true }),
   },
   {
+    id: "CL-STELLAR-PRESIGN-RECEIPT",
+    area: "integration",
+    claim: "PSAR/1 pre-sign authorization receipts exist and fail closed: decisions are PASS or BLOCK only, every verdict carries executionProof NOT_INCLUDED, and a receipt binds the exact transaction XDR bytes to one issuer key and one validity window.",
+    status: "VERIFIED",
+    verificationLevel: "L1",
+    external: false,
+    evidence: ["packages/stellar/presign.mjs", "test/integrations/stellar-presign.test.mjs"],
+    recheck: "npm run stellar:presign",
+    derive: () => ({
+      decisions: ["PASS", "BLOCK"],
+      executionProof: "NOT_INCLUDED",
+      binding: "sha256 over the exact XDR string + Ed25519 canonical JSON",
+      rejectCodes: ["MALFORMED_RECEIPT", "MALFORMED_INPUT", "BAD_DIGEST", "BAD_SIGNATURE", "XDR_BINDING_MISMATCH", "NETWORK_MISMATCH", "POLICY_MISMATCH", "NOT_YET_VALID", "RECEIPT_EXPIRED", "VERIFIER_ERROR"],
+    }),
+  },
+  {
     id: "CL-ATTACK-LAB",
     area: "security",
     claim: "The attack lab holds ten tamper cases fail-closed, with a valid control that must still verify.",

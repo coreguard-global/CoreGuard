@@ -79,6 +79,7 @@
     "anchor:verify": "powershell -ExecutionPolicy Bypass -File scripts/verify-anchor.ps1",
     "stellar:demo": "node examples/stellar-verify/demo.mjs",
     "stellar:gate": "node examples/stellar-gate/demo.mjs",
+    "stellar:presign": "node examples/stellar-presign/demo.mjs",
     "agent-gate": "node packages/agent-gate/demo.mjs"
   },
   "engines": {

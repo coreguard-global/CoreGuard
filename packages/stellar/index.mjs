@@ -185,3 +185,23 @@ export * from "./soroban-dex.mjs";
 export * from "./mainnet.mjs";
 export * from "./mainnet-executor.mjs";
 export * from "./dex-gating.mjs";
+
+// PSAR/1 - pre-sign authorization receipts (packages/stellar/presign.mjs).
+// status/selfCheck are aliased because this adapter exports its own.
+export {
+  PSAR_VERSION,
+  PSAR_SCHEMA,
+  PSAR_NETWORKS,
+  RECEIPT_SCOPE,
+  EXECUTION_PROOF_FIELD,
+  DECISIONS,
+  REJECT_CODES,
+  canonicalJson,
+  fingerprintXdr,
+  normalizePolicy,
+  createInMemoryIssuer,
+  issueAuthorizationReceipt,
+  verifyAuthorizationReceipt,
+  status as presignStatus,
+  selfCheck as presignSelfCheck,
+} from "./presign.mjs";

@@ -1,6 +1,6 @@
 {
   "schema": "coreguard.surface-status/1",
-  "updated": "2026-11-10",
+  "updated": "2026-11-12",
   "why": "One registry so that 'code exists', 'something was executed once' and 'an external project can adopt this' can never be averaged into a single flattering word.",
   "axes": {
     "code": ["BUILT", "BUILT_UNVERIFIED", "PLAN_ONLY", "NOT_BUILT"],
@@ -58,6 +58,17 @@
       "matrixRow": true,
       "evidence": ["docs/evidence/stellar-agent-gate-executed.json"],
       "note": "VERIFIED / REJECTED / HELD matrix executed offline; submit NOT_PERFORMED (credential-gated)."
+    },
+    {
+      "id": "stellar-presign-receipt",
+      "label": "Pre-sign authorization receipts (PSAR/1)",
+      "path": "packages/stellar/presign.mjs",
+      "code": "BUILT",
+      "execution": "TEST_EXECUTED",
+      "integration": "NOT_BUILT",
+      "matrixRow": true,
+      "evidence": ["test/integrations/stellar-presign.test.mjs", "examples/stellar-presign/demo.mjs"],
+      "note": "A receipt binds an authorization decision to the exact transaction XDR bytes (sha256 + Ed25519 over canonical JSON), fail-closed PASS or BLOCK; every verdict carries executionProof NOT_INCLUDED. Offline demo: npm run stellar:presign. No wallet embeds it; the Freighter proposal is a proposal, not an integration."
     },
     {
       "id": "agent-gate",

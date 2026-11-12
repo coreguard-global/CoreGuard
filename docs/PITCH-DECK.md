@@ -27,8 +27,8 @@ Intent → Policy → Execution → Evidence → Replay → Verdict
 5. Output: VERIFIED / REJECTED / UNKNOWN
 
 ## Slide 4: Traction
-- ✅ 1539 tests passing (machine-pinned)
-- ✅ 1052 files, 0 boundary violations
+- ✅ 1566 tests passing (machine-pinned)
+- ✅ 1140 files, 0 boundary violations
 - ✅ 10,000-run benchmark: 0 false accept/reject
 - ✅ Core DAO mainnet: 2 contracts deployed & verified
 - ✅ Stellar testnet: Soroban contract deployed
