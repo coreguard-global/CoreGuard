@@ -99,6 +99,11 @@ pre-sign receipt in this repo ever reads as "the payment happened".
 - `test/integrations/stellar-presign.test.mjs` — the contract battery:
   known-answer vectors, the fail-closed set, canonical binding, malformed
   shapes, deterministic re-issue.
+- `docs/psar-security-review-2026-11-12.md` — the project's critical
+  self-review of this exact surface: forgery resistance (Ed25519 over the
+  pinned issuer key), the bytes-vs-semantics boundary stated plainly, the
+  replay/clock/policy analysis, and what PSAR/1 deliberately does not cover
+  (key distribution, revocation, semantic judgment).
 - `examples/stellar-presign/demo.mjs` — the offline arc (next section).
 - What does **not** exist: any wallet embedding, any pilot, any external
   adopter. The repo's registries state external adoption as zero
@@ -107,6 +112,12 @@ pre-sign receipt in this repo ever reads as "the payment happened".
   wallet ships something, the label stays `NOT_BUILT`.
 
 ## 6. Try it offline in one command
+
+Prerequisite: run `npm install` once after cloning. The envelope is built with
+the official `@stellar/stellar-sdk` package (a repo dependency); the demo
+itself stays fully offline and makes no network calls. A clone without the
+install step exits nonzero with one clear instruction instead of a stack
+trace.
 
 ```bash
 npm run stellar:presign
