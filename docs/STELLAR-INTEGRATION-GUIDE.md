@@ -131,9 +131,34 @@ CoreGuard's verifiable execution truth layer is patentable:
 
 ---
 
+
+## Demo Videos / عروض الفيديو التوضيحية
+
+### CoreGuard × Freighter — PSAR/1 (90 seconds) | فيديو تعريفي احترافي
+
+**File:** [assets/video/coreguard_psar1_freighter_90s.mp4](assets/video/coreguard_psar1_freighter_90s.mp4)  
+**Duration:** ~90s | **Purpose:** Technical evaluation/demo for Stellar/Freighter integration discussion
+
+**What this video shows (honest):**
+- **Problem & approach:** PSAR/1 adds pre-sign authorization integrity before signing.
+- **Clean-clone flow:** demonstrates a reproducible flow from a clean-clone context.
+- **PASS / BLOCK cases:** receipt verification PASS, BLOCK on tampered transaction bytes (`XDR_BINDING_MISMATCH`), and BLOCK on expired receipt (`RECEIPT_EXPIRED`).
+- **Boundaries (by design):** `executionProof: NOT_INCLUDED`; wallet integration **NOT BUILT**; external adoption **NOT YET**; semantic policy-content decoding is not part of PSAR/1 (semantic check = PSAR/2).
+
+> **Note:** This is a produced/presentation demo video. Any existing demo assets on Stellar pages remain unchanged. Both are kept with clear labeling.
+
+### PSAR/1 quick links
+- **Module:** [packages/stellar/presign.mjs](../packages/stellar/presign.mjs)
+- **Demo:** [examples/stellar-presign/demo.mjs](../examples/stellar-presign/demo.mjs)
+- **Tests:** 37 automated integration tests
+- **Proposal:** [docs/freighter-presign-integration-proposal-2026-11-12.md](freighter-presign-integration-proposal-2026-11-12.md)
+- **Security review:** [docs/psar-security-review-2026-11-12.md](psar-security-review-2026-11-12.md)
+
+---
+
 ## Contact
 
 - **Email**: inquire@coredao.org
-- **GitHub**: https://github.com/coreguard-global
+- **GitHub**: https://github.com/coreguard-global/CoreGuard
 - **LinkedIn**: https://www.linkedin.com/company/coreguard-global
 - **Twitter**: https://x.com/CoreGuardGlobal

@@ -367,6 +367,29 @@
   <div class="card"><b><span data-lang-text="en" class="inline">Soroban authorized lane</span><span data-lang-text="ar" class="inline">مسار Soroban المعتمد</span><span class="tag inline inline" data-lang-text="en">OWNER-GATED</span><span class="tag inline inline" data-lang-text="ar">معتمد من المالك</span></b><small><span data-lang-text="en" class="inline">Contract-level identity enforced in-contract: <code>commit_authorized</code> derives the id from the owner + hash (a wrong value never occupies the right id); <code>owner.require_auth()</code> makes the write host-gated. Additive to the deployed/1 ABI family — live mainnet instance remains the deployed/1 binary (no deploy, no restatement). Runners: rehearsal + live-verify (fee solvency pre-send · artifact self-decode · binding hoist). <code>soroban/commitment-anchor</code> · <code>scripts/stellar-soroban-authorized-deploy.mjs</code> · <code>scripts/stellar-soroban-deploy-live-verify.mjs</code>.</span><span data-lang-text="ar" class="inline">هوية على مستوى العقد: commit_authorized يشتق المعرّف من المالك+التجزئة؛ owner.require_auth() يجعل الكتابة host-gated. additive للـABI deployed/1 — الـinstance الحية تبقى deployed/1 (no deploy, no restatement).</span></small></div>
   <div class="card"><b><span data-lang-text="en" class="inline">Phase 3 — first attempt (captured fail-closed)</span><span data-lang-text="ar" class="inline">المرحلة 3 — أول محاولة (fail-closed مسجّلة)</span><span class="tag gated inline inline" data-lang-text="en">REJECTED (CAPTURED)</span><span class="tag gated inline inline" data-lang-text="ar">مرفوض (مسجّل)</span></b><small><span data-lang-text="en" class="inline">Upload <code>txInsufficientBalance</code> self-decoded from its own bytes (fresh-clone-reproducible root cause); redeployed cleanly via the Phase-5 runner. Evidence: <code>docs/evidence/stellar-soroban-deploy-first-attempt-rejected-2026-11-10.json</code> · <code>docs/evidence/stellar-soroban-authorized-deploy.json</code> · <code>node scripts/stellar-soroban-authorized-deploy.mjs --verify</code>.</span><span data-lang-text="ar" class="inline">upload txInsufficientBalance — self-decoded من bytes itself؛ أعيد النشر cleanly عبر Phase-5 runner. evidence: docs/evidence/stellar-soroban-deploy-first-attempt-rejected-2026-11-10.json.</span></small></div>
     <div class="card"><b><span data-lang-text="en" class="inline">PSAR/1 — Pre-sign Authorization Receipt</span><span data-lang-text="ar" class="inline">PSAR/1 — إيصال تفويض ما قبل التوقيع</span><span class="tag inline inline" data-lang-text="en">BUILT · TEST_EXECUTED</span><span class="tag gated inline inline" data-lang-text="en">INTEGRATION NOT_BUILT</span></b><small><span data-lang-text="en" class="inline">Wallet verifies the receipt before signing: PASS / BLOCK (tamper) / BLOCK (expired). No XDR semantic/content decode in v1; semantic check = PSAR/2 (P1). 37 tests. <code>packages/stellar/presign.mjs</code> · <code>examples/stellar-presign/demo.mjs</code></span><span data-lang-text="ar" class="inline">المحفظة تتحقق من الإيصال قبل التوقيع. لا فحص دلالي لـXDR في الإصدار 1؛ الفحص الدلالي = PSAR/2. تكامل خارجي غير مبني.</span></small></div>
+  <div class="card" style="grid-column:1 / -1">
+    <b>
+      <span data-lang-text="en" class="inline">CoreGuard × Freighter — PSAR/1 demo video (90s)</span>
+      <span data-lang-text="ar" class="inline">فيديو CoreGuard × Freighter — PSAR/1 (90 ثانية)</span>
+      <span class="tag live inline" data-lang-text="en">NEW · PRODUCED DEMO</span>
+      <span class="tag live inline" data-lang-text="ar">جديد · عرض مُنتج</span>
+    </b>
+    <small style="margin-bottom:.8rem">
+      <span data-lang-text="en" class="inline"><strong>What it is:</strong> a 90-second produced technical demo for PSAR/1 in a Freighter-evaluation context. It shows clean-clone flow, PASS, BLOCK (tampered XDR / <code>XDR_BINDING_MISMATCH</code>), and BLOCK (expired / <code>RECEIPT_EXPIRED</code>). <strong>Boundaries:</strong> <code>executionProof: NOT_INCLUDED</code>, wallet integration <strong>NOT BUILT</strong>, external adoption <strong>NOT YET</strong>, no semantic XDR-content decode in v1. Any existing Stellar demo assets remain unchanged and are kept with clear labeling.</span>
+      <span data-lang-text="ar" class="inline"><strong>ما هذا الفيديو:</strong> عرض تقني مُنتج (90 ثانية) لـ PSAR/1 في سياق تقييم Freighter. يوضح تدفق clean-clone، وPASS، وBLOCK (عبث XDR / <code>XDR_BINDING_MISMATCH</code>)، وBLOCK (انتهاء الصلاحية / <code>RECEIPT_EXPIRED</code>). <strong>الحدود:</strong> <code>executionProof: NOT_INCLUDED</code>، تكامل المحفظة <strong>غير مبني</strong>، تبنٍ خارجي <strong>غير قائم بعد</strong>، ولا فحص دلالي لمحتوى XDR في v1. أي مواد فيديو سابقة على صفحة Stellar تبقى كما هي مع توضيح مستقل.</span>
+    </small>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:.4rem 0 .7rem">
+      <img src="assets/coreguard-logo-full.png" alt="CoreGuard" style="height:28px;width:auto;object-fit:contain;opacity:.95">
+      <span style="color:var(--muted);font-size:.85rem">×</span>
+      <span style="color:var(--muted);font-size:.85rem;font-weight:600">Freighter (evaluation context)</span>
+    </div>
+    <video controls preload="metadata" style="width:100%;max-width:960px;border-radius:12px;border:1px solid var(--line);background:#000;display:block">
+      <source src="assets/video/coreguard_psar1_freighter_90s.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <small style="margin-top:.6rem"><a href="assets/video/coreguard_psar1_freighter_90s.mp4">Open/download video file · فتح/تحميل</a> · <a href="STELLAR-INTEGRATION-GUIDE.md">Stellar integration guide & demo notes</a></small>
+  </div>
+
   </div>
 </section>
 
