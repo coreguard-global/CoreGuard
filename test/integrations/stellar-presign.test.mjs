@@ -69,9 +69,10 @@ test("PSAR/1 exports version, schema, scope and the two-valued decision set", ()
 });
 
 test("every reject code the module can emit is in the frozen vocabulary", () => {
-  for (const code of ["MALFORMED_RECEIPT", "MALFORMED_INPUT", "BAD_DIGEST", "BAD_SIGNATURE", "XDR_BINDING_MISMATCH", "NETWORK_MISMATCH", "POLICY_MISMATCH", "NOT_YET_VALID", "RECEIPT_EXPIRED", "VERIFIER_ERROR"]) {
+  for (const code of ["MALFORMED_RECEIPT", "MALFORMED_INPUT", "BAD_DIGEST", "BAD_SIGNATURE", "ISSUER_MISMATCH", "XDR_BINDING_MISMATCH", "NETWORK_MISMATCH", "POLICY_MISMATCH", "NOT_YET_VALID", "RECEIPT_EXPIRED", "VERIFIER_ERROR"]) {
     assert.ok(REJECT_CODES.includes(code), `missing code ${code}`);
   }
+  assert.equal(REJECT_CODES.length, 11, "the reject vocabulary is an explicit, versioned set, not open-ended");
 });
 
 test("status() is honest: offline prototype, integration NOT_BUILT, execution never claimed", () => {
@@ -260,4 +261,141 @@ test("the demo fixture the docs cite runs the whole arc offline (import-shape ch
   // test only proves the demo module exists and exports its arc builder.
   const mod = await import(pathToFileURL(resolve(here, "../../examples/stellar-presign/demo.mjs")).href);
   assert.equal(typeof mod.runArc, "function");
+});
+
+/* ---- fix batch 2026-11-12: issuer identity, hostile input, window hardening ---- */
+
+function forgeReceipt({ issuerHex, signer, overrides = {} }) {
+  // Build an INTERNALLY CONSISTENT receipt (digest + signature both valid) on a
+  // hand-made ADR, so the deep verify steps can be exercised with chosen field
+  // values (a false issuer claim that is nevertheless signed correctly).
+  const adr = {
+    v: PSAR_VERSION, scope: RECEIPT_SCOPE, network: "TESTNET",
+    xdrFingerprint: XDR_FP, policy: POLICY, issuedAt: NOW, expiresAt: NOW + TTL,
+    issuer: issuerHex, ...overrides,
+  };
+  const bytes = Buffer.from(canonicalJson(adr), "utf8");
+  const digest = createHash("sha256").update(bytes).digest("hex");
+  return { ...adr, digest, signature: signer.sign(bytes) };
+}
+
+const PINNED = createInMemoryIssuer({ seedHex: SEED }); // the key the verifier pins
+const IMPOSTOR = createInMemoryIssuer({ seedHex: "77".repeat(32) }); // a key a receipt may falsely claim
+
+const XDR_500 = "AAAAAgAAAADTsUWraPPAVsZ9DfGEXQoAZiHNc5uTB6WWAY5zJ3IfFQAAAGQAAAAAAAAAAgAAAAEAAAAAAAAAAAAAAABnMYz4AAAAAAAAAAEAAAAAAAAAAQAAAAABlHJijueOuScU0i0DkJY8JNkn6gCZmUhuiR+sLaqcIQAAAAAAAAABKgXyAAAAAAAAAAAA";
+
+test("a receipt CLAIMED a different issuer BLOCKs (ISSUER_MISMATCH) even when the pinned key signed it", () => {
+  // The ADR names the impostor and the PINNED key signed exactly those bytes:
+  // the digest and signature are internally valid - the identity is the gap.
+  const receipt = forgeReceipt({ issuerHex: IMPOSTOR.publicKeyHex, signer: PINNED });
+  const v = verify(receipt);
+  assert.equal(v.decision, "BLOCK");
+  assert.equal(v.code, "ISSUER_MISMATCH");
+  assert.equal(v.executionProof, EXECUTION_PROOF_FIELD);
+  assert.equal(v.receiptId, receipt.digest);
+});
+
+test("the issuer-identity check sits AFTER signature verification - a claim-B receipt signed by B dies as BAD_SIGNATURE", () => {
+  // Placement proof: a receipt that claims the impostor AND is signed by the
+  // impostor must never reach the ISSUER_MISMATCH check - it dies at the
+  // signature step against the pinned key first.
+  const receipt = forgeReceipt({ issuerHex: IMPOSTOR.publicKeyHex, signer: IMPOSTOR });
+  const v = verify(receipt);
+  assert.equal(v.decision, "BLOCK");
+  assert.equal(v.code, "BAD_SIGNATURE");
+});
+
+test("issuing fails closed when issuer.sign does not sign with issuer.publicKeyHex", () => {
+  // The issuer object DECLARES the impostor key while sign() is bound to the
+  // pinned key - issuance must refuse, never emit a mismatched receipt.
+  const r = issue({ issuer: { publicKeyHex: IMPOSTOR.publicKeyHex, sign: PINNED.sign } });
+  assert.equal(r.ok, false);
+  assert.match(r.error, /issuer\.sign does not sign with issuer\.publicKeyHex/);
+  assert.equal(r.receipt, null);
+});
+
+test("unsafe-integer window stamps are refused at issue and BLOCK at verify", () => {
+  assert.equal(issue({ nowSeconds: 2 ** 53 }).ok, false); // beyond Number.MAX_SAFE_INTEGER
+  assert.equal(issue({ nowSeconds: Number.MAX_SAFE_INTEGER - 10, ttlSeconds: 100 }).ok, false); // the SUM leaves the safe range
+  const receipt = forgeReceipt({ issuerHex: ISSUER_PUB, signer: PINNED, overrides: { issuedAt: 2 ** 53, expiresAt: 2 ** 53 + TTL } });
+  assert.equal(verify(receipt).code, "MALFORMED_RECEIPT");
+  assert.equal(verify(issue().receipt, { nowSeconds: 2 ** 53 }).code, "MALFORMED_INPUT");
+});
+
+test("LIMITATION (v1): the byte-binding layer does not decode XDR - a policy contradicting the decoded amount still PASSes", () => {
+  // Captured, deterministic 500-XLM payment envelope (the same builder the
+  // demo uses, maxTime pinned): it is the tampered amount of the demo arc.
+  // The receipt layer binds BYTES and never interprets them, so a receipt
+  // issued for maxAmount "10" over a 500-XLM envelope verifies PASS - the gap
+  // is documented and pinned here on purpose; closing it is enforced semantic
+  // verification (PSAR/2 P1), NOT a v1 claim.
+  const issued = issue({ xdr: XDR_500 });
+  assert.equal(issued.ok, true);
+  const v = verify(issued.receipt, { xdr: XDR_500 });
+  assert.equal(v.decision, "PASS");
+  assert.notEqual(fingerprintXdr(XDR_500), XDR_FP); // it really is a different transaction
+});
+
+test("LIMITATION (v1): an unsigned envelope carries no network - a receipt claiming TESTNET PASSes over PUBLIC-built bytes", () => {
+  // The same captured bytes were built with network: "mainnet" (PUBLIC
+  // passphrase) and came out byte-identical - an unsigned Stellar envelope
+  // encodes no network, so the passphrase lives only in the absent signature
+  // and the transaction hash that would be signed. The receipt's network is
+  // therefore a CLAIM vs CLAIM (step 4), never a decoded fact; closing that
+  // gap is PSAR/2 material, not a v1 verification step.
+  const issued = issue({ network: "TESTNET", xdr: XDR_500 });
+  const v = verify(issued.receipt, { xdr: XDR_500, network: "TESTNET" });
+  assert.equal(v.decision, "PASS");
+});
+
+test("the verifier never throws on hostile receipts - a throwing getter BLOCKs (VERIFIER_ERROR) without escaping", () => {
+  const receipt = issue().receipt;
+  const hostileDigest = { ...receipt };
+  Object.defineProperty(hostileDigest, "digest", { enumerable: true, get() { throw new Error("hostile getter"); } });
+  const v = verify(hostileDigest);
+  assert.equal(v.decision, "BLOCK");
+  assert.equal(v.code, "VERIFIER_ERROR");
+  assert.equal(v.receiptId, null); // the BLOCK path itself survives the hostile getter
+
+  const hostilePolicy = { ...receipt };
+  Object.defineProperty(hostilePolicy, "policy", { enumerable: true, get() { throw new Error("hostile getter"); } });
+  const vp = verify(hostilePolicy);
+  assert.equal(vp.decision, "BLOCK");
+  assert.equal(vp.code, "VERIFIER_ERROR");
+});
+
+test("the verifier never throws on circular or exotic policies - each lands in a named BLOCK", () => {
+  const receipt = issue().receipt;
+  const circular = { asset: "XLM", maxAmount: "10" };
+  circular.self = circular;
+  assert.equal(verify(receipt, { policy: circular }).code, "MALFORMED_INPUT");
+  assert.equal(verify({ ...receipt, policy: circular }).code, "MALFORMED_RECEIPT");
+
+  let reads = 0;
+  const twoFaced = {};
+  Object.defineProperty(twoFaced, "maxAmount", { enumerable: true, get() { reads += 1; return reads === 1 ? "10" : twoFaced; } });
+  const vt = verify(receipt, { policy: twoFaced });
+  assert.equal(vt.decision, "BLOCK");
+  assert.equal(vt.code, "VERIFIER_ERROR"); // the canonicalization recursion is caught, named, never thrown
+
+  assert.equal(verify({ ...receipt, policy: new Map([["maxAmount", "10"]]) }).code, "MALFORMED_RECEIPT");
+  assert.equal(verify(receipt, { policy: new Date(0) }).code, "MALFORMED_INPUT");
+  class NotPlain { constructor() { this.maxAmount = "10"; } }
+  assert.equal(verify(receipt, { policy: new NotPlain() }).code, "MALFORMED_INPUT");
+  assert.equal(verifyAuthorizationReceipt({ receipt: new Map(), xdr: XDR, network: "TESTNET", policy: POLICY, nowSeconds: NOW, issuerPublicKey: ISSUER_PUB }).code, "MALFORMED_RECEIPT");
+});
+
+test("normalizePolicy requires a REAL plain object (prototype Object.prototype or null)", () => {
+  assert.equal(normalizePolicy(new Map([["maxAmount", "10"]])).ok, false);
+  assert.equal(normalizePolicy(new Date(0)).ok, false);
+  class NotPlain { constructor() { this.maxAmount = "10"; } }
+  assert.equal(normalizePolicy(new NotPlain()).ok, false);
+  assert.equal(normalizePolicy(Object.assign(Object.create(null), { maxAmount: "10" })).ok, true); // prototype-less is still plain
+  assert.equal(normalizePolicy({ maxAmount: "10" }).ok, true);
+});
+
+test("fingerprintXdr refuses non-strings instead of silently coercing them (TypeError)", () => {
+  assert.throws(() => fingerprintXdr(123), TypeError);
+  assert.throws(() => fingerprintXdr(null), TypeError);
+  assert.throws(() => fingerprintXdr({}), TypeError);
 });

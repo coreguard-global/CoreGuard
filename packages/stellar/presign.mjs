@@ -37,6 +37,12 @@
  *   - it does not replace Soroban authorization or wallet risk scanners: it
  *     adds the authorization-to-exact-bytes binding layer on top of whatever
  *     the wallet already shows.
+ *   - the receipt's `issuer` field must EQUAL the pinned verification key
+ *     (ISSUER_MISMATCH): the signature proves the pinned key produced it, and
+ *     this check proves the receipt says so. Issuance runs the mirror check
+ *     against the issuer's own declared key, so a receipt can never be born
+ *     from an issuer object whose sign() is bound to a different key than it
+ *     declared.
  *
  * Status: code BUILT, execution TEST_EXECUTED (deterministic, offline,
  * known-answer vectors), integration NOT_BUILT (no wallet embeds it yet).
@@ -62,12 +68,15 @@ export const DECISIONS = Object.freeze(["PASS", "BLOCK"]);
 /**
  * Fail-closed reason codes. Every non-pass path lands here by name, and the
  * verifier's own failure is a code too - never an exception leaking a pass.
+ * The vocabulary is explicit and versioned, not open-ended: a new code lands
+ * with its own negative test and docs in the same push.
  */
 export const REJECT_CODES = Object.freeze([
   "MALFORMED_RECEIPT",
   "MALFORMED_INPUT",
   "BAD_DIGEST",
   "BAD_SIGNATURE",
+  "ISSUER_MISMATCH",
   "XDR_BINDING_MISMATCH",
   "NETWORK_MISMATCH",
   "POLICY_MISMATCH",
@@ -93,15 +102,24 @@ export function canonicalJson(value) {
 
 /** The binding primitive: sha256 over the EXACT utf8 XDR string. */
 export function fingerprintXdr(xdr) {
-  return createHash("sha256").update(String(xdr), "utf8").digest("hex");
+  if (typeof xdr !== "string") {
+    throw new TypeError("fingerprintXdr: xdr must be a string (a non-string XDR is a caller defect, never coerced)");
+  }
+  return createHash("sha256").update(xdr, "utf8").digest("hex");
 }
 
 function isPlainObject(v) {
-  return v !== null && typeof v === "object" && !Array.isArray(v);
+  if (v === null || typeof v !== "object" || Array.isArray(v)) return false;
+  const proto = Object.getPrototypeOf(v);
+  // A real plain object only: Map, Date, and class instances are NOT plain
+  // objects, and normalizing them to "empty policy" would be a hole.
+  return proto === Object.prototype || proto === null;
 }
 
 function isNonNegativeInt(v) {
-  return typeof v === "number" && Number.isInteger(v) && v >= 0;
+  // Safe integers only: a stamp beyond 2^53-1 would lose precision the
+  // moment it rides the canonical bytes, and a lost second is a wrong window.
+  return typeof v === "number" && Number.isSafeInteger(v) && v >= 0;
 }
 
 /**
@@ -163,6 +181,11 @@ export function issueAuthorizationReceipt({ network, xdr, policy, issuer, nowSec
   }
   if (!isNonNegativeInt(nowSeconds)) return { ok: false, error: "nowSeconds required (inject the clock; never read Date inside the module)", receipt: null };
   if (!isNonNegativeInt(ttlSeconds) || ttlSeconds === 0) return { ok: false, error: "ttlSeconds must be a positive integer", receipt: null };
+  // The window stamps ride the canonical bytes as JS numbers: a sum beyond
+  // the safe range would silently lose precision before it is ever signed.
+  if (!Number.isSafeInteger(nowSeconds + ttlSeconds)) {
+    return { ok: false, error: "nowSeconds + ttlSeconds must stay within the safe integer range", receipt: null };
+  }
 
   const adr = {
     v: PSAR_VERSION,
@@ -184,6 +207,20 @@ export function issueAuthorizationReceipt({ network, xdr, policy, issuer, nowSec
   }
   if (typeof signature !== "string" || !HEX128.test(signature)) {
     return { ok: false, error: "issuer.sign must return 64 bytes of hex", receipt: null };
+  }
+  // Issuance self-check: the signature must verify against the issuer's OWN
+  // declared public key. An issuer object that declares key B while its
+  // sign() is bound to key A can never produce a receipt - the mirror of the
+  // verify-side ISSUER_MISMATCH check, enforced where the receipt is born.
+  let selfVerified = false;
+  try {
+    const spkiSelf = Buffer.concat([Buffer.from("302a300506032b6570032100", "hex"), Buffer.from(issuer.publicKeyHex, "hex")]);
+    selfVerified = edVerify(null, bytes, createPublicKey({ key: spkiSelf, format: "der", type: "spki" }), Buffer.from(signature, "hex"));
+  } catch {
+    selfVerified = false;
+  }
+  if (!selfVerified) {
+    return { ok: false, error: "issuer.sign does not sign with issuer.publicKeyHex", receipt: null };
   }
   return { ok: true, error: null, receipt: { ...adr, digest, signature }, digest, adr };
 }
@@ -238,8 +275,9 @@ export function verifyAuthorizationReceipt({ receipt, xdr, network, policy, nowS
     const recomputed = createHash("sha256").update(Buffer.from(canonicalJson(adr), "utf8")).digest("hex");
     if (recomputed !== receipt.digest) return block("BAD_DIGEST", "the receipt's digest does not match its own fields");
 
-    // (2) the issuer's signature over the digest bytes - pinned key, no trust
-    // in a verdict string, an image, or a DApp's claim.
+    // (2) the issuer's signature over the canonical ADR bytes (the digest's
+    // preimage) - pinned key, no trust in a verdict string, an image, or a
+    // DApp's claim.
     const spki = Buffer.concat([Buffer.from("302a300506032b6570032100", "hex"), Buffer.from(pubHex, "hex")]);
     let pub;
     try {
@@ -254,6 +292,14 @@ export function verifyAuthorizationReceipt({ receipt, xdr, network, policy, nowS
       okSig = false;
     }
     if (!okSig) return block("BAD_SIGNATURE", "the issuer's signature does not verify against the pinned public key");
+
+    // (2b) the receipt must CLAIM the pinned issuer identity. Step (2) proved
+    // the pinned key made the signature; this proves the receipt SAYS that
+    // key. Only now does the claim matter, and a receipt that names a
+    // different issuer BLOCKs with the named code.
+    if (receipt.issuer !== pubHex) {
+      return block("ISSUER_MISMATCH", "the receipt names an issuer that is not the pinned verification key");
+    }
 
     // (3) the byte-exact binding: what is about to be signed must be the exact
     // bytes the receipt was issued for. One byte of difference ends it.
@@ -286,7 +332,18 @@ export function verifyAuthorizationReceipt({ receipt, xdr, network, policy, nowS
   }
 
   function block(code, reason) {
-    return { decision: "BLOCK", code, reasons: [`${code}: ${reason}`], executionProof: EXECUTION_PROOF_FIELD, checkedAtSeconds: isNonNegativeInt(nowSeconds) ? nowSeconds : null, receiptId: isPlainObject(receipt) && HEX64.test(String(receipt.digest)) ? receipt.digest : null };
+    // The BLOCK path itself must never throw, even on hostile input (a
+    // throwing getter on receipt.digest, an exotic receipt object): the
+    // fail-closed guarantee is "always a BLOCK", never an exception escaping
+    // as a pass or as a crash.
+    let receiptId = null;
+    try {
+      const d = isPlainObject(receipt) ? receipt.digest : null;
+      if (typeof d === "string" && HEX64.test(d)) receiptId = d;
+    } catch {
+      receiptId = null; // a hostile getter must not break the BLOCK path itself
+    }
+    return { decision: "BLOCK", code, reasons: [`${code}: ${reason}`], executionProof: EXECUTION_PROOF_FIELD, checkedAtSeconds: isNonNegativeInt(nowSeconds) ? nowSeconds : null, receiptId };
   }
 }
 

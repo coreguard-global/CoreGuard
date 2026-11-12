@@ -29,7 +29,7 @@ own transaction details:
 | Issuer | Signature verifies against the pinned public key |
 | Execution | `NOT_INCLUDED` — nothing executed yet |
 
-If the transaction bytes change after the approval (amount 100 -> 500, a
+If the transaction bytes change after the approval (amount 10 -> 500, a
 swapped destination, an edited fee):
 
 | Field | Tampered transaction |
@@ -74,16 +74,20 @@ pre-sign receipt in this repo ever reads as "the payment happened".
 
 - **Two decisions only**: `PASS` and `BLOCK`. There is no soft pass.
 - **Frozen reject codes**: `MALFORMED_RECEIPT`, `MALFORMED_INPUT`,
-  `BAD_DIGEST`, `BAD_SIGNATURE`, `XDR_BINDING_MISMATCH`, `NETWORK_MISMATCH`,
-  `POLICY_MISMATCH`, `NOT_YET_VALID`, `RECEIPT_EXPIRED`, `VERIFIER_ERROR`.
+  `BAD_DIGEST`, `BAD_SIGNATURE`, `ISSUER_MISMATCH`, `XDR_BINDING_MISMATCH`,
+  `NETWORK_MISMATCH`, `POLICY_MISMATCH`, `NOT_YET_VALID`, `RECEIPT_EXPIRED`,
+  `VERIFIER_ERROR`.
 - **Byte-exact binding**: the receipt carries sha256 over the exact XDR
   string. One appended byte, one changed stroop, one swapped destination
   invalidates it.
 - **Closed shape**: the receipt field set is fixed; unknown fields are a
   rejection, not decoration.
 - **Issuer-bound**: Ed25519 signature over canonical (sorted-key, no
-  whitespace) JSON, verified against a pinned 32-byte public key. A receipt
-  signed by any other key BLOCKs.
+  whitespace) JSON, verified against a pinned 32-byte public key, AND the
+  receipt's `issuer` field must equal that pinned key (`ISSUER_MISMATCH`).
+  Issuance enforces the mirror check against the issuer's own declared key, so
+  a receipt can never be born from an object whose sign() is bound to a
+  different key. A receipt signed by any other key BLOCKs.
 - **Windowed**: `issuedAt` / `expiresAt` with an injected clock —
   `NOT_YET_VALID` before the window, `RECEIPT_EXPIRED` at and after it.
 - **Verifier error is a BLOCK**: an internal failure returns
@@ -98,7 +102,10 @@ pre-sign receipt in this repo ever reads as "the payment happened".
   (`coreguard.psar/1`).
 - `test/integrations/stellar-presign.test.mjs` — the contract battery:
   known-answer vectors, the fail-closed set, canonical binding, malformed
-  shapes, deterministic re-issue.
+  shapes, deterministic re-issue, issuer identity (the receipt's `issuer`
+  must equal the pinned key), the hostile-input fail-closed battery, and the
+  two honest v1 LIMITATION pins (no semantic decode of the XDR; no network
+  decode from an unsigned envelope).
 - `docs/psar-security-review-2026-11-12.md` — the project's critical
   self-review of this exact surface: forgery resistance (Ed25519 over the
   pinned issuer key), the bytes-vs-semantics boundary stated plainly, the
@@ -146,7 +153,7 @@ A technical evaluation of five points — a reading, not a merge request:
 1. **Read** a PSAR/1 receipt at the signing prompt (delivered by the dApp
    with its XDR, or held locally after an approval step).
 2. **Verify it locally**: canonical bytes -> digest -> Ed25519 signature
-   against the pinned issuer key -> exact-XDR binding -> network -> policy ->
+   against the pinned issuer key -> the receipt's issuer field must equal the pinned key -> exact-XDR binding -> network -> policy ->
    window. All of it runs in the wallet, offline, in milliseconds.
 3. **Display** the result beside Freighter's existing transaction details —
    as one more verified fact, not a replacement for anything.
