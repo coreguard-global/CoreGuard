@@ -23,13 +23,13 @@ git config core.hooksPath .githooks   # recommended: Pages-settle pre-push guard
 npm test                              # full suite (machine-pinned/enforced against docs/state-snapshot.json)
 npm run corpus                        # deterministic adversarial corpus
 npm run benchmark                     # adversarial benchmark (73/73)
-npm run boundary:audit                # boundary/claim hygiene (0 violations expected)
-npm run claims:audit                  # claim registry audit
 forge test --match-path "test/contract/*"  # Foundry contracts/proofs (requires Foundry)
 ```
 
 Useful targeted checks (when relevant):
 ```text
+npm run boundary:audit                # boundary/claim hygiene (0 violations expected)
+npm run claims:audit                  # claim registry audit
 npm run stellar:presign               # PSAR/1 offline demo (no signing/wallet/network)
 node --test test/ci/doc-numbers.test.js
 ```

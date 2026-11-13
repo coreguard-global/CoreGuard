@@ -37,9 +37,14 @@ if (result.stderr) process.stderr.write(result.stderr);
 // with `node scripts/current-state.mjs --write --tests <n>` after every full
 // green run, so any test growth/shrink breaks `npm test` until the docs that
 // cite the number are refreshed — the count can never silently outlive the doc.
-if (result.status === 0) {
-  const pass = Number((result.stdout.match(/^ℹ pass (\d+)$/m) || [])[1] ?? NaN);
-  const total = Number((result.stdout.match(/^ℹ tests (\d+)$/m) || [])[1] ?? NaN);
+// Summary lines are read in BOTH runner formats so enforcement is version-safe:
+// `# pass N` (TAP — the piped default through Node 22) and `ℹ pass N`
+// (spec — the piped default from Node 24). One format only would silently
+// no-op the pin on the other engine leg.
+let exitCode = result.status ?? 1;
+if (exitCode === 0) {
+  const pass = Number((result.stdout.match(/^(?:ℹ|#) pass (\d+)$/m) || [])[1] ?? NaN);
+  const total = Number((result.stdout.match(/^(?:ℹ|#) tests (\d+)$/m) || [])[1] ?? NaN);
   const snapshotPath = join(process.cwd(), "docs", "state-snapshot.json");
   try {
     const expected = JSON.parse(readFileSync(snapshotPath, "utf8")).testsTotal;
@@ -47,18 +52,24 @@ if (result.status === 0) {
       console.error(`\nRUN-TESTS: DRIFT  suite passed ${pass} tests but docs/state-snapshot.json pins testsTotal=${expected}.`);
       console.error(`RUN-TESTS:        run: node scripts/current-state.mjs --write --tests ${pass}`);
       console.error(`RUN-TESTS:        then refresh every doc that cites the count, then re-run npm test.`);
-      process.exit(1);
-    }
-    if (Number.isFinite(total) && Number.isFinite(pass) && pass !== total) {
+      exitCode = 1;
+    } else if (Number.isFinite(total) && Number.isFinite(pass) && pass !== total) {
       console.error(`\nRUN-TESTS: AGGREGATE MISMATCH  TAP reported tests ${total} but pass ${pass}.`);
-      process.exit(1);
+      exitCode = 1;
     }
   } catch {
     // no committed snapshot yet — nothing to enforce (first snapshot run).
   }
 }
 
-process.exit(result.status ?? 1);
+// [C14] NEVER process.exit() after large piped stdout writes: stdout to a pipe
+// is asynchronous on Linux, and an immediate exit silently discards whatever
+// is still buffered — the runner's own end summary AND its failing-tests
+// section, i.e. exactly what failure triage needs. Both 2026-11-12 main reds
+// (43307458781 node 24, 43309858370 node 22) lost that tail and ended mid-line
+// ("✔ ws1-prob"), reading as a crash with no cause. Set the exit code and let
+// the event loop drain instead.
+process.exitCode = exitCode;
 
 // [C20] CI parity for load-sensitive assertions: node --test sizes file
 // concurrency from availableParallelism()-1, so a many-core dev box runs the
