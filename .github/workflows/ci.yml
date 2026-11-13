@@ -122,6 +122,12 @@ jobs:
       # execute freshly-built binaries — Application Control, os error 4551).
       - name: cargo test (authorized lane + known-answer vector), --locked
         run: cargo test --manifest-path soroban/commitment-anchor/Cargo.toml --locked
+      # A receipt that cites a ledger sequence is only meaningful if the anchor
+      # cannot be restamped later: this lane drives the same (owner, hash) and
+      # the same id across different ledger sequences and asserts the ledger of
+      # the FIRST write survives every replay.
+      - name: Ledger-sequence properties (replay never restamps an anchor)
+        run: cargo test --manifest-path soroban/commitment-anchor/Cargo.toml --locked -- sequence
       # OWNER-AUTHORIZED DEPLOY MATERIAL (docs/OWNER-DECISIONS-2026-11-08.md):
       # the wasm deployed to mainnet MUST be built from THIS head's committed
       # source — the in-tree artifact predates the authorized lane (a80d8f9)

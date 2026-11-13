@@ -260,6 +260,7 @@ impl CgCommitmentAnchor {
 #[cfg(test)]
 mod test {
     use super::*;
+    use soroban_sdk::testutils::Ledger as _;
     use soroban_sdk::Address;
 
     const VERSION_TEST: &str = VERSION;
@@ -546,5 +547,142 @@ mod test {
         client
             .try_assert_anchored_authorized(&legacy_id, &owner, &hash)
             .unwrap_err();
+    }
+
+    // ---- Ledger-sequence properties: a record never moves after it lands ----
+    //
+    // A receipt that cites a ledger sequence is only meaningful if the anchor
+    // cannot be restamped later. These four tests drive the same (owner, hash)
+    // and the same id across DIFFERENT ledger sequences and assert the ledger
+    // of the FIRST write survives every later call.
+
+    #[test]
+    fn authorized_anchor_replay_at_a_later_sequence_returns_the_original_sequence() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let address = auth_client(&env);
+        let client = CgCommitmentAnchorClient::new(&env, &address);
+        let owner = wallet(&env);
+        let hash = executed_hash(&env);
+
+        env.ledger().set_sequence_number(1_000);
+        let id = client.derive_authorized_id(&owner, &hash);
+        let anchored_at = client.commit_authorized(&owner, &hash);
+        assert_eq!(anchored_at, 1_000, "the anchor records the writing ledger");
+
+        // A replay 5_000 ledgers later must NOT restamp the record: the
+        // receipt's ledger is the ledger of the FIRST write.
+        env.ledger().set_sequence_number(6_000);
+        let replay = client.commit_authorized(&owner, &hash);
+        assert_eq!(
+            replay, 1_000,
+            "idempotent replay must return the original ledger sequence"
+        );
+
+        let anchor = client.read_authorized(&id).unwrap();
+        assert_eq!(anchor.seq, 1_000);
+        assert_eq!(anchor.hash, hash);
+        assert_eq!(anchor.owner, owner);
+        assert_eq!(
+            client.assert_anchored_authorized(&id, &owner, &hash),
+            1_000,
+            "strict read-back reports the original ledger, not the replay's"
+        );
+    }
+
+    #[test]
+    fn authorized_anchor_new_content_gets_its_own_sequence_and_never_moves_the_first() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let address = auth_client(&env);
+        let client = CgCommitmentAnchorClient::new(&env, &address);
+        let owner = wallet(&env);
+
+        let first_hash = executed_hash(&env);
+        env.ledger().set_sequence_number(2_000);
+        let first_seq = client.commit_authorized(&owner, &first_hash);
+
+        let second_hash = BytesN::from_array(&env, &[0x5au8; 32]);
+        env.ledger().set_sequence_number(2_500);
+        let second_seq = client.commit_authorized(&owner, &second_hash);
+        assert_eq!(second_seq, 2_500, "a new commitment anchors at its own ledger");
+        assert_ne!(first_seq, second_seq);
+
+        // The first record is untouched by the later write...
+        let first_id = client.derive_authorized_id(&owner, &first_hash);
+        let first = client.read_authorized(&first_id).unwrap();
+        assert_eq!(first.seq, first_seq);
+        assert_eq!(first.hash, first_hash);
+        assert_eq!(first.owner, owner);
+
+        // ...and the two live under DIFFERENT ids, so neither can shadow the
+        // other no matter which ledger the caller replays them at.
+        let second_id = client.derive_authorized_id(&owner, &second_hash);
+        assert_ne!(first_id, second_id);
+        assert_eq!(client.read_authorized(&second_id).unwrap().seq, 2_500);
+    }
+
+    #[test]
+    fn permissionless_lane_first_write_wins_across_sequences_and_refuses_a_new_hash() {
+        let env = Env::default();
+        let address = contract_address(&env);
+        let client = CgCommitmentAnchorClient::new(&env, &address);
+        let id = BytesN::from_array(&env, &[7u8; 32]);
+        let hash_a = BytesN::from_array(&env, &[9u8; 32]);
+        let hash_b = BytesN::from_array(&env, &[11u8; 32]);
+
+        env.ledger().set_sequence_number(42);
+        assert_eq!(client.commit(&id, &hash_a), 42);
+
+        env.ledger().set_sequence_number(4_242);
+        assert_eq!(
+            client.commit(&id, &hash_a),
+            42,
+            "idempotent replay keeps the first ledger sequence"
+        );
+        assert_eq!(
+            client.try_commit(&id, &hash_b),
+            Err(Ok(CgError::HashMismatch)),
+            "a later ledger cannot replace the anchored content"
+        );
+
+        let anchor = client.read(&id).unwrap();
+        assert_eq!(anchor.hash, hash_a);
+        assert_eq!(anchor.seq, 42);
+        assert_eq!(client.assert_anchored(&id, &hash_a), 42);
+    }
+
+    #[test]
+    fn a_later_sequence_cannot_rebind_the_owners_record_to_another_owner() {
+        let env = Env::default();
+        env.mock_all_auths();
+        let address = auth_client(&env);
+        let client = CgCommitmentAnchorClient::new(&env, &address);
+        let owner = wallet(&env);
+        let attacker =
+            Address::from_str(&env, "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN");
+        let hash = executed_hash(&env);
+
+        env.ledger().set_sequence_number(3_000);
+        let owner_id = client.derive_authorized_id(&owner, &hash);
+        let owner_seq = client.commit_authorized(&owner, &hash);
+
+        // One ledger later the attacker anchors the SAME content: the write
+        // lands in the attacker's own lane and cannot touch the owner's.
+        env.ledger().set_sequence_number(3_001);
+        let attacker_id = client.derive_authorized_id(&attacker, &hash);
+        assert_ne!(attacker_id, owner_id);
+        assert_eq!(client.commit_authorized(&attacker, &hash), 3_001);
+
+        let owner_anchor = client.read_authorized(&owner_id).unwrap();
+        assert_eq!(owner_anchor.owner, owner);
+        assert_eq!(owner_anchor.seq, owner_seq);
+        assert_eq!(owner_anchor.hash, hash);
+
+        // The owner's id still refuses to be read as the attacker's record.
+        assert_eq!(
+            client.try_assert_anchored_authorized(&owner_id, &attacker, &hash),
+            Err(Ok(CgError::HashMismatch))
+        );
     }
 }
