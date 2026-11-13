@@ -33,6 +33,6 @@ Core DAO • Core Chain • Core DeFi • Core DApps • Core Wallets • AI Age
 
 ## Recent developments (Nov 10–12 2026, measured)
 - **Evidence-registry proofs (chain 1116 lane):** Foundry invariant + fuzz proofs over the Evidence Registry with deterministic seed/config (`foundry.toml`); invariants run as the test contract's own actions (not a cheatcode target); CI executes `forge test --match-path "test/contract/*invariant*"`. **43/43 Foundry tests pass** (CI-measured, pinned to `forge` output) — `.github/workflows/ci.yml`, `test/contract/*invariant*`, [STATUS.md](STATUS.md).
-- **Measured repo state:** 1576/1576 npm tests, 1145 files / 0 violations, docs-node 133/79/30 — [state-snapshot.json](state-snapshot.json).
+- **Measured repo state:** 1576/1576 npm tests, 1148 files / 0 violations, docs-node 133/79/30 — [state-snapshot.json](state-snapshot.json).
 
 **Status:** Core anchors **LIVE/recorded** on chain 1116 (see STATUS); this COREDao-KILLER packaging surface remains an integration/product wrapper with ecosystem integrations **NOT BUILT** unless separately evidenced. | **Version:** COREDao-KILLER/1
