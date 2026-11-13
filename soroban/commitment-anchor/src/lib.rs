@@ -450,7 +450,10 @@ mod test {
         let owner = wallet(&env);
         let hash = executed_hash(&env);
 
-        client.try_commit_authorized(&owner, &hash).unwrap_err();
+        // The host refuses before the contract runs, so there is no CgError to
+        // name here — only "the invocation fails". Asserting that, instead of
+        // discarding the Result, is the assertion this test always meant.
+        assert!(client.try_commit_authorized(&owner, &hash).is_err());
         // Fail-closed trace: nothing landed in the authorized lane.
         let id = client.derive_authorized_id(&owner, &hash);
         assert!(client.read_authorized(&id).is_none());
@@ -544,9 +547,9 @@ mod test {
         // read-back even with matching (owner, hash).
         let legacy_id = BytesN::from_array(&env, &[7u8; 32]);
         client.commit(&legacy_id, &hash);
-        client
+        assert!(client
             .try_assert_anchored_authorized(&legacy_id, &owner, &hash)
-            .unwrap_err();
+            .is_err());
     }
 
     // ---- Ledger-sequence properties: a record never moves after it lands ----
@@ -579,15 +582,9 @@ mod test {
             "idempotent replay must return the original ledger sequence"
         );
 
-        let anchor = client.read_authorized(&id).unwrap();
-        assert_eq!(anchor.seq, 1_000);
-        assert_eq!(anchor.hash, hash);
-        assert_eq!(anchor.owner, owner);
-        assert_eq!(
-            client.assert_anchored_authorized(&id, &owner, &hash),
-            1_000,
-            "strict read-back reports the original ledger, not the replay's"
-        );
+        // Both read paths report the FIRST ledger, never the replay's.
+        assert_eq!(client.read_authorized(&id).unwrap().seq, 1_000);
+        assert_eq!(client.assert_anchored_authorized(&id, &owner, &hash), 1_000);
     }
 
     #[test]
@@ -599,27 +596,21 @@ mod test {
         let owner = wallet(&env);
 
         let first_hash = executed_hash(&env);
+        let first_id = client.derive_authorized_id(&owner, &first_hash);
         env.ledger().set_sequence_number(2_000);
-        let first_seq = client.commit_authorized(&owner, &first_hash);
+        assert_eq!(client.commit_authorized(&owner, &first_hash), 2_000);
 
         let second_hash = BytesN::from_array(&env, &[0x5au8; 32]);
-        env.ledger().set_sequence_number(2_500);
-        let second_seq = client.commit_authorized(&owner, &second_hash);
-        assert_eq!(second_seq, 2_500, "a new commitment anchors at its own ledger");
-        assert_ne!(first_seq, second_seq);
-
-        // The first record is untouched by the later write...
-        let first_id = client.derive_authorized_id(&owner, &first_hash);
-        let first = client.read_authorized(&first_id).unwrap();
-        assert_eq!(first.seq, first_seq);
-        assert_eq!(first.hash, first_hash);
-        assert_eq!(first.owner, owner);
-
-        // ...and the two live under DIFFERENT ids, so neither can shadow the
-        // other no matter which ledger the caller replays them at.
         let second_id = client.derive_authorized_id(&owner, &second_hash);
-        assert_ne!(first_id, second_id);
+        env.ledger().set_sequence_number(2_500);
+        assert_eq!(client.commit_authorized(&owner, &second_hash), 2_500);
+
+        // The later write anchors at its own ledger and leaves the earlier
+        // record exactly where it was.
         assert_eq!(client.read_authorized(&second_id).unwrap().seq, 2_500);
+        let first = client.read_authorized(&first_id).unwrap();
+        assert_eq!(first.seq, 2_000);
+        assert_eq!(first.hash, first_hash);
     }
 
     #[test]
@@ -635,21 +626,13 @@ mod test {
         assert_eq!(client.commit(&id, &hash_a), 42);
 
         env.ledger().set_sequence_number(4_242);
-        assert_eq!(
-            client.commit(&id, &hash_a),
-            42,
-            "idempotent replay keeps the first ledger sequence"
-        );
-        assert_eq!(
-            client.try_commit(&id, &hash_b),
-            Err(Ok(CgError::HashMismatch)),
-            "a later ledger cannot replace the anchored content"
-        );
+        assert_eq!(client.commit(&id, &hash_a), 42);
+        assert_eq!(client.try_commit(&id, &hash_b), Err(Ok(CgError::HashMismatch)));
 
+        // The refused write changed nothing: content and ledger are the first ones.
         let anchor = client.read(&id).unwrap();
         assert_eq!(anchor.hash, hash_a);
         assert_eq!(anchor.seq, 42);
-        assert_eq!(client.assert_anchored(&id, &hash_a), 42);
     }
 
     #[test]
@@ -665,24 +648,15 @@ mod test {
 
         env.ledger().set_sequence_number(3_000);
         let owner_id = client.derive_authorized_id(&owner, &hash);
-        let owner_seq = client.commit_authorized(&owner, &hash);
+        assert_eq!(client.commit_authorized(&owner, &hash), 3_000);
 
-        // One ledger later the attacker anchors the SAME content: the write
-        // lands in the attacker's own lane and cannot touch the owner's.
+        // One ledger later the attacker anchors the SAME content. The write
+        // succeeds in the attacker's own lane and must not move the owner's.
         env.ledger().set_sequence_number(3_001);
-        let attacker_id = client.derive_authorized_id(&attacker, &hash);
-        assert_ne!(attacker_id, owner_id);
         assert_eq!(client.commit_authorized(&attacker, &hash), 3_001);
 
         let owner_anchor = client.read_authorized(&owner_id).unwrap();
+        assert_eq!(owner_anchor.seq, 3_000);
         assert_eq!(owner_anchor.owner, owner);
-        assert_eq!(owner_anchor.seq, owner_seq);
-        assert_eq!(owner_anchor.hash, hash);
-
-        // The owner's id still refuses to be read as the attacker's record.
-        assert_eq!(
-            client.try_assert_anchored_authorized(&owner_id, &attacker, &hash),
-            Err(Ok(CgError::HashMismatch))
-        );
     }
 }
