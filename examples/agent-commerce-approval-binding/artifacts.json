@@ -1,0 +1,117 @@
+{
+  "demo": "agent-commerce-approval-binding",
+  "synthetic": true,
+  "network": "offline",
+  "keys": "none",
+  "approved": {
+    "intent": {
+      "version": "CGEP/1",
+      "chainId": "0",
+      "signer": "0x000000000000000000000000000000000000000d",
+      "nonce": "0",
+      "validAfter": "0",
+      "validUntil": "9999999999",
+      "action": "AGENT_CHECKOUT",
+      "target": "0x0000000000000000000000000000000000000042",
+      "selector": "0xa9059cbb",
+      "asset": "0x0000000000000000000000000000000000000002",
+      "amount": "3000",
+      "recipient": "0x0000000000000000000000000000000000000042",
+      "constraints": [
+        {
+          "type": "MAX_VALUE",
+          "value": "3000"
+        },
+        {
+          "type": "RECIPIENT_ALLOWLIST",
+          "addresses": [
+            "0x0000000000000000000000000000000000000042"
+          ]
+        }
+      ],
+      "merchantName": "synthetic-goods.example",
+      "currency": "USD",
+      "items": [
+        {
+          "sku": "SKU-DEMO-001",
+          "name": "Synthetic item A",
+          "qty": 1,
+          "unitPriceMinor": "1800"
+        },
+        {
+          "sku": "SKU-DEMO-002",
+          "name": "Synthetic item B",
+          "qty": 1,
+          "unitPriceMinor": "1200"
+        }
+      ],
+      "paymentCredentialRef": "TOKENIZED-CREDENTIAL-REF-0a41 (placeholder — never a PAN)",
+      "agentRef": "DEMO-AGENT-0001 (declared, not detected)",
+      "authorizedAtUtc": "2026-11-14T12:00:00Z",
+      "expiryUtc": "2026-11-14T12:10:00Z",
+      "singleUse": true
+    },
+    "policy": {
+      "version": "CGEP/1",
+      "policyId": "0x00000000000000000000000000000000000000cb",
+      "name": "Agent Checkout Policy",
+      "rules": [
+        {
+          "ruleId": "VALUE_001",
+          "type": "VALUE_LIMIT",
+          "params": {
+            "max": "3000"
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "TARGET_001",
+          "type": "TARGET_ALLOWLIST",
+          "params": {
+            "targets": [
+              "0x0000000000000000000000000000000000000042"
+            ]
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "RECIPIENT_001",
+          "type": "RECIPIENT_ALLOWLIST",
+          "params": {
+            "addresses": [
+              "0x0000000000000000000000000000000000000042"
+            ]
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "SELECTOR_001",
+          "type": "SELECTOR_ALLOWLIST",
+          "params": {
+            "selectors": [
+              "0xa9059cbb"
+            ]
+          },
+          "severity": "CRITICAL"
+        }
+      ]
+    }
+  },
+  "approvalReceiptId": "0x3961cea636ce2a99776ee04a81e5cab9b7aa738982bf877f0b2a423d9e53ea51",
+  "results": {
+    "executeExact": "VERIFIED",
+    "totalDrift": "INVALID",
+    "merchantSwap": "INVALID",
+    "recordTamper": "INVALID"
+  },
+  "driftNamed": {
+    "totalDrift": [
+      "total: approved 3000 -> executed 3199",
+      "post-approval surcharge appeared: 199"
+    ],
+    "merchantSwap": [
+      "merchant: approved 0x0000000000000000000000000000000000000042 -> executed 0x0000000000000000000000000000000000000099"
+    ]
+  },
+  "exitContract": "APPROVED_VERIFIED_DRIFT_INVALID_SWAP_INVALID_TAMPER_INVALID"
+}

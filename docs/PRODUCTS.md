@@ -200,6 +200,7 @@ npm run quickstart
 | **DDE perf + trend** | CI-measured budgets, medians and full history. | [DDE-PERF.html](DDE-PERF.html) · [DDE-TREND.html](DDE-TREND.html) |
 | **Gate 4.1 visual** | On-chain identity anchor through the evidence chain (AR + EN). | [AR](coreguard-gate41-visual.html) · [EN](coreguard-gate41-visual-en.html) |
 | **Core DApp surface** | Core-branded identity / plans / treasury / on-Core view. | [coreguard-dapp-core.html](coreguard-dapp-core.html) |
+| **Agent-commerce approval-binding demo** (offline) | APPROVE → EXECUTE exact **VERIFIED** · post-approval total drift **INVALID** (field named) · merchant swap **INVALID** · record tamper **INVALID** — synthetic orders, zero keys, zero network, exit 0 only on the exact arc. Dated market context: the ChatGPT Wallet announcement (OpenAI, 2026-11-13, built with American Express, Mastercard, Visa) — no contact, integration or endorsement claimed with OpenAI or any named provider. | [examples/agent-commerce-approval-binding](../examples/agent-commerce-approval-binding/) · [dated instrument](agent-commerce-moment-chatgpt-wallet-2026-11-14.md) |
 | **Site index** | Entry point for all live surfaces. | [index.html](index.html) |
 
 ---

@@ -25,10 +25,24 @@
   <a href="https://twitter.com/CoreGuardGlobal"><img src="https://img.shields.io/badge/Twitter-@CoreGuardGlobal-1DA1F2?style=flat-square&logo=twitter&logoColor=white" alt="Twitter"></a>
 </p>
 
-### Verifiable Execution Truth Layer for Bitcoin DeFi
+### The Execution Trust Layer for Stellar
+**VERIFY · PROTECT · PROVE**
 
 **CoreGuard doesn't tell you whether a transaction looks safe.**
-**It produces independently verifiable evidence of whether execution conformed to what was authorized.**
+**It proves whether what executed is what was authorized — and hands a stranger the receipt.**
+
+| Pillar | Question it answers | What you get |
+|---|---|---|
+| **1 · Authorization** | What was this human or agent allowed to do? | a signed receipt bound to the exact transaction bytes |
+| **2 · Execution Firewall** | Is what is about to be signed still that thing? | `PASS` or `BLOCK` with a named code — never a score |
+| **3 · Verifiable Execution** | Did what ran match what was authorized? | a comparison against the signed envelope and the result |
+| **4 · Immutable Evidence** | Can a third party check this without trusting us? | an artifact + an offline verifier: no secret, no network |
+
+**See it in one command — offline, no keys:** `npm install` → `npm run trust:demo` — four pillars, three refusals by name, one receipt digest.
+
+Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · **[Positioning](docs/EXECUTION-TRUST-LAYER.md)** · **[Competitive landscape](docs/COMPETITIVE-LANDSCAPE.md)** (cited) · **[SCF Build application v3](docs/SCF-BUILD-APPLICATION-V3.md)** · **[Evidence matrix](docs/EVIDENCE-MATRIX.md)** (code, execution and adoption, kept apart).
+
+**Honest status today:** the four pillars are BUILT and TEST_EXECUTED in this repository; external adoption is **NOT_BUILT** — zero external projects, zero signed pilots, no third-party audit, and the Soroban authorized lane is source-only, not deployed.
 
 [![CI](https://github.com/coreguard-global/CoreGuard/actions/workflows/ci.yml/badge.svg)](https://github.com/coreguard-global/CoreGuard/actions/workflows/ci.yml)
 [![Core DAO Killer](https://coreguard-global.github.io/CoreGuard/assets/badges/core-dao-killer.svg)](docs/COREDAO-KILLER-FEATURES.md)
@@ -69,7 +83,7 @@ Run the offline arc: `npm run stellar:presign` — no signing, no wallet, no net
 
 ### Recent developments — Nov 10–14 2026 (by network, measured & evidenced)
 
-> Canonical measured state for this cycle: **1576/1576 tests**, **1148 files scanned / 0 violations**, **docs-node 133 executed · 79 skip-listed · 30 covered**, **Foundry 43/43 pass** — [docs/state-snapshot.json](docs/state-snapshot.json) · [docs/STATUS.md](docs/STATUS.md). Every item below is labeled by its committed evidence; nothing implies revenue, customers, partnerships, external adoption, or a third-party audit.
+> Canonical measured state for this cycle: **1576/1576 tests**, **1152 files scanned / 0 violations**, **docs-node 133 executed · 79 skip-listed · 30 covered**, **Foundry 43/43 pass** — [docs/state-snapshot.json](docs/state-snapshot.json) · [docs/STATUS.md](docs/STATUS.md). Every item below is labeled by its committed evidence; nothing implies revenue, customers, partnerships, external adoption, or a third-party audit.
 
 #### Stellar — pre-sign receipts, agent-gate envelope path, Freighter evaluation, DEX integration
 
@@ -791,6 +805,24 @@ transaction match the declared authority, re-derivable by anyone" — is the
 layer none of them ship.** That is the CoreGuard layer. The dated matrix and
 the overtake roadmap live in
 [docs/competitive-intelligence-overtake-2026-09-20.md](docs/competitive-intelligence-overtake-2026-09-20.md).
+
+**The moment arrived at consumer scale — ChatGPT Wallet (OpenAI, 2026-11-13,
+built with American Express, Mastercard, Visa).** Agent-initiated payments are
+now real: agents pay with tokenized credentials, every purchase needs a user
+approval + security check, and the announcement itself names *pre-approved
+delegation within set parameters (spending limits, categories, time periods)*
+as future work. Tokenization protects card data — it does not bind the
+executed order to the approved order bytes, and an approval record held only
+by the issuing platform is a record, not independent evidence. That binding is
+what CoreGuard commits today, offline: the approval-binding arc
+(`examples/agent-commerce-approval-binding/run-demo.js` — APPROVE → EXECUTE
+exact → VERIFIED · total drift → INVALID with the field named · merchant swap →
+INVALID · record tamper → INVALID, zero keys, zero network, synthetic orders),
+with the full dated mapping in
+[docs/agent-commerce-moment-chatgpt-wallet-2026-11-14.md](docs/agent-commerce-moment-chatgpt-wallet-2026-11-14.md).
+No contact, integration or endorsement is claimed with OpenAI or any named
+provider — this is the layer the flow needs, demonstrated on committed
+machinery.
 
 ## Built for Core
 
