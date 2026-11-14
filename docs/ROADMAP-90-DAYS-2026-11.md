@@ -96,7 +96,7 @@ surface, (c) stop. The repo's own claim rules require the finding to be visible.
 | Cost per verification | harness + RPC fees | not measured as deployed/RPC cost |
 | Audit findings open/closed | review record | not started (self-review committed for PSAR/1; third-party audit not performed) |
 | Claims without evidence | `npm run claims:audit` | 0 violations (per committed registry) |
-| Suite total vs snapshot | `npm run test` drift guard | in sync (1576/1576, snapshot-enforced) |
+| Suite total vs snapshot | `npm run test` drift guard | in sync (1578/1578, snapshot-enforced) |
 
 Stars, followers, impressions and "interest expressed" are deliberately absent:
 none of them is adoption.

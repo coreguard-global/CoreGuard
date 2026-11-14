@@ -15,11 +15,11 @@ adoption, partnerships, or outcomes.
 
 ## 1. Honest baseline (what stands today, machine-measured)
 
-- The committed snapshot (`docs/state-snapshot.json`) pins `testsTotal` 1576, with
+- The committed snapshot (`docs/state-snapshot.json`) pins `testsTotal` 1578, with
   `boundaryAudit` at 0 violations (1140 files) and `docsNode` at 133 executed / 79 skip-listed /
   30 docs covered. CI is green on the final delivery-kit push of the authorized-lane
   cycle (`7be2d5c`: ESCROW/1 bounty-escrow mirror, owner click-runbook, suite-count
-  measured 1526, then +13 from the parallel signed-envelope session and +27 from the PSAR/1 kit in this push, reconciled into one suite). Full suite 1576/1576 pass; prepush 6/6 PASS.
+  measured 1526, then +13 from the parallel signed-envelope session and +27 from the PSAR/1 kit in this push, reconciled into one suite). Full suite 1578/1578 pass; prepush 6/6 PASS.
 - The authorized-lane delivery cycle closed on 2026-11-10: the mainnet refusal was
   decoded from its own committed bytes to `txInsufficientBalance` (-7) - deterministic,
   not transient - and the runner was upgraded with the pre-send fee-solvency gate and
@@ -135,11 +135,11 @@ adoption, partnerships, or outcomes.
 
 ## 1. Honest baseline (what stands today, machine-measured)
 
-- The committed snapshot (`docs/state-snapshot.json`) pins `testsTotal` 1576, with
+- The committed snapshot (`docs/state-snapshot.json`) pins `testsTotal` 1578, with
   `boundaryAudit` at 0 violations (1140 files) and `docsNode` at 133 executed / 79 skip-listed /
   30 docs covered. CI is green on the final delivery-kit push of the authorized-lane
   cycle (`7be2d5c`: ESCROW/1 bounty-escrow mirror, owner click-runbook, suite-count
-  measured 1526, then +13 from the parallel signed-envelope session and +27 from the PSAR/1 kit in this push, reconciled into one suite). Full suite 1576/1576 pass; prepush 6/6 PASS.
+  measured 1526, then +13 from the parallel signed-envelope session and +27 from the PSAR/1 kit in this push, reconciled into one suite). Full suite 1578/1578 pass; prepush 6/6 PASS.
 - The authorized-lane delivery cycle closed on 2026-11-10: the mainnet refusal was
   decoded from its own committed bytes to `txInsufficientBalance` (-7) - deterministic,
   not transient - and the runner was upgraded with the pre-send fee-solvency gate and

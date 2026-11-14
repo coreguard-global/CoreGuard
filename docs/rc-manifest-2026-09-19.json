@@ -1843,7 +1843,7 @@
     {
       "file": "examples/pilot/preflight.mjs",
       "sha256": "5cee590118622d63581b6273aee6b4428e1e3033d4512eba2a2229de7161b60a",
-      "bytes": 1576
+      "bytes": 1578
     },
     {
       "file": "examples/pilot/proof-artifact-1.json",

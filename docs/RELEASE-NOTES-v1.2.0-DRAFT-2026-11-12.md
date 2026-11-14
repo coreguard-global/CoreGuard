@@ -5,7 +5,7 @@
 > **Evidence-first, honesty-bound:** every item below cites committed code/tests/docs/artifacts or recorded outreach. No revenue, no customers, no partnerships, no external adoption, no third-party audit, and no live wallet integration are claimed. Where status is `NOT_BUILT`, `TEST_EXECUTED`, `DRY_RUN`, `PREPARED`, or `PLAN_ONLY`, it is stated as such.
 
 ## Canonical measured state (re-read at publish — unchanged)
-- **npm tests:** 1576 / 1576 pass (machine-pinned)
+- **npm tests:** 1578 / 1578 pass (machine-pinned)
 - **Boundary audit:** 1143 files · 0 violations
 - **Docs-node contract:** 133 executed · 79 skip-listed · 30 covered
 - **Foundry (contracts):** 43 / 43 pass
@@ -62,6 +62,6 @@ npm run stellar:presign
 ## Publish checklist — outcomes (closed at publication)
 - [x] Target version/tag/title: `v1.2.0`, tag on `33e5606`, title "CoreGuard — Release Notes (v1.2.0)".
 - [x] CI re-confirmed green on the tag commit: run [`43453599056`](https://github.com/coreguard-global/CoreGuard/actions/runs/43453599056) (node 22 · node 24 · foundry · demos · soroban).
-- [x] Numbers re-read from `docs/state-snapshot.json` at publish: 1576 tests · 1143 files · 0 violations · docs-node 133 · 79 · 30; Foundry 43/43.
+- [x] Numbers re-read from `docs/state-snapshot.json` at publish: 1578 tests · 1143 files · 0 violations · docs-node 133 · 79 · 30; Foundry 43/43.
 - [x] Evidence links curated in the published text; the Freighter #3087 comment is recorded as a comment, never as adoption.
 - [x] Published on explicit owner instruction (2026-11-13); no automated publication path exists in this repo.

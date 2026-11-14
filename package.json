@@ -80,7 +80,9 @@
     "stellar:demo": "node examples/stellar-verify/demo.mjs",
     "stellar:gate": "node examples/stellar-gate/demo.mjs",
     "stellar:presign": "node examples/stellar-presign/demo.mjs",
-    "agent-gate": "node packages/agent-gate/demo.mjs"
+    "agent-gate": "node packages/agent-gate/demo.mjs",
+    "trust:demo": "node examples/execution-trust/run.mjs",
+    "trust:verify": "node examples/execution-trust/verify-third-party.mjs"
   },
   "engines": {
     "node": ">=18"

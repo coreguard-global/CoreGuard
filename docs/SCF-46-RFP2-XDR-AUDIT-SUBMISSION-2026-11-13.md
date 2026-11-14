@@ -48,7 +48,7 @@ Standing claims discipline (binding): every number in our forms is machine-measu
 
 ### B.1 Why we are a good fit (with evidence, not adjectives)
 
-- **Byte-level XDR discipline is already shipped and CI-measured.** PSAR/1 binds an authorization decision to the EXACT transaction XDR bytes before any signature exists; AGENT-XDR/1 binds authorized intent to signed-envelope bytes field by field; a real testnet signature has been carried through the lane with committed evidence. Suite: 1576/1576 tests, machine-pinned against `docs/state-snapshot.json` and enforced on every push by `scripts/run-tests.mjs`.
+- **Byte-level XDR discipline is already shipped and CI-measured.** PSAR/1 binds an authorization decision to the EXACT transaction XDR bytes before any signature exists; AGENT-XDR/1 binds authorized intent to signed-envelope bytes field by field; a real testnet signature has been carried through the lane with committed evidence. Suite: 1578/1578 tests, machine-pinned against `docs/state-snapshot.json` and enforced on every push by `scripts/run-tests.mjs`.
 - **Cross-language truth is our standing working method.** The Soroban commitment-anchor crate carries a JS mirror plus a cross-language known-answer vector; the Rust leg runs in CI (17/17 in the anchor crate). "Two independent implementations must agree on bytes" is not a slogan here — it is an enforced contract.
 - **Fail-closed is our default posture, with negative controls to prove it.** A verifier error is itself a BLOCK, never a pass; the repo maintains mutation batteries where every guard must be observed to bite. `VERIFIED ≠ SAFE` is a standing label, and our own docs say so.
 - **We reproduced one of the RFP's own sighting classes before submitting** (the reviewability gate): the #1766 ordering-divergence class — two valid Ed25519 issuers whose strkey-string order is the OPPOSITE of their XDR-byte order — reproduced offline and committed as evidence with four byte-round-trip-verified sample corpus entries, including a CAP-0040 signed-payload signer and a CAP-0027 muxed account with its SEP-0023 M-strkey. See B.5 for the artifact.
@@ -147,7 +147,7 @@ The RFP marks proposals without these as incomplete. All three exist as committe
 
 ## Part C — Measured repo state (machine-pinned, at this instrument's landing)
 
-- npm tests: **1576/1576 tests** (machine-pinned; enforced by `scripts/run-tests.mjs` against `docs/state-snapshot.json`).
+- npm tests: **1578/1578 tests** (machine-pinned; enforced by `scripts/run-tests.mjs` against `docs/state-snapshot.json`).
 - Boundary audit: **1148 tracked files · 0 violations** (the three files this instrument lands — this doc, the reproduction script, its evidence artifact — are counted; measured from `git ls-files`, the count a fresh clone reproduces).
 - Docs-node contract: **133 executed · 79 skip-listed · 30 covered** (unchanged; this instrument is fence-free by construction, like its 2026-11-06 predecessor).
 - Foundry: **43/43 pass** (CI-measured). Claims audit: **PASS (0 violations)**.

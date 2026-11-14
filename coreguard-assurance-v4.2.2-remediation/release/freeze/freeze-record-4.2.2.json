@@ -263,7 +263,7 @@
   "v06Remediation": {
     "path": "C:UsersDeLL-L.foundrycast.exe",
     "sha256": "0xeba3df695d1c96cb54175183f89d62bafac7f728365987a1947743c6f3e91b36",
-    "bytes": 58801152,
+    "bytes": 58801159,
     "version": "cast 1.8.0",
     "commit": "61ae26af36320d4fa1020f7db53785885e29eeb5",
     "buildTimestamp": "2026-08-26T13:16:35Z",
