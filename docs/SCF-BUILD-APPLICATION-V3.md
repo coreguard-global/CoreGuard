@@ -24,7 +24,7 @@ not happen.
 | Field-by-field tamper refusal on the signed envelope | `test/integrations/agent-gate-field-tamper.test.mjs` | BUILT · TEST_EXECUTED |
 | Deterministic replay across runtimes (pinned clock + vectors) | `test/integrations/agent-gate-replay-determinism.test.mjs`, `test/fixtures/agent-gate/canonical-vectors.json` | BUILT · TEST_EXECUTED (Node 22 + 24 in CI) |
 | Contract-level invariants (evidence registry, fees, write-once) | `test/contract/EvidenceRegistryV3.invariant.t.sol` — 5 invariants, 8 fuzz properties, 43 Foundry tests | BUILT · CI-MEASURED |
-| Anchor immutability across ledger sequences | `soroban/commitment-anchor/src/lib.rs` — 17 Rust tests incl. 4 sequence properties | SOURCE ONLY — not deployed |
+| Anchor immutability across ledger sequences | `soroban/commitment-anchor/src/lib.rs` — 16 Rust tests incl. 4 sequence properties | SOURCE ONLY — not deployed |
 | Offline third-party verification | `packages/independent-verifier/` (JS · Rust · WASM · C/Python three-way parity) | BUILT · TEST_EXECUTED |
 | Four-pillar demo in one command | `examples/execution-trust/` (`npm run trust:demo`) | BUILT · TEST_EXECUTED |
 

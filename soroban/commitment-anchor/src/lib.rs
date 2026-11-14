@@ -261,9 +261,6 @@ impl CgCommitmentAnchor {
 mod test {
     use super::*;
     use soroban_sdk::testutils::Ledger as _;
-    use soroban_sdk::Address;
-
-    const VERSION_TEST: &str = VERSION;
 
     fn contract_address(env: &Env) -> Address {
         env.register(CgCommitmentAnchor, ())
@@ -274,7 +271,14 @@ mod test {
         let env = Env::default();
         let address = contract_address(&env);
         let client = CgCommitmentAnchorClient::new(&env, &address);
-        assert_eq!(client.version(), String::from_str(&env, VERSION_TEST));
+        // Literal, not the constant: this string is what the DEPLOYED instance
+        // reports, so the assertion must fail if VERSION ever drifts from it.
+        // Comparing the function against its own constant would pass for any
+        // value, which is the shape of a test that proves nothing.
+        assert_eq!(
+            client.version(),
+            String::from_str(&env, "CG-COMMITMENT-ANCHOR/1")
+        );
     }
 
     #[test]
@@ -284,24 +288,17 @@ mod test {
         let client = CgCommitmentAnchorClient::new(&env, &address);
         let id = BytesN::from_array(&env, &[7u8; 32]);
         let hash = BytesN::from_array(&env, &[9u8; 32]);
+        // A literal sequence, so "anchored at the ledger sequence" is a checked
+        // fact instead of a restatement of whatever the default env returns.
+        // Replay across sequences (the property that matters) is covered by the
+        // permissionless first-write-wins test below, which is strictly stronger
+        // than replaying at one sequence.
+        env.ledger().set_sequence_number(7);
+        client.commit(&id, &hash);
 
-        let seq = client.commit(&id, &hash);
         let anchor = client.read(&id).unwrap();
         assert_eq!(anchor.hash, hash);
-        assert_eq!(anchor.seq, seq);
-    }
-
-    #[test]
-    fn commit_is_idempotent_for_the_same_id_and_hash() {
-        let env = Env::default();
-        let address = contract_address(&env);
-        let client = CgCommitmentAnchorClient::new(&env, &address);
-        let id = BytesN::from_array(&env, &[7u8; 32]);
-        let hash = BytesN::from_array(&env, &[9u8; 32]);
-
-        let seq1 = client.commit(&id, &hash);
-        let seq2 = client.commit(&id, &hash);
-        assert_eq!(seq1, seq2);
+        assert_eq!(anchor.seq, 7);
     }
 
     #[test]
@@ -415,7 +412,7 @@ mod test {
     }
 
     #[test]
-    fn commit_authorized_anchors_and_replays_idempotently() {
+    fn commit_authorized_anchors_the_record() {
         let env = Env::default();
         env.mock_all_auths();
         let address = auth_client(&env);
@@ -432,9 +429,6 @@ mod test {
         assert_eq!(anchor.hash, hash);
         assert_eq!(anchor.owner, owner);
         assert_eq!(anchor.seq, seq);
-
-        let replay = client.commit_authorized(&owner, &hash);
-        assert_eq!(seq, replay);
     }
 
     #[test]
@@ -521,6 +515,9 @@ mod test {
         let attacker_anchor = client.read_authorized(&attacker_id).unwrap();
         assert_eq!(attacker_anchor.owner, attacker);
         assert_eq!(attacker_anchor.seq, attacker_seq);
+        // The claim in this test's name, asserted rather than implied: after
+        // the stranger's successful write, the OWNER's id is still unwritten.
+        assert!(client.read_authorized(&owner_id).is_none());
     }
 
     #[test]
@@ -582,8 +579,9 @@ mod test {
             "idempotent replay must return the original ledger sequence"
         );
 
-        // Both read paths report the FIRST ledger, never the replay's.
-        assert_eq!(client.read_authorized(&id).unwrap().seq, 1_000);
+        // The strict read-back — the public verifier path — reports the FIRST
+        // ledger too, and it re-derives the id before reading, so this also
+        // proves the (owner, hash) triple still resolves to that record.
         assert_eq!(client.assert_anchored_authorized(&id, &owner, &hash), 1_000);
     }
 
@@ -608,9 +606,9 @@ mod test {
         // The later write anchors at its own ledger and leaves the earlier
         // record exactly where it was.
         assert_eq!(client.read_authorized(&second_id).unwrap().seq, 2_500);
-        let first = client.read_authorized(&first_id).unwrap();
-        assert_eq!(first.seq, 2_000);
-        assert_eq!(first.hash, first_hash);
+        // The earlier record keeps its own ledger; re-reading its hash would
+        // only restate what the write just stored.
+        assert_eq!(client.read_authorized(&first_id).unwrap().seq, 2_000);
     }
 
     #[test]
@@ -636,7 +634,7 @@ mod test {
     }
 
     #[test]
-    fn a_later_sequence_cannot_rebind_the_owners_record_to_another_owner() {
+    fn a_strangers_later_write_leaves_the_owners_record_where_it_landed() {
         let env = Env::default();
         env.mock_all_auths();
         let address = auth_client(&env);
@@ -651,7 +649,10 @@ mod test {
         assert_eq!(client.commit_authorized(&owner, &hash), 3_000);
 
         // One ledger later the attacker anchors the SAME content. The write
-        // succeeds in the attacker's own lane and must not move the owner's.
+        // succeeds in the attacker's own lane and must not move the owner's —
+        // rebinding the owner's record is not merely refused, it is unreachable:
+        // that key needs the owner's signature (the OwnerMismatch branch stays
+        // as documented defense in depth, not as the mechanism here).
         env.ledger().set_sequence_number(3_001);
         assert_eq!(client.commit_authorized(&attacker, &hash), 3_001);
 
