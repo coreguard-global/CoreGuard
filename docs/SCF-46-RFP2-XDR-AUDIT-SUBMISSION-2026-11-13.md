@@ -1,7 +1,7 @@
 # SCF #46 RFP Track — RFP-2 Submission Instrument (2026-11-13)
 
 **RFP addressed:** XDR/CAP-Coverage Audit Tool and Indexer-Hardening Guide (SCF #46, RFP Track).
-**Deadline:** 2026-11-20, 9 AM PT. **Prepared:** 2026-11-13 as a dated instrument.
+**Deadline:** 2026-11-20, 9 AM PT. **Prepared:** 2026-11-13 as a dated instrument (interest-status updated 2026-11-14).
 **Possession rule (binding, `docs/ceo-decisions-2026-11-11.md` Decision 3):** the interest form and every external submission are sent by the OWNER per step — this file is a paste source, never an automatic sender. Owner fill-slots are marked `[OWNER: …]`; nothing is fabricated where an owner-held fact is required (entity/KYC data, referral code).
 
 **Positioning decided by the owner (2026-11-13):** CoreGuard's long-term shape is an independent global company in Web3 Security and AI-agent financial infrastructure built on Stellar as core infrastructure; the NOW play — and the lane this RFP funds — is CoreGuard as a security-and-trust layer inside the Stellar ecosystem itself. This proposal is written from the second posture: shared ecosystem tooling first, built in the open, liberally licensed, maintained past delivery.
@@ -9,6 +9,8 @@
 ---
 
 ## Part A — Interest-form answers (paste-ready)
+
+**Interest-form status (honest, recorded 2026-11-14):** the SCF #46 interest form was already submitted by the owner on 2026-11-06/07 (Cairo time) — BEFORE these RFPs opened, as a general Build-round interest (Devtools category; paste source `docs/SCF-46-INTEREST-FORM-READY-2026-11-06.md`). The RFP process requires the interest form to indicate the **RFP Track** explicitly, and the handbook does not state that an earlier form can be edited. The safe action is a NEW interest form selecting the RFP Track and naming RFP 2 (Part A below is the paste source), noting the prior general submission in the free-text field, and optionally confirming supersession in the SCF Discord `#scf-general`. The announcement itself asks for the interest form ASAP so the process fits before the deadline.
 
 **1. Project name**
 CoreGuard — verification-first security rails for agentic transactions, and (for this RFP) the team behind a shared XDR/CAP coverage audit kit for everything that reads the Stellar ledger.
@@ -154,7 +156,7 @@ The RFP marks proposals without these as incomplete. All three exist as committe
 ## Owner checklist (per-step, possession rule)
 
 1. Read Part A; fill the two `[OWNER: …]` slots (referral code, entity data).
-2. Submit the SCF interest form choosing the **RFP Track** and name RFP 2 — paste Part A verbatim (or the AR lines per field). Target: within 48 hours of today (the announcement asks for ASAP so the process fits before 2026-11-20).
+2. **Submit the RFP-Track interest form (the one remaining ASAP step).** Submit a NEW form choosing the **RFP Track** and naming **RFP 2** — your 2026-11-06/07 submission predates the RFP opening, and the handbook does not confirm it can be edited; the safe action is the new form with the prior submission noted in the free-text field. Paste Part A verbatim (or the AR lines per field). Optionally confirm supersession in the SCF Discord `#scf-general`. This must fit before 2026-11-20, 9 AM PT.
 3. On invitation, submit the Build form choosing the RFP Track; paste Part B and link the committed evidence (B.5) — it is reviewer-checkable from a fresh clone.
 4. Nothing external leaves the repo without your explicit per-step sign-off; no submission is automatic.
 
