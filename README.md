@@ -8,7 +8,7 @@
 
 ### VERIFY&nbsp;•&nbsp;<b style="color:#ff8a00">PROTECT</b>&nbsp;•&nbsp;EMPOWER — Execution Integrity for a Smarter Onchain Future
 
-**Live&nbsp;·&nbsp;[coreguard-global.github.io/CoreGuard](https://coreguard-global.github.io/CoreGuard/)**
+**Live&nbsp;·&nbsp;[Official investor & reviewer website](https://coreguard-trust-and-defense.lovable.app/)&nbsp;·&nbsp;[Documentation & product catalog](https://coreguard-global.github.io/CoreGuard/)**
 
 <p align="center">
   <a href="https://coreguard-global.github.io/CoreGuard/"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/cgep-1-receipt.svg" alt="CGEP/1 receipt"></a>
@@ -61,6 +61,38 @@ Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Spec](https://img.shields.io/badge/CGEP%2F1-Draft-yellow.svg)](spec/CGEP-1.md)
 [![Full Inventory - ALL-IN-ONE](https://img.shields.io/badge/Full%20Inventory-ALL--IN--ONE-0f766e)](docs/ALL-IN-ONE-CATALOG.md)
+
+## Official website, films & judges review
+
+**One public starting point for investors, Stellar judges and ecosystem reviewers:** [coreguard-trust-and-defense.lovable.app](https://coreguard-trust-and-defense.lovable.app/). The website brings the product story, public evidence, films, funding path, partnerships and contact routes together; this repository remains the source of implementation truth.
+
+| Destination | What investors and reviewers can inspect |
+|---|---|
+| **[Official CoreGuard website](https://coreguard-trust-and-defense.lovable.app/)** | The Execution Trust Layer vision, products, networks, public evidence and the focused Stellar launch order |
+| **[Stellar judges presentation — English](https://coreguard-trust-and-defense.lovable.app/stellar#stellar-review)** | Four trust layers, authorized AI-agent payments, the integration surface, function-by-function comparison, two-week pilot scorecard, team evidence, future Personal/Enterprise packaging and the five-stage execution plan |
+| **[Stellar Mainnet evidence](https://coreguard-trust-and-defense.lovable.app/stellar#request)** | The owner-operated Soroban commit and first signed funded gated swap, with explorer links and the requested **$40K / $55K / $55K** milestone presentation |
+| **[Core DAO execution evidence](https://coreguard-trust-and-defense.lovable.app/networks/core-dao)** | Execution receipts, fail-closed firewall and dispute-evidence surfaces for Core DAO |
+| **[Products](https://coreguard-trust-and-defense.lovable.app/products) · [Developments](https://coreguard-trust-and-defense.lovable.app/developments) · [Security & code reviews](https://coreguard-trust-and-defense.lovable.app/reviews)** | The current catalog, dated repository developments and published review findings with their limitations kept visible |
+| **[Funding](https://coreguard-trust-and-defense.lovable.app/funding?network=Stellar&kind=grant) · [Pilot & partnership proposal](https://coreguard-trust-and-defense.lovable.app/partnerships) · [Contact](https://coreguard-trust-and-defense.lovable.app/contact)** | Direct routes for grant interest, a documented pilot, incubation, partnerships and investor conversations |
+
+### Watch the two CoreGuard films
+
+| Film | Watch with its evidence context | Direct MP4 | Exact purpose and boundary |
+|---|---|---|---|
+| **PSAR/1 × Freighter — 89.6 seconds** | [Open the PSAR/1 film and technical boundary](https://coreguard-trust-and-defense.lovable.app/stellar#psar-demo) | [Watch/download the PSAR/1 MP4](https://coreguard-trust-and-defense.lovable.app/__l5e/assets-v1/53014dad-fcdc-43b6-9f59-721cdc4d4536/coreguard_psar1_freighter_90s.mp4) | English voiceover and captions; a **visual replay of captured clean-clone output**, not a live wallet recording. It shows exact-XDR receipt binding, PASS, then BLOCK for changed bytes and an expired receipt. Wallet integration and external adoption are **not built**. |
+| **Stellar Mainnet & SCF — 90 seconds** | [Open the Mainnet film and on-chain evidence](https://coreguard-trust-and-defense.lovable.app/stellar#mainnet-demo) | [Watch/download the Mainnet MP4](https://coreguard-trust-and-defense.lovable.app/__l5e/assets-v1/44aa5a83-961c-450e-9ca2-fc2a65bed0db/coreguard_stellar_scf_90s_v2.mp4) | English voiceover covering the live Soroban commitment anchor, first signed funded swap, execution-truth story and requested $150K roadmap. This is separate from the offline PSAR/1 pre-sign demonstration. |
+
+### Judges' direct review path
+
+1. **See the whole presentation:** [Stellar judges & ecosystem review](https://coreguard-trust-and-defense.lovable.app/stellar#stellar-review) — the page is English throughout this section, including when the surrounding site is switched to Arabic.
+2. **Inspect the implementation narrative:** [README](README.md) · [Execution Trust Layer positioning](docs/EXECUTION-TRUST-LAYER.md) · [Developer quickstart](docs/DEVELOPER-QUICKSTART.md).
+3. **Evaluate the next proof:** [Two-week Pilot Kit](docs/PILOT-KIT.md) — one named counterparty, one flow, measured integration effort, replayable artifacts and a publishable report including failures.
+4. **Compare by function, not hype:** [Cited competitive landscape](docs/COMPETITIVE-LANDSCAPE.md) — simulation, wallet security, smart-contract monitoring and AI-agent guardrails, with CoreGuard presented as a complementary evidence layer rather than a universal replacement.
+5. **Share the short visual preview:** [6-second animated judges loop](https://coreguard-trust-and-defense.lovable.app/__l5e/assets-v1/c2d810f1-aa9b-42d4-809d-e74a39d7b20c/og-judges-preview.mp4) — a silent brand preview for link sharing, not a substitute for the two evidence films or the full review.
+
+**Reviewer truth boundary:** public implementation surfaces, tests and owner-operated Mainnet evidence exist; zero external customers, zero signed pilots and zero production integrations are recorded. Funding is **requested, not awarded**; stable SDK publication, independent security review, staffed specialist roles and external adoption remain separate evidence milestones. **VERIFIED ≠ SAFE.**
+
+---
 
 ## 🟠 SCF #46 — RFP Track · RFP-2: XDR/CAP-Coverage Audit Tool and Indexer-Hardening Guide
 
