@@ -179,6 +179,7 @@ Run the offline arc: `npm run stellar:presign` — no signing, no wallet, no net
 - **Legal node · العقدة القانونية**: [LICENSE.md](LICENSE.md) — MIT code, brand-and-trademark posture, bilingual.
 - **CoreGuard Labs — the evidence lab · مخبر الأدلة**: [docs/LABS.md](docs/LABS.md) — independent re-derivation, reviewer kits, incubation/program evidence packs.
 - **Verify bot (Telegram/Discord) · بوت التحقق**: [docs/VERIFY-BOT.md](docs/VERIFY-BOT.md) — committed engineering spec, honest PLAN_ONLY status.
+- **Verify a receipt in a browser · تحقّق من الإيصال في المتصفح**: [docs/verify.html](docs/verify.html) — the page reads a `#v1.<base64url>` bundle from the URL fragment (never the query string, so no server logs it) and re-derives the verdict inside the tab with WebCrypto (SHA-256 + Ed25519): no network, no install, no key. Its logic is the same module the Node verifier runs, and `test/integrations/verify-page.test.mjs` fails if the two ever disagree.
 
 Seven brand plates, each minted from ONE committed file that exclusively owns its surface — Execution Firewall, Verifier X3, Stellar Agent, Trinity, the CG-BDG/1 engine, the CGEP/1 receipt, and the Core Mainnet anchor. Every plate's artwork names its source and carries that file's full `sha256` digest in a machine payload; the audit re-derives every digest from the committed tree, offline, and fails loudly on any drift — a plate can never silently drift from the bytes it certifies:
 

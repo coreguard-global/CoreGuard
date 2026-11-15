@@ -84,6 +84,13 @@ Re-verification, on a machine that only has Node and the three files:
 That command is the deliverable. Anything that cannot be checked by it is a
 claim, not evidence.
 
+The same artifact has a browser face for the people who will never install
+Node: [verify.html](verify.html) opens a `#v1.<base64url>` bundle and re-derives
+the verdict in the tab — WebCrypto SHA-256 + Ed25519, no network, no build step,
+and the fragment is never sent anywhere. `scripts/make-verify-link.mjs` writes
+that fragment from a pilot directory, and the page's verdict is pinned to the
+Node verifier's by a test, so the two cannot drift apart silently.
+
 ## 6 · What this pilot does not establish
 
 - Not that a transaction is **safe**: `VERIFIED ≠ SAFE`. It proves conformance
