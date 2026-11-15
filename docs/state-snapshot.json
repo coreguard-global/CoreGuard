@@ -2,9 +2,9 @@
   "measuredAtUtc": "2026-11-15T16:39:17Z",
   "gitCommit": "481f2fef6784604bfcb66a09a47acb5bc2fd21a6",
   "commitsAheadOfV060": 416,
-  "testsTotal": 1657,
+  "testsTotal": 1673,
   "boundaryAudit": {
-    "filesScanned": 1190,
+    "filesScanned": 1218,
     "violations": 0,
     "check": "PASS"
   },
