@@ -30,7 +30,9 @@ upgrades itself.
 | Line | Verdict | Reading |
 | --- | --- | --- |
 | same bytes, same id | `true` | L0 determinism: the commitment is replayable |
-| with a chain authority | `VERIFIED / RECEIPT_INTEGRITY` | the chain confirms this txHash in this block |
+| with a chain authority and a bound identity | `VERIFIED / RECEIPT_INTEGRITY` | the chain confirms this txHash in this block and the receipt names the commitment it belongs to |
+| the same receipt, relabeled with another commitment | `MISMATCH / RECEIPT_ID_MISMATCH` | the evidence is genuine and belongs to a different receipt |
+| the same receipt, naming no commitment | `UNKNOWN / RECEIPT_ID_UNBOUND` | nothing binds the evidence to this receipt, so it is not a pass |
 | no chain authority | `UNKNOWN / NO_CHAIN_EVIDENCE` | a format-valid receipt is **not** verified |
 | swapped txHash | `MISMATCH / TX_NOT_FOUND` | a substituted hash is a contradiction, not a near-miss |
 | every rule PASS | `MATCH / REPLAY_CONSISTENT` | L2 replay, all canonical rules |

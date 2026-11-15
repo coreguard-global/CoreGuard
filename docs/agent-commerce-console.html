@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CoreGuard — Agent Commerce Security Console · وحدة أمن تجارة الوكلاء</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0B0F14; color: #E8ECF1; font-family: "Segoe UI", Tahoma, Arial, sans-serif; line-height: 1.65; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 64px; }
+  header { border-bottom: 2px solid #FF8A00; padding-bottom: 18px; margin-bottom: 28px; }
+  h1 { color: #FF8A00; font-size: 1.9rem; margin: 0 0 6px; }
+  .sub { color: #9AA7B4; font-size: 1.02rem; margin: 0; }
+  .sub-en { color: #9AA7B4; font-size: .95rem; margin: 2px 0 0; direction: ltr; text-align: right; }
+  h2 { color: #FF8A00; font-size: 1.35rem; margin: 34px 0 10px; border-inline-start: 4px solid #FF8A00; padding-inline-start: 10px; }
+  h3 { color: #FFC46B; font-size: 1.08rem; margin: 22px 0 8px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: .95rem; }
+  th { background: #131A22; color: #FFC46B; text-align: start; padding: 9px 10px; border: 1px solid #232E3A; }
+  td { padding: 8px 10px; border: 1px solid #232E3A; vertical-align: top; }
+  tr:nth-child(even) td { background: #0F151C; }
+  .v-verified { color: #4ADE80; font-weight: 700; }
+  .v-invalid { color: #FF6B6B; font-weight: 700; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700; margin-inline-start: 6px; }
+  .b-shipped { background: #123B29; color: #4ADE80; border: 1px solid #1F6B48; }
+  .b-built { background: #123043; color: #67C7F5; border: 1px solid #1F5B7E; }
+  .b-spec { background: #3B2F12; color: #FFC46B; border: 1px solid #7E631F; }
+  .b-gated { background: #3B1717; color: #FF9A9A; border: 1px solid #7E2F2F; }
+  .banner { background: #131A22; border: 1px solid #232E3A; border-inline-start: 4px solid #FF8A00; padding: 12px 16px; border-radius: 6px; margin: 18px 0; font-size: .93rem; }
+  .en { direction: ltr; text-align: left; }
+  .en h2, .en h3 { direction: ltr; text-align: left; border-inline-start: none; border-left: 4px solid #FF8A00; padding-left: 10px; padding-right: 0; }
+  .meta { color: #7E8B99; font-size: .85rem; direction: ltr; text-align: left; }
+  code { background: #131A22; border: 1px solid #232E3A; padding: 1px 6px; border-radius: 4px; font-size: .88rem; direction: ltr; unicode-bidi: embed; }
+  footer { margin-top: 40px; border-top: 1px solid #232E3A; padding-top: 16px; color: #7E8B99; font-size: .85rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>وحدة أمن تجارة الوكلاء — CoreGuard Agent Commerce Security</h1>
+  <p class="sub">تفويضٌ قابلٌ للتحقق · إحكامٌ حتمي · دليلٌ مستقل — <span dir="ltr">Verifiable authorization · Deterministic enforcement · Independent evidence</span></p>
+  <p class="sub-en">AC-SDK/1 · CGCR/1 consent receipts · AGR/1 drift taxonomy · MCP server · REST API — all offline, all committed, all re-derivable.</p>
+</header>
+
+<h2>الإجابة على سؤال اللحظة</h2>
+<p>في 13 نوفمبر 2026 أطلقت OpenAI محفظة ChatGPT Wallet (بشراكة American Express وMastercard وVisa): الوكيل يدفع باعتماد دفع مُرمَّز، وكل عملية شراء تمر بمراجعة وتحقق أمني من المستخدم، وOpenAI نفسها سمّت التفويض المسبق ضمن حدود الإنفاق والفئات والفترات عملًا <em>مستقبليًا</em>. السؤال المفتوح في كل هذه المنظومة: <strong>«هل التنفيذ مطابقٌ لما وافق عليه المستخدم — ومن يستطيع إثبات ذلك لاحقًا وباستقلال؟»</strong> الترميز يحمي بيانات البطاقة؛ لكنه لا يربط التنفيذ بالتفويض. هذه الوحدة هي طبقة الربط هذه — ملتزمة هنا بالكامل، تعمل دون اتصال، ويعيد أي طرف اشتقاق إثباتها.</p>
+
+<h2>عائلة المنتجات الخمسة — بحالتها الحقيقية</h2>
+<table>
+  <tr><th>المنتج</th><th>ما يحلّه</th><th>الحالة المُقاسة</th></tr>
+  <tr><td><strong>1 · بوابة تفويض الوكلاء</strong><br><span class="meta">Agent Authorization Firewall</span></td><td>طبقة بين الوكيل والتنفيذ التجاري: تفحص التفويض والسياسة والمستفيد والقيمة والمهلة قبل التنفيذ — فشل-مغلقة.</td><td><span class="badge b-built">BUILT · TEST_EXECUTED</span> <span class="meta">offline</span></td></tr>
+  <tr><td><strong>2 · إيصالات الموافقة القابلة للتحقق</strong><br><span class="meta">Verifiable Consent Receipts (CGCR/1)</span></td><td>إيصال تشفيري مستقل يُثبت ما سُمح به، وبأي سياسة، وبأي بايتات بالضبط — يعيد أي طرف اشتقاقه.</td><td><span class="badge b-built">BUILT · TEST_EXECUTED</span></td></tr>
+  <tr><td><strong>3 · محرك مخاطر الوكلاء</strong><br><span class="meta">Agent Risk Engine (AGR/1)</span></td><td>تصنيف حتمي لانحراف التنفيذ: تغيير المستفيد، تجاوز القيمة، بند محقون، اعتماد دفع مُستبدل، انتهاء مهلة، إعادة استخدام، تلاعب بالسجل — <em>ليس درجة احتيال احتمالية</em>.</td><td><span class="badge b-built">BUILT · TEST_EXECUTED</span></td></tr>
+  <tr><td><strong>4 · SDK وواجهات التحقق</strong><br><span class="meta">Agent Commerce SDK · MCP · REST API</span></td><td>واجهة SDK موحدة + خادم MCP (stdio JSON-RPC) + واجهة REST للتحقق — مستقلة عن مزوّد الوكيل ومنصة الدفع.</td><td><span class="badge b-built">BUILT · TEST_EXECUTED</span> <span class="badge b-gated">نشر npm: بقرار المالك</span></td></tr>
+  <tr><td><strong>5 · إثبات التنفيذ عبر الشبكات</strong><br><span class="meta">Cross-Chain Execution Attestation</span></td><td>سطح الإشهاد CGXA/1 مبني ومُختبَر: يربط إيصال الموافقة + التزام الطلب المنفذ (تجزئة نطاق CGEP/1) + سجل ربط السلسلة الملتزم من السجل المجمّد (مرسى Core DAO على 1116 <span dir="ltr">LIVE/RECORDED</span> · عقد مرسى Stellar من مصفوفة الأدلة) — قابل لإعادة الاشتقاق، فشل-مغلق بـ9 أكواد مسماة. لا سطح بثّ في الكود؛ أرجل البث على السلسلة بقرار المالك ولم تُنفَّذ؛ حمل الربط إلى مسار Soroban <span dir="ltr">integration NOT_BUILT</span>.</td><td><span class="badge b-built">BUILT · TEST_EXECUTED</span> <span class="badge b-gated">البث: بقرار المالك</span></td></tr>
+</table>
+
+<h2>القوس الكامل — مقاسًا لا مصمَّمًا</h2>
+<p>التشغيل: <code>node examples/agent-commerce-security-suite/run.mjs</code> — دون مفاتيح، دون شبكة (حلقة محلية فقط)، طلبات اصطناعية بالكامل، وعقد الخروج: صفر فقط على القوس الدقيق. الأرقام أدناه من <code>artifacts.json</code> الملتزم (حتمي بايت-ببايت):</p>
+<table>
+  <tr><th>الخطوة</th><th>ماذا يحدث</th><th>الحكم</th></tr>
+  <tr><td>الموافقة (CGCR/1)</td><td>ربط موافقة المستخدم بالبايتات المعتمدة بالضبط (التاجر · البنود · الضريبة · الشحن · الإجمالي · مرجع الاعتماد)</td><td class="v-verified">VERIFIED</td></tr>
+  <tr><td>التنفيذ المطابق</td><td>المتجر ينفّذ الطلب المعتمد حرفيًا</td><td class="v-verified">VERIFIED</td></tr>
+  <tr><td>1 · انحراف الإجمالي</td><td>رسم يظهر بعد الموافقة</td><td class="v-invalid">INVALID</td></tr>
+  <tr><td>2 · استبدال التاجر</td><td>المستفيد يتغيّر بعد الموافقة</td><td class="v-invalid">INVALID</td></tr>
+  <tr><td>3 · بند محقون</td><td>بند يُدخل في السلة بعد الموافقة (شكل حقن التوجيه)</td><td class="v-invalid">INVALID</td></tr>
+  <tr><td>4 · استبدال الاعتماد</td><td>مرجع اعتماد الدفع يُستبدل بعد الموافقة</td><td class="v-invalid">INVALID</td></tr>
+  <tr><td>5 · تفويض منتهٍ</td><td>التنفيذ بعد إغلاق نافذة التفويض</td><td class="v-invalid">INVALID</td></tr>
+  <tr><td>6 · إعادة استخدام</td><td>إعادة تفويضٍ استُهلك في تنفيذ موثّق</td><td class="v-invalid">INVALID</td></tr>
+  <tr><td>7 · تلاعب السجل</td><td>تعديل بايت واحد من سجل الموافقة</td><td class="v-invalid">INVALID</td></tr>
+  <tr><td>8 · تنفيذ مشوّه</td><td>حمولة غير مقروءة — تُرفض ولا تُخمَّن</td><td class="v-invalid">INVALID</td></tr>
+  <tr><td>خادم MCP (حقيقي)</td><td>طلب منحرف عبر JSON-RPC على stdio</td><td class="v-invalid">INVALID</td></tr>
+  <tr><td>واجهة REST (حقيقية)</td><td>تنفيذ مطابق عبر HTTP على الحلقة المحلية</td><td class="v-verified">VERIFIED</td></tr>
+</table>
+
+<div class="banner">
+  <strong>الحدود الصادقة (ثابتة):</strong> التحقق من التنفيذ لا يقرّ مطابقة التسليم أبدًا (DDE/1 — بوابة الصرف تُفتح على سجلات قبول الأطراف فقط) · <strong>VERIFIED ≠ SAFE</strong> · التصنيف حتمي وليس درجة احتيال · الفاعل <strong>مُعلَن ولا يُكتشَف</strong> · الإحكام الدائم للاستخدام الواحد <strong>لم يُبنَ</strong> (الاستهلاك محلي-للعملية بالتصميم) · لا اتصال ولا تكامل ولا تأييد يُدَّعى مع OpenAI أو American Express أو Mastercard أو Visa أو أي مزوّد · كل طلب اصطناعي (الاعتماد placeholder وليس PAN أبدًا) · التمويل $0 حتى تهبط جائزة.
+</div>
+
+<h2>لمن هذا — ولماذا يستفيد كل طرف بلا مزاحمة</h2>
+<table>
+  <tr><th>الطرف</th><th>ما يحصل عليه</th></tr>
+  <tr><td>منصات التجارة</td><td>إثبات مستقل أن الطلب المنفَّذ = الطلب الموافق عليه — يُعرض على المشتري والمُدقق دون كشف أي بيانات دفع.</td></tr>
+  <tr><td>المحافظ وشركات الدفع</td><td>طبقة إسناد تُلحق بأنظمة المخاطر القائمة (تُسمّي الانحراف بالحقل) — لا بديل عن أنظمة الاحتيال.</td></tr>
+  <tr><td>مطورو الوكلاء</td><td>SDK + خادم MCP مستقل عن المزوّد: يربط الموافقة ويتحقق من التنفيذ في دقائق، دون اتصال بشبكة.</td></tr>
+  <tr><td>المدققون والجهات التنظيمية</td><td>إيصال CGCR/1 يعاد اشتقاقه من نسخة باردة — سجل رباط تفويض↔تنفيذ قابل لإعادة الحساب.</td></tr>
+</table>
+
+<h2>مرآة إنجليزية — English mirror</h2>
+
+<div class="en">
+<h3>The moment, answered</h3>
+<p>OpenAI launched ChatGPT Wallet (2026-11-13, with American Express, Mastercard, Visa): agents pay with tokenized credentials, every purchase passes a user review + security check, and pre-approved delegation within spending/category/time limits is named as <em>future work</em>. The open question everywhere: <strong>"did the executed order match what the user approved — and who can prove it later, independently?"</strong> Tokenization protects card data; it does not bind execution to authorization. This console is that binding layer — committed here, running offline, re-derivable by anyone.</p>
+
+<h3>The arc, measured — not designed</h3>
+<p>Run <code>node examples/agent-commerce-security-suite/run.mjs</code>: zero keys, no network (loopback only), synthetic orders, exit 0 only on the exact arc. The numbers above come from the committed deterministic <code>artifacts.json</code>: CONSENT VERIFIED → EXECUTE exact VERIFIED → 8/8 attacks INVALID with the named class (total drift · merchant swap · injected item · credential substitution · expired authorization · single-use replay · record tamper · malformed payload) → real MCP server rejects a drifted order → real REST API verifies the exact order.</p>
+
+<h3>Five products, their real statuses</h3>
+<p>1 · Agent Authorization Firewall — <strong>BUILT · TEST_EXECUTED</strong> (offline). 2 · Verifiable Consent Receipts (CGCR/1) — <strong>BUILT · TEST_EXECUTED</strong>. 3 · Agent Risk Engine (AGR/1) — <strong>BUILT · TEST_EXECUTED</strong> (deterministic taxonomy, never a fraud score). 4 · Agent Commerce SDK + MCP + REST API — <strong>BUILT · TEST_EXECUTED</strong>; npm publication is owner-gated. 5 · Cross-Chain Execution Attestation — <strong>BUILT · TEST_EXECUTED</strong> as the offline attestation surface CGXA/1 (the adapter registry is pinned to committed chain facts: Core DAO anchors live on chainId 1116, LIVE/RECORDED; Stellar anchor contract per the evidence matrix; the on-chain broadcast legs are OWNER-GATED / NOT_PERFORMED and no broadcast surface exists in the module; carrying the binding into the Soroban lane is integration NOT_BUILT).</p>
+
+<h3>Boundaries (standing)</h3>
+<p>Execution verification never decides delivery conformity (DDE/1) · <strong>VERIFIED ≠ SAFE</strong> · the AGR/1 taxonomy is deterministic — never a probabilistic fraud score · the actor is <strong>declared, never detected</strong> · durable single-use anchoring is <strong>NOT_BUILT</strong> (consumption is process-local by design) · <strong>no contact, integration or endorsement is claimed</strong> with OpenAI, American Express, Mastercard, Visa or any provider · every order is synthetic (the credential is a placeholder, never a PAN) · funding stands at $0.</p>
+</div>
+
+<p class="meta" style="margin-top:28px">Dated instrument: docs/agent-commerce-moment-chatgpt-wallet-2026-11-14.md · Product spec: docs/AGENT-COMMERCE-SECURITY-SPEC-V1.md · Suite: examples/agent-commerce-security-suite/ · This page is static and offline; the embedded data block below is the committed artifacts.json of the suite run.</p>
+
+<script type="application/json" id="suite-artifacts">
+{
+  "suite": "agent-commerce-security-suite",
+  "sdk": "AC-SDK/1",
+  "specs": {
+    "consent": "CGCR/1",
+    "risk": "AGR/1",
+    "api": "AC-API/1"
+  },
+  "synthetic": true,
+  "network": "offline (loopback MCP + HTTP only)",
+  "keys": "none",
+  "pinnedEpoch": "1794657600",
+  "approved": {
+    "intent": {
+      "version": "CGEP/1",
+      "chainId": "0",
+      "signer": "0x000000000000000000000000000000000000000d",
+      "nonce": "0",
+      "validAfter": "0",
+      "validUntil": "9999999999",
+      "action": "AGENT_CHECKOUT",
+      "target": "0x0000000000000000000000000000000000000042",
+      "selector": "0xa9059cbb",
+      "asset": "0x0000000000000000000000000000000000000002",
+      "amount": "3300",
+      "recipient": "0x0000000000000000000000000000000000000042",
+      "constraints": [
+        {
+          "type": "MAX_VALUE",
+          "value": "3300"
+        },
+        {
+          "type": "RECIPIENT_ALLOWLIST",
+          "addresses": [
+            "0x0000000000000000000000000000000000000042"
+          ]
+        }
+      ],
+      "merchantName": "synthetic-store.example",
+      "currency": "USD",
+      "items": [
+        {
+          "sku": "SKU-SEC-001",
+          "name": "Synthetic item A",
+          "qty": 1,
+          "unitPriceMinor": "1800"
+        },
+        {
+          "sku": "SKU-SEC-002",
+          "name": "Synthetic item B",
+          "qty": 1,
+          "unitPriceMinor": "1200"
+        }
+      ],
+      "taxMinor": "200",
+      "shippingMinor": "100",
+      "paymentCredentialRef": "TOKENIZED-CREDENTIAL-REF-5e17 (placeholder — never a PAN)",
+      "agentRef": "DEMO-AGENT-SEC-1 (declared, not detected)",
+      "authorizedAtUtc": "2026-11-14T12:00:00Z",
+      "expiryUtc": "2026-11-14T12:10:00Z",
+      "singleUse": true
+    },
+    "policy": {
+      "version": "CGEP/1",
+      "policyId": "0x00000000000000000000000000000000000000ac",
+      "name": "Agent Commerce Policy",
+      "rules": [
+        {
+          "ruleId": "VALUE_001",
+          "type": "VALUE_LIMIT",
+          "params": {
+            "max": "3300"
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "TARGET_001",
+          "type": "TARGET_ALLOWLIST",
+          "params": {
+            "targets": [
+              "0x0000000000000000000000000000000000000042"
+            ]
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "RECIPIENT_001",
+          "type": "RECIPIENT_ALLOWLIST",
+          "params": {
+            "addresses": [
+              "0x0000000000000000000000000000000000000042"
+            ]
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "SELECTOR_001",
+          "type": "SELECTOR_ALLOWLIST",
+          "params": {
+            "selectors": [
+              "0xa9059cbb"
+            ]
+          },
+          "severity": "CRITICAL"
+        }
+      ]
+    }
+  },
+  "consentReceiptId": "0x25b0fd6145f26913aad704b2a3584889fd17d2237cba9f61ea69a8726622fa61",
+  "results": {
+    "consentIntegrity": "VERIFIED",
+    "executeExact": "VERIFIED",
+    "attacks": [
+      {
+        "label": "1 TOTAL_DRIFT — surcharge appears after approval",
+        "verdict": "INVALID",
+        "classes": "POLICY_VIOLATION+VALUE_ESCALATION"
+      },
+      {
+        "label": "2 MERCHANT_SWAP — the payee changes after approval",
+        "verdict": "INVALID",
+        "classes": "POLICY_VIOLATION+POLICY_VIOLATION+RECIPIENT_SUBSTITUTION"
+      },
+      {
+        "label": "3 ITEM_MUTATION — an injected item (prompt-injection shape)",
+        "verdict": "INVALID",
+        "classes": "ITEM_MUTATION+POLICY_VIOLATION+VALUE_ESCALATION"
+      },
+      {
+        "label": "4 CREDENTIAL_SUBSTITUTION — the payment credential is swapped",
+        "verdict": "INVALID",
+        "classes": "CREDENTIAL_SUBSTITUTION"
+      },
+      {
+        "label": "5 EXPIRED — execution after the authorization window closed",
+        "verdict": "INVALID",
+        "classes": "EXPIRED_AUTHORIZATION"
+      },
+      {
+        "label": "6 SINGLE_USE_REUSE — the consumed authorization is replayed",
+        "verdict": "INVALID",
+        "classes": "SINGLE_USE_REUSE"
+      },
+      {
+        "label": "7 RECORD_TAMPER — one byte of the consent record is edited",
+        "verdict": "INVALID",
+        "classes": "none"
+      },
+      {
+        "label": "8 MALFORMED — an unreadable execution payload is refused, not guessed",
+        "verdict": "INVALID",
+        "classes": "MALFORMED_EXECUTION"
+      }
+    ],
+    "attacksBlocked": "8/8",
+    "mcp": {
+      "server": "coreguard-agent-commerce",
+      "tools": 4,
+      "verdict": "INVALID"
+    },
+    "http": {
+      "version": "AC-API/1",
+      "verdict": "VERIFIED"
+    }
+  },
+  "exitContract": "CONSENT_VERIFIED_EXACT_VERIFIED_ATTACKS_9_OF_9_INVALID_MCP_INVALID_HTTP_VERIFIED",
+  "boundary": "execution verification never decides delivery conformity (DDE/1); VERIFIED ≠ SAFE; deterministic taxonomy, never a fraud score; durable single-use anchoring NOT_BUILT; no contact/integration/endorsement claimed with OpenAI, American Express, Mastercard, Visa or any named provider"
+}
+</script>
+
+<footer>
+  CoreGuard — VERIFY · PROTECT · EMPOWER · Core Orange #FF8A00 · Deep Core #0B0F14 · © 2026 coreguard-global · EslaM-X · هذه الصفحة ثابتة وتعمل دون اتصال؛ كل الأرقام من آثار ملتزمة قابلة لإعادة الاشتقاق.
+</footer>
+
+</div>
+</body>
+</html>

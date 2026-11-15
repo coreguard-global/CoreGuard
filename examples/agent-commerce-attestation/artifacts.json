@@ -1,0 +1,80 @@
+{
+  "spec": "CGXA/1",
+  "demo": "agent-commerce-attestation (offline · synthetic · zero keys · no broadcast surface)",
+  "boundary": "the adapter verifies committed chain facts and never broadcasts; an attestation of one environment is never bridge trust or a relay; VERIFIED ≠ SAFE; delivery conformity (DDE/1) is never decided",
+  "adapters": [
+    {
+      "id": "core-dao-anchor",
+      "network": "core-dao-mainnet-1116",
+      "binding": {
+        "chainId": "1116",
+        "anchor": "0x037dF08F2d43c5D03759279Fe35664f6AFf9EA6E"
+      },
+      "source": "docs/DEPLOYMENT.md",
+      "note": "LIVE/RECORDED per docs/DEPLOYMENT.md — a NEW anchor commit for a consent receipt is owner-authorized only and is NOT code here"
+    },
+    {
+      "id": "stellar-anchor",
+      "network": "stellar-mainnet",
+      "binding": {
+        "anchorContract": "CCKA2GYVILX7YZVSXGVIHOPNLTRBBF2SSWKBTQBIE7M67N5N2QMMXPSP"
+      },
+      "source": "docs/EVIDENCE-MATRIX.md",
+      "note": "EXECUTED deploy + first commit INVOKED per docs/EVIDENCE-MATRIX.md — carrying a consent binding into the Soroban lane is integration NOT_BUILT and is NOT code here"
+    }
+  ],
+  "arcs": [
+    {
+      "leg": "CONSENT",
+      "outcome": "VERIFIED"
+    },
+    {
+      "leg": "ATTEST+VERIFY",
+      "outcome": "VERIFIED",
+      "code": null,
+      "attested": {
+        "adapterId": "stellar-anchor",
+        "network": "stellar-mainnet",
+        "verificationLevel": "COMMITTED_EVIDENCE",
+        "source": "docs/EVIDENCE-MATRIX.md"
+      },
+      "attestationId": "0x1426c7226bdf74af79bfca3bea91706d10744f4c12965bb52f97d23f08aca8ff",
+      "attestation": {
+        "v": "CGXA/1",
+        "consentReceiptId": "0xd76ee842de7ee5f372b05b94176b3ed4a9fe94c7e72d5e50883c2ee9e27c8a10",
+        "executedCommitment": "0x6e4309621665bd176d65ace02cdba2300b17528f46fc9f7b80129cb177232831",
+        "adapter": {
+          "id": "stellar-anchor",
+          "network": "stellar-mainnet"
+        },
+        "chainBinding": {
+          "anchorContract": "CCKA2GYVILX7YZVSXGVIHOPNLTRBBF2SSWKBTQBIE7M67N5N2QMMXPSP"
+        },
+        "verificationLevel": "COMMITTED_EVIDENCE",
+        "issuedAtSeconds": 1794657660
+      }
+    }
+  ],
+  "attackLegs": [
+    {
+      "attack": "EXECUTION_MISMATCH",
+      "outcome": "REFUSED",
+      "code": "EXECUTION_MISMATCH"
+    },
+    {
+      "attack": "CHAIN_BINDING_MISMATCH",
+      "outcome": "REFUSED",
+      "code": "CHAIN_BINDING_MISMATCH"
+    },
+    {
+      "attack": "CONSENT_MISMATCH",
+      "outcome": "REFUSED",
+      "code": "CONSENT_MISMATCH"
+    }
+  ],
+  "determinism": {
+    "attestationIdStable": true,
+    "canonicalBytesStable": true
+  },
+  "ok": true
+}

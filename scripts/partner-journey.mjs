@@ -179,7 +179,7 @@ export function runJourney({
 
   /* -------------------------------------------------------- 6. receipt */
   const chain = labChain();
-  const l1 = verifyReceipt(receipt, commitment, chain);
+  const l1 = verifyReceipt({ commitmentId: commitment.commitmentId, ...receipt }, commitment, chain);
   const receiptVerdict = l1.verdict === "VERIFIED" ? "VERIFIED" : l1.verdict === "UNKNOWN" ? "UNKNOWN" : "MISMATCH";
   legs.push(
     leg("receipt", receiptVerdict, `L1 ${l1.verdict} (${l1.verdictCode})${l1.reason ? " — " + l1.reason : ""}`, {

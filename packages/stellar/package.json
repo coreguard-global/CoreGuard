@@ -1,0 +1,54 @@
+{
+  "name": "@coreguard/stellar",
+  "version": "0.1.0",
+  "description": "PSAR/1 pre-sign authorization receipts and the Stellar adapter: bind an authorization to the exact transaction bytes, refuse a mismatch by name, and verify offline with a public key",
+  "keywords": [
+    "stellar",
+    "soroban",
+    "authorization",
+    "evidence",
+    "receipt",
+    "verification"
+  ],
+  "type": "module",
+  "main": "./index.mjs",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs"
+    },
+    "./presign": {
+      "types": "./presign.d.ts",
+      "import": "./presign.mjs"
+    },
+    "./freighter": "./freighter.mjs",
+    "./mainnet": "./mainnet.mjs",
+    "./mainnet-executor": "./mainnet-executor.mjs",
+    "./dex-gating": "./dex-gating.mjs",
+    "./soroban-dex": "./soroban-dex.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "presign.mjs",
+    "presign.d.ts",
+    "freighter.mjs",
+    "mainnet.mjs",
+    "mainnet-executor.mjs",
+    "dex-gating.mjs",
+    "soroban-dex.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^17.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
+}

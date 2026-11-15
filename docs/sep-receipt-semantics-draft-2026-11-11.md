@@ -60,7 +60,9 @@ is a chain authority able to look up a `txHash`. The verdict turns on
 | `UNKNOWN` | `NO_CHAIN_EVIDENCE` | No authority was passed at all - nobody was asked. Absent evidence, never absolution. |
 | `MISMATCH` | `TX_NOT_FOUND` | An authority WAS asked and does not know the claimed `txHash`. The only contradiction verdict - the system's strongest signal. |
 | `UNKNOWN` | `EVIDENCE_INCONSISTENT` | The receipt is too malformed to ask an authority with. Absent evidence again - never a silent pass. |
-| `VERIFIED` | (none) | The authority confirmed the `txHash` and the derived commitment matches. |
+| `UNKNOWN` | `RECEIPT_ID_UNBOUND` | The authority confirmed the `txHash`, but the receipt names no identity (or none was presented), so nothing binds the evidence to this receipt. Absent evidence about the label - deliberately not a contradiction, and never a pass. |
+| `MISMATCH` | `RECEIPT_ID_MISMATCH` | The receipt names a different identity than the one it was presented with. The evidence may be genuine and belong to another receipt: the borrowed-label case. |
+| `VERIFIED` | (none) | The authority confirmed the `txHash`, the derived commitment matches, AND the receipt's identity is bound to the presented commitment. |
 
 ### 3. The fail-closed rule
 
@@ -74,6 +76,13 @@ is a chain authority able to look up a `txHash`. The verdict turns on
    nobody asked.
 4. `NOT_APPLICABLE`/`ABSENT` never count as success for a mandatory check;
    a missing mandatory premise aborts, it does not skip.
+5. **Identity is bound separately from evidence.** Confirming a `txHash`/`blockHash`
+   pair says nothing about WHICH receipt it belongs to, so a receipt must name
+   the commitment it belongs to, and that name must be the one presented. An
+   unbound identity is `UNKNOWN/RECEIPT_ID_UNBOUND`; a borrowed label is
+   `MISMATCH/RECEIPT_ID_MISMATCH`. Neither may be folded into `TX_NOT_FOUND`
+   (in the swap case the authority was asked and *agreed*) and neither may be
+   dropped as "unverified" alongside cases where nobody asked.
 
 ### 4. Offline re-derivation
 
@@ -105,11 +114,23 @@ re-derived from the anchor's stored digest alone. Anchoring strengthens
 - **Fail-closed by default.** The standard must make the silent pass the
   hardest thing to build, not the easiest.
 
+### 6. Identity binding (normative, added after review)
+
+The id-binding swap is the first must-fail vector of this section: take a
+receipt whose evidence verifies perfectly, relabel it with a different
+receipt's identity, and the verdict must fail on the binding while the
+commitment checks pass. Two enumerated codes exist so the failure is legible:
+`RECEIPT_ID_UNBOUND` (nothing established about the label - `UNKNOWN`) and
+`RECEIPT_ID_MISMATCH` (two artifacts we hold disagree - `MISMATCH`). A format
+that carries no receipt identifier at all, like this draft's reference
+implementation before review, cannot express the distinction and therefore
+cannot claim conformance.
+
 ## Testability
 
 Each verdict is reproducible from a clean clone: the negative cases (no
-authority; asked-and-contradicted; malformed evidence) are ordinary unit
-tests, and the documentation of any implementation claiming conformance is
+authority; asked-and-contradicted; malformed evidence; borrowed label;
+absent identity) are ordinary unit tests, and the documentation of any implementation claiming conformance is
 required to restate the three branches in the same paragraph - enforced in
 this repository by a contract test that derives the codes from the module at
 run time and fails the build when prose and machine diverge.

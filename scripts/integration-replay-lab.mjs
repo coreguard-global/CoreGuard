@@ -126,7 +126,11 @@ function deriveJourney({ inputs, chain, secret, now, replayWindowMs = 300000 }) 
   if (inputs.receipt === undefined) {
     add("L1_RECEIPT", "UNKNOWN", "no receipt captured");
   } else {
-    const verdict = verifyReceipt(inputs.receipt, commitment || { chainId: null }, chain);
+    const verdict = verifyReceipt(
+      { commitmentId: inputs.receipt.commitmentId ?? commitment?.commitmentId, ...inputs.receipt },
+      commitment || { chainId: null },
+      chain,
+    );
     const status = verdict.verdict === "VERIFIED" ? "MATCH" : verdict.verdict === "MISMATCH" ? "MISMATCH" : "UNKNOWN";
     add("L1_RECEIPT", status, `${verdict.verdict}/${verdict.verdictCode}`);
   }

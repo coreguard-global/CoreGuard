@@ -174,7 +174,9 @@ The platform that makes this ladder runnable offline is specified in
 - **L0–L4 machine** (`npm run verify:levels`): deterministic commitment; L1
   requires a chain authority — no authority is UNKNOWN/NO_CHAIN_EVIDENCE, an authority that
   does not know the txHash is MISMATCH/TX_NOT_FOUND, and a receipt too malformed to ask with is
-  UNKNOWN/EVIDENCE_INCONSISTENT; L2 replay
+  UNKNOWN/EVIDENCE_INCONSISTENT; identity is bound last — no named commitment is
+  UNKNOWN/RECEIPT_ID_UNBOUND and a different one than presented is MISMATCH/RECEIPT_ID_MISMATCH,
+  so a genuine txHash relabeled onto another receipt never verifies; L2 replay
   never upgrades a partial pass; L3 merkle proofs available; L4 interface
   frozen, RESEARCH.
 - **Integration machine** (`npm run integration:states`): the 13 doorway states

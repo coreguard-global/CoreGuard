@@ -76,6 +76,9 @@ async function main() {
     blockHash: MINED_BLOCK,
     txHash: MINED_TX,
     chainId: CHAIN_ID,
+    // Identity binding: the receipt names the commitment it belongs to, so a
+    // genuine txHash/blockHash pair cannot be relabeled onto another receipt.
+    commitmentId: commitment.commitmentId,
     evidence: [
       { rule: "AUTHORITY", result: "PASS" },
       { rule: "CAP", result: "PASS" },

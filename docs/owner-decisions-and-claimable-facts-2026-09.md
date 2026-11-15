@@ -231,6 +231,9 @@ rewards.
    the one genuine contradiction. A receipt too malformed to ask with → `UNKNOWN/EVIDENCE_INCONSISTENT`.
    Structure alone never yields VERIFIED, and "unconfirmed" is not a single verdict —
    collapsing MISMATCH into UNKNOWN would under-report the strongest signal the system produces.
+   Identity is bound separately and last: no named commitment → `UNKNOWN/RECEIPT_ID_UNBOUND`, a
+   different commitment than the one presented → `MISMATCH/RECEIPT_ID_MISMATCH`, because confirming
+   a txHash says nothing about which receipt it belongs to (id-binding swap, issue #56).
 4. **`UNKNOWN ≠ FAILED ≠ VERIFIED` is a platform rule**, not a slogan: every
    machine record, sandbox scenario and attack case carries a verdictCode, and
    no path upgrades a partial pass.

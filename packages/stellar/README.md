@@ -24,6 +24,19 @@ A deterministic, fail-closed adapter for the Stellar network (Horizon REST API):
 - Not a live integration claim. `status()` reports `UNKNOWN / DRY_RUN / NOT_BUILT` until a real counterparty + credentials + receipt are observed.
 - Not revenue. No transaction is ever submitted by this module.
 
+## Install (and what "published" means today)
+
+Package name `@coreguard/stellar`, version `0.1.0`. It is **publishable but not on the
+public registry yet** — and the difference is tested, not asserted: `test/integrations/stellar-package-import.test.mjs`
+runs a real `npm pack`, extracts the tarball **outside this repository**, and imports it by
+package name in a fresh process. When it lands on npm, `npm install @coreguard/stellar` is the
+only step.
+
+Entry points: `.` (adapter plus the PSAR/1 receipt surface) and `./presign` (receipts alone,
+zero runtime dependencies). Chain subpaths: `./freighter`, `./mainnet`, `./mainnet-executor`,
+`./dex-gating`, `./soroban-dex`. Types ship with `.` and `./presign`; the five chain modules
+are untyped in 0.1.0 — stated here instead of hidden behind `any`.
+
 ## Usage
 
 ```js

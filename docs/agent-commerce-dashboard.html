@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CoreGuard — لوحة قرارات التفويض والإيصالات · Authorization Decisions &amp; Receipts Dashboard</title>
+<meta name="description" content="لوحة تشغيل أوفلاين لقرارات تفويض الوكلاء وإيصالات الموافقة CGCR/1 — تُشتق بالكامل من artifacts.json الملتزم. Offline operator view of agent authorization decisions and consent receipts, derived from committed artifacts.">
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#141c24; --panel2:#18222c; --line:#243240;
+    --ink:#e8eef4; --muted:#8fa3b5; --faint:#5f7386;
+    --ok:#FFA31A; --ok2:#FF8A00; --bad:#ff5d5d; --blue:#4da3ff;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:"Segoe UI","Noto Sans",system-ui,-apple-system,sans-serif;
+    background:
+      radial-gradient(1100px 500px at 85% -10%, rgba(255,138,0,.09), transparent 60%),
+      radial-gradient(900px 420px at 0% 0%, rgba(77,163,255,.07), transparent 55%),
+      var(--bg);
+    color:var(--ink); line-height:1.65; padding:2rem 1rem 4rem;
+  }
+  .wrap{max-width:1060px; margin:0 auto}
+  h1{font-size:1.7rem; margin:.2rem 0}
+  h2{font-size:1.15rem; margin:2.2rem 0 .6rem; color:var(--ok2)}
+  .sub{color:var(--muted); font-size:.95rem}
+  .banner{
+    border:1px solid var(--line); border-radius:14px; background:var(--panel);
+    padding:.9rem 1.1rem; margin:1.2rem 0; font-size:.92rem;
+  }
+  .banner b{color:var(--ok2)}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:.9rem}
+  .card{border:1px solid var(--line); border-radius:14px; background:var(--panel); padding:1rem 1.1rem}
+  .card small{color:var(--muted)}
+  .tag{display:inline-block; border:1px solid var(--line); border-radius:999px; padding:.05rem .6rem; font-size:.75rem; color:var(--ok); margin-inline-start:.4rem}
+  .tag.bad{color:var(--bad)}
+  .tag.mut{color:var(--faint)}
+  table{width:100%; border-collapse:collapse; font-size:.9rem}
+  th,td{border-bottom:1px solid var(--line); padding:.5rem .55rem; text-align:right}
+  th{color:var(--muted); font-weight:600}
+  .verdict-invalid{color:var(--bad); font-weight:700}
+  .verdict-verified{color:var(--ok); font-weight:700}
+  code{background:var(--panel2); border:1px solid var(--line); border-radius:6px; padding:.05rem .35rem; font-size:.85em; direction:ltr; unicode-bidi:embed}
+  .receipt{font-size:.85rem; color:var(--muted); word-break:break-all}
+  .ltr{direction:ltr; unicode-bidi:embed; text-align:left}
+  footer{margin-top:3rem; color:var(--faint); font-size:.85rem; border-top:1px solid var(--line); padding-top:1rem}
+  .mirror{margin-top:3rem; border-top:2px dashed var(--line); padding-top:1rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>لوحة قرارات التفويض والإيصالات</h1>
+<p class="sub">مرآة إنجليزية — English mirror below. <b>Authorization Decisions &amp; Receipts Dashboard</b> — operator view, offline, derived entirely from the committed <code>examples/agent-commerce-security-suite/artifacts.json</code>. No server, no keys, no network.</p>
+
+<div class="banner">
+  <b>حدود الصدق (ثابتة):</b> كل طلب اصطناعي (اعتماد بديل، لا PAN أبدًا). لا اتصال ولا تكامل ولا تأييد يُدَّعى مع OpenAI أو American Express أو Mastercard أو Visa أو أي مزوّد. <code>VERIFIED ≠ SAFE</code> — التنفيذ المحقق لا يقرر مطابقة التسليم (DDE/1)؛ الفاعل مُعلَن لا مُكتشَف؛ التصنيف حتمي بالفئات المسماة وليس درجة احتيال احتمالية؛ التثبيت الدائم للاستخدام الأحادي <b>NOT_BUILT</b> (غير مبني: محلي بالعملية، موثّق)؛ نشر npm <b>بقرار المالك</b> — قرار المالك بالفتح مسجَّل في المواصفة §9 والخطوات المتبقية له وحده؛ المنتج 5 (الإثبات عبر الشبكات) <b>مبني · مُختبَر</b> كسطح إشهاد خارج السلسلة وأرجل بثه على السلسلة <b>بقرار المالك / لم تُنفَّذ</b>. التمويل <b>$0</b>.
+</div>
+
+<h2>عائلة المنتجات الخمسة — الحالة الحقيقية</h2>
+<div class="grid">
+  <div class="card"><b>1 · جدار تفويض الوكيل</b><span class="tag">BUILT · TEST_EXECUTED</span><br><small>يرفض الإجراء المنحرف عن النية المفوَّضة، fail-closed. التكامل: NOT_BUILT.</small></div>
+  <div class="card"><b>2 · إيصالات الموافقة CGCR/1</b><span class="tag">BUILT · TEST_EXECUTED</span><br><small>الموافقة مرتبطة بالبايتات الدقيقة كإيصال قابل لإعادة الاشتقاق. التكامل: NOT_BUILT.</small></div>
+  <div class="card"><b>3 · محرك المخاطر AGR/1</b><span class="tag">BUILT · TEST_EXECUTED</span><br><small>تصنيف حتمي لانحراف التفويض — فئات مسماة وشدّة. التكامل: NOT_BUILT.</small></div>
+  <div class="card"><b>4 · SDK + MCP + REST</b><span class="tag">BUILT · TEST_EXECUTED</span><span class="tag mut">بقرار المالك</span><br><small>AC-SDK/1 + MCP stdio (JSON-RPC) + REST <code>/v1/authorize</code> · <code>/v1/verify</code> · <code>/v1/risk-assess</code>. التكامل: NOT_BUILT.</small></div>
+  <div class="card"><b>5 · الإثبات عبر الشبكات</b><span class="tag">BUILT · TEST_EXECUTED</span><span class="tag mut">البث: بقرار المالك</span><br><small>سطح الإشهاد CGXA/1 يربط إيصال الموافقة + التزام الطلب المنفذ + سجل ربط السلسلة الملتزم — إشهاد خارج السلسلة قابل لإعادة الاشتقاق (المواصفة §8). لا سطح بثّ في الكود — أرجل البث على السلسلة بقرار المالك ولم تُنفَّذ.</small></div>
+</div>
+
+<h2>الخط الزمني للقرارة — القرار المقاس، لا المصمَّم</h2>
+<table>
+  <tr><th>المرحلة</th><th>القرار</th><th>الدليل</th></tr>
+  <tr><td>APPROVE — الموافقة</td><td class="verdict-verified">VERIFIED</td><td>إيصال CGCR/1 مربوط بالبايتات الدقيقة للطلب المفوَّض — <span class="receipt ltr" id="receipt-id">0x25b0fd6145f26913aad704b2a3584889fd17d2237cba9f61ea69a8726622fa61</span> (زمن مثبَّت <code>1794657600</code>)</td></tr>
+  <tr><td>EXECUTE exact — التنفيذ المطابق</td><td class="verdict-verified">VERIFIED</td><td>كل فحص المحرك PASS — لا بايت منحرف</td></tr>
+  <tr><td>MCP — أمر منحرف عبر خادم MCP حقيقي</td><td class="verdict-invalid">INVALID</td><td>الخادم الحقيقي (stdio JSON-RPC) يرفض الطلب المنحرف</td></tr>
+  <tr><td>HTTP — التحقق عبر REST حقيقي</td><td class="verdict-verified">VERIFIED</td><td>AC-API/1 على loopback — نفس الحكم</td></tr>
+</table>
+
+<h2>بطارية الهجمات — 8 من 8 مرفوضة بالاسم</h2>
+<table id="attack-table">
+  <tr><th>الهجوم</th><th>الحكم</th><th>الفئات (AGR/1)</th></tr>
+  <tr><td>1 · انحراف الإجمالي — رسوم تظهر بعد الموافقة</td><td class="verdict-invalid">INVALID</td><td class="ltr">POLICY_VIOLATION+VALUE_ESCALATION</td></tr>
+  <tr><td>2 · استبدال التاجر — المستفيد يتغير بعد الموافقة</td><td class="verdict-invalid">INVALID</td><td class="ltr">POLICY_VIOLATION+POLICY_VIOLATION+RECIPIENT_SUBSTITUTION</td></tr>
+  <tr><td>3 · بند محقون — شكل حقن التوجيه (prompt injection)</td><td class="verdict-invalid">INVALID</td><td class="ltr">ITEM_MUTATION+POLICY_VIOLATION+VALUE_ESCALATION</td></tr>
+  <tr><td>4 · استبدال الاعتماد — مرجع وسيلة الدفع يتبدل</td><td class="verdict-invalid">INVALID</td><td class="ltr">CREDENTIAL_SUBSTITUTION</td></tr>
+  <tr><td>5 · تفويض منته — تنفيذ بعد إغلاق النافذة</td><td class="verdict-invalid">INVALID</td><td class="ltr">EXPIRED_AUTHORIZATION</td></tr>
+  <tr><td>6 · إعادة استخدام — تفويض مستهلك يُعاد تشغيله</td><td class="verdict-invalid">INVALID</td><td class="ltr">SINGLE_USE_REUSE</td></tr>
+  <tr><td>7 · تلاعب السجل — بايت واحد من إيصال الموافقة يُعدَّل</td><td class="verdict-invalid">INVALID</td><td class="ltr">none — commitment mismatch</td></tr>
+  <tr><td>8 · غير مقروءة — حمولة تنفيذ غير قابلة للقراءة تُرفض ولا تُخمَّن</td><td class="verdict-invalid">INVALID</td><td class="ltr">MALFORMED_EXECUTION</td></tr>
+</table>
+<p class="sub">بطارية الهجمات المسماة الموسّعة (حقن التوجيه الحتمي بستة ناقلات، الجلسة المتعددة، الاستبدال، الانحرافات، التلاعب) ملتزمة في <code>test/integrations/agent-commerce-attack-battery.test.mjs</code> — تعمل داخل <code>npm test</code>.</p>
+
+<h2>الإيصال والثوابت</h2>
+<div class="grid">
+  <div class="card"><b>المواصفات</b><br><small class="ltr">consent CGCR/1 · risk AGR/1 · api AC-API/1 · sdk AC-SDK/1</small></div>
+  <div class="card"><b>الشبكة والمفاتيح</b><br><small>أوفلاين (loopback فقط لـ MCP وHTTP) · لا مفاتيح · كل طلب اصطناعي</small></div>
+  <div class="card"><b>المُشتقّ من</b><br><small><code>examples/agent-commerce-security-suite/artifacts.json</code> — إعادة تشغيل الحزمة تعيد إنتاج نفس البايتات</small></div>
+</div>
+
+<h2>الفجوات الصادقة (لا تُخفى)</h2>
+<div class="grid">
+  <div class="card"><b>التثبيت الدائم للاستخدام الأحادي</b><span class="tag bad">NOT_BUILT</span><br><small>الاستهلاك محلي بالعملية موثّقًا؛ الحل الحالي للتكامل: تمرير سجل استهلاك مشترك.</small></div>
+  <div class="card"><b>سطح أنواع TypeScript</b><span class="tag">BUILT · TEST_EXECUTED</span><br><small>إعلانات فقط في <code>packages/agent-commerce/index.d.ts</code> — عقد بنيوي، بلا مسار tsc في CI (مسمّى بصدق).</small></div>
+  <div class="card"><b>الإثبات الموحّد عبر الشبكات</b><span class="tag">BUILT · TEST_EXECUTED</span><span class="tag bad">البث: لم يُنفَّذ</span><br><small>سطح الإشهاد CGXA/1 مبني ومُختبَر (خارج السلسلة)؛ أرجل البث على السلسلة بقرار المالك ولم تُنفَّذ؛ تكامل Soroban الخارجي NOT_BUILT.</small></div>
+  <div class="card"><b>نشر npm / نشر MCP</b><span class="tag mut">بقرار المالك</span><br><small>الحزمة تعمل من الشجرة؛ النشر قرار مالك.</small></div>
+  <div class="card"><b>التكامل الخارجي الحي</b><span class="tag bad">NOT_BUILT</span><br><small>لا مستخدم خارجي، لا تجربة موقّعة، لا تدقيق خارجي. الحزمة الاصطناعية هي السقف الحالي.</small></div>
+</div>
+
+<div class="mirror ltr">
+<h2>English mirror — Authorization Decisions &amp; Receipts</h2>
+<p class="sub"><b>What this page is.</b> The operator view of the agent-commerce arc, offline, derived from the committed suite artifacts (embedded verbatim in this page's data island). <b>What it is not:</b> every order synthetic (placeholder credential, never a PAN); no contact, integration or endorsement is claimed with OpenAI, American Express, Mastercard, Visa or any provider; <code>VERIFIED ≠ SAFE</code>; the deterministic taxonomy is never a probabilistic fraud score; the actor is declared, never detected; durable single-use anchoring is NOT_BUILT; npm publication is owner-gated (the owner's go is recorded in spec §9 — the remaining steps are owner-only); product 5 (cross-chain attestation) is BUILT · TEST_EXECUTED as the offline attestation surface, its on-chain broadcast legs OWNER-GATED / NOT_PERFORMED; funding $0.</p>
+<table>
+  <tr><th>Stage</th><th>Verdict</th><th>Evidence</th></tr>
+  <tr><td>APPROVE (CGCR/1 consent receipt)</td><td class="verdict-verified">VERIFIED</td><td>approval bound to the exact approved order bytes — receipt id above, pinned epoch</td></tr>
+  <tr><td>EXECUTE exact</td><td class="verdict-verified">VERIFIED</td><td>every engine check PASS — zero bytes of drift</td></tr>
+  <tr><td>Real MCP server, drifted order</td><td class="verdict-invalid">INVALID</td><td>the stdio JSON-RPC server refuses the drifted order</td></tr>
+  <tr><td>Real REST verification (AC-API/1)</td><td class="verdict-verified">VERIFIED</td><td>loopback HTTP instance, same verdict</td></tr>
+</table>
+<p class="sub">The eight attack rows above are refused by name (AGR/1 classes). The extended named battery — a deterministic six-vector prompt-injection fuzz set, the documented cross-session consumption gap, and every swap/drift/tamper class — lives in the committed battery test and runs inside <code>npm test</code>.</p>
+<p class="sub">Re-derive it yourself: <code>node examples/agent-commerce-security-suite/run.mjs</code> — exit 0 only on the exact arc; re-running regenerates <code>artifacts.json</code> byte-identically.</p>
+</div>
+
+<footer>
+CoreGuard — The Trust Layer for Autonomous Execution · Verifiable authorization · Deterministic enforcement · Independent evidence · لوحة القرارات مشتقة بالكامل من artifacts الملتزم — كل رقم على هذه الصفحة قابل لإعادة الاشتقاق من الشجرة.
+<script type="application/json" id="suite-artifacts">{
+  "suite": "agent-commerce-security-suite",
+  "sdk": "AC-SDK/1",
+  "specs": {
+    "consent": "CGCR/1",
+    "risk": "AGR/1",
+    "api": "AC-API/1"
+  },
+  "synthetic": true,
+  "network": "offline (loopback MCP + HTTP only)",
+  "keys": "none",
+  "pinnedEpoch": "1794657600",
+  "approved": {
+    "intent": {
+      "version": "CGEP/1",
+      "chainId": "0",
+      "signer": "0x000000000000000000000000000000000000000d",
+      "nonce": "0",
+      "validAfter": "0",
+      "validUntil": "9999999999",
+      "action": "AGENT_CHECKOUT",
+      "target": "0x0000000000000000000000000000000000000042",
+      "selector": "0xa9059cbb",
+      "asset": "0x0000000000000000000000000000000000000002",
+      "amount": "3300",
+      "recipient": "0x0000000000000000000000000000000000000042",
+      "constraints": [
+        {
+          "type": "MAX_VALUE",
+          "value": "3300"
+        },
+        {
+          "type": "RECIPIENT_ALLOWLIST",
+          "addresses": [
+            "0x0000000000000000000000000000000000000042"
+          ]
+        }
+      ],
+      "merchantName": "synthetic-store.example",
+      "currency": "USD",
+      "items": [
+        {
+          "sku": "SKU-SEC-001",
+          "name": "Synthetic item A",
+          "qty": 1,
+          "unitPriceMinor": "1800"
+        },
+        {
+          "sku": "SKU-SEC-002",
+          "name": "Synthetic item B",
+          "qty": 1,
+          "unitPriceMinor": "1200"
+        }
+      ],
+      "taxMinor": "200",
+      "shippingMinor": "100",
+      "paymentCredentialRef": "TOKENIZED-CREDENTIAL-REF-5e17 (placeholder — never a PAN)",
+      "agentRef": "DEMO-AGENT-SEC-1 (declared, not detected)",
+      "authorizedAtUtc": "2026-11-14T12:00:00Z",
+      "expiryUtc": "2026-11-14T12:10:00Z",
+      "singleUse": true
+    },
+    "policy": {
+      "version": "CGEP/1",
+      "policyId": "0x00000000000000000000000000000000000000ac",
+      "name": "Agent Commerce Policy",
+      "rules": [
+        {
+          "ruleId": "VALUE_001",
+          "type": "VALUE_LIMIT",
+          "params": {
+            "max": "3300"
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "TARGET_001",
+          "type": "TARGET_ALLOWLIST",
+          "params": {
+            "targets": [
+              "0x0000000000000000000000000000000000000042"
+            ]
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "RECIPIENT_001",
+          "type": "RECIPIENT_ALLOWLIST",
+          "params": {
+            "addresses": [
+              "0x0000000000000000000000000000000000000042"
+            ]
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "SELECTOR_001",
+          "type": "SELECTOR_ALLOWLIST",
+          "params": {
+            "selectors": [
+              "0xa9059cbb"
+            ]
+          },
+          "severity": "CRITICAL"
+        }
+      ]
+    }
+  },
+  "consentReceiptId": "0x25b0fd6145f26913aad704b2a3584889fd17d2237cba9f61ea69a8726622fa61",
+  "results": {
+    "consentIntegrity": "VERIFIED",
+    "executeExact": "VERIFIED",
+    "attacks": [
+      {
+        "label": "1 TOTAL_DRIFT — surcharge appears after approval",
+        "verdict": "INVALID",
+        "classes": "POLICY_VIOLATION+VALUE_ESCALATION"
+      },
+      {
+        "label": "2 MERCHANT_SWAP — the payee changes after approval",
+        "verdict": "INVALID",
+        "classes": "POLICY_VIOLATION+POLICY_VIOLATION+RECIPIENT_SUBSTITUTION"
+      },
+      {
+        "label": "3 ITEM_MUTATION — an injected item (prompt-injection shape)",
+        "verdict": "INVALID",
+        "classes": "ITEM_MUTATION+POLICY_VIOLATION+VALUE_ESCALATION"
+      },
+      {
+        "label": "4 CREDENTIAL_SUBSTITUTION — the payment credential is swapped",
+        "verdict": "INVALID",
+        "classes": "CREDENTIAL_SUBSTITUTION"
+      },
+      {
+        "label": "5 EXPIRED — execution after the authorization window closed",
+        "verdict": "INVALID",
+        "classes": "EXPIRED_AUTHORIZATION"
+      },
+      {
+        "label": "6 SINGLE_USE_REUSE — the consumed authorization is replayed",
+        "verdict": "INVALID",
+        "classes": "SINGLE_USE_REUSE"
+      },
+      {
+        "label": "7 RECORD_TAMPER — one byte of the consent record is edited",
+        "verdict": "INVALID",
+        "classes": "none"
+      },
+      {
+        "label": "8 MALFORMED — an unreadable execution payload is refused, not guessed",
+        "verdict": "INVALID",
+        "classes": "MALFORMED_EXECUTION"
+      }
+    ],
+    "attacksBlocked": "8/8",
+    "mcp": {
+      "server": "coreguard-agent-commerce",
+      "tools": 4,
+      "verdict": "INVALID"
+    },
+    "http": {
+      "version": "AC-API/1",
+      "verdict": "VERIFIED"
+    }
+  },
+  "exitContract": "CONSENT_VERIFIED_EXACT_VERIFIED_ATTACKS_9_OF_9_INVALID_MCP_INVALID_HTTP_VERIFIED",
+  "boundary": "execution verification never decides delivery conformity (DDE/1); VERIFIED ≠ SAFE; deterministic taxonomy, never a fraud score; durable single-use anchoring NOT_BUILT; no contact/integration/endorsement claimed with OpenAI, American Express, Mastercard, Visa or any named provider"
+}</script>
+</footer>
+
+</div>
+</body>
+</html>

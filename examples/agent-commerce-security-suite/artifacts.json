@@ -1,0 +1,168 @@
+{
+  "suite": "agent-commerce-security-suite",
+  "sdk": "AC-SDK/1",
+  "specs": {
+    "consent": "CGCR/1",
+    "risk": "AGR/1",
+    "api": "AC-API/1"
+  },
+  "synthetic": true,
+  "network": "offline (loopback MCP + HTTP only)",
+  "keys": "none",
+  "pinnedEpoch": "1794657600",
+  "approved": {
+    "intent": {
+      "version": "CGEP/1",
+      "chainId": "0",
+      "signer": "0x000000000000000000000000000000000000000d",
+      "nonce": "0",
+      "validAfter": "0",
+      "validUntil": "9999999999",
+      "action": "AGENT_CHECKOUT",
+      "target": "0x0000000000000000000000000000000000000042",
+      "selector": "0xa9059cbb",
+      "asset": "0x0000000000000000000000000000000000000002",
+      "amount": "3300",
+      "recipient": "0x0000000000000000000000000000000000000042",
+      "constraints": [
+        {
+          "type": "MAX_VALUE",
+          "value": "3300"
+        },
+        {
+          "type": "RECIPIENT_ALLOWLIST",
+          "addresses": [
+            "0x0000000000000000000000000000000000000042"
+          ]
+        }
+      ],
+      "merchantName": "synthetic-store.example",
+      "currency": "USD",
+      "items": [
+        {
+          "sku": "SKU-SEC-001",
+          "name": "Synthetic item A",
+          "qty": 1,
+          "unitPriceMinor": "1800"
+        },
+        {
+          "sku": "SKU-SEC-002",
+          "name": "Synthetic item B",
+          "qty": 1,
+          "unitPriceMinor": "1200"
+        }
+      ],
+      "taxMinor": "200",
+      "shippingMinor": "100",
+      "paymentCredentialRef": "TOKENIZED-CREDENTIAL-REF-5e17 (placeholder — never a PAN)",
+      "agentRef": "DEMO-AGENT-SEC-1 (declared, not detected)",
+      "authorizedAtUtc": "2026-11-14T12:00:00Z",
+      "expiryUtc": "2026-11-14T12:10:00Z",
+      "singleUse": true
+    },
+    "policy": {
+      "version": "CGEP/1",
+      "policyId": "0x00000000000000000000000000000000000000ac",
+      "name": "Agent Commerce Policy",
+      "rules": [
+        {
+          "ruleId": "VALUE_001",
+          "type": "VALUE_LIMIT",
+          "params": {
+            "max": "3300"
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "TARGET_001",
+          "type": "TARGET_ALLOWLIST",
+          "params": {
+            "targets": [
+              "0x0000000000000000000000000000000000000042"
+            ]
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "RECIPIENT_001",
+          "type": "RECIPIENT_ALLOWLIST",
+          "params": {
+            "addresses": [
+              "0x0000000000000000000000000000000000000042"
+            ]
+          },
+          "severity": "CRITICAL"
+        },
+        {
+          "ruleId": "SELECTOR_001",
+          "type": "SELECTOR_ALLOWLIST",
+          "params": {
+            "selectors": [
+              "0xa9059cbb"
+            ]
+          },
+          "severity": "CRITICAL"
+        }
+      ]
+    }
+  },
+  "consentReceiptId": "0x25b0fd6145f26913aad704b2a3584889fd17d2237cba9f61ea69a8726622fa61",
+  "results": {
+    "consentIntegrity": "VERIFIED",
+    "executeExact": "VERIFIED",
+    "attacks": [
+      {
+        "label": "1 TOTAL_DRIFT — surcharge appears after approval",
+        "verdict": "INVALID",
+        "classes": "POLICY_VIOLATION+VALUE_ESCALATION"
+      },
+      {
+        "label": "2 MERCHANT_SWAP — the payee changes after approval",
+        "verdict": "INVALID",
+        "classes": "POLICY_VIOLATION+POLICY_VIOLATION+RECIPIENT_SUBSTITUTION"
+      },
+      {
+        "label": "3 ITEM_MUTATION — an injected item (prompt-injection shape)",
+        "verdict": "INVALID",
+        "classes": "ITEM_MUTATION+POLICY_VIOLATION+VALUE_ESCALATION"
+      },
+      {
+        "label": "4 CREDENTIAL_SUBSTITUTION — the payment credential is swapped",
+        "verdict": "INVALID",
+        "classes": "CREDENTIAL_SUBSTITUTION"
+      },
+      {
+        "label": "5 EXPIRED — execution after the authorization window closed",
+        "verdict": "INVALID",
+        "classes": "EXPIRED_AUTHORIZATION"
+      },
+      {
+        "label": "6 SINGLE_USE_REUSE — the consumed authorization is replayed",
+        "verdict": "INVALID",
+        "classes": "SINGLE_USE_REUSE"
+      },
+      {
+        "label": "7 RECORD_TAMPER — one byte of the consent record is edited",
+        "verdict": "INVALID",
+        "classes": "none"
+      },
+      {
+        "label": "8 MALFORMED — an unreadable execution payload is refused, not guessed",
+        "verdict": "INVALID",
+        "classes": "MALFORMED_EXECUTION"
+      }
+    ],
+    "attacksBlocked": "8/8",
+    "mcp": {
+      "server": "coreguard-agent-commerce",
+      "tools": 4,
+      "verdict": "INVALID"
+    },
+    "http": {
+      "version": "AC-API/1",
+      "verdict": "VERIFIED"
+    }
+  },
+  "exitContract": "CONSENT_VERIFIED_EXACT_VERIFIED_ATTACKS_9_OF_9_INVALID_MCP_INVALID_HTTP_VERIFIED",
+  "boundary": "execution verification never decides delivery conformity (DDE/1); VERIFIED ≠ SAFE; deterministic taxonomy, never a fraud score; durable single-use anchoring NOT_BUILT; no contact/integration/endorsement claimed with OpenAI, American Express, Mastercard, Visa or any named provider"
+}

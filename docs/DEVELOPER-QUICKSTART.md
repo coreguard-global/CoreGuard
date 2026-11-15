@@ -17,7 +17,7 @@ digest. That output is the product.
 
 ## 1 · The surface, in three calls
 
-Three imports from `@coreguard/stellar-presign` are the whole surface:
+Three imports from `@coreguard/stellar/presign` are the whole surface:
 `createInMemoryIssuer` (the demo issuer — in production, your own signer),
 `issueAuthorizationReceipt` (pillar 1: bind authorization to bytes), and
 `verifyAuthorizationReceipt` (pillars 2 + 3: enforce, with a named reason).
@@ -70,14 +70,17 @@ a receipt they can break.
 | Runtime dependencies | Node 20+; `@stellar/stellar-sdk` only for building envelopes |
 | Network calls | none for authorization, enforcement, or verification |
 | Secrets you must hold | the issuer's private key — and only where receipts are issued |
-| Price | usage-based per verified receipt, free tier sized for integration tests; model in `docs/pricing.md`, enterprise pack in `docs/SCF-BUILD-APPLICATION-V3.md` §M4 |
+| Price | usage-based per verified receipt, free tier sized for integration tests; the tiers and the per-receipt numbers are in [`docs/pricing.md`](pricing.md) and are marked **proposed — not published** (nothing bills, no meter exists), enterprise pack in `docs/SCF-BUILD-APPLICATION-V3.md` §M4 |
 
 ## 5 · What this does not do yet
 
 - **No real Freighter extension path in CI.** The adapter exists; the extension
   signature is not exercised, and no document may claim otherwise.
-- **No SDK package published under a stable name yet.** The imports above are
-  the in-repo modules; M1 of the funding plan publishes them.
+- **The package is publishable, not published.** `@coreguard/stellar` carries
+  `exports`, `types` and a `files` allowlist, and an offline test packs it,
+  installs it outside the repo and imports it by name — so the import above is
+  the real one. It is not on the npm registry yet, so `npm install` would fail
+  today; until it lands, use the in-repo path.
 - **No execution proof in the receipt.** By design: `executionProof` is always
   `NOT_INCLUDED`; the ledger read-back proves execution, separately.
 

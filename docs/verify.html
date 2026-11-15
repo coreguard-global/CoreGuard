@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>CoreGuard · verify a receipt</title>
+<style>
+  :root { color-scheme: dark; --bg:#0B0F14; --panel:#111821; --line:#1F2A37; --ink:#E6EDF3; --dim:#9AA7B4; --ok:#3FB950; --no:#F85149; --accent:#58A6FF; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  main { max-width: 860px; margin: 0 auto; padding: 40px 20px 72px; }
+  h1 { font-size: 20px; letter-spacing: .02em; margin: 0 0 4px; }
+  .sub { color: var(--dim); margin: 0 0 28px; }
+  .verdict { display:flex; align-items:center; gap:14px; padding:18px 20px; border:1px solid var(--line); border-radius:10px; background:var(--panel); }
+  .verdict .badge { font-weight:700; letter-spacing:.08em; padding:6px 12px; border-radius:6px; }
+  .pass .badge { background: rgba(63,185,80,.12); color:var(--ok); border:1px solid rgba(63,185,80,.4); }
+  .block .badge { background: rgba(248,81,73,.12); color:var(--no); border:1px solid rgba(248,81,73,.4); }
+  .idle .badge { background: rgba(88,166,255,.10); color:var(--accent); border:1px solid rgba(88,166,255,.4); }
+  .code { color: var(--ink); font-weight: 700; }
+  .reason { color: var(--dim); font-size: 13px; margin-top: 4px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin: 30px 0 10px; }
+  table { width:100%; border-collapse: collapse; }
+  td { padding: 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 13px; }
+  td.k { color: var(--dim); width: 42%; }
+  td.v { word-break: break-all; }
+  .ok { color: var(--ok); } .no { color: var(--no); } .skip { color: var(--dim); }
+  pre { white-space: pre-wrap; word-break: break-all; background: var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px; font-size:12px; color:var(--dim); }
+  .note { margin-top: 26px; padding: 14px 16px; border-left: 3px solid var(--accent); background: var(--panel); color: var(--dim); font-size: 13px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>CoreGuard — verify a receipt</h1>
+  <p class="sub">PSAR/1 pre-sign authorization receipt. Everything below is computed in this tab: no request leaves your browser.</p>
+
+  <div id="verdict" class="verdict idle">
+    <span class="badge" id="badge">NO BUNDLE</span>
+    <div>
+      <div class="code" id="code">Nothing to verify yet</div>
+      <div class="reason" id="reason">Open a link that ends in <code>#v1.&lt;base64url&gt;</code> — for example the one a pilot hands you.</div>
+    </div>
+  </div>
+
+  <h2>Checks this page can and cannot run</h2>
+  <table id="checks"><tbody><tr><td class="k">waiting</td><td class="v">no bundle supplied</td></tr></tbody></table>
+
+  <h2>Receipt</h2>
+  <table id="facts"><tbody><tr><td class="k">digest</td><td class="v">—</td></tr></tbody></table>
+
+  <h2>The exact bytes shown</h2>
+  <pre id="raw">—</pre>
+
+  <p class="note">
+    <strong>What a PASS means:</strong> the signature verifies against the pinned issuer key, the digest
+    recomputes from the receipt's own fields, this envelope hashes to the fingerprint the receipt names,
+    the network agrees, and the clock is inside the authorization window.<br>
+    <strong>What it never means:</strong> that the transaction is safe, that the counterparty is honest, or
+    that anything executed. A pre-sign receipt carries <code>executionProof: NOT_INCLUDED</code>; execution
+    is proven by the ledger read-back, separately.
+  </p>
+</main>
+<script type="module" src="./verify-page.mjs"></script>
+</body>
+</html>

@@ -59,7 +59,7 @@ const ATTACK_CASES = [
 export function runAttackLab() {
   const sequence = ATTACK_CASES.map(({ id, expected, mutate }) => {
     const commitment = commit(baseIntent());
-    const attacked = mutate();
+    const attacked = { commitmentId: commitment.commitmentId, ...mutate() };
     const l1 = verifyReceipt(attacked, commitment, mockChain);
     const l2 = replay(baseIntent(), attacked, RULES);
 
@@ -73,7 +73,7 @@ export function runAttackLab() {
 
   /* control: the untouched valid path must VERIFY against the same chain */
   const ctrlCommitment = commit(baseIntent());
-  const ctrl = baseReceipt();
+  const ctrl = { commitmentId: ctrlCommitment.commitmentId, ...baseReceipt() };
   const ctrlOk =
     verifyReceipt(ctrl, ctrlCommitment, mockChain).verdict === "VERIFIED" && replay(baseIntent(), ctrl, RULES).verdict === "MATCH";
   return { sequence, control: { id: "valid-control", verdict: "VERIFIED", pass: ctrlOk } };

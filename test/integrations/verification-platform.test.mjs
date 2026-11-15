@@ -61,7 +61,11 @@ test("verification protocol: L0 commit is deterministic, replayable, schema-pinn
 
 test("verification protocol: L1 VERIFIED requires chain confirmation never structure alone", () => {
   const commitment = commit({ subject: "alice", chainId: "1116", policy: RULES });
-  const good = verifyReceipt({ status: "VERIFIED", blockHash: BLOCK, txHash: TX, chainId: "1116" }, commitment, chainOk);
+  const good = verifyReceipt(
+    { status: "VERIFIED", blockHash: BLOCK, txHash: TX, chainId: "1116", commitmentId: commitment.commitmentId },
+    commitment,
+    chainOk,
+  );
   assert.equal(good.verdict, "VERIFIED");
   assert.equal(good.verdictCode, "RECEIPT_INTEGRITY");
   const unconfirmed = verifyReceipt({ status: "VERIFIED", blockHash: BLOCK, txHash: TX, chainId: "1116" }, commitment);

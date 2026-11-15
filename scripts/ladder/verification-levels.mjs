@@ -101,6 +101,36 @@ export function verifyReceipt(receipt, commitment, chain) {
   if (onChain.blockHash !== receipt.blockHash) {
     return { verdict: "MISMATCH", verdictCode: "BLOCK_HASH_MISMATCH", reason: "receipt names a block the chain does not confirm" };
   }
+  // 4. identity binding. The authority just confirmed a txHash/blockHash pair,
+  //    which says nothing about WHICH receipt this is: a genuine pair can be
+  //    relabeled onto another receipt's identity and every check above stays
+  //    green. That is the laundering shape this protocol exists to refuse, so
+  //    VERIFIED additionally requires the receipt to name the commitment it
+  //    belongs to, and that name to be the one presented:
+  //      absent name  -> UNKNOWN/RECEIPT_ID_UNBOUND  (cannot establish identity)
+  //      wrong name   -> MISMATCH/RECEIPT_ID_MISMATCH (two artifacts disagree)
+  //    Unbound identity is deliberately NOT a pass and NOT a contradiction:
+  //    nothing was asked about the label, so reporting a contradiction would
+  //    put an absence of evidence in the same bucket as a detected forgery.
+  //    Both codes exist so a caller can tell the borrowed-label case from
+  //    "the chain does not know this tx" (TX_NOT_FOUND keeps that meaning).
+  const declaredId = typeof receipt.commitmentId === "string" && receipt.commitmentId.length > 0 ? receipt.commitmentId : null;
+  const presentedId = typeof commitment.commitmentId === "string" && commitment.commitmentId.length > 0 ? commitment.commitmentId : null;
+  if (!declaredId || !presentedId) {
+    return {
+      verdict: "UNKNOWN",
+      verdictCode: "RECEIPT_ID_UNBOUND",
+      reason:
+        "the chain confirms this txHash, but the receipt does not name the commitment it belongs to (or none was presented); the evidence is real and says nothing about which receipt it is. Bound identity is required for VERIFIED.",
+    };
+  }
+  if (declaredId !== presentedId) {
+    return {
+      verdict: "MISMATCH",
+      verdictCode: "RECEIPT_ID_MISMATCH",
+      reason: `receipt declares commitment ${declaredId} but was presented with ${presentedId} - the chain evidence may be genuine and belong to a different receipt`,
+    };
+  }
   return { verdict: "VERIFIED", verdictCode: "RECEIPT_INTEGRITY", requiredMissing: [] };
 }
 
@@ -345,7 +375,20 @@ function selfCheck() {
     /* only the genuinely mined tx is known to the chain */
     getReceipt: (tx) => (tx === goodTx ? { txHash: goodTx, blockHash: goodBlock } : null),
   };
-  const good = verifyReceipt(
+  const goodReceipt = {
+    status: "VERIFIED",
+    blockHash: goodBlock,
+    txHash: goodTx,
+    chainId: "1116",
+    commitmentId: c1.commitmentId,
+  };
+  const good = verifyReceipt(goodReceipt, c1, mockChain);
+  const relabeled = verifyReceipt(
+    goodReceipt,
+    commit({ subject: "mallory", chainId: "1116", policy: [{ id: "VALUE_001" }] }),
+    mockChain,
+  );
+  const unbound = verifyReceipt(
     { status: "VERIFIED", blockHash: goodBlock, txHash: goodTx, chainId: "1116" },
     c1,
     mockChain,
@@ -374,6 +417,8 @@ function selfCheck() {
   line("L1 no chain authority -> UNKNOWN", unconfirmed.verdict === "UNKNOWN");
   line("L1 chain contradiction -> MISMATCH", forged.verdict === "MISMATCH");
   line("L1 inconsistent -> UNKNOWN", bad.verdict === "UNKNOWN");
+  line("L1 relabeled identity -> MISMATCH (must-fail)", relabeled.verdict === "MISMATCH" && relabeled.verdictCode === "RECEIPT_ID_MISMATCH");
+  line("L1 absent identity -> UNKNOWN, never a pass", unbound.verdict === "UNKNOWN" && unbound.verdictCode === "RECEIPT_ID_UNBOUND");
   line("L2 all-PASS -> MATCH", plat.verdict === "MATCH");
   line("L3 merkle proof honest", okProof);
   line("L4 boundary RESEARCH", L4_BOUNDARY.status === "RESEARCH");
@@ -383,6 +428,10 @@ function selfCheck() {
     unconfirmed.verdict === "UNKNOWN" &&
     forged.verdict === "MISMATCH" &&
     bad.verdict === "UNKNOWN" &&
+    relabeled.verdict === "MISMATCH" &&
+    relabeled.verdictCode === "RECEIPT_ID_MISMATCH" &&
+    unbound.verdict === "UNKNOWN" &&
+    unbound.verdictCode === "RECEIPT_ID_UNBOUND" &&
     plat.verdict === "MATCH" &&
     okProof &&
     L4_BOUNDARY.status === "RESEARCH";

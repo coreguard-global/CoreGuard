@@ -17,13 +17,14 @@ Measuring surfaces (CI-enforced; do not hand-edit):
 | Level | Machine | Rule | Status |
 |---|---|---|---|
 | L0 | scripts/ladder/verification-levels.mjs commit() | intent -> canonical -> sha256 -> commitmentId; replayable | AVAILABLE |
-| L1 | verifyReceipt(receipt, commitment, chain) | VERIFIED only when every field is present, consistent, AND a chain authority confirms txHash/blockHash | AVAILABLE (chain required) |
+| L1 | verifyReceipt(receipt, commitment, chain) | VERIFIED only when every field is present, consistent, a chain authority confirms txHash/blockHash, AND the receipt's identity is bound to the presented commitment | AVAILABLE (chain + identity required) |
 | L2 | replay(intent, receipt, rules) | MATCH / MISMATCH / UNKNOWN; a partial pass never upgrades to MATCH | AVAILABLE |
 | L3 | merkleTree / merkleProof / verifyMerkle | real sha-256 tree; a third party proves one leaf without the bundle | AVAILABLE |
 | L4 | L4_BOUNDARY | RESEARCH; interface frozen (5 provider methods) | RESEARCH |
 
 The L1 chain rule is the honesty hinge added this cycle, and it has three
 outcomes, not two. The verdict turns on **whether anyone was asked**. No authority at all → `UNKNOWN/NO_CHAIN_EVIDENCE` (nobody was asked). An authority that does not know the `txHash` → `MISMATCH/TX_NOT_FOUND` (it was asked, and it contradicted you). A receipt too malformed to ask with → `UNKNOWN/EVIDENCE_INCONSISTENT`. Only the middle case is a contradiction; the two `UNKNOWN` cases are absent evidence, never absolution, and neither is `VERIFIED`.
+Identity is bound separately and last, because confirming a `txHash`/`blockHash` pair says nothing about WHICH receipt it belongs to: a receipt that names no commitment is `UNKNOWN/RECEIPT_ID_UNBOUND` (nothing was asked about the label, so it is absent evidence and deliberately not a contradiction), and a receipt naming a different commitment than the one presented is `MISMATCH/RECEIPT_ID_MISMATCH` (two artifacts we hold disagree). Reported on issue #56 as the id-binding swap; `test/integrations/l1-identity-binding.test.mjs` is the must-fail vector set and includes the control that a bound identity still verifies.
 Structure alone never yields VERIFIED, and "no confirmation" is not one verdict: the
 difference between MISMATCH and UNKNOWN is whether a chain authority was asked at all.
 

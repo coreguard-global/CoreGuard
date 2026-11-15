@@ -78,6 +78,23 @@ test("every doc surface that states the L1 rule names all three verdict codes in
   }
 });
 
+test("every surface states the identity-binding branch in the same passage, not just the chain branch", () => {
+  // The defect from issue #56 (id-binding swap): a verdict function that checks
+  // the evidence but never checks WHICH receipt the evidence belongs to will
+  // pass a genuine txHash relabeled onto another receipt's identity. A surface
+  // that still describes only the three chain outcomes is describing a machine
+  // that no longer exists, so the two binding codes are required here too.
+  for (const rel of SURFACES) {
+    const found = ruleParagraphs(rel).filter(
+      (p) => p.includes("RECEIPT_ID_UNBOUND") && p.includes("RECEIPT_ID_MISMATCH")
+    );
+    assert.ok(
+      found.length > 0,
+      `${rel}: the L1 rule passage never states the identity-binding branch (RECEIPT_ID_UNBOUND / RECEIPT_ID_MISMATCH)`
+    );
+  }
+});
+
 test("the L1 rule is stated as a question of WHO WAS ASKED, in the passage that states it", () => {
   // The defect this binds: every surface used to reduce the rule to
   // "unconfirmed => UNKNOWN", which is false for the asked-and-contradicted case

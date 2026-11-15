@@ -102,7 +102,7 @@ function runScenario(id) {
   switch (id) {
     case "happy-path": {
       receipt = proofReceipt();
-      const l1 = verifyReceipt(receipt, commitment, MOCK_CHAIN);
+      const l1 = verifyReceipt({ commitmentId: commitment.commitmentId, ...receipt }, commitment, MOCK_CHAIN);
       push("l1-receipt", `L1 ${l1.verdict} (${l1.verdictCode}) — MOCK chain confirm`);
       const re = replay(intent, receipt, RULES);
       push("l2-replay", re.verdict);
@@ -116,7 +116,7 @@ function runScenario(id) {
     }
     case "tampered-receipt": {
       receipt = happyReceipt({ txHash: mockHash("tx", "ATTACKER") });
-      const l1 = verifyReceipt(receipt, commitment, MOCK_CHAIN);
+      const l1 = verifyReceipt({ commitmentId: commitment.commitmentId, ...receipt }, commitment, MOCK_CHAIN);
       push("l1-receipt", `L1 ${l1.verdict} (${l1.verdictCode})`);
       verdictOutcome = "MISMATCH";
       verdictCode = l1.verdictCode;
@@ -125,7 +125,7 @@ function runScenario(id) {
     }
     case "missing-evidence": {
       receipt = proofReceipt({ evidence: [{ rule: "VALUE_001", result: "PASS" }] });
-      verifyReceipt(receipt, commitment, MOCK_CHAIN);
+      verifyReceipt({ commitmentId: commitment.commitmentId, ...receipt }, commitment, MOCK_CHAIN);
       const re = replay(intent, receipt, RULES);
       verdictOutcome = "UNKNOWN";
       verdictCode = re.verdictCode;
@@ -139,7 +139,7 @@ function runScenario(id) {
           { rule: "TARGET_001", result: "PASS" },
         ],
       });
-      verifyReceipt(receipt, commitment, MOCK_CHAIN);
+      verifyReceipt({ commitmentId: commitment.commitmentId, ...receipt }, commitment, MOCK_CHAIN);
       const re = replay(intent, receipt, RULES);
       verdictOutcome = "UNKNOWN";
       verdictCode = re.verdictCode;
@@ -148,7 +148,7 @@ function runScenario(id) {
     }
     case "unknown-settlement": {
       receipt = proofReceipt();
-      verifyReceipt(receipt, commitment, MOCK_CHAIN);
+      verifyReceipt({ commitmentId: commitment.commitmentId, ...receipt }, commitment, MOCK_CHAIN);
       const settlement = { present: false };
       verdictOutcome = "UNKNOWN";
       verdictCode = "SETTLEMENT_UNKNOWN";
@@ -158,7 +158,7 @@ function runScenario(id) {
     }
     case "replay-mismatch": {
       receipt = proofReceipt({ failedChecks: [{ rule: "TARGET_001", result: "FAIL" }] });
-      verifyReceipt(receipt, commitment, MOCK_CHAIN);
+      verifyReceipt({ commitmentId: commitment.commitmentId, ...receipt }, commitment, MOCK_CHAIN);
       const re = replay(intent, receipt, RULES);
       verdictOutcome = "MISMATCH";
       verdictCode = re.verdictCode;
@@ -168,7 +168,7 @@ function runScenario(id) {
       const expiredIntent = makeIntent({ validUntil: 1000 });
       commit(expiredIntent);
       receipt = happyReceipt();
-      verifyReceipt(receipt, commitment, MOCK_CHAIN);
+      verifyReceipt({ commitmentId: commitment.commitmentId, ...receipt }, commitment, MOCK_CHAIN);
       const re = replay(expiredIntent, receipt, RULES);
       verdictOutcome = "REJECTED";
       verdictCode = "AUTHORIZATION_EXPIRED";
@@ -178,7 +178,7 @@ function runScenario(id) {
     }
     case "duplicate-execution": {
       receipt = happyReceipt();
-      verifyReceipt(receipt, commitment, MOCK_CHAIN);
+      verifyReceipt({ commitmentId: commitment.commitmentId, ...receipt }, commitment, MOCK_CHAIN);
       const prior = { present: true, commitmentId: commitment.commitmentId };
       verdictOutcome = "REJECTED";
       verdictCode = "DUPLICATE_EXECUTION";

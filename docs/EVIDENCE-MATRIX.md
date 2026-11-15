@@ -77,9 +77,25 @@ today and cannot adopt the latter today.
 | Pi Sign-In (implicit flow) | BUILT | TEST_EXECUTED — `/api/pi-me` rejects an invalid bearer with 401 | NOT_BUILT — domain verification pending | `WEB-coreguard/src/routes/api/pi-me.ts` |
 | Pi packages | BUILT_UNVERIFIED | NONE | NOT_BUILT | `packages/pi-network`, `packages/pi-killer` |
 
+## Agent commerce (offline, synthetic, committed surfaces)
+
+> **Honesty boundary.** Products 1–4 are committed runnable surfaces on this tree (offline, deterministic, synthetic orders only — placeholder credentials, never a PAN). Product 5 is SPEC'D and NOT_BUILT as a unified cross-chain surface. No contact, integration, or endorsement is claimed with OpenAI, American Express, Mastercard, Visa, or any provider. npm publication and any live external use are OWNER-GATED. `VERIFIED ≠ SAFE`; not a probabilistic fraud score.
+
+| Surface | Code | Execution | Integration | Evidence |
+|---|---|---|---|---|
+| `agent-authorization-firewall` — refuse execution that diverges from authorized intent (product 1) | BUILT | TEST_EXECUTED — offline fail-closed battery (authorization bound to exact bytes; divergence refused) | NOT_BUILT — no external adopter | `packages/agent-gate/index.mjs`; `test/integrations/agent-payment-gate.test.mjs` |
+| `consent-receipts` — Verifiable Consent Receipts (CGCR/1) (product 2) | BUILT | TEST_EXECUTED — consent bound to exact approved order bytes; verify fail-closed with named drift on divergence | NOT_BUILT — no external adopter | `packages/agent-commerce/index.mjs`; `test/integrations/agent-commerce-sdk.test.mjs` |
+| `agent-risk-engine` — deterministic authorization-drift taxonomy (AGR/1) (product 3) | BUILT | TEST_EXECUTED — named classes + severities (deterministic, not a probabilistic fraud score; `VERIFIED ≠ SAFE`) | NOT_BUILT — no external adopter | `packages/agent-commerce/risk.mjs`; `test/integrations/agent-commerce-sdk.test.mjs` |
+| `agent-commerce-sdk-mcp-rest` — SDK + MCP server + REST API (product 4) | BUILT | TEST_EXECUTED — SDK, stdio MCP (JSON-RPC) and REST `/v1/authorize` · `/v1/verify` · `/v1/risk-assess` exercised offline | NOT_BUILT — npm publication OWNER-GATED; no external adopter | `packages/agent-commerce/`; `test/integrations/agent-commerce-sdk.test.mjs` · `test/integrations/agent-commerce-mcp.test.mjs` · `test/integrations/agent-commerce-http.test.mjs` |
+| `agent-commerce-attack-battery` — the named adversarial battery (deterministic six-vector prompt-injection fuzz, post-approval recipient swap, tax/shipping/fee escalation, credential substitution, replay, the documented cross-session consumption gap, expiry, receipt tamper) | BUILT | TEST_EXECUTED — every attack leg INVALID fail-closed; the cross-session gap is asserted honestly (a fresh ledger cannot see prior consumption — named on the report, never hidden) | NOT_BUILT — no external adopter | `test/integrations/agent-commerce-attack-battery.test.mjs` |
+| `agent-commerce-typescript-types` — TypeScript declaration surface over AC-SDK/1 + AGR/1 | BUILT (type-only; no tsc typecheck lane in CI — the structural contract is the honest limit) | TEST_EXECUTED — declared value-exports ↔ runtime exports, constant equality, boundary strings, no implementation | NOT_BUILT — no external adopter | `packages/agent-commerce/index.d.ts`; `test/integrations/agent-commerce-types.test.mjs` |
+| `agent-commerce-dashboard` — bilingual operator dashboard (authorization decisions + receipts + honest gaps) | BUILT | TEST_EXECUTED — data island equals the committed artifacts byte-for-byte; boundaries in BOTH languages; fully offline (no external scripts, fetches, absolute URLs, imports) | NOT_BUILT — no external adopter | `docs/agent-commerce-dashboard.html`; `test/integrations/agent-commerce-dashboard-page.test.mjs` |
+| `agent-commerce-attestation` — Cross-Chain Execution Attestation (CGXA/1) (product 5): consent receiptId + executed-order commitment + the chain's committed binding record | BUILT | TEST_EXECUTED — the exact arc VERIFIES offline against both committed adapters; the 3 named attack legs REFUSED (EXECUTION_MISMATCH · CHAIN_BINDING_MISMATCH · CONSENT_MISMATCH); the record id re-derives byte-deterministically; the attestation view consumes nothing; every adapter fact pinned to its cited committed document | NOT_BUILT — on-chain broadcast legs OWNER-GATED / NOT_PERFORMED (no broadcast surface exists in the module); no external adopter | `packages/agent-commerce/attest.mjs`; `test/integrations/agent-commerce-attestation.test.mjs`; `examples/agent-commerce-attestation/run.mjs` |
+| `cross-chain-execution-attestation` — unified cross-chain attestation (product 5) | NOT_BUILT (SPEC'D) | NONE | NOT_BUILT | `docs/AGENT-COMMERCE-SECURITY-SPEC-V1.md` §8; per-chain machinery committed separately (Core DAO anchors LIVE/RECORDED on chainId 1116; Stellar PSAR/1 BUILT · TEST_EXECUTED, integration NOT_BUILT) |
+
 ## Totals
 
-Suite total: **1578 / 1578 pass**, machine-pinned in
+Suite total: **1673 / 1673 pass**, machine-pinned in
 `docs/state-snapshot.json` (the only authoritative count in the repo).
 Boundary audit: **0 violations**; file count lives in the same snapshot.
 
@@ -93,10 +109,14 @@ Boundary audit: **0 violations**; file count lives in the same snapshot.
 |---|---|
 | EXECUTED (on-chain artifacts) | 6 |
 | REAL_BOOK_EXECUTED / POLICY_GATE_EXECUTED | 3 |
-| TEST_EXECUTED | 10 |
-| NONE / not exercised | 5 |
+| TEST_EXECUTED | 17 |
+| NONE / not exercised | 6 |
 
 **The sentence this matrix exists to make impossible:** "CoreGuard is a verified
 Stellar integration." The supported sentences are: "CoreGuard has verifiable
 execution evidence on Stellar mainnet" (true, checkable) and "CoreGuard has no
-external Stellar adopter yet" (true, and it is the gap the roadmap closes).
+external Stellar adopter yet" (true, and it is the gap the roadmap closes). The
+agent-commerce surfaces add offline, synthetic, fail-closed authorization and
+consent evidence on this tree (BUILT · TEST_EXECUTED); they are not external
+integrations and do not imply adoption, endorsement, or safety beyond the named
+checks.

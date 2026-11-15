@@ -139,6 +139,31 @@ node demo.mjs
 
 ---
 
+## 4.1 Agent Commerce Security family (v1.0, offline committed surfaces)
+
+> **Positioning:** CoreGuard — The Trust Layer for Autonomous Execution. **Verifiable authorization. Deterministic enforcement. Independent evidence.**
+>
+> **Honesty boundary:** offline, deterministic, synthetic orders only (placeholder credentials, never a PAN). No contact, integration, or endorsement is claimed with OpenAI, American Express, Mastercard, Visa, or any provider. npm publication and any live external use are OWNER-GATED. `VERIFIED ≠ SAFE`; not a probabilistic fraud score. Funding **$0**.
+
+| Product / surface | What it does | Status | Entry point |
+|---|---|---|---|
+| **1 · Agent Authorization Firewall** | Refuses an action that diverges from the authorized intent, fail-closed (offline). | BUILT · TEST_EXECUTED · integration NOT_BUILT | [`packages/agent-gate/index.mjs`](../packages/agent-gate/index.mjs) |
+| **2 · Verifiable Consent Receipts (CGCR/1)** | Binds the user's approval to the exact approved order bytes as an independently re-derivable receipt; verification on divergence is fail-closed `INVALID` with the drifted field named (AGR/1). | BUILT · TEST_EXECUTED · integration NOT_BUILT | [`packages/agent-commerce/index.mjs`](../packages/agent-commerce/index.mjs) |
+| **3 · Agent Risk Engine (AGR/1)** | Deterministic authorization-drift taxonomy (named classes + severities). Not a probabilistic fraud score. | BUILT · TEST_EXECUTED · integration NOT_BUILT | [`packages/agent-commerce/risk.mjs`](../packages/agent-commerce/risk.mjs) |
+| **4 · Agent Commerce SDK + MCP + REST API** | Commerce arc as SDK + stdio MCP server (JSON-RPC) + REST (`/v1/authorize`, `/v1/verify`, `/v1/risk-assess`), offline. npm publication OWNER-GATED. | BUILT · TEST_EXECUTED · integration NOT_BUILT | [`packages/agent-commerce/`](../packages/agent-commerce/) |
+| **Named attack battery** | Deterministic six-vector prompt-injection fuzz set, post-approval recipient swap / tax-shipping-fee escalation / credential substitution / item mutation, replay, the DOCUMENTED cross-session consumption gap (asserted honestly, never hidden), expiry, receipt tamper. | BUILT · TEST_EXECUTED | [`test/integrations/agent-commerce-attack-battery.test.mjs`](../test/integrations/agent-commerce-attack-battery.test.mjs) |
+| **TypeScript declaration surface** | Type-only façade over the SDK + risk engine; structurally contracted (declared exports ↔ runtime exports both directions, constant equality, no implementation). No tsc typecheck lane in CI — stated honestly. | BUILT · TEST_EXECUTED | [`packages/agent-commerce/index.d.ts`](../packages/agent-commerce/index.d.ts) |
+| **Operator dashboard (bilingual)** | Offline operator view: decision timeline (APPROVE → EXECUTE exact → real MCP INVALID → real REST VERIFIED), the 8 named attacks refused, consent receipt id + pinned epoch, honest-gaps panel. Data island equals the committed artifacts byte-for-byte; fully offline. | BUILT · TEST_EXECUTED | [`docs/agent-commerce-dashboard.html`](agent-commerce-dashboard.html) |
+| **5 · Cross-Chain Execution Attestation** | The consent↔execution arc attested against a chain's COMMITTED binding record (CGXA/1: consent receiptId + executed-order commitment + the frozen adapter registry + verification level COMMITTED_EVIDENCE). | **BUILT · TEST_EXECUTED (offline attestation surface)** — on-chain broadcast legs **OWNER-GATED / NOT_PERFORMED** | [AGENT-COMMERCE-SECURITY-SPEC-V1.md](AGENT-COMMERCE-SECURITY-SPEC-V1.md) §8 · `packages/agent-commerce/attest.mjs` · `test/integrations/agent-commerce-attestation.test.mjs` (16 tests) · `examples/agent-commerce-attestation/run.mjs` |
+
+```text
+node --test test/integrations/agent-commerce-sdk.test.mjs test/integrations/agent-commerce-mcp.test.mjs test/integrations/agent-commerce-http.test.mjs
+```
+
+Spec, console, and instruments: [AGENT-COMMERCE-SECURITY-SPEC-V1.md](AGENT-COMMERCE-SECURITY-SPEC-V1.md) · [agent-commerce-console.html](agent-commerce-console.html) · [EXECUTION-TRUST-LAYER.md](EXECUTION-TRUST-LAYER.md) · [COMPETITIVE-LANDSCAPE.md](COMPETITIVE-LANDSCAPE.md) · [PILOT-KIT.md](PILOT-KIT.md). Outreach/funding documents are instruments only (no contact/integration/endorsement claimed).
+
+---
+
 ## 5. Verification & integration platform (v0.3.x)
 
 | Product / surface | What it does | Status | Entry point |
@@ -295,7 +320,7 @@ Every Stellar deliverable that exists in this repository, with its honest networ
 (CGEP/1)، محرك التحقق المستقل بثلاث لغات، جدار الحماية التنفيذي وSDK، طبقة
 الدليل والنزاع (DDE/1) ومحوّل People's Court (تجريبي فقط)، بدائيات اقتصاد
 الوظائف (ميزانية مغلقة عند النشر، قبول موقّع، بوابة x402 تُبقي `UNKNOWN`
-معلّقًا، وسجل رفض بلا أسرار)، منصة التحقق والتكامل، وطبقة الصدق (سجل الادعاءات،
+معلّقًا، وسجل رفض بلا أسرار)، **عائلة أمن تجارة الوكلاء v1.0** (منتجات 1–4 مبنية ومُختبَرة أوفلاين وبأوامر اصطناعية: جدار التفويض، إيصالات الموافقة CGCR/1، محرك المخاطر AGR/1، وSDK+MCP+REST — التكامل الخارجي NOT_BUILT ونشر npm بقرار المالك؛ والمنتج 5 «الإثبات عبر الشبكات» موصَّف SPEC'D وغير مبني)، منصة التحقق والتكامل، وطبقة الصدق (سجل الادعاءات،
 الشارات غير الصادرة، بوابة الإصدار).
 
 **أرقام حقيقية مقاسة:** الإيراد **$0** · العملاء **0** · الشراكات **0** ·
