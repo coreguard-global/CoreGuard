@@ -9,6 +9,7 @@ Determine whether a developer **not involved** in building PSAR/1 can, using onl
 - **Package under test:** `docs/PSAR1-INDEPENDENT-VERIFICATION-PACKAGE.md` (pinned to a specific commit/tag).
 - **Scope frozen for the trial:** no feature additions; only clarifications/fixes to docs or reproducibility issues discovered by the trial (logged as changes) before a re-trial.
 - **Reviewer independence:** no participation in PSAR/1 design/implementation; no live assistance from the author during execution (questions/ambiguities recorded, not answered in real time).
+- **Before trial start:** pin the specific commit/tag to be tested and record the execution environment, commands, and outputs as they appear (do not edit or sanitize failures).
 
 ## 3) Trial procedure
 
@@ -30,6 +31,7 @@ Reviewer records:
 - **Environment:** OS, Node version, hardware/VM notes, network conditions relevant to setup
 - **Setup outcome:** success/failure, time taken, blockers, deviations required
 - **Reproduction:** for each documented case, observed result vs. expected (PASS/BLOCK, reason/code where applicable), with command outputs/logs
+- **Result categories (do not merge):** classify outcomes separately as (1) successfully reproduced, (2) not reproduced due to environment issues, (3) not reproduced due to deficiencies/ambiguity in the package — do not conflate environment failures with package failures.
 - **Understanding:** could they explain (a) what is guaranteed, (b) what is not guaranteed, (c) trust assumptions (issuer key pinning, etc.)?
 - **Friction & gaps:** unclear steps, missing info, ambiguities, errors, or misleading wording
 - **Verdict (factual):** “reproduced as documented” / “partially reproduced” / “not reproduced”, with evidence
@@ -48,6 +50,7 @@ Reviewer records:
 ## 5) How to state results (accuracy rules)
 - Permitted (if true): “The PSAR/1 verification package was executed and the documented checks were reproduced by an independent reviewer (commit X, date Y).”
 - Not permitted without separate evidence: claims of security correctness, production readiness, wallet readiness, or third-party adoption/endorsement.
+- **Scope of conclusion:** this trial is an independent verification of runnability and reproduction of specified results — **not** a security audit and **not** an independent certification/endorsement of the product.
 - Always report limitations and any unreproduced/ambiguous outcomes.
 
 ## 6) Reviewer report template (copy/fill)
