@@ -42,5 +42,5 @@ Publisher/human judgment can feed in as input, but the **hold is enforced by the
 
 - **Playground (live):** [https://eslam-x.github.io/coreguard/PLAYGROUND.html](https://eslam-x.github.io/coreguard/PLAYGROUND.html)
 - **Demo:** `node demo.mjs`
-- **Tests:** 1701 / 1701 passing • Boundary audit PASS · Release gate GATE_PASS
+- **Tests:** 1711 / 1711 passing • Boundary audit PASS · Release gate GATE_PASS
 - **One-Pager:** [ONE-PAGER.md](ONE-PAGER.md)
