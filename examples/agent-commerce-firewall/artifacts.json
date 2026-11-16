@@ -1,0 +1,75 @@
+{
+  "spec": "AC-FW/1",
+  "demo": "agent-commerce-firewall (offline · synthetic · zero keys · the firewall only refuses)",
+  "boundary": "the composed authorization firewall refuses — it never signs, submits or broadcasts; VERIFIED ≠ SAFE; delivery conformity (DDE/1) is never decided; the actor is declared, never detected",
+  "arcs": [
+    {
+      "leg": "PRE_GATE",
+      "outcome": "ALLOW",
+      "reasons": [],
+      "consentChecked": true
+    },
+    {
+      "leg": "EXECUTE+REVIEW",
+      "outcome": "ALLOW",
+      "verdict": "VERIFIED",
+      "engineVerdict": "VERIFIED",
+      "riskClassification": "CLEAN",
+      "consumed": true,
+      "consumedLedger": "process-local (durable single-use anchoring NOT_BUILT)"
+    }
+  ],
+  "attackLegs": [
+    {
+      "attack": "RECIPIENT_SWAP (pre)",
+      "outcome": "DENY",
+      "codes": [
+        "CONSENT_MISMATCH",
+        "POLICY_REFUSED",
+        "POLICY_REFUSED"
+      ]
+    },
+    {
+      "attack": "VALUE_ESCALATION (pre)",
+      "outcome": "DENY",
+      "codes": [
+        "CONSENT_MISMATCH",
+        "POLICY_REFUSED"
+      ]
+    },
+    {
+      "attack": "RECORD_TAMPER (pre)",
+      "outcome": "DENY",
+      "codes": [
+        "CONSENT_INVALID"
+      ]
+    },
+    {
+      "attack": "WINDOW_CLOSED (pre)",
+      "outcome": "DENY",
+      "codes": [
+        "WINDOW_CLOSED"
+      ]
+    },
+    {
+      "attack": "SINGLE_USE_REUSE (pre)",
+      "outcome": "DENY",
+      "codes": [
+        "SINGLE_USE_CONSUMED"
+      ]
+    },
+    {
+      "attack": "SINGLE_USE_REUSE (post)",
+      "outcome": "DENY",
+      "verdict": "INVALID",
+      "riskClassification": "VIOLATIONS",
+      "codes": [
+        "SINGLE_USE_REUSE"
+      ]
+    }
+  ],
+  "determinism": {
+    "decisionBytesStable": true
+  },
+  "ok": true
+}

@@ -16,7 +16,7 @@ An agent pays. The user approves a specific order — a merchant, items, a total
 
 | # | Product | Surfaces (committed paths) | Status | Measured where |
 |---|---|---|---|---|
-| 1 | Agent Authorization Firewall | `packages/agent-commerce/index.mjs` (createConsent → verifyExecution, fail-closed) over `packages/policy` | BUILT · TEST_EXECUTED (offline) | the suite arc + integration tests |
+| 1 | Agent Authorization Firewall | `packages/agent-commerce/firewall.mjs` (AC-FW/1 composed gate: `authorizeRequest` → `reviewExecution`) over `packages/policy` | BUILT · TEST_EXECUTED (offline) | the firewall contract tests + the offline demo |
 | 2 | Verifiable Consent Receipts (CGCR/1) | `packages/agent-commerce/index.mjs` (createConsent, verifyConsent) over `packages/canonical` · `packages/evidence` · `packages/verifier` | BUILT · TEST_EXECUTED | the suite CONSENT leg + tests |
 | 3 | Agent Risk Engine (AGR/1) | `packages/agent-commerce/risk.mjs` | BUILT · TEST_EXECUTED | the suite attack battery + tests |
 | 4 | Agent Commerce SDK · MCP server · REST API | `packages/agent-commerce/index.mjs` · `mcp.mjs` · `http.mjs` | BUILT · TEST_EXECUTED — npm publication OWNER-GATED | the suite MCP + HTTP legs + tests |
@@ -40,6 +40,7 @@ Product 5 note (honest context, committed facts only): per-chain attribution mac
 | Surface | File | What it adds |
 |---|---|---|
 | AC-SDK/1 façade | `packages/agent-commerce/index.mjs` | one provider-independent API: `createConsent` · `verifyConsent` · `verifyExecution` · `nameDrift` |
+| AC-FW/1 composed firewall | `packages/agent-commerce/firewall.mjs` | product 1 as ONE face over the existing engines (no fifth engine): the PRE-EXECUTION gate `authorizeRequest` (committed policy against the DECLARED request · consent byte-match · caller-pinned window · single-use replay consulted, never consumed) + the POST-EXECUTION review `reviewExecution` (the full verifyExecution record) · frozen 6-code refusal vocabulary · ALLOW only on an empty reasons list · a shared `createFirewall({ consumedSet })` bound guard; the family's shared trace→policy context (`policy-context.mjs`) keeps the firewall and AGR/1 judging the same rule context |
 | CGCR/1 consent record | `index.mjs` | the user's approval bound to the EXACT approved order bytes as a CGEP/1 receipt with a PINNED timestamp |
 | AGR/1 drift taxonomy | `risk.mjs` | 8 named violation classes with severities (§5) — deterministic, never a probabilistic score |
 | MCP server | `mcp.mjs` | real stdio JSON-RPC 2.0 server (protocol 2025-06-18), 4 tools, newline-delimited transport |
@@ -53,6 +54,8 @@ Product 5 note (honest context, committed facts only): per-chain attribution mac
 ### 3c. NOT_BUILT — named, with no pretense
 
 **Revision 2026-11-15:** three §3c rows moved to BUILT on this tree — the named attack battery (prompt-injection fuzz + the cross-session gap, honestly framed), the TypeScript declaration surface (structural contract; no tsc lane in CI — stated on the surface itself), and the bilingual authorization/receipts dashboard — and the cross-chain attestation row moved to BUILT the same day (CGXA/1, the offline attestation surface; its broadcast legs stay OWNER-GATED, §8). The rows below are what remains. §4–§7 are unchanged; §8–§10 record the attestation build, the npm lane and the IP study.
+
+**Revision 2026-11-16:** product 1 now ships as ONE composed firewall face — `packages/agent-commerce/firewall.mjs` (AC-FW/1, §3b): a request-time interception gate over `packages/policy` + the consent binding, plus the after-the-fact review over the family's own verdict — no fifth engine was built. The surface registry (`docs/surface-status.json`, `agent-authorization-firewall`) was re-pointed from the older Stellar mandate gate (`packages/agent-gate`, a distinct surface) to this face, with the alignment guarded by a contract test. Durable single-use consumption anchoring remains the next step (§4 note).
 
 | Missing surface | Why it matters | Status |
 |---|---|---|
@@ -120,6 +123,7 @@ A reviewer can verify every claim on this tree, offline, with zero keys:
 8. **The dashboard contract:** run `node --test test/integrations/agent-commerce-dashboard-page.test.mjs` — data island equals the committed artifacts byte-for-byte; boundaries in BOTH languages; the page fully offline.
 9. **The attestation surface (CGXA/1):** run `node --test test/integrations/agent-commerce-attestation.test.mjs` — the exact arc VERIFIES offline against both committed adapters; every attack leg REFUSES fail-closed with a named code from the frozen 9-code vocabulary; the record id re-derives byte-deterministically; the attestation view consumes nothing; every adapter fact literal is pinned to its cited committed document; no exported name suggests a broadcast.
 10. **The attestation demo:** run `node examples/agent-commerce-attestation/run.mjs` — exit 0 ONLY on the exact arc (CONSENT VERIFIED → ATTEST+VERIFY VERIFIED → the 3 named attack legs REFUSED with their codes → determinism); re-running regenerates `examples/agent-commerce-attestation/artifacts.json` byte-identically — the committed copy is the reference artifact.
+11. **The authorization firewall (AC-FW/1):** run `node examples/agent-commerce-firewall/run.mjs` — exit 0 ONLY on the exact arc (PRE gate ALLOWs the exact request → the exact execution VERIFIES → the 5 named attack legs DENIED with their codes → determinism); re-running regenerates `examples/agent-commerce-firewall/artifacts.json` byte-identically — the committed copy is the reference artifact. The firewall contract tests additionally prove the frozen refusal vocabulary, byte-deterministic decisions, the pre-gate never consuming a single-use consent, and the registry's product-1 mapping (`packages/agent-commerce/firewall.mjs`).
 
 ## 8. Cross-Chain Execution Attestation — BUILT as the offline attestation surface (CGXA/1)
 

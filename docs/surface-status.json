@@ -1,6 +1,6 @@
 {
   "schema": "coreguard.surface-status/1",
-  "updated": "2026-11-15",
+  "updated": "2026-11-16",
   "why": "One registry so that 'code exists', 'something was executed once' and 'an external project can adopt this' can never be averaged into a single flattering word.",
   "axes": {
     "code": ["BUILT", "BUILT_UNVERIFIED", "PLAN_ONLY", "NOT_BUILT"],
@@ -79,7 +79,7 @@
       "integration": "NOT_BUILT",
       "matrixRow": true,
       "evidence": [],
-      "note": "The flagship surface: refuses an envelope that diverges from the authorized intent, including a batched second payment. No signer, no submission, no chain read."
+      "note": "The flagship surface: refuses an envelope that diverges from the authorized intent, including a batched second payment. No signer, no submission, no chain read. Distinct from product 1 of the agent-commerce family — the composed AC-FW/1 firewall (agent-authorization-firewall), which composes packages/policy over the agent-commerce verdict rather than extending this Stellar mandate gate."
     },
     {
       "id": "stellar-freighter",
@@ -193,14 +193,14 @@
     },
     {
       "id": "agent-authorization-firewall",
-      "label": "Agent Authorization Firewall (product 1)",
-      "path": "packages/agent-gate/index.mjs",
+      "label": "Agent Authorization Firewall (AC-FW/1) (product 1)",
+      "path": "packages/agent-commerce/firewall.mjs",
       "code": "BUILT",
       "execution": "TEST_EXECUTED",
       "integration": "NOT_BUILT",
       "matrixRow": true,
-      "evidence": ["test/integrations/agent-payment-gate.test.mjs"],
-      "note": "Product 1 of the agent-commerce family: an agent refuses an action that diverges from the authorized intent, offline, with a committed battery. TEST_EXECUTED; integration NOT_BUILT (no external adopter yet)."
+      "evidence": ["test/integrations/agent-commerce-firewall.test.mjs", "examples/agent-commerce-firewall/run.mjs", "examples/agent-commerce-firewall/artifacts.json"],
+      "note": "Product 1 of the agent-commerce family as ONE composed face over the existing engines (packages/policy + the CGCR/1 consent binding + the CGEP/1 verdict + AGR/1 — no fifth engine): a request-time interception gate (authorizeRequest: committed policy against the declared request, consent byte-match, caller-pinned window, single-use replay consulted but never consumed) and the after-the-fact review (reviewExecution: the full verifyExecution record). Refusals carry the frozen AC-FW/1 codes; ALLOW requires an empty reasons list; decisions are byte-deterministic. TEST_EXECUTED (contract tests + deterministic demo with committed artifacts); integration NOT_BUILT (no external adopter yet). Distinct older engines it composes but does not absorb: packages/firewall (Phase-D EVM decision core) and packages/agent-gate (Stellar mandate gate, AGENT-GATE/1)."
     },
     {
       "id": "consent-receipts",

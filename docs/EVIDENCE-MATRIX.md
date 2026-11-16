@@ -83,7 +83,7 @@ today and cannot adopt the latter today.
 
 | Surface | Code | Execution | Integration | Evidence |
 |---|---|---|---|---|
-| `agent-authorization-firewall` — refuse execution that diverges from authorized intent (product 1) | BUILT | TEST_EXECUTED — offline fail-closed battery (authorization bound to exact bytes; divergence refused) | NOT_BUILT — no external adopter | `packages/agent-gate/index.mjs`; `test/integrations/agent-payment-gate.test.mjs` |
+| `agent-authorization-firewall` — the composed authorization firewall (AC-FW/1): request-time gate + after-the-fact review (product 1) | BUILT | TEST_EXECUTED — offline fail-closed arc (PRE gate ALLOWs the exact request / DENIES with named codes; POST review VERIFIED exact / INVALID drifted; byte-deterministic decisions) | NOT_BUILT — no external adopter | `packages/agent-commerce/firewall.mjs`; `test/integrations/agent-commerce-firewall.test.mjs`; `examples/agent-commerce-firewall/artifacts.json` |
 | `consent-receipts` — Verifiable Consent Receipts (CGCR/1) (product 2) | BUILT | TEST_EXECUTED — consent bound to exact approved order bytes; verify fail-closed with named drift on divergence | NOT_BUILT — no external adopter | `packages/agent-commerce/index.mjs`; `test/integrations/agent-commerce-sdk.test.mjs` |
 | `agent-risk-engine` — deterministic authorization-drift taxonomy (AGR/1) (product 3) | BUILT | TEST_EXECUTED — named classes + severities (deterministic, not a probabilistic fraud score; `VERIFIED ≠ SAFE`) | NOT_BUILT — no external adopter | `packages/agent-commerce/risk.mjs`; `test/integrations/agent-commerce-sdk.test.mjs` |
 | `agent-commerce-sdk-mcp-rest` — SDK + MCP server + REST API (product 4) | BUILT | TEST_EXECUTED — SDK, stdio MCP (JSON-RPC) and REST `/v1/authorize` · `/v1/verify` · `/v1/risk-assess` exercised offline | NOT_BUILT — npm publication OWNER-GATED; no external adopter | `packages/agent-commerce/`; `test/integrations/agent-commerce-sdk.test.mjs` · `test/integrations/agent-commerce-mcp.test.mjs` · `test/integrations/agent-commerce-http.test.mjs` |
@@ -95,7 +95,7 @@ today and cannot adopt the latter today.
 
 ## Totals
 
-Suite total: **1673 / 1673 pass**, machine-pinned in
+Suite total: **1694 / 1694 pass**, machine-pinned in
 `docs/state-snapshot.json` (the only authoritative count in the repo).
 Boundary audit: **0 violations**; file count lives in the same snapshot.
 

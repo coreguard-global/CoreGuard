@@ -17,6 +17,7 @@
  */
 
 import { evaluatePolicy } from "@coreguard/policy";
+import { tracePolicyContext } from "./policy-context.mjs";
 
 export const AGR_VERSION = "AGR/1";
 
@@ -217,25 +218,9 @@ export function assessRisk({ intent, policy, trace, consumed = false }) {
   }
 
   // 6. Committed policy rules, evaluated against the executed order
-  //    (mirrors the verifier's own trace→policy context mapping).
+  //    (the family's shared trace→policy context — policy-context.mjs).
   if (policy?.rules?.length) {
-    const selector = String(trace.calldata ?? "0x").slice(0, 10).toLowerCase();
-    let recipient = trace.to ?? null;
-    if (selector === "0xa9059cbb" && String(trace.calldata ?? "").length >= 74) {
-      recipient = "0x" + String(trace.calldata).slice(34, 74);
-    } else if (selector === "0x23b872dd" && String(trace.calldata ?? "").length >= 138) {
-      recipient = "0x" + String(trace.calldata).slice(98, 138);
-    }
-    const context = {
-      value: trace.value ?? "0",
-      target: trace.to ?? "0x",
-      recipient: recipient ?? "0x",
-      selector,
-      blockTimestamp: trace.blockTimestamp ?? "0",
-      slippageBps: trace.slippageBps ?? "0",
-      gasUsed: trace.gasUsed ?? "0",
-      priceBps: trace.priceBps ?? "10000",
-    };
+    const context = tracePolicyContext(trace);
     let evaluation;
     try {
       evaluation = evaluatePolicy(policy, context);
