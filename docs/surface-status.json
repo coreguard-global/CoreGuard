@@ -211,18 +211,18 @@
       "integration": "NOT_BUILT",
       "matrixRow": true,
       "evidence": ["packages/agent-commerce/index.mjs"],
-      "note": "Product 2 of the agent-commerce family: a consent record binds the user's approval to the exact approved order bytes as an independently re-derivable receipt; a verifying execution that diverges is fail-closed INVALID with the drifted field named (AGR/1)."
+      "note": "Product 2 of the agent-commerce family: a consent record binds the user's approval to the exact approved order bytes as an independently re-derivable receipt; a verifying execution that diverges is fail-closed INVALID with the drifted field named (AGR/1). Durable cross-process consumption anchoring on the same host is provided by the file-backed AC-CS/1 store adapter (consumedSet injection); an on-chain single-use marker remains OWNER-GATED / NOT_BUILT."
     },
     {
       "id": "agent-risk-engine",
-      "label": "Agent Risk Engine (AGR/1) (product 3)",
+      "label": "Agent Risk Engine (AGR/1) + standalone CLI (product 3)",
       "path": "packages/agent-commerce/risk.mjs",
       "code": "BUILT",
       "execution": "TEST_EXECUTED",
       "integration": "NOT_BUILT",
       "matrixRow": true,
-      "evidence": ["packages/agent-commerce/risk.mjs"],
-      "note": "Product 3 of the agent-commerce family: deterministic authorization-drift taxonomy (named classes + severities). Not a probabilistic fraud score; VERIFIED ≠ SAFE."
+      "evidence": ["packages/agent-commerce/risk.mjs", "packages/agent-commerce/risk-cli.mjs", "test/integrations/agent-commerce-risk-cli.test.mjs"],
+      "note": "Product 3 of the agent-commerce family: deterministic authorization-drift taxonomy (named classes + severities, classes frozen) plus standalone CLI with assessment persistence (`packages/agent-commerce/risk-cli.mjs`: JSON report + JSONL ledger). Not a probabilistic fraud score; VERIFIED ≠ SAFE."
     },
     {
       "id": "agent-commerce-sdk-mcp-rest",
@@ -234,6 +234,17 @@
       "matrixRow": true,
       "evidence": ["packages/agent-commerce/index.mjs"],
       "note": "Product 4 of the agent-commerce family: the commerce arc ships as SDK surface + MCP server (stdio JSON-RPC) + REST endpoints (POST /v1/authorize, POST /v1/verify, POST /v1/risk-assess). npm publication is owner-gated."
+    },
+    {
+      "id": "agent-commerce-consumption-store",
+      "label": "Durable single-use consumption store adapter (AC-CS/1)",
+      "path": "packages/agent-commerce/consumption-store.mjs",
+      "code": "BUILT",
+      "execution": "TEST_EXECUTED",
+      "integration": "NOT_BUILT",
+      "matrixRow": true,
+      "evidence": ["packages/agent-commerce/consumption-store.mjs", "test/integrations/agent-commerce-consumption-store.test.mjs"],
+      "note": "File-backed Set-compatible consumption ledger for durable cross-process single-use anchoring on the same host via existing consumedSet injection. NOT a distributed ledger and NOT an on-chain marker; an on-chain consumption marker remains OWNER-GATED / NOT_BUILT. VERIFIED ≠ SAFE."
     },
     {
       "id": "agent-commerce-attack-battery",
@@ -254,8 +265,8 @@
       "execution": "TEST_EXECUTED",
       "integration": "NOT_BUILT",
       "matrixRow": true,
-      "evidence": ["packages/agent-commerce/index.d.ts", "test/integrations/agent-commerce-types.test.mjs"],
-      "note": "Type-only declaration surface over index.mjs + risk.mjs, validated structurally (declared value-exports ↔ runtime exports, constant equality, boundary strings, no implementation). There is no tsc typecheck lane in CI — the structural contract is the honest limit of what is verified."
+      "evidence": ["packages/agent-commerce/index.d.ts", "packages/agent-commerce/tsconfig.json", "packages/agent-commerce/typecheck-smoke.ts", "test/integrations/agent-commerce-types.test.mjs"],
+      "note": "Type-only declaration surface over index.mjs + risk.mjs, validated structurally (declared value-exports ↔ runtime exports, constant equality, boundary strings, no implementation) and type-checked in CI via `npx --yes --package typescript@5.9 tsc --noEmit --project packages/agent-commerce` (declaration surface + smoke)."
     },
     {
       "id": "agent-commerce-dashboard",
@@ -270,14 +281,14 @@
     },
     {
       "id": "agent-commerce-attestation",
-      "label": "Cross-Chain Execution Attestation (CGXA/1) — the consent↔execution arc attested against a chain's committed binding record (product 5)",
+      "label": "Cross-Chain Execution Attestation (CGXA/1) + Soroban consent-binding preparation (product 5)",
       "path": "packages/agent-commerce/attest.mjs",
       "code": "BUILT",
       "execution": "TEST_EXECUTED",
       "integration": "NOT_BUILT",
       "matrixRow": true,
-      "evidence": ["packages/agent-commerce/attest.mjs", "test/integrations/agent-commerce-attestation.test.mjs", "examples/agent-commerce-attestation/run.mjs", "examples/agent-commerce-attestation/artifacts.json"],
-      "note": "Product 5 of the agent-commerce family: one verifiable statement binding the consent receiptId + the executed-order commitment (the CGEP/1 trace-domain hash) + the target chain's COMMITTED binding record (frozen adapter registry: Core DAO anchor chainId 1116 per docs/DEPLOYMENT.md; Stellar anchor contract per docs/EVIDENCE-MATRIX.md) + verification level COMMITTED_EVIDENCE. Offline, deterministic, fail-closed with 9 frozen reject codes; the attestation view consumes nothing. THERE IS NO BROADCAST SURFACE — a new anchor commit or a Soroban call is owner-authorized only and is not code here; an attestation of one environment is never bridge trust or a relay; VERIFIED ≠ SAFE."
+      "evidence": ["packages/agent-commerce/attest.mjs", "test/integrations/agent-commerce-attestation.test.mjs", "test/integrations/agent-commerce-soroban-binding.test.mjs", "examples/agent-commerce-attestation/run.mjs", "examples/agent-commerce-attestation/artifacts.json"],
+      "note": "Product 5 of the agent-commerce family: one verifiable statement binding the consent receiptId + the executed-order commitment (the CGEP/1 trace-domain hash) + the target chain's COMMITTED binding record (frozen adapter registry: Core DAO anchor chainId 1116 per docs/DEPLOYMENT.md; Stellar anchor contract per docs/EVIDENCE-MATRIX.md) + verification level COMMITTED_EVIDENCE. Offline, deterministic, fail-closed with 9 frozen reject codes. Soroban consent-binding integration is BUILT as offline preparation (CGXA-SOROBAN/1: `buildSorobanConsentBinding`, commit_authorized invocation payload, no broadcast). THERE IS NO BROADCAST SURFACE — any commit_authorized call is owner-authorized only and NOT_PERFORMED; an attestation of one environment is never bridge trust or a relay; VERIFIED ≠ SAFE."
     }
   ]
 }

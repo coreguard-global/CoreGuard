@@ -82,7 +82,8 @@
     "stellar:presign": "node examples/stellar-presign/demo.mjs",
     "agent-gate": "node packages/agent-gate/demo.mjs",
     "trust:demo": "node examples/execution-trust/run.mjs",
-    "trust:verify": "node examples/execution-trust/verify-third-party.mjs"
+    "trust:verify": "node examples/execution-trust/verify-third-party.mjs",
+    "agent-commerce:risk": "node packages/agent-commerce/risk-cli.mjs"
   },
   "engines": {
     "node": ">=18"

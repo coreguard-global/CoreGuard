@@ -24,7 +24,9 @@
  * no keys, no wall clock. A fresh anchor commit or a Soroban call is a NEW
  * on-chain transaction: by repo rule that is owner-authorized only, and this
  * module does not contain the code to attempt it. The adapter verifies
- * committed facts; it never performs anything.
+ * committed facts and can PREPARE a Soroban authorized-lane consent binding
+ * (`buildSorobanConsentBinding`) as an offline invocation payload; it never
+ * performs a broadcast.
  *
  * Consumption semantics: verifyAttestation is an attestation VIEW — it never
  * consumes a consent (single-use consumption stays in verifyExecution's
@@ -35,6 +37,7 @@
  * an attestation of one environment is not bridge trust or a relay claim.
  */
 
+import { createHash } from "node:crypto";
 import { domainHash, hashTrace } from "@coreguard/canonical";
 
 export const CGXA_VERSION = "CGXA/1";
@@ -88,7 +91,7 @@ export const CGXA_ADAPTERS = Object.freeze([
       anchorContract: "CCKA2GYVILX7YZVSXGVIHOPNLTRBBF2SSWKBTQBIE7M67N5N2QMMXPSP",
     }),
     source: "docs/EVIDENCE-MATRIX.md",
-    note: "EXECUTED deploy + first commit INVOKED per docs/EVIDENCE-MATRIX.md — carrying a consent binding into the Soroban lane is integration NOT_BUILT and is NOT code here",
+    note: "EXECUTED deploy + first commit INVOKED per docs/EVIDENCE-MATRIX.md — consent binding carried into the Soroban lane via buildSorobanConsentBinding (offline preparation/invocation payload, no broadcast); any commit_authorized call is owner-authorized only and NOT_PERFORMED",
   }),
 ]);
 
@@ -279,5 +282,120 @@ function refused(code, reason) {
     reasons: [`${code}: ${reason}`],
     boundary:
       "fail-closed: verification failure is never a pass; the verifier's own failure is a named code too",
+  };
+}
+
+export const SOROBAN_AUTH_DOMAIN = "coreguard-anchor-auth/1";
+export const SOROBAN_CONSENT_BINDING_VERSION = "CGXA-SOROBAN/1";
+
+function hexToBytes(hex) {
+  const h = typeof hex === "string" && hex.startsWith("0x") ? hex.slice(2) : String(hex ?? "");
+  if (!/^[0-9a-fA-F]{64}$/.test(h)) {
+    const err = new Error("CGXA/1: Soroban binding hash must be a 0x + 64-hex digest");
+    err.code = "MALFORMED_ATTESTATION";
+    throw err;
+  }
+  return Buffer.from(h, "hex");
+}
+
+/**
+ * Derive the Soroban authorized-anchor id exactly as the contract does:
+ *   id = sha256( utf8(AUTH_DOMAIN) ++ utf8(strkey(owner)) ++ hash_bytes )
+ * (CG-COMMITMENT-ANCHOR/1 authorized lane, byte-for-byte mirror).
+ */
+export function deriveSorobanAuthorizedAnchorId(owner, hash) {
+  if (typeof owner !== "string" || owner.length === 0) {
+    const err = new Error("CGXA/1: Soroban binding requires an owner strkey string");
+    err.code = "MALFORMED_ATTESTATION";
+    throw err;
+  }
+  const hashBytes = hexToBytes(hash);
+  const preimage = Buffer.concat([
+    Buffer.from(SOROBAN_AUTH_DOMAIN, "utf8"),
+    Buffer.from(owner, "utf8"),
+    hashBytes,
+  ]);
+  return "0x" + createHash("sha256").update(preimage).digest("hex");
+}
+
+/**
+ * Carry a consent binding into the Soroban lane (offline preparation only).
+ *
+ * Builds (or accepts) a CGXA/1 attestation for the consent-execution arc and
+ * produces the authorized-lane invocation payload for the Soroban commitment
+ * anchor's commit_authorized(owner, hash) - with the anchor id derived
+ * in-contract-style from (owner, hash) so identity is bound to the owner and
+ * the commitment.
+ *
+ * The commitment hash anchored is the attestation record id (CGXA/1:RECORD),
+ * binding the consent receipt id + executed commitment + chain binding record.
+ *
+ * NO BROADCAST: preparation data only. Submitting the invocation is a new
+ * on-chain transaction, owner-authorized only, and NOT_PERFORMED.
+ */
+export async function buildSorobanConsentBinding({
+  consent,
+  executedTrace,
+  owner,
+  nowSeconds,
+  adapterId = "stellar-anchor",
+  attestation,
+  attestationId,
+}) {
+  requireConsent(consent);
+  if (typeof owner !== "string" || owner.length === 0) {
+    const err = new Error("CGXA/1: Soroban consent binding requires an owner strkey");
+    err.code = "MALFORMED_ATTESTATION";
+    throw err;
+  }
+  const adapter = adapterById(adapterId);
+  if (!adapter || adapter.id !== "stellar-anchor") {
+    const err = new Error("CGXA/1: Soroban consent binding requires the stellar-anchor adapter");
+    err.code = "ADAPTER_UNKNOWN";
+    throw err;
+  }
+
+  let record = attestation;
+  let recordId = attestationId;
+  if (!record) {
+    const built = await buildAttestation({ consent, executedTrace, adapterId: "stellar-anchor", nowSeconds });
+    record = built.attestation;
+    recordId = built.attestationId;
+  } else {
+    if (typeof recordId !== "string") {
+      recordId = await domainHash("CGXA/1:RECORD", record);
+    }
+    const verdict = await verifyAttestation({ attestation: record, attestationId: recordId, consent, executedTrace });
+    if (verdict.decision !== "VERIFIED") {
+      const err = new Error("CGXA/1: cannot carry an unverified attestation into the Soroban lane (" + verdict.code + ")");
+      err.code = verdict.code || "MALFORMED_ATTESTATION";
+      throw err;
+    }
+  }
+
+  const anchorHash = recordId;
+  const authorizedAnchorId = deriveSorobanAuthorizedAnchorId(owner, anchorHash);
+
+  return {
+    spec: SOROBAN_CONSENT_BINDING_VERSION,
+    adapterId: adapter.id,
+    network: adapter.network,
+    chainBinding: Object.freeze({ ...adapter.binding }),
+    consentReceiptId: consent.receiptId,
+    executedCommitment: record.executedCommitment,
+    attestationId: recordId,
+    owner,
+    commitHash: anchorHash,
+    authorizedAnchorId,
+    invocation: Object.freeze({
+      contract: adapter.binding.anchorContract,
+      method: "commit_authorized",
+      args: Object.freeze({ owner, hash: anchorHash }),
+    }),
+    broadcast: "OWNER-GATED / NOT_PERFORMED",
+    boundary:
+      "offline Soroban consent-binding preparation (CGXA-SOROBAN/1): carries the consent-execution attestation into the Soroban authorized lane as an invocation payload; " +
+      "NO broadcast, NO signing, NO network, NO keys - commit_authorized is owner-authorized only and NOT_PERFORMED; " +
+      "VERIFIED != SAFE; never bridge trust or a relay",
   };
 }

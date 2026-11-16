@@ -210,7 +210,7 @@ export interface ExecutionVerdict {
 export declare function verifyExecution(
   consent: ConsentRecord,
   trace: DeclaredTrace,
-  options?: { consumedSet?: Set<string> },
+  options?: { consumedSet?: { has(id: string): boolean; add(id: string): unknown } },
 ): Promise<ExecutionVerdict>;
 
 // ---------------------------------------------------------------------------
@@ -219,12 +219,12 @@ export declare function verifyExecution(
 
 /**
  * Product 5: attests a consent↔execution arc against a chain's COMMITTED
- * binding record. THERE IS NO BROADCAST SURFACE — a new anchor commit or a
- * Soroban call is owner-authorized only and is not code here. VERIFIED ≠
- * SAFE; an attestation of one environment is never bridge trust, never a
- * relay, and never delivery conformity (DDE/1); the actor is declared, never
- * detected; every demo order is synthetic; AGR/1 remains never a
- * probabilistic fraud score.
+ * binding record. Soroban consent-binding preparation is offline (invocation
+ * payload only); THERE IS NO BROADCAST SURFACE — a commit_authorized call is
+ * owner-authorized only and NOT_PERFORMED. VERIFIED ≠ SAFE; an attestation of
+ * one environment is never bridge trust, never a relay, and never delivery
+ * conformity (DDE/1); the actor is declared, never detected; every demo order
+ * is synthetic; AGR/1 remains never a probabilistic fraud score.
  */
 export const CGXA_VERSION: "CGXA/1";
 
@@ -250,4 +250,75 @@ export interface CgxaVerdict {
   decision: "VERIFIED" | "REFUSED";
   code: string | null;
   reasons: string[];
+}
+
+// ---------------------------------------------------------------------------
+// CGXA-SOROBAN/1 — Soroban consent-binding preparation (product 5 integration)
+// ---------------------------------------------------------------------------
+
+export const SOROBAN_AUTH_DOMAIN: "coreguard-anchor-auth/1";
+export const SOROBAN_CONSENT_BINDING_VERSION: "CGXA-SOROBAN/1";
+
+/** Derive the Soroban authorized-anchor id: sha256(utf8(AUTH_DOMAIN)+utf8(owner)+hash_bytes). */
+export declare function deriveSorobanAuthorizedAnchorId(owner: string, hash: string): string;
+
+/** Build offline Soroban commit_authorized invocation payload carrying the consent↔execution attestation (NO broadcast). */
+export declare function buildSorobanConsentBinding(args: {
+  consent: unknown;
+  executedTrace?: unknown;
+  owner: string;
+  nowSeconds?: number;
+  adapterId?: string;
+  attestation?: unknown;
+  attestationId?: string;
+}): Promise<SorobanConsentBinding>;
+
+export interface SorobanConsentBinding {
+  spec: "CGXA-SOROBAN/1";
+  adapterId: string;
+  network: string;
+  chainBinding: Record<string, string>;
+  consentReceiptId: string;
+  executedCommitment: string;
+  attestationId: string;
+  owner: string;
+  commitHash: string;
+  authorizedAnchorId: string;
+  invocation: { contract: string; method: "commit_authorized"; args: { owner: string; hash: string } };
+  broadcast: "OWNER-GATED / NOT_PERFORMED";
+  boundary: string;
+}
+
+// ---------------------------------------------------------------------------
+// AC-CS/1 — durable single-use consumption store (file-backed, Set-compatible)
+// ---------------------------------------------------------------------------
+
+export const CONSUMPTION_STORE_VERSION: "AC-CS/1";
+export const CONSUMPTION_STORE_BOUNDARY: string;
+
+/** File-backed Set-compatible consumption ledger (durable across process restarts on host; NOT distributed, NOT on-chain). */
+export declare function createConsumptionStore(filePath: string): ConsumptionStore;
+export declare function openConsumptionStore(filePath: string): Readonly<ConsumptionStoreView>;
+
+export interface ConsumptionStore {
+  spec: "AC-CS/1";
+  filePath: string;
+  boundary: string;
+  has(id: string): boolean;
+  add(id: string): ConsumptionStore;
+  delete(id: string): boolean;
+  clear(): void;
+  readonly size: number;
+  ids(): string[];
+  toJSON(): { spec: "AC-CS/1"; ids: string[]; boundary: string };
+  [Symbol.iterator](): Iterator<string>;
+}
+
+export interface ConsumptionStoreView {
+  spec: "AC-CS/1";
+  filePath: string;
+  boundary: string;
+  has(id: string): boolean;
+  readonly size: number;
+  ids(): string[];
 }

@@ -17,10 +17,13 @@
  *   TAMPER     any byte of the stored consent record itself → commitment
  *              mismatch, INVALID.
  *
- * Consumption semantics (single-use): process-local by design and DOCUMENTED
- * as such — durable consumption anchoring (an on-chain single-use marker or
- * equivalent) is NOT_BUILT and is the next spec step. A fresh process cannot
- * see a previous consumption; nothing here hides that.
+ * Consumption semantics (single-use): the default ledger is process-local and
+ * DOCUMENTED as such. A file-backed Set-compatible store adapter (AC-CS/1,
+ * `createConsumptionStore`) is provided for durable cross-process anchoring on
+ * the same host via the existing `consumedSet` injection — it is NOT a
+ * distributed ledger and NOT an on-chain marker. An on-chain single-use
+ * consumption marker remains OWNER-GATED / NOT_BUILT. A fresh process without a
+ * shared ledger cannot see a previous consumption; nothing here hides that.
  *
  * BOUNDARY (standing): execution verification never decides delivery
  * conformity (DDE/1); VERIFIED ≠ SAFE; the actor is declared, never detected;
@@ -34,15 +37,30 @@ import { assessRisk, AGR_VERSION } from "./risk.mjs";
 
 export { assessRisk, AGR_VERSION };
 
+// AC-CS/1 — durable single-use consumption store adapter (file-backed,
+// Set-compatible; cross-process on host). NOT a distributed ledger, NOT an
+// on-chain marker (on-chain anchoring OWNER-GATED / NOT_BUILT).
+export {
+  CONSUMPTION_STORE_VERSION,
+  CONSUMPTION_STORE_BOUNDARY,
+  createConsumptionStore,
+  openConsumptionStore,
+} from "./consumption-store.mjs";
+
 // CGXA/1 — cross-chain execution attestation (product 5): the offline
-// attestation surface over committed chain facts. No broadcast capability is
-// re-exported because none exists in the module (see attest.mjs header).
+// attestation surface over committed chain facts. Soroban consent-binding
+// preparation is offline (invocation payload only); NO broadcast capability is
+// exported because none exists in the module (see attest.mjs header).
 export {
   CGXA_VERSION,
   CGXA_REJECT_CODES,
   CGXA_ADAPTERS,
   buildAttestation,
   verifyAttestation,
+  SOROBAN_AUTH_DOMAIN,
+  SOROBAN_CONSENT_BINDING_VERSION,
+  deriveSorobanAuthorizedAnchorId,
+  buildSorobanConsentBinding,
 } from "./attest.mjs";
 
 export const AGENT_COMMERCE_VERSION = "AC-SDK/1";
@@ -183,7 +201,9 @@ export async function verifyConsent(consent) {
  *    drift → FAIL with the check named);
  *  - the AGR/1 taxonomy classifies the drift by named class + severity;
  *  - a single-use consent is consumed by its FIRST verified execution
- *    (process-local ledger — durable anchoring NOT_BUILT, documented);
+ *    (default ledger process-local; pass a shared `consumedSet`, e.g. an
+ *    AC-CS/1 store, for cross-process anchoring on host — on-chain marker
+ *    OWNER-GATED / NOT_BUILT);
  *  - the verdict is VERIFIED only when the verifier verdict is VERIFIED, no
  *    taxonomy violation exists, and no consumption rule fires.
  *
