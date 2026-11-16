@@ -121,10 +121,43 @@ receipt whose evidence verifies perfectly, relabel it with a different
 receipt's identity, and the verdict must fail on the binding while the
 commitment checks pass. Two enumerated codes exist so the failure is legible:
 `RECEIPT_ID_UNBOUND` (nothing established about the label - `UNKNOWN`) and
-`RECEIPT_ID_MISMATCH` (two artifacts we hold disagree - `MISMATCH`). A format
+`RECEIPT_ID_MISMATCH` (two artifacts we hold disagree - `MISMATCH`). Both must
+be declared on the code axis as a frozen set a caller can enumerate, and both
+sit on an axis independent of evidence: they can fire while every evidence
+check passes, and no evidence failure may be reported under them. A format
 that carries no receipt identifier at all, like this draft's reference
 implementation before review, cannot express the distinction and therefore
 cannot claim conformance.
+
+The binding is proven, not asserted: the reference implementation's test suite
+mutates the shipped module at run time by deleting exactly this branch and
+shows the pre-fix code laundering the swap (`VERIFIED/RECEIPT_INTEGRITY` for a
+borrowed label) before showing the shipped code refusing the same bytes. A
+conformance kit that only tests the fixed code cannot tell a real branch from a
+missing one.
+
+### 7. External conformance vectors (AER-1)
+
+The six published id-binding vectors of AER-1 (`draft-zambo-aer1-26`, corpus kit
+v1.5.7) are vendored verbatim in `test/fixtures/aer1-corpus-v1.5.7/` with their
+provenance and both digests recorded, and are replayed on every CI run. Nothing
+here was paraphrased: the file's sha256 equals the digest the corpus index
+publishes for that path, and the corpus `evaluated_set_digest` is pinned beside
+it.
+
+The mapping is not one-to-one, and the differences are the interesting part:
+
+| AER-1 id verdict | this draft's outcome | note |
+|---|---|---|
+| `matched` | `BOUND` (`RECEIPT_ID_BOUND`) | the id agrees with an externally supplied expectation |
+| `mismatched` | `MISMATCH` (`RECEIPT_ID_MISMATCH`) | the swap case: digest passes, label contradicts |
+| `unverified` | `UNKNOWN` (`RECEIPT_ID_UNBOUND`) | a label checked against nothing is not a pass here either |
+| `absent` | `UNKNOWN` (`RECEIPT_ID_UNBOUND`) | a missing required member is an absence, not a skip |
+| `resolved` | `UNKNOWN` (`RECEIPT_ID_RESOLUTION_UNSUPPORTED`) | **declared gap**: CGEP/1 has no resolution step, so a resolved claim cannot be exercised; both resolution vectors — agreement and disagreement — receive the same answer, because they are indistinguishable to a verifier without one |
+
+The resolution row is a to-do, not a feature: adopting AER-1's Section 9 shape
+(the record an id resolves to must agree on the committed digest) is the work
+required before this column can say more than "unsupported".
 
 ## Testability
 

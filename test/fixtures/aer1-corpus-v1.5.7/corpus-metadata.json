@@ -1,0 +1,13 @@
+{
+ "format": "aer1-evaluated-corpus/1",
+ "kit_version": "1.5.7",
+ "draft": "draft-zambo-aer1-26",
+ "vector_count": 143,
+ "check_count": 146,
+ "evaluated_set_digest": "sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2",
+ "base_corpus_digest": "sha256:b9a740e75c1d01a666d952d6037f9816d791e9bc0bfcef55a4e0d43c02cceb87",
+ "digest_algorithm": "SHA-256 of UTF-8 concatenation of path + NUL + lowercase SHA-256 of exact file bytes + LF, for evaluated vector files sorted by ASCII relative path. Excludes index, runners and license.",
+ "base_url": "https://zambo.dev/aer1/corpus/v1.5.7/",
+ "source": "https://zambo.dev/aer1/corpus.json",
+ "subset_note": "Metadata subset of the published corpus index (not the full file list)."
+}

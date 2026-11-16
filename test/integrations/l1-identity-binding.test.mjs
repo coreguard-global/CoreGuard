@@ -15,8 +15,19 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 
-import { commit, verifyReceipt } from "../../scripts/ladder/verification-levels.mjs";
+import {
+  commit,
+  verifyReceipt,
+  L1_VERDICT_CODES,
+  L1_IDENTITY_CODES,
+} from "../../scripts/ladder/verification-levels.mjs";
+
+const MODULE_PATH = new URL("../../scripts/ladder/verification-levels.mjs", import.meta.url);
 
 const RULES = [{ id: "VALUE_001" }];
 const TX = "0x" + "ab".repeat(32);
@@ -98,6 +109,65 @@ test("VERIFIED is unreachable without a bound identity, by construction", () => 
       else assert.notEqual(v.verdict, "VERIFIED", `identity ${JSON.stringify(id)} must not verify`);
     }
   }
+});
+
+test("the identity codes are declared on the code axis, not invented at the call site", () => {
+  // A caller that wants to render "this is the wrong receipt" must be able to
+  // enumerate the code instead of matching a string it guessed, and the two
+  // identity codes must be a named subset of the whole vocabulary - they are
+  // the only two that can fire while every evidence check passed.
+  assert.deepEqual(L1_IDENTITY_CODES, [
+    "RECEIPT_ID_BOUND",
+    "RECEIPT_ID_UNBOUND",
+    "RECEIPT_ID_MISMATCH",
+    "RECEIPT_ID_RESOLUTION_UNSUPPORTED",
+  ]);
+  for (const code of L1_IDENTITY_CODES) assert.equal(L1_VERDICT_CODES[code], code);
+  assert.equal(L1_VERDICT_CODES.RECEIPT_INTEGRITY, "RECEIPT_INTEGRITY");
+  // Every code the machine can return is in the frozen table.
+  const reachable = [
+    verifyReceipt({ ...aliceReceipt, commitmentId: mallory.commitmentId }, alice, chainOk), // RECEIPT_ID_MISMATCH
+    verifyReceipt({ ...aliceReceipt, commitmentId: undefined }, alice, chainOk), // RECEIPT_ID_UNBOUND
+    verifyReceipt(aliceReceipt, alice), // NO_CHAIN_EVIDENCE
+    verifyReceipt({ ...aliceReceipt, txHash: "0x" + "ee".repeat(32) }, alice, chainOk), // TX_NOT_FOUND
+    verifyReceipt({ ...aliceReceipt, blockHash: OTHER_BLOCK }, alice, chainOk), // BLOCK_HASH_MISMATCH
+    verifyReceipt({ ...aliceReceipt, txHash: "0xdead" }, alice, chainOk), // EVIDENCE_INCONSISTENT
+    verifyReceipt({ status: "VERIFIED" }, alice, chainOk), // REQUIRED_EVIDENCE_MISSING
+    verifyReceipt(aliceReceipt, alice, chainOk), // RECEIPT_INTEGRITY
+  ].map((v) => v.verdictCode);
+  for (const code of reachable) assert.ok(L1_VERDICT_CODES[code] === code, `undeclared code reached the caller: ${code}`);
+});
+
+test("control: with the identity branch deleted, the pre-fix code DOES verify a borrowed label", async () => {
+  // This is the test that fails before the fix. It mutates the shipped module
+  // at run time - deletes the branch between the L1_PROBE_4 marker and the
+  // VERIFIED return - and executes the result. If the branch is what makes the
+  // difference, the mutated module must launder the swap; if the swap is caught
+  // for some other reason, this control fails and names that instead of
+  // pretending the guard is proven. Deleting the branch is the mutation; the
+  // assertion that the shipped module refuses the same bytes is the guard.
+  const src = readFileSync(MODULE_PATH, "utf8").replace(/\r\n/g, "\n");
+  const start = src.indexOf("// 4. identity binding. (marker: L1_PROBE_4");
+  assert.ok(
+    start > 0,
+    "the identity-binding branch is gone or its marker moved: the must-fail vectors cannot be proven to fail without it",
+  );
+  const end = src.indexOf('return { verdict: "VERIFIED", verdictCode: "RECEIPT_INTEGRITY"', start);
+  assert.ok(end > start, "could not find the VERIFIED return after the identity branch");
+
+  const dir = mkdtempSync(join(tmpdir(), "l1-prefix-"));
+  const file = join(dir, "verification-levels-prefix.mjs");
+  writeFileSync(file, src.slice(0, start) + src.slice(end), "utf8");
+  const prefix = await import(pathToFileURL(file).href);
+
+  const swapped = { ...aliceReceipt, commitmentId: mallory.commitmentId };
+  const before = prefix.verifyReceipt(swapped, alice, chainOk);
+  assert.equal(before.verdict, "VERIFIED", "the pre-fix code must launder the swap - otherwise this test does not bite");
+  assert.equal(before.verdictCode, "RECEIPT_INTEGRITY");
+
+  const after = verifyReceipt(swapped, alice, chainOk);
+  assert.equal(after.verdict, "MISMATCH", "the shipped code must refuse the same bytes the control above accepted");
+  assert.equal(after.verdictCode, L1_VERDICT_CODES.RECEIPT_ID_MISMATCH);
 });
 
 test("the borrowed-label verdict is distinguishable from every other MISMATCH", () => {

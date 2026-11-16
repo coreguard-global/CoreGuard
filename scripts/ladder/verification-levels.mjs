@@ -67,8 +67,94 @@ export function isReplayableCommitment(c) {
 
 /* ------------------------------------------------------------------ L1 */
 
+/**
+ * The L1 verdict codes, frozen so a caller can enumerate them instead of
+ * matching strings it guessed. Two of them sit on the identity axis and can
+ * fail while every evidence check passes — that is the whole point of the
+ * branch: verifying the bytes and verifying WHICH receipt they are must be
+ * separately reportable.
+ */
+export const L1_VERDICT_CODES = Object.freeze({
+  REQUIRED_EVIDENCE_MISSING: "REQUIRED_EVIDENCE_MISSING",
+  EVIDENCE_INCONSISTENT: "EVIDENCE_INCONSISTENT",
+  NO_CHAIN_EVIDENCE: "NO_CHAIN_EVIDENCE",
+  TX_NOT_FOUND: "TX_NOT_FOUND",
+  BLOCK_HASH_MISMATCH: "BLOCK_HASH_MISMATCH",
+  RECEIPT_ID_BOUND: "RECEIPT_ID_BOUND",
+  RECEIPT_ID_UNBOUND: "RECEIPT_ID_UNBOUND",
+  RECEIPT_ID_MISMATCH: "RECEIPT_ID_MISMATCH",
+  RECEIPT_ID_RESOLUTION_UNSUPPORTED: "RECEIPT_ID_RESOLUTION_UNSUPPORTED",
+  RECEIPT_INTEGRITY: "RECEIPT_INTEGRITY",
+});
+
+/** The subset that answers "is this the receipt it claims to be?", not "is the evidence real?". */
+export const L1_IDENTITY_CODES = Object.freeze([
+  L1_VERDICT_CODES.RECEIPT_ID_BOUND,
+  L1_VERDICT_CODES.RECEIPT_ID_UNBOUND,
+  L1_VERDICT_CODES.RECEIPT_ID_MISMATCH,
+  L1_VERDICT_CODES.RECEIPT_ID_RESOLUTION_UNSUPPORTED,
+]);
+
 const LX1_REQUIRED = ["status", "blockHash", "txHash", "chainId"];
 const HASH64 = /^0x[0-9a-fA-F]{64}$/;
+
+/**
+ * The identity axis of L1: "is this the receipt it claims to be?", answered
+ * separately from "is the evidence real?".
+ *
+ * A chain confirming a txHash/blockHash pair says nothing about WHICH receipt
+ * the evidence belongs to, so a verifier that only re-derives evidence will
+ * vouch for a label it never checked - the id-binding swap reported on issue
+ * #56 against the SEP draft. Exported so a conformance kit can exercise the
+ * branch with no chain, no network and no fixture of our own making.
+ *
+ *   BOUND                                        the receipt names the commitment it was presented with
+ *   UNKNOWN / RECEIPT_ID_UNBOUND                 nothing was named, or nothing was presented
+ *   MISMATCH / RECEIPT_ID_MISMATCH               two artifacts we hold disagree (borrowed label)
+ *   UNKNOWN / RECEIPT_ID_RESOLUTION_UNSUPPORTED  a resolution claim this format cannot exercise
+ *
+ * The last case exists because AER-1 binds an id by *resolution* (the record
+ * the id resolves to must agree on the committed digest) and CGEP/1 has no
+ * resolution step. Reporting that as unsupported is the honest answer; calling
+ * it agreement would be a pass on evidence nobody produced.
+ */
+export function bindReceiptIdentity(receipt, commitment, options = {}) {
+  const declaredId =
+    typeof receipt?.commitmentId === "string" && receipt.commitmentId.length > 0 ? receipt.commitmentId : null;
+  const presentedId =
+    typeof commitment?.commitmentId === "string" && commitment.commitmentId.length > 0 ? commitment.commitmentId : null;
+  // A resolution claim is answered before the missing-label branch on purpose:
+  // the claim is what makes the identity unverifiable here, and saying "unbound"
+  // would hide that a resolution step was asked for.
+  if (options.resolvedRecord || receipt.resolvedRecord) {
+    return {
+      verdict: "UNKNOWN",
+      verdictCode: L1_VERDICT_CODES.RECEIPT_ID_RESOLUTION_UNSUPPORTED,
+      reason:
+        "the receipt claims an identity by resolution (the id resolves to a record that must agree on the committed digest), and CGEP/1 has no resolution step; the identity stays unestablished, and unestablished is never a pass",
+    };
+  }
+  if (!declaredId || !presentedId) {
+    return {
+      verdict: "UNKNOWN",
+      verdictCode: L1_VERDICT_CODES.RECEIPT_ID_UNBOUND,
+      reason:
+        "the receipt does not name the commitment it belongs to (or none was presented), so nothing binds the evidence to this receipt identity",
+    };
+  }
+  if (declaredId !== presentedId) {
+    return {
+      verdict: "MISMATCH",
+      verdictCode: L1_VERDICT_CODES.RECEIPT_ID_MISMATCH,
+      reason: `receipt declares commitment ${declaredId} but was presented with ${presentedId} - the chain evidence may be genuine and belong to a different receipt`,
+    };
+  }
+  return {
+    verdict: "BOUND",
+    verdictCode: L1_VERDICT_CODES.RECEIPT_ID_BOUND,
+    reason: "the receipt names the commitment it was presented with",
+  };
+}
 
 export function verifyReceipt(receipt, commitment, chain) {
   if (!receipt || !commitment) {
@@ -114,22 +200,12 @@ export function verifyReceipt(receipt, commitment, chain) {
   //    put an absence of evidence in the same bucket as a detected forgery.
   //    Both codes exist so a caller can tell the borrowed-label case from
   //    "the chain does not know this tx" (TX_NOT_FOUND keeps that meaning).
-  const declaredId = typeof receipt.commitmentId === "string" && receipt.commitmentId.length > 0 ? receipt.commitmentId : null;
-  const presentedId = typeof commitment.commitmentId === "string" && commitment.commitmentId.length > 0 ? commitment.commitmentId : null;
-  if (!declaredId || !presentedId) {
-    return {
-      verdict: "UNKNOWN",
-      verdictCode: "RECEIPT_ID_UNBOUND",
-      reason:
-        "the chain confirms this txHash, but the receipt does not name the commitment it belongs to (or none was presented); the evidence is real and says nothing about which receipt it is. Bound identity is required for VERIFIED.",
-    };
-  }
-  if (declaredId !== presentedId) {
-    return {
-      verdict: "MISMATCH",
-      verdictCode: "RECEIPT_ID_MISMATCH",
-      reason: `receipt declares commitment ${declaredId} but was presented with ${presentedId} - the chain evidence may be genuine and belong to a different receipt`,
-    };
+  // 4. identity binding. (marker: L1_PROBE_4 — read by the mutation control
+  //    in test/integrations/l1-identity-binding.test.mjs, which deletes this
+  //    branch to prove the must-fail verbs really fail without it.)
+  const identity = bindReceiptIdentity(receipt, commitment);
+  if (identity.verdict !== "BOUND") {
+    return { verdict: identity.verdict, verdictCode: identity.verdictCode, reason: identity.reason };
   }
   return { verdict: "VERIFIED", verdictCode: "RECEIPT_INTEGRITY", requiredMissing: [] };
 }
