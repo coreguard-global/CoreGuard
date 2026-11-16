@@ -14,11 +14,11 @@
 - 🟠 Pi Network: DRY_RUN / PLAN_ONLY.
 
 ## SCF #46 request — $150,000 (requested, not awarded)
-| Tranche | Amount | Deliverables |
+| Tranche | Amount | Milestones (from the official budget) |
 |---|---|---|
-| T1 | $40,000 | Hardened Stellar verifier, PSAR/1 v2 semantic XDR checks, public npm release gate |
-| T2 | $55,000 | Soroban authorized-lane anchor (owner-gated), Agent Commerce pilot with an external Stellar partner |
-| T3 | $55,000 | Independent security review, wallet / anchor integrations, mainnet adoption metrics |
+| T1 | $40,000 | M1 — SDK v1 + measured 15-minute quickstart, API reference, error-code catalogue |
+| T2 | $55,000 | M2 — Soroban `commit_authorized` lane deployed from CI wasm with TTL/archival policy · M3 — two external two-week pilots (DEX/wallet + AI-agent payments) |
+| T3 | $55,000 | M4 — independent review findings closed, enterprise policies, SLA, pricing and support boundaries |
 
 ## Next 90 days
 - ⏳ Run the [Agent Commerce pilot plan](docs/AGENT-COMMERCE-PILOT-PLAN-2026-11-16.md) with a design partner (none signed yet).
