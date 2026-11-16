@@ -1,7 +1,11 @@
 <div align="center">
 
 <p align="center">
-  <img src="assets/core-guard-logo.png" alt="CoreGuard" width="78%">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/coreguard-banner-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="brand/coreguard-logo-light.png">
+    <img src="brand/coreguard-banner-dark.png" alt="CoreGuard — Verify • Protect • Empower" width="88%">
+  </picture>
 </p>
 
 # ⛨ CoreGuard
@@ -24,6 +28,26 @@
   <a href="https://www.linkedin.com/company/coreguard-global"><img src="https://img.shields.io/badge/LinkedIn-CoreGuard%20Global-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
   <a href="https://twitter.com/CoreGuardGlobal"><img src="https://img.shields.io/badge/Twitter-@CoreGuardGlobal-1DA1F2?style=flat-square&logo=twitter&logoColor=white" alt="Twitter"></a>
 </p>
+
+<table><tr>
+<td align="center" width="25%"><img src="brand/coreguard-shield.png" width="110" alt="CoreGuard shield"><br><sub><b>The Shield</b></sub></td>
+<td align="center" width="40%"><img src="brand/coreguard-app-icons.png" width="300" alt="CoreGuard app icons"><br><sub><b>App &amp; social icons</b></sub></td>
+<td align="center" width="35%"><img src="brand/coreguard-trust-3d.png" width="240" alt="More than security. It's trust."><br><sub><b>More than security. It's trust.</b></sub></td>
+</tr></table>
+
+### ★ New — Agent Commerce Security, Phase 2 (16 Nov 2026)
+
+| Module | What it does | Status |
+|---|---|---|
+| **AC-FW/1** Agent Authorization Firewall | Pre-execution authorization + post-execution review with named refusals | BUILT · TEST_EXECUTED |
+| **CGCR/1** Verifiable Consent Receipts | Approval bound to the exact approved bytes, re-derivable by anyone | BUILT · TEST_EXECUTED |
+| **AGR/1** Risk Engine + CLI | Frozen drift vocabulary, JSON/JSONL assessment persistence | BUILT · TEST_EXECUTED |
+| **AC-CS/1** Durable consumption store | Same-host, cross-process single-use anchoring (not distributed / on-chain) | BUILT · TEST_EXECUTED |
+| **CGXA/1 + CGXA-SOROBAN/1** | Offline execution attestation + Soroban consent-binding preparation — **no broadcast** | DRY_RUN |
+
+**Evidence:** [Showcase](docs/AGENT-COMMERCE-EVIDENCE-SHOWCASE-2026-11-16.md) · [Partner & funding one-pager](docs/AGENT-COMMERCE-PARTNER-FUNDING-ONE-PAGER-2026-11-16.md) · [Pilot plan](docs/AGENT-COMMERCE-PILOT-PLAN-2026-11-16.md) · [Outreach pack](docs/AGENT-COMMERCE-OUTREACH-PACK-2026-11-16.md) · [Roadmap](ROADMAP.md) · [Brand kit](brand/)
+
+> Synthetic fixtures only. No interception of real wallet/card flows, no provider endorsement, no customers, revenue, audit or awarded funding are claimed. `VERIFIED ≠ SAFE`.
 
 ### The Execution Trust Layer for Stellar
 **VERIFY · PROTECT · PROVE**
