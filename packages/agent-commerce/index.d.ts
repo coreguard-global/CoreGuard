@@ -3,10 +3,10 @@
  *
  * A TYPE-ONLY façade over the committed runtime modules (`index.mjs`, `risk.mjs`).
  * Declaration surface for editors and downstream adopters; it adds no runtime
- * code, no trust assumption and no dependency. There is no `tsc` typecheck lane
- * in CI — this file is validated structurally (declared names ↔ runtime
- * exports) by `test/integrations/agent-commerce-types.test.mjs`; that test is
- * the honest limit of what is verified here.
+ * code, no trust assumption and no dependency. The CI lane `tsc --noEmit` over
+ * this declaration surface (via `packages/agent-commerce/typecheck-smoke.ts`)
+ * type-checks the declarations for real; the structural tests below pin the
+ * declared names against the runtime exports on top of that.
  *
  * BOUNDARY (standing): execution verification never decides delivery conformity
  * (DDE/1); VERIFIED ≠ SAFE; the actor is declared, never detected; every order

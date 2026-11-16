@@ -1,10 +1,13 @@
 /**
  * Agent Commerce TypeScript declaration surface — structural contract tests.
  *
- * The honest limit of what is verified here: the .d.ts is a declaration file,
- * validated STRUCTURALLY (declared value-exports ↔ runtime exports, constant
- * equality, boundary strings, no implementation). There is no tsc typecheck
- * lane in CI, and this file never claims one. Node 18-safe.
+ * Layer 1 (this file): the .d.ts is a declaration file, validated STRUCTURALLY
+ * (declared value-exports ↔ runtime exports, constant equality, boundary
+ * strings, no implementation). Layer 2 is the real CI lane — `tsc --noEmit` over
+ * the declaration surface via `packages/agent-commerce/typecheck-smoke.ts`
+ * (see the typecheck step in .github/workflows/ci.yml); the lane does the
+ * compile-level check, these tests do the surface-parity checks. Neither
+ * claims more than it verifies. Node 18-safe.
  */
 
 import { test } from "node:test";
@@ -74,4 +77,11 @@ test("all eight AGR classes appear in the declaration", () => {
   for (const code of Object.keys(risk.RISK_CLASSES)) {
     assert.ok(dts.includes(`"${code}"`), code);
   }
+});
+
+test("the CI lane runs the real tsc typecheck over the declaration surface", () => {
+  const wfPath = resolve(here, "../../.github/workflows/ci.yml");
+  const wf = readFileSync(wfPath, "utf8");
+  assert.ok(wf.includes("Typecheck - Agent Commerce declaration surface (tsc)"), "typecheck CI step missing");
+  assert.ok(wf.includes("tsc --noEmit --project packages/agent-commerce"), "typecheck tsc command missing");
 });

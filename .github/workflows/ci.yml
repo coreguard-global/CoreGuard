@@ -47,6 +47,8 @@ jobs:
           python-version: '3.14'
       - name: Guard - workflow YAML (zero-jobs trap)
         run: node scripts/check-workflows.mjs
+      - name: Typecheck - Agent Commerce declaration surface (tsc)
+        run: npx --yes --package typescript@5.9 tsc --noEmit --project packages/agent-commerce
       - run: npm ci
       - name: Release gate self-audit (no test run — the gate auditing its own source)
         run: npm run release:gate:independence
