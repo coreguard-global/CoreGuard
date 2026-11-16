@@ -85,9 +85,9 @@ Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · 
 <!-- COREGUARD-WEBSITE-SYNC:START -->
 ### Live website content sync
 
-> Updated automatically after an authorized CoreGuard administrator saves website content. This block is the only part of README changed by the website sync. Funding remains requested, not awarded; VERIFIED ≠ SAFE.
+> Updated automatically after an authorized CoreGuard administrator saves website content. Only this managed block and the judges-language summary are changed by the website sync. Funding remains requested, not awarded; VERIFIED ≠ SAFE.
 
-**Last synced:** 2026-11-16T13:48:16.526Z · [Open the official website](https://coreguard-trust-and-defense.lovable.app/) · [Investor brief](https://coreguard-trust-and-defense.lovable.app/investors) · [Research blog](https://coreguard-trust-and-defense.lovable.app/blog)
+**Last synced:** 2026-11-16T13:51:12.653Z · [Open the official website](https://coreguard-trust-and-defense.lovable.app/) · [Investor brief](https://coreguard-trust-and-defense.lovable.app/investors) · [Research blog](https://coreguard-trust-and-defense.lovable.app/blog) · [Judges — English](https://coreguard-trust-and-defense.lovable.app/stellar#stellar-review) · [الحكّام — العربية](https://coreguard-trust-and-defense.lovable.app/ar/stellar#stellar-review)
 
 **Brand settings:** orange #FF8A00 · glow #FFB547 · background #0B0F14 · logo Official CoreGuard shield
 
@@ -123,7 +123,7 @@ Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · 
 | Destination | What investors and reviewers can inspect |
 |---|---|
 | **[Official CoreGuard website](https://coreguard-trust-and-defense.lovable.app/)** | The Execution Trust Layer vision, products, networks, public evidence and the focused Stellar launch order |
-| **[Stellar judges presentation — English](https://coreguard-trust-and-defense.lovable.app/stellar#stellar-review)** | Four trust layers, authorized AI-agent payments, the integration surface, function-by-function comparison, two-week pilot scorecard, team evidence, future Personal/Enterprise packaging and the five-stage execution plan |
+| **[Stellar judges presentation — English & Arabic](https://coreguard-trust-and-defense.lovable.app/stellar#stellar-review)** | Four trust layers, authorized AI-agent payments, the integration surface, function-by-function comparison, two-week pilot scorecard, team evidence, future Personal/Enterprise packaging and the five-stage execution plan |
 | **[Stellar Mainnet evidence](https://coreguard-trust-and-defense.lovable.app/stellar#request)** | The owner-operated Soroban commit and first signed funded gated swap, with explorer links and the requested **$40K / $55K / $55K** milestone presentation |
 | **[Core DAO execution evidence](https://coreguard-trust-and-defense.lovable.app/networks/core-dao)** | Execution receipts, fail-closed firewall and dispute-evidence surfaces for Core DAO |
 | **[Products](https://coreguard-trust-and-defense.lovable.app/products) · [Developments](https://coreguard-trust-and-defense.lovable.app/developments) · [Security & code reviews](https://coreguard-trust-and-defense.lovable.app/reviews)** | The current catalog, dated repository developments and published review findings with their limitations kept visible |
@@ -138,7 +138,7 @@ Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · 
 
 ### Judges' direct review path
 
-1. **See the whole presentation:** [Stellar judges & ecosystem review](https://coreguard-trust-and-defense.lovable.app/stellar#stellar-review) — the page is English throughout this section, including when the surrounding site is switched to Arabic.
+1. **See the whole presentation:** [Stellar judges & ecosystem review](https://coreguard-trust-and-defense.lovable.app/stellar#stellar-review) — the complete presentation is available in English and Arabic, each with direct README, Pilot Kit and comparison actions.
 2. **Inspect the implementation narrative:** [README](README.md) · [Execution Trust Layer positioning](docs/EXECUTION-TRUST-LAYER.md) · [Developer quickstart](docs/DEVELOPER-QUICKSTART.md).
 3. **Evaluate the next proof:** [Two-week Pilot Kit](docs/PILOT-KIT.md) — one named counterparty, one flow, measured integration effort, replayable artifacts and a publishable report including failures.
 4. **Compare by function, not hype:** [Cited competitive landscape](docs/COMPETITIVE-LANDSCAPE.md) — simulation, wallet security, smart-contract monitoring and AI-agent guardrails, with CoreGuard presented as a complementary evidence layer rather than a universal replacement.
