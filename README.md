@@ -40,7 +40,7 @@
 
 **See it in one command — offline, no keys:** `npm install` → `npm run trust:demo` — four pillars, three refusals by name, one receipt digest.
 
-Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · **[Pilot kit](docs/PILOT-KIT.md)** (two weeks, one artifact a stranger can verify) · **[Positioning](docs/EXECUTION-TRUST-LAYER.md)** · **[Competitive landscape](docs/COMPETITIVE-LANDSCAPE.md)** (cited) · **[SCF Build application v3](docs/SCF-BUILD-APPLICATION-V3.md)** · **[Evidence matrix](docs/EVIDENCE-MATRIX.md)** (code, execution and adoption, kept apart).
+Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · **[Pilot kit](docs/PILOT-KIT.md)** (two weeks, one artifact a stranger can verify) · **[Positioning](docs/EXECUTION-TRUST-LAYER.md)** · **[Competitive landscape](docs/COMPETITIVE-LANDSCAPE.md)** (cited) · **[SCF Build application v3](docs/SCF-BUILD-APPLICATION-V3.md)** · **[Evidence matrix](docs/EVIDENCE-MATRIX.md)** (code, execution and adoption, kept apart) · **[Audit readiness pack](docs/AUDIT-READINESS-PACK-2026-11-16.md)** (scope, invariants, out-of-scope) · **[Two draft LOIs](docs/loi/README.md)** (drafts: not sent, not signed).
 
 **Honest status today:** the four pillars are BUILT and TEST_EXECUTED in this repository; external adoption is **NOT_BUILT** — zero external projects, zero signed pilots, no third-party audit, and the Soroban authorized lane is source-only, not deployed.
 
