@@ -82,6 +82,42 @@ Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · 
 
 ## Official website, films & judges review
 
+<!-- COREGUARD-WEBSITE-SYNC:START -->
+### Live website content sync
+
+> Updated automatically after an authorized CoreGuard administrator saves website content. This block is the only part of README changed by the website sync. Funding remains requested, not awarded; VERIFIED ≠ SAFE.
+
+**Last synced:** 2026-11-16T13:48:16.526Z · [Open the official website](https://coreguard-trust-and-defense.lovable.app/) · [Investor brief](https://coreguard-trust-and-defense.lovable.app/investors) · [Research blog](https://coreguard-trust-and-defense.lovable.app/blog)
+
+**Brand settings:** orange #FF8A00 · glow #FFB547 · background #0B0F14 · logo Official CoreGuard shield
+
+#### Current network messaging
+
+| Network | English headline | العنوان بالعربية |
+|---|---|---|
+| Core DAO | The execution truth layer for Bitcoin DeFi on Core. | طبقة حقيقة التنفيذ لـ Bitcoin DeFi على Core. |
+| Stellar | Fail-closed execution for Soroban and Stellar DEX flows. | تنفيذ آمن (fail-closed) لعمليات Soroban و Stellar DEX. |
+| Pi Network | Execution truth for Pi Network — commerce shield, wallet guard, verified badge, 7-run ladder, mainnet anchor (prepared), attestation service (planned), cross-network with Core + Stellar. | حقيقة تنفيذ لـ Pi Network — درع تجارة، حماية محفظة، شارة تاجر موثّق، سلم 7 درجات، مرساة شبكة رئيسية (مستعدة)، خدمة توثيق (مخطط لها)، ومرساة مشترك مع Core وStellar. |
+
+#### Current product messaging
+
+| Product | Status | English tagline | الوصف بالعربية |
+|---|---|---|---|
+| ★ Stellar DEX-GATE/1 — Signed Swap Gate | LIVE | First signed funded swap on Stellar mainnet: 4.0598146 XLM → 0.6306239 USDC, both gates VERIFIED before submission (ledger 65,338,112). | أول تبديل موقّع وممول على Stellar Mainnet: ‎4.0598146 XLM → 0.6306239 USDC، والبوابتين VERIFIED قبل الإرسال (ledger 65,338,112). |
+| ★ SOROBAN/1 Commitment Anchor | LIVE | Live Soroban contract; first commit(proofId, commitment) invoked on mainnet with byte-exact read-back (ledger 65,337,373). | عقد Soroban شغّال؛ أول commit اتنفّذ على Mainnet وقراءته رجعت مطابقة بالبايت (ledger 65,337,373). |
+| CGEP/1 Execution Receipts | LIVE | Intent → policy → commitment → receipt → independent verifier → anchor. | نية ← سياسة ← التزام ← إيصال ← مُحقِّق مستقل ← مرساة. |
+| Execution Firewall | SHIPPED | Wrap any action — swap, lend, bridge, vote, agent proposal — with ALLOW / DENY / HOLD. | لف أي عملية — swap أو قرض أو bridge أو تصويت أو اقتراح وكيل — بقرار ALLOW / DENY / HOLD. |
+| x402 Reserve-before-sign | SHIPPED | Payment-gated escrow with deterministic replay and on-chain commission. | ضمان مشروط بالدفع مع إعادة تشغيل حتمية وعمولة على السلسلة. |
+| ESCROW/1 — Bounty Escrow Mirror | DRY_RUN | SHIPPED JS mirror · NOT LAUNCHED. Verify-before-release, digest-bound signatures, single-spend release and full refund; no chain calls or funds moved. | نسخة JS جاهزة · لم تُطلق. تحقق قبل الإفراج، توقيع مربوط بالدليل، إفراج مرة واحدة واسترداد كامل؛ من غير اتصال بالشبكة أو حركة أموال. |
+| AgentProof | SHIPPED | Declared, signer-bound actor provenance — never a behavioural guess. | إثبات هوية المنفّذ مربوط بالتوقيع — مش تخمين سلوكي. |
+| DDE/1 Dispute Boundary | SHIPPED | Execution/acceptance disputes resolved with offline, deterministic evidence packages. | نزاعات التنفيذ والقبول بتتحل بحزم أدلة حتمية بتشتغل بدون إنترنت. |
+| Independent Verifier | SHIPPED | JS / Rust-WASM / Python verifiers. Trust never depends on us running a hosted check. | مُحققات JS و Rust-WASM و Python. الثقة مش معتمدة إننا نشغّل فحص عندنا. |
+| Badge Shield | SHIPPED | Embeddable verification badges rendered only from anchored manifests. | شارات تحقق تتحط في أي موقع، بتطلع بس من بيانات متثبّتة على السلسلة. |
+| ★ PSAR/1 Pre-Sign Authorization Receipts | SHIPPED | A Stellar transaction carries its own authorization proof before any signature — PASS / BLOCK, bound to the exact XDR bytes. 37 tests; v1 does not semantically decode XDR. | معاملة Stellar بتشيل إثبات التصريح بتاعها قبل أي توقيع — PASS أو BLOCK، مربوطة بنفس بايتات المعاملة بالظبط. 37 اختبار؛ والإصدار الأول مش بيفك محتوى XDR دلاليًا. |
+| Trust Gate · Labs · Verify Bot | RESEARCH | Investor portal (TRUST.md) live; CoreGuard Labs evidence lab DRAFT; Telegram/Discord verify bot PLAN_ONLY. | بوابة المستثمر (TRUST.md) شغالة؛ معمل الأدلة CoreGuard Labs مسودة؛ بوت التحقق لسه خطة. |
+| @coreguard/sdk + CLI | GATED | Two-line SDK integration and `npx coreguard demo`. 13-package npm closure, release-gated. | دمج في سطرين و`npx coreguard demo`. 13 حزمة npm بانتظار بوابة الإصدار. |
+<!-- COREGUARD-WEBSITE-SYNC:END -->
+
 **One public starting point for investors, Stellar judges and ecosystem reviewers:** [coreguard-trust-and-defense.lovable.app](https://coreguard-trust-and-defense.lovable.app/). The website brings the product story, public evidence, films, funding path, partnerships and contact routes together; this repository remains the source of implementation truth.
 
 | Destination | What investors and reviewers can inspect |
