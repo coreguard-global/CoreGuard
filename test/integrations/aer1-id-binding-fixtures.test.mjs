@@ -13,10 +13,10 @@
  *      its sha256 equals the digest the corpus index lists for that path, and it
  *      cannot be edited even by a space without the test failing by name.
  *   2. SEMANTICS. Every vector is replayed against our identity branch, and the
- *      mapping is asserted case by case. Where the two formats genuinely differ
- *      (AER-1 binds an id by *resolution*; CGEP/1 has no resolution step) the
- *      difference is asserted as an enumerated `RECEIPT_ID_RESOLUTION_UNSUPPORTED`
- *      — never silently mapped to agreement, and never to a pass.
+ *      mapping is asserted case by case. Resolution (AER-1 Section 9) is exercised:
+ *      a resolved record agreeing on the committed digest binds identity, and a
+ *      disagreeing resolved record is a mismatch; incomplete resolution evidence
+ *      remains `RECEIPT_ID_RESOLUTION_UNSUPPORTED` (UNKNOWN), never a pass.
  *
  * Attribution: AER-1 / draft-zambo-aer1-26, corpus by Brennan Zambo (Zambo),
  * kit v1.5.7. Vendored under the terms offered in the issue thread ("free to
@@ -75,9 +75,9 @@ function aer1IdVerdictOf(vector) {
   return "unverified";
 }
 
-/** Our identity branch, fed the same facts: the receipt's own label and the expected one. */
+/** Our identity branch, fed the same facts: the receipt's own label, expected id, and (for resolution) artifact digest. */
 function oursFor(vector) {
-  const receipt = "id" in vector.receipt ? { commitmentId: vector.receipt.id } : {};
+  const receipt = "id" in vector.receipt ? { commitmentId: vector.receipt.id, outputHash: vector.receipt.output_hash } : {};
   const commitment = "expected_id" in vector ? { commitmentId: vector.expected_id } : {};
   const options = vector.resolved_record ? { resolvedRecord: vector.resolved_record } : {};
   return bindReceiptIdentity(receipt, commitment, options);
@@ -136,18 +136,16 @@ test("our identity branch agrees with AER-1 on the three shared outcomes", () =>
   }
 });
 
-test("the published resolution vectors are reported unsupported, never as agreement", () => {
-  // This is the honest gap, stated as a test rather than buried in prose: AER-1
-  // binds an id by resolving it to a record whose committed digest must agree,
-  // and CGEP/1 has no resolution step. Both resolution vectors - the agreeing
-  // one AND the disagreeing one - get the same named answer, because the two
-  // cases are indistinguishable to us until a resolution step exists.
-  for (const name of ["id-resolution-agreement", "id-resolution-disagreement"]) {
-    const v = vectorsDoc.vectors.find((x) => x.name === name);
-    const got = oursFor(v);
-    assert.equal(got.verdict, "UNKNOWN", `${name}: an unexercised resolution is never a pass`);
-    assert.equal(got.verdictCode, L1_VERDICT_CODES.RECEIPT_ID_RESOLUTION_UNSUPPORTED, name);
-  }
+test("the published resolution vectors exercise AER-1 Section 9 (agreement binds, disagreement mismatches)", () => {
+  const agreement = vectorsDoc.vectors.find((x) => x.name === "id-resolution-agreement");
+  const agreeGot = oursFor(agreement);
+  assert.equal(agreeGot.verdict, "BOUND", "resolved record agreeing on committed digest binds identity");
+  assert.equal(agreeGot.verdictCode, L1_VERDICT_CODES.RECEIPT_ID_BOUND, "id-resolution-agreement");
+
+  const disagreement = vectorsDoc.vectors.find((x) => x.name === "id-resolution-disagreement");
+  const disagreeGot = oursFor(disagreement);
+  assert.equal(disagreeGot.verdict, "MISMATCH", "resolved record with differing committed digest is not a pass");
+  assert.equal(disagreeGot.verdictCode, L1_VERDICT_CODES.RECEIPT_ID_MISMATCH, "id-resolution-disagreement");
 });
 
 test("fail-closed lattice: no vector is ever more permissive here than upstream", () => {
@@ -164,8 +162,9 @@ test("fail-closed lattice: no vector is ever more permissive here than upstream"
     if (v.expected_verdict === "fail") {
       assert.notEqual(got.verdictCode, L1_VERDICT_CODES.RECEIPT_ID_BOUND, `${v.name}: an upstream fail became a bound identity`);
     }
-    // And the converse guard: a bound claim must be backed by an upstream "matched".
-    if (weClaimBound) assert.equal(upstreamIdVerdict, "matched", `${v.name}: bound without upstream agreement`);
+    // And the converse guard: a bound claim must be backed by upstream agreement
+    // (matched by expectation, or resolved by Section 9 with agreeing committed digest).
+    if (weClaimBound) assert.ok(["matched", "resolved"].includes(upstreamIdVerdict), `${v.name}: bound without upstream agreement`);
   }
 });
 

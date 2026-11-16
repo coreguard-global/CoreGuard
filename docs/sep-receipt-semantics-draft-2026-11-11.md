@@ -153,11 +153,10 @@ The mapping is not one-to-one, and the differences are the interesting part:
 | `mismatched` | `MISMATCH` (`RECEIPT_ID_MISMATCH`) | the swap case: digest passes, label contradicts |
 | `unverified` | `UNKNOWN` (`RECEIPT_ID_UNBOUND`) | a label checked against nothing is not a pass here either |
 | `absent` | `UNKNOWN` (`RECEIPT_ID_UNBOUND`) | a missing required member is an absence, not a skip |
-| `resolved` | `UNKNOWN` (`RECEIPT_ID_RESOLUTION_UNSUPPORTED`) | **declared gap**: CGEP/1 has no resolution step, so a resolved claim cannot be exercised; both resolution vectors — agreement and disagreement — receive the same answer, because they are indistinguishable to a verifier without one |
+| `resolved` (agreement) | `BOUND` (`RECEIPT_ID_BOUND`) | Resolution exercised (AER-1 Section 9): the resolved record's committed digest agrees with the artifact, so the identity is bound. |
+| `resolved` (disagreement) | `MISMATCH` (`RECEIPT_ID_MISMATCH`) | Resolution exercised (AER-1 Section 9): the resolved record for the claimed id does not agree with the artifact's committed digest (borrowed/contradicted label). Incomplete resolution evidence remains `UNKNOWN` (`RECEIPT_ID_RESOLUTION_UNSUPPORTED`), never a pass. |
 
-The resolution row is a to-do, not a feature: adopting AER-1's Section 9 shape
-(the record an id resolves to must agree on the committed digest) is the work
-required before this column can say more than "unsupported".
+Resolution (Section 9 shape) is implemented for cases where the resolved record and artifact committed digests can be compared; incomplete evidence is reported explicitly as unsupported/unknown rather than treated as agreement.
 
 ## Testability
 

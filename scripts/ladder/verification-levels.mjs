@@ -111,27 +111,59 @@ const HASH64 = /^0x[0-9a-fA-F]{64}$/;
  *   BOUND                                        the receipt names the commitment it was presented with
  *   UNKNOWN / RECEIPT_ID_UNBOUND                 nothing was named, or nothing was presented
  *   MISMATCH / RECEIPT_ID_MISMATCH               two artifacts we hold disagree (borrowed label)
- *   UNKNOWN / RECEIPT_ID_RESOLUTION_UNSUPPORTED  a resolution claim this format cannot exercise
+ *   BOUND / RECEIPT_ID_BOUND                     resolved record agrees on committed digest (AER-1 Section 9)
+ *   UNKNOWN / RECEIPT_ID_RESOLUTION_UNSUPPORTED  resolution evidence incomplete/uncomparable (never a pass)
  *
- * The last case exists because AER-1 binds an id by *resolution* (the record
- * the id resolves to must agree on the committed digest) and CGEP/1 has no
- * resolution step. Reporting that as unsupported is the honest answer; calling
- * it agreement would be a pass on evidence nobody produced.
+ * Resolution (AER-1 Section 9): when a resolved record is provided, its id and
+ * committed digest must agree with the artifact's; agreement binds identity and
+ * disagreement is a mismatch. If required resolution evidence is missing, the
+ * identity remains unestablished (UNSUPPORTED/UNKNOWN), never treated as agreement.
  */
 export function bindReceiptIdentity(receipt, commitment, options = {}) {
   const declaredId =
     typeof receipt?.commitmentId === "string" && receipt.commitmentId.length > 0 ? receipt.commitmentId : null;
   const presentedId =
     typeof commitment?.commitmentId === "string" && commitment.commitmentId.length > 0 ? commitment.commitmentId : null;
-  // A resolution claim is answered before the missing-label branch on purpose:
-  // the claim is what makes the identity unverifiable here, and saying "unbound"
-  // would hide that a resolution step was asked for.
-  if (options.resolvedRecord || receipt.resolvedRecord) {
+  // A resolution claim (AER-1 Section 9 shape): the id resolves to a record whose
+  // committed digest must agree with the artifact's. Agreement binds the identity;
+  // disagreement is a borrowed/contradicted label (MISMATCH). Missing/insufficient
+  // resolution evidence stays UNKNOWN (never a pass).
+  const resolved = options.resolvedRecord || receipt.resolvedRecord;
+  if (resolved) {
+    const resolvedId =
+      typeof resolved.id === "string" && resolved.id.length > 0 ? resolved.id : null;
+    const resolvedDigest =
+      (typeof resolved.output_hash === "string" && resolved.output_hash.length > 0 && resolved.output_hash) ||
+      (typeof resolved.commitmentDigest === "string" && resolved.commitmentDigest.length > 0 && resolved.commitmentDigest) ||
+      (typeof resolved.digest === "string" && resolved.digest.length > 0 && resolved.digest) ||
+      null;
+    const artifactDigest =
+      (typeof receipt.output_hash === "string" && receipt.output_hash.length > 0 && receipt.output_hash) ||
+      (typeof receipt.outputHash === "string" && receipt.outputHash.length > 0 && receipt.outputHash) ||
+      (typeof receipt.commitmentDigest === "string" && receipt.commitmentDigest.length > 0 && receipt.commitmentDigest) ||
+      (typeof commitment.output_hash === "string" && commitment.output_hash.length > 0 && commitment.output_hash) ||
+      (typeof commitment.commitmentDigest === "string" && commitment.commitmentDigest.length > 0 && commitment.commitmentDigest) ||
+      (typeof options.artifactDigest === "string" && options.artifactDigest.length > 0 && options.artifactDigest) ||
+      null;
+    if (!declaredId || !resolvedId || !resolvedDigest || !artifactDigest) {
+      return {
+        verdict: "UNKNOWN",
+        verdictCode: L1_VERDICT_CODES.RECEIPT_ID_RESOLUTION_UNSUPPORTED,
+        reason:
+          "resolution evidence is incomplete (missing receipt id, resolved id, or comparable committed digest), so the identity remains unestablished; unestablished is never a pass",
+      };
+    }
+    if (resolvedId === declaredId && resolvedDigest === artifactDigest) {
+      return {
+        verdict: "BOUND",
+        verdictCode: L1_VERDICT_CODES.RECEIPT_ID_BOUND,
+        reason: "the receipt id resolves to a record whose committed digest agrees with the artifact",
+      };
+    }
     return {
-      verdict: "UNKNOWN",
-      verdictCode: L1_VERDICT_CODES.RECEIPT_ID_RESOLUTION_UNSUPPORTED,
-      reason:
-        "the receipt claims an identity by resolution (the id resolves to a record that must agree on the committed digest), and CGEP/1 has no resolution step; the identity stays unestablished, and unestablished is never a pass",
+      verdict: "MISMATCH",
+      verdictCode: L1_VERDICT_CODES.RECEIPT_ID_MISMATCH,
+      reason: "the resolved record for the claimed id does not agree with the artifact's committed digest - borrowed or contradicted label",
     };
   }
   if (!declaredId || !presentedId) {
