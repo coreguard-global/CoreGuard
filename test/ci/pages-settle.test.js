@@ -64,10 +64,20 @@ test("queued/building → waits, then settles once the build turns terminal", as
     writeFileSync(s.sim, JSON.stringify({ status: "building", created_at: newIso() }));
     const timer = setTimeout(() => {
       /* atomic flip: the guard re-reads mid-rewrite under load; a torn read
-         (malformed JSON) is a raced sim artifact, not a settle answer. */
+         (malformed JSON) is a raced sim artifact, not a settle answer. The
+         rename itself can lose a Windows AV scan handle (EPERM) — retried
+         atomically with a bounded backoff, never a partial write. */
       const tmp = `${s.sim}.next`;
       writeFileSync(tmp, JSON.stringify({ status: "built", created_at: oldIso() }));
-      renameSync(tmp, s.sim);
+      for (let attempt = 0; ; attempt++) {
+        try {
+          renameSync(tmp, s.sim);
+          break;
+        } catch (e) {
+          if (e.code !== "EPERM" || attempt >= 8) throw e;
+          Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 40);
+        }
+      }
     }, 60);
     const r = await runSettle({ PAGES_SETTLE_JSON: s.sim, PAGES_SETTLE_MAX_WAIT_MS: "5000" });
     clearTimeout(timer);
