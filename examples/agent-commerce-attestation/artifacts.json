@@ -20,7 +20,7 @@
         "anchorContract": "CCKA2GYVILX7YZVSXGVIHOPNLTRBBF2SSWKBTQBIE7M67N5N2QMMXPSP"
       },
       "source": "docs/EVIDENCE-MATRIX.md",
-      "note": "EXECUTED deploy + first commit INVOKED per docs/EVIDENCE-MATRIX.md — carrying a consent binding into the Soroban lane is integration NOT_BUILT and is NOT code here"
+      "note": "EXECUTED deploy + first commit INVOKED per docs/EVIDENCE-MATRIX.md — consent binding carried into the Soroban lane via buildSorobanConsentBinding (offline preparation/invocation payload, no broadcast); any commit_authorized call is owner-authorized only and NOT_PERFORMED"
     }
   ],
   "arcs": [
