@@ -85,10 +85,10 @@ test("a consumer outside the repo imports it by name and gets the same verdicts"
   const consumer = join(dir, "consumer");
   const modules = join(consumer, "node_modules", "@coreguard");
   mkdirSync(modules, { recursive: true });
-  // GNU tar reads "C:" as a remote host; --force-local is the portable escape
-  // hatch on Windows and is not needed (or accepted) everywhere else.
-  const tarArgs = process.platform === "win32" ? ["--force-local", "-xzf", tarball, "-C", consumer] : ["-xzf", tarball, "-C", consumer];
-  execFileSync("tar", tarArgs, { cwd: dir });
+  // Colon-bearing absolute paths make GNU tar read "C:" as a remote host, and
+  // the --force-local escape hatch does not exist in Windows bsdtar at all —
+  // so the extraction runs on cwd-relative names, which every tar accepts.
+  execFileSync("tar", ["-xzf", info.filename, "-C", "consumer"], { cwd: dir });
   // npm pack names the extracted directory `package`; installing it by name is
   // exactly the layout a registry install produces.
   renameSync(join(consumer, "package"), join(modules, "stellar"));
