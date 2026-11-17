@@ -42,6 +42,42 @@ AI agents and apps now sign transactions faster than any human can review them. 
 npm install && npm run trust:demo   # four pillars, three named refusals, one receipt digest — offline, no keys
 ```
 
+### What that command prints
+
+Verbatim output of `npm run trust:demo` on the committed tree — no network,
+no key, no chain call. (The transcript line prints an absolute path; the
+repo-relative path is shown here. Nothing else is edited.)
+
+```text
+────────────────────────────────────────────────────────────────────────
+CoreGuard — Execution Trust Layer · four pillars, offline
+────────────────────────────────────────────────────────────────────────
+✓ AUTHORIZATION        PASS                   the conforming envelope is authorized
+✓ AUTHORIZATION        NOT_INCLUDED           the receipt never claims execution
+✓ EXECUTION FIREWALL   BLOCK                  a tampered amount is refused
+✓ EXECUTION FIREWALL   XDR_BINDING_MISMATCH   the refusal names the binding
+✓ EXECUTION FIREWALL   BLOCK                  an expired window is refused
+✓ EXECUTION FIREWALL   RECEIPT_EXPIRED        the refusal names the clock
+✓ VERIFIABLE EXECUTION PASS                   the same receipt still passes inside its window
+✓ IMMUTABLE EVIDENCE   0                      a third party verifies with the public key alone
+✓ IMMUTABLE EVIDENCE   PASS                   the outsider's verdict
+✓ IMMUTABLE EVIDENCE   2                      a one-field edit is refused
+✓ IMMUTABLE EVIDENCE   BAD_DIGEST             the refusal names the digest
+────────────────────────────────────────────────────────────────────────
+receipt digest   890fc4e2e968ce9e244ef26e28f77bac8cf82e0a2bb85d9000f535f33a9ebb64
+envelope sha256  02ddf278aa29b585684a02cbab51bfd137201650f2e91a9092b9d05f2208f74f
+transcript       examples/execution-trust/out/transcript.json
+────────────────────────────────────────────────────────────────────────
+Not proven here: execution. A pre-sign receipt says what was AUTHORIZED.
+Execution proof is the ledger read-back after submission, and nothing in this demo submits.
+```
+
+`PASS` appears only where the envelope conforms. Every refusal carries a
+named code — `BLOCK` with `XDR_BINDING_MISMATCH`, `BLOCK` with
+`RECEIPT_EXPIRED`, `BAD_DIGEST` — and the closing lines state what this demo
+does **not** prove. Wire-level settlement, broadcast and execution are
+outside it.
+
 ---
 
 ## 🧭 Choose your path
