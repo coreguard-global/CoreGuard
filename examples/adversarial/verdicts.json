@@ -1,0 +1,62 @@
+{
+  "scenario": "coreguard.adversarial/1",
+  "measuredBy": "node examples/adversarial/run.mjs",
+  "networkCall": "NOT_PERFORMED",
+  "executionProof": "NOT_INCLUDED",
+  "stages": [
+    {
+      "n": 1,
+      "stage": "CREATE",
+      "decision": "PASS",
+      "code": null
+    },
+    {
+      "n": 2,
+      "stage": "POLICY",
+      "decision": "PASS",
+      "code": null
+    },
+    {
+      "n": 3,
+      "stage": "SIMULATE",
+      "decision": "PASS",
+      "code": null
+    },
+    {
+      "n": 4,
+      "stage": "ATTACK",
+      "decision": "BLOCK",
+      "code": "XDR_BINDING_MISMATCH"
+    },
+    {
+      "n": 5,
+      "stage": "REFUSE",
+      "decision": "BLOCK",
+      "code": "XDR_BINDING_MISMATCH"
+    },
+    {
+      "n": 6,
+      "stage": "RECEIPT",
+      "decision": "PASS",
+      "code": null
+    },
+    {
+      "n": 7,
+      "stage": "THIRD PARTY",
+      "decision": "PASS",
+      "code": null
+    }
+  ],
+  "digests": {
+    "envelopeSha256": "02ddf278aa29b585684a02cbab51bfd137201650f2e91a9092b9d05f2208f74f",
+    "policySha256": "619e47c6965c803fe15cd4ef4212e3075b892d112a703b3e4c7b6dee2d91931a",
+    "receiptDigest": "890fc4e2e968ce9e244ef26e28f77bac8cf82e0a2bb85d9000f535f33a9ebb64",
+    "attackedEnvelopeSha256": "7b7ad0a4bba57ec6f0d968dd33b257fc53a671cc47dd65496c2aa9279451a93b",
+    "refusalSha256": "04608a464cc61ba2818f99851234323947fbd03a5fa4fe0e020aeec46b25bdb5",
+    "issuerPublicKeyHex": "2152f8d19b791d24453242e15f2eab6cb7cffa7b6a5ed30097960e069881db12"
+  },
+  "outsider": {
+    "pristine": "PASS exit 0",
+    "attacked": "BLOCK XDR_BINDING_MISMATCH exit 2"
+  }
+}

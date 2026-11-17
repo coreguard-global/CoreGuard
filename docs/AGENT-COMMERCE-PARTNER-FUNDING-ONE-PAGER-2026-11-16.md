@@ -14,7 +14,7 @@ An independent, **offline/deterministic/fail-closed** verification layer for age
 - **Cross-Chain Execution Attestation (CGXA/1):** offline attestation of the approval↔execution arc against committed binding records; **Soroban consent-binding preparation (CGXA-SOROBAN/1)** provided offline (no broadcast).
 - **Durable same-host consumption anchoring (AC-CS/1):** file-backed, cross-process on host (not distributed/on-chain).
 
-**Measured proof (CI-pinned):** 1795/1795 tests · 1284 files / 0 boundary violations · docs-node 133/82/30 · CI green on `main`. Runnable demos: `examples/agent-commerce-security-suite/`, `firewall/`, `attestation/` (synthetic fixtures).
+**Measured proof (CI-pinned):** 1799/1799 tests · 1287 files / 0 boundary violations · docs-node 133/82/30 · CI green on `main`. Runnable demos: `examples/agent-commerce-security-suite/`, `firewall/`, `attestation/` (synthetic fixtures).
 
 ## 3) Why it’s differentiated (defensible angle)
 - **Precise binding:** authorization ↔ execution ↔ independently re-derivable receipt/evidence (not a generic “AI safety” claim).
