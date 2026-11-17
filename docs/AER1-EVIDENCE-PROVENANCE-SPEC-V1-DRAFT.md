@@ -1,100 +1,91 @@
-# CoreGuard — Evidence Provenance & Adversarial Identity Resolution Spec (v1 Draft)
+# CoreGuard — Evidence Provenance & Adversarial Identity Resolution Spec (v1)
 
-**Status:** DRAFT (design/specification, pre-implementation).  
-**Scope:** AER-1 Section 9–style receipt-id resolution path (`bindReceiptIdentity`) as implemented and tested on pinned revisions (e.g. `688d260` / `000d1aa`), and the next hardening step: **evidence provenance and source trust**.  
-**Non-claims:** This document is **not** a security audit, formal proof, certification, production-readiness claim, or evidence of adoption/integration/funding/partnership. It defines questions, boundaries, and acceptance criteria to guide evidence-driven work.
+**Status:** FROZEN (v1 minimal-slice contract decisions) — implementation/test coverage applies to this frozen slice; broader provenance features remain future work unless explicitly specified and evidenced.  
+**Scope:** AER-1 Section 9–style receipt-id resolution path (`bindReceiptIdentity`) and a **separate, fail-closed provenance verification** slice for resolved records (`scripts/ladder/resolved-record-provenance.mjs`, CG-RRP/1).  
+**Reference baseline:** `d3cd7a0` (green) for prior Section 9/boundary work; this spec records frozen v1 provenance decisions layered on that baseline.  
+**Non-claims:** Not a security audit, formal proof, certification, production-readiness claim, or evidence of adoption/integration/funding/partnership. Provenance verification proves only what the frozen contract states.
 
 ---
 
 ## 1. Purpose
 Strengthen Section 9 resolution from **value-consistency binding** toward **evidence-grounded verification** by explicitly separating:
-1. **Identity/digest binding** — do the compared values agree?
-2. **Evidence provenance/authenticity** — is the resolved record trustworthy for its claimed source and context?
-3. **Fail-closed verdicting** — do ambiguity, conflict, or missing trust evidence remain non-passing (`UNKNOWN`/explicit refusal), never upgraded to `BOUND`?
+1. **Identity/digest binding** — do the compared values agree? (existing axis: `BOUND`/`MISMATCH`/`UNKNOWN`)
+2. **Evidence provenance/authenticity** — is the resolved record authentic for the expected trust anchor and context? (**new separate axis, CG-RRP/1**)
+3. **Fail-closed verdicting** — ambiguity, conflict, missing/invalid trust evidence, or context mismatch remain **non-passing** (never upgraded to success).
 
-## 2. Current baseline (measured/implemented)
-- **Implemented behavior (fail-closed):** agreement on claimed id + artifact committed digest vs resolved record → `BOUND` (`RECEIPT_ID_BOUND`); disagreement → `MISMATCH` (`RECEIPT_ID_MISMATCH`); incomplete/uncomparable resolution evidence → `UNKNOWN` (`RECEIPT_ID_RESOLUTION_UNSUPPORTED`).
-- **Evidence in-repo:** vendored AER-1 id-binding corpus vectors (including resolution agreement/disagreement), identity-binding controls/mutation proof, adversarial/boundary/property-style tests, and a small in-test reference comparison. CI green on pinned commits (see repository history/tags/issues for exact runs).
-- **Key question (answered):** *Is `resolvedRecord` cryptographically authenticated by a trusted source in the current implementation?*  
-  **No.** `bindReceiptIdentity` currently evaluates **caller-supplied records by value comparison only**. It does **not** verify issuer identity, cryptographic signature/proof of origin, network/context binding, freshness, or revocation of the resolved record.
+## 2. Current baseline (answered)
+- `bindReceiptIdentity` evaluates caller-supplied resolved records by **value comparison only**. It does **not** verify issuer identity, cryptographic origin, network/context binding, freshness/revocation beyond caller inputs, or trust anchors.
+- **Rule:** `BOUND` means *bound by compared values* only — **not** proof of authentic/trusted source, correct context, or execution.
 
-## 3. Trust boundary (normative distinction)
-| Concept | Meaning | Current proof |
-|---|---|---|
-| **Value-consistent binding** | Compared id/digest values agree | **Yes** (when evidence is complete/comparable) |
-| **Authentic/provenant resolved record** | Record is issued/attested by a trusted source for the correct context | **No** (out of scope today; separate evidence required) |
-| **Execution/semantic correctness** | Transaction executed as intended / semantics valid | **No** |
+## 3. Frozen v1 contract decisions (minimal slice: CG-RRP/1)
 
-**Rule:** `BOUND` (current) MUST be interpreted as *bound by compared values*, **not** as proof of record authenticity, trusted provenance, or execution. Introducing provenance MUST NOT silently widen the meaning of existing verdicts without explicit, versioned semantics.
+### 3.1 Trust anchor (external, pinned by caller)
+- **MUST** be supplied by the verifier/caller as an explicit input: `trustAnchor = { keyId: string, publicKeyHex: string }`.
+- `publicKeyHex`: 32-byte Ed25519 public key encoded as 64 lowercase/uppercase hex chars (normalized for comparison as specified by implementation; invalid encoding → fail-closed).
+- **Non-negotiable:** the resolved record **MUST NOT** select or supply the trust key/anchor. The record declares `issuerKeyId` which **MUST equal** the provided anchor `keyId`; otherwise provenance is **not** established.
 
-## 4. Threats and failure modes to address (v1 focus)
-- **Forged-but-consistent records:** attacker supplies a self-consistent resolved record (matching id/digest) from an untrusted source.
-- **Context confusion:** valid-looking record bound to wrong network, chain, ledger height/version, environment, or time window.
-- **Conflicting evidence:** multiple resolved records for the same claim/context disagree (digest, issuer, or version).
-- **Malformed/ambiguous inputs:** missing fields, type confusion, unexpected encodings/algorithms/versions, partial records.
-- **Replay/staleness:** outdated or revoked records presented as current (where model applies).
-- **Trust lifecycle gaps:** key rotation, revocation, expiration, algorithm agility not handled fail-closed.
-- **Regression/permissiveness drift:** implementation becomes more accepting than the spec/reference/corpus.
+### 3.2 Signed payload (covered fields) and canonicalization
+- Canonicalization: **canonical JSON** (UTF-8) with recursively sorted object keys and no insignificant whitespace (deterministic; equivalent to `JSON.stringify` over sorted keys as implemented in-repo).
+- **Signed payload object** (all required unless noted):
+  - `v`: `"CG-RRP/1"`
+  - `recordId`: non-empty string (resolved record id)
+  - `artifactDigest`: non-empty string (committed/artifact digest to bind; compared as provided string)
+  - `context`: plain object with **required** `network` (non-empty string) and `chainId` (string or integer normalized to string in canonical form as implemented) — minimal required context dimensions for v1
+  - `issuerKeyId`: non-empty string (must match external trust anchor)
+  - `issuedAt`: optional integer seconds (Unix epoch) — if present, must be a safe/non-negative integer
+  - `expiresAt`: optional integer seconds — if present, must be a safe/non-negative integer and `>= issuedAt` when both present
+- **Signature:** Ed25519 over the UTF-8 bytes of the canonicalized signed payload. `signature` is a 64-byte hex string (128 hex chars). Algorithm is **fixed** to Ed25519 for v1; unknown/other algorithms are unsupported (fail-closed).
 
-## 5. Evidence Provenance Layer — design questions (to resolve before implementation)
+### 3.3 Record envelope (input)
+- `provenantRecord = { payload: <signed payload>, signature: <hex> }` (plain objects; unknown top-level fields on the envelope are rejected as malformed for this strict v1 slice).
+- Multiple/conflicting records: **not accepted** in a single verification call in v1 — supplying more than one record (or an ambiguous set) yields a deterministic **conflict/fail-closed** result (no selection).
 
-### 5.1 Issuer identity & trust anchors
-- Who may issue/attest a resolved record? (identified issuers, allowlisted keys, registries, or out-of-band trust)
-- How are trust anchors distributed, pinned, rotated, and revoked?
-- What is the verification path (direct key, chain of trust), and what is explicitly unsupported?
+### 3.4 Context binding
+- Caller provides `expectedContext` with required `network` and `chainId`.
+- Verification **requires exact match** of canonicalized/normalized `network` and `chainId` between signed payload context and `expectedContext`. Mismatch → **fail-closed** (context mismatch), never a pass.
 
-### 5.2 Cryptographic authenticity
-- What proof authenticates the record? (signature scheme, MAC in symmetric contexts where applicable, or other verifiable attestation)
-- Which canonical bytes/payload are covered by the proof? (exact field set and encoding)
-- Algorithm/version agility: accepted suites, downgrade resistance, and fail-closed behavior on unknown/disabled algorithms.
+### 3.5 Time/freshness (deterministic)
+- No wall-clock reads. If `issuedAt`/`expiresAt` are present, caller **MUST** supply `nowSeconds` (injected integer seconds) to evaluate validity; missing `nowSeconds` when needed → fail-closed.
+- `nowSeconds < issuedAt` → not yet valid (fail-closed). `nowSeconds > expiresAt` → expired (fail-closed). (Inclusive/exact boundaries per implementation; tested.)
 
-### 5.3 Context binding
-- Which context dimensions MUST bind to the record (e.g. network/chain identifier, environment, contract/app scope, ledger/reference point, issuance/validity time)?
-- How is “same context” determined, and what mismatches yield `MISMATCH` vs `UNKNOWN`?
+### 3.6 Provenance verdicts (separate axis, frozen codes)
+`verifyResolvedRecordProvenance(...) -> { verdict, verdictCode, reason }`
 
-### 5.4 Conflicting records & resolution policy
-- Input model: single record, set of records, or prioritized sources?
-- Deterministic policy for conflicts: refuse (`UNKNOWN`/conflict state), require quorum, or select by rule — MUST be fail-closed and unambiguous.
-- No silent preference that can be influenced to bypass contradiction.
+- `VERIFIED` / `PROVENANCE_VERIFIED`: signature valid for payload under **provided external trust anchor**, `issuerKeyId` matches anchor, context matches, and time checks (if applicable) pass.
+- `INVALID` / `PROVENANCE_MALFORMED`: malformed/missing/typed/encoding/unknown-field/unsupported-version-or-algorithm input.
+- `INVALID` / `PROVENANCE_UNTRUSTED_ISSUER`: `issuerKeyId` does not match provided trust anchor (or anchor missing/invalid) — record cannot select its own trust.
+- `INVALID` / `PROVENANCE_BAD_SIGNATURE`: signature missing/invalid or does not verify for the canonical payload and anchor key.
+- `INVALID` / `PROVENANCE_CONTEXT_MISMATCH`: required context does not match expected context.
+- `INVALID` / `PROVENANCE_NOT_YET_VALID` / `PROVENANCE_EXPIRED`: time window checks fail (when applicable).
+- `INVALID` / `PROVENANCE_CONFLICT`: conflicting/ambiguous/multiple records or irreconcilable provenance inputs (deterministic, no selection).
+- `UNKNOWN` / `PROVENANCE_UNVERIFIABLE`: reserved for cases where required verification cannot be completed under this slice’s inputs without guessing (fail-closed, never a pass). *(v1 slice aims to classify deterministically; any unclassifiable internal/error path must not pass.)*
 
-### 5.5 Trust lifecycle
-- Validity windows, expiration, not-before/after semantics (with pinned/injected time where determinism is required).
-- Revocation/status checks: availability assumptions and fail-closed behavior when status is unavailable but required.
-- Key compromise/rotation procedures and their effect on prior vs new records.
+**Composition (frozen intent):** A claim requiring trusted provenance is **not satisfied** by binding consistency (`BOUND`) alone; provenance must be `PROVENANCE_VERIFIED` for the same record/context/anchor assumptions. `BOUND` meaning is unchanged.
 
-## 6. Verdict model (proposed separation, v1 target)
-Preserve fail-closed guarantees and avoid semantic overloading:
+### 3.7 Threat model coverage (v1 slice) and expected outcomes
+| Threat / case | Expected outcome |
+|---|---|
+| Forged-but-consistent record (no/wrong signature or untrusted key) | `PROVENANCE_BAD_SIGNATURE` or `PROVENANCE_UNTRUSTED_ISSUER` (never verified) |
+| Correct signature but wrong context (network/chainId) | `PROVENANCE_CONTEXT_MISMATCH` |
+| Malformed/typed/unknown-field/unsupported version | `PROVENANCE_MALFORMED` |
+| Missing required time input when window present | `PROVENANCE_MALFORMED`/fail-closed (unverifiable window) |
+| Not-yet-valid / expired (with injected now) | `PROVENANCE_NOT_YET_VALID` / `PROVENANCE_EXPIRED` |
+| Multiple/conflicting records supplied | `PROVENANCE_CONFLICT` |
+| Valid under external pinned anchor + matching context + valid window | `PROVENANCE_VERIFIED` |
 
-- **Binding verdict (existing axis):** consistency of id/digest (and, when modeled, resolved binding) — `BOUND` / `MISMATCH` / `UNKNOWN` as defined.
-- **Provenance/authenticity verdict (new/explicit axis, to be specified):** e.g. `AUTHENTICATED` / `NOT_AUTHENTICATED` / `UNVERIFIABLE` (names illustrative; final vocabulary to be frozen with codes), reported **separately** from binding consistency.
-- **Composition rule (to specify):** a claim requiring trusted provenance MUST NOT be treated as satisfied when binding is consistent but provenance is unverified/unverifiable. Composition MUST be deterministic and fail-closed.
+## 4. Adversarial verification (v1 implemented scope)
+- Positive/negative vectors covering valid verification, bad signature, wrong key/issuer, context mismatch, malformed/type confusion/unknown fields, time window failures, and conflict.
+- Determinism checks for identical inputs.
+- Independent reference comparison within tests for representative cases (separately specified from implementation logic paths) and non-permissiveness assertions.
+- **Note:** large-scale fuzzing/mutation campaigns and external independent review are valuable follow-ups; this slice provides deterministic, reproducible adversarial/property-oriented coverage in-repo, not a claim of exhaustive assurance.
 
-*(Any code changes to verdict surfaces require frozen vocabularies, tests, and doc alignment in the same change.)*
+## 5. Out of scope (v1 slice, explicitly not claimed)
+- Revocation/status infrastructure, key rotation protocols, multi-anchor/quorum trust chains, network fetch of records, ledger/on-chain resolution, semantic execution proof, and production key management.
+- Any change to `BOUND` semantics or to `bindReceiptIdentity`’s existing verdict meanings.
 
-## 7. Adversarial verification plan (v1, pre/post implementation)
-- **Negative/adversarial cases:** forged-but-consistent records, wrong-context records, conflicting/duplicate records, stale/revoked (when modeled), malformed/type-confused/empty fields, algorithm/version mismatches, partial evidence.
-- **Property-oriented checks:** no `BOUND`/positive provenance verdict when required evidence differs or is missing; determinism for identical inputs; monotonicity (adding contradiction must not increase trust).
-- **Permissiveness guard:** implementation MUST NOT be more permissive than the spec and reference corpus/expected outcomes (fail the build on drift).
-- **Independent reference:** maintain/extend a reference evaluator **independently specified** from the implementation under test; compare implementation vs reference vs corpus expectations. (Independence must be real, not a copy of the same logic/bug.)
-- **Reproducibility:** pinned revisions, recorded environment/commands/outputs, and reviewable artifacts; distinguish environment issues from package/spec issues in reports.
+## 6. Deliverables in this slice
+- Frozen spec decisions (this document) aligned with implementation and tests.
+- `scripts/ladder/resolved-record-provenance.mjs` (CG-RRP/1) — fail-closed verification against external trust anchor.
+- `test/integrations/resolved-record-provenance.test.mjs` — positive/negative/adversarial/determinism/reference vectors.
 
-## 8. Deliverables for v1 (incremental, evidence-driven)
-1. **This spec (refined):** resolved design choices, frozen evidence contract, verdict vocabulary/codes, and threat-model assumptions.
-2. **Conformance vectors:** positive/negative/conflict/context cases with expected outcomes and provenance.
-3. **Minimal implementation:** only after spec freeze for the targeted subset, with fail-closed defaults and explicit unsupported states.
-4. **Tests:** corpus + adversarial + property/mutation-guard coverage proportionate to risk.
-5. **Documentation:** trust boundaries, “what is proven / not proven”, and operator/reviewer guidance.
-
-## 9. Open decisions (tracked)
-- Chosen authenticity mechanism(s) and canonicalization/signing payload.
-- Trust anchor model and distribution.
-- Context dimensions required for v1.
-- Conflict policy and verdict composition.
-- Handling of unavailable revocation/freshness signals.
-
-## 10. Review checklist (before claiming progress)
-- [ ] Key question answered and documented (current: consistency-only, no provenance auth)
-- [ ] `BOUND` vs “authentic/trusted source” kept distinct
-- [ ] Fail-closed behavior specified for unknown/missing/conflicting evidence
-- [ ] Adversarial cases and non-permissiveness guards defined
-- [ ] Claims limited to reproducible, pinned evidence
+*Claims limited to reproducible, pinned evidence for this slice.* 

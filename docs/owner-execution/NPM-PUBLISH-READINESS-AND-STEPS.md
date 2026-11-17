@@ -1,7 +1,7 @@
 # npm Publication — Readiness Review & Owner Execution Steps (preparation only)
 
 **Status:** preparation artifact. **No packages have been published.** Actual publication is **OWNER-GATED** (account/ownership, scope, credentials, explicit version/release decision).  
-**Measured repo state:** 1738/1738 tests, 1248 files / 0 boundary violations (pre-this-doc snapshot context), CI green on `main` (see `docs/state-snapshot.json` / `docs/STATUS.md`).
+**Measured repo state:** 1752/1752 tests, 1248 files / 0 boundary violations (pre-this-doc snapshot context), CI green on `main` (see `docs/state-snapshot.json` / `docs/STATUS.md`).
 
 ## 1) Monorepo/package inventory (current)
 

@@ -1,6 +1,6 @@
 # CoreGuard Agent Commerce Security — Evidence Showcase (evidence-first)
 
-**Measured state (CI-pinned, `main`):** 1738/1738 tests · 1244 files / 0 boundary violations · docs-node 133 executed · 81 skip-listed · 30 docs covered · CI green.  
+**Measured state (CI-pinned, `main`):** 1752/1752 tests · 1244 files / 0 boundary violations · docs-node 133 executed · 81 skip-listed · 30 docs covered · CI green.  
 **Scope:** offline, deterministic, fail-closed verification surfaces (synthetic fixtures; no live wallet/card interception; no on-chain broadcast). `VERIFIED ≠ SAFE`.
 
 ## The arc to demonstrate (from a clean clone)
