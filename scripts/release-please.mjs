@@ -79,7 +79,7 @@ const log = join(REPO, "tmp", "release-log.txt");
 let failed = null;
 for (const dir of PACKAGES) {
   if (failed) break;
-  const res = spawnSync(NPM, ["publish", "--provenance", "--access", "public"], {
+  const res = spawnSync(NPM, ["publish", "--access", "public"], {
     cwd: join(REPO, "packages", dir),
     encoding: "utf8",
     maxBuffer: 32 * 1024 * 1024,
