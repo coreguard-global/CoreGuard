@@ -2,7 +2,6 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="brand/coreguard-banner-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="brand/coreguard-logo-light.png">
   <img src="brand/coreguard-banner-dark.png" alt="CoreGuard" width="92%">
 </picture>
 
