@@ -73,6 +73,11 @@ const ALLOWED = new Set([
   "docs/SCF-46-INTEREST-FORM-READY-2026-11-06.md", // dated instrument: answers prepared 2026-11-06 for the 2026-11-09 deadline; the total it cites was the measured one at its own date
   "docs/scf-evidence-packet-2026-10.md",
   "docs/scf-evidence-packet-ar-2026-10.md",
+  "docs/AGENT-COMMERCE-EVIDENCE-SHOWCASE-2026-11-16.md", // dated instrument: CI-pinned measured state at its own date (2026-11-16)
+  "docs/AGENT-COMMERCE-OUTREACH-PACK-2026-11-16.md", // dated instrument: outreach/evidence pack authored and measured 2026-11-16 (this push)
+  "docs/AGENT-COMMERCE-PARTNER-FUNDING-ONE-PAGER-2026-11-16.md", // dated instrument: partner-funding one-pager measured 2026-11-16 (this push)
+  "docs/RELEASE-NOTES-v1.2.0-DRAFT-2026-11-12.md", // dated instrument: pre-publish release-notes draft (2026-11-12), published 2026-11-13 as v1.2.0
+  "docs/RELEASE-NOTES-v1.2.0.md", // dated instrument: release notes published 2026-11-13 (tag 33e5606; suite state as measured at publish)
 ]);
 
 /** The claim shapes the repo actually writes (shapes are pinned by controls below). */
