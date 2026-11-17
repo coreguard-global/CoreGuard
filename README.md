@@ -1,39 +1,114 @@
 <div align="center">
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="brand/coreguard-banner-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="brand/coreguard-logo-light.png">
-    <img src="brand/coreguard-banner-dark.png" alt="CoreGuard — Verify • Protect • Empower" width="88%">
-  </picture>
-</p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="brand/coreguard-banner-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="brand/coreguard-logo-light.png">
+  <img src="brand/coreguard-banner-dark.png" alt="CoreGuard — Verify • Protect • Empower" width="92%">
+</picture>
 
-# ⛨ CoreGuard
+# CoreGuard
 
-### VERIFY&nbsp;•&nbsp;<b style="color:#ff8a00">PROTECT</b>&nbsp;•&nbsp;EMPOWER — Execution Integrity for a Smarter Onchain Future
+### The Execution Trust Layer for Stellar
+**Every autonomous transaction deserves a receipt a stranger can verify.**
 
-**Live&nbsp;·&nbsp;[Official investor & reviewer website](https://coreguard-trust-and-defense.lovable.app/)&nbsp;·&nbsp;[Documentation & product catalog](https://coreguard-global.github.io/CoreGuard/)**
+<sub><b>VERIFY</b> &nbsp;•&nbsp; <b>PROTECT</b> &nbsp;•&nbsp; <b>EMPOWER</b> &nbsp;—&nbsp; More than security. It's trust.</sub>
 
-<p align="center">
-  <a href="https://coreguard-global.github.io/CoreGuard/"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/cgep-1-receipt.svg" alt="CGEP/1 receipt"></a>
-  <a href="https://coreguard-global.github.io/CoreGuard/PRODUCTS.html"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/execution-firewall.svg" alt="Execution Firewall"></a>
-  <a href="https://coreguard-global.github.io/CoreGuard/PRODUCTS.html"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/intent-policy.svg" alt="Intent + Policy"></a>
-  <a href="https://coreguard-global.github.io/CoreGuard/PRODUCTS.html"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/verifier-x3.svg" alt="Verifier x3"></a>
-  <a href="https://coreguard-global.github.io/CoreGuard/DDE-SDK-REFERENCE.html"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/coreguard-sdk.svg" alt="@coreguard/sdk"></a>
-  <a href="https://coreguard-global.github.io/CoreGuard/DDE-API-REFERENCE.html"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/dde-dispute.svg" alt="DDE / dispute"></a>
-  <a href="https://coreguard-global.github.io/CoreGuard/PRODUCTS.html"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/cg-bdg-1-badges.svg" alt="CG-BDG/1 badges"></a>
-  <a href="https://coreguard-global.github.io/CoreGuard/GOVERNANCE-DASHBOARD.html"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/cg-cl-1-claims.svg" alt="CG-CL/1 claims"></a>
-  <a href="https://coreguard-global.github.io/CoreGuard/"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/core-mainnet-anchor.svg" alt="Core Mainnet anchor"></a>
-  <a href="https://github.com/coreguard-global/CoreGuard/actions"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/ci-1694-tests.svg" alt="CI 1738 tests"></a>
-  <a href="https://www.linkedin.com/company/coreguard-global"><img src="https://img.shields.io/badge/LinkedIn-CoreGuard%20Global-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
-  <a href="https://twitter.com/CoreGuardGlobal"><img src="https://img.shields.io/badge/Twitter-@CoreGuardGlobal-1DA1F2?style=flat-square&logo=twitter&logoColor=white" alt="Twitter"></a>
-</p>
+<br>
 
-<table><tr>
-<td align="center" width="25%"><img src="brand/coreguard-shield.png" width="110" alt="CoreGuard shield"><br><sub><b>The Shield</b></sub></td>
-<td align="center" width="40%"><img src="brand/coreguard-app-icons.png" width="300" alt="CoreGuard app icons"><br><sub><b>App &amp; social icons</b></sub></td>
-<td align="center" width="35%"><img src="brand/coreguard-trust-3d.png" width="240" alt="More than security. It's trust."><br><sub><b>More than security. It's trust.</b></sub></td>
-</tr></table>
+[![Website](https://img.shields.io/badge/Website-Investors%20%26%20Reviewers-FF8A00?style=for-the-badge&labelColor=0B0F14)](https://coreguard-trust-and-defense.lovable.app/)
+[![Stellar](https://img.shields.io/badge/Stellar-Mainnet%20evidenced-F5F7FA?style=for-the-badge&logo=stellar&logoColor=0B0F14&labelColor=FF8A00)](https://coreguard-trust-and-defense.lovable.app/stellar)
+[![Core DAO](https://img.shields.io/badge/Core%20DAO-Live%20on%20Mainnet-FF8A00?style=for-the-badge&labelColor=0B0F14)](https://coreguard-trust-and-defense.lovable.app/networks/core-dao)
+[![SCF](https://img.shields.io/badge/SCF%20%2346-%24150K%20requested-4A5568?style=for-the-badge&labelColor=0B0F14)](docs/SCF-BUILD-APPLICATION-V3.md)
+
+[**Website**](https://coreguard-trust-and-defense.lovable.app/) · [**Stellar review**](https://coreguard-trust-and-defense.lovable.app/stellar) · [**Investors**](https://coreguard-trust-and-defense.lovable.app/investors) · [**Docs & catalog**](https://coreguard-global.github.io/CoreGuard/) · [**Roadmap**](ROADMAP.md) · [**Brand kit**](brand/)
+
+</div>
+
+---
+
+## ⛨ In 30 seconds
+
+AI agents and apps now sign transactions faster than any human can review them. Wallets show *what a transaction looks like*. **CoreGuard proves *what actually executed is what was authorized*** — and hands anyone an offline-verifiable receipt.
+
+<table>
+<tr>
+<td width="25%" valign="top"><h3>1 · Authorize</h3>A signed receipt bound to the <b>exact transaction bytes</b>.</td>
+<td width="25%" valign="top"><h3>2 · Enforce</h3><code>PASS</code> or <code>BLOCK</code> with a named reason — <b>never a score</b>.</td>
+<td width="25%" valign="top"><h3>3 · Verify</h3>Compare what ran against the signed envelope and result.</td>
+<td width="25%" valign="top"><h3>4 · Prove</h3>Artifact + offline verifier. No secret, no network, no trust in us.</td>
+</tr>
+</table>
+
+```bash
+npm install && npm run trust:demo   # four pillars, three named refusals, one receipt digest — offline, no keys
+```
+
+---
+
+## 🧭 Choose your path
+
+| You are… | Start here | Then |
+|---|---|---|
+| **Stellar / SCF reviewer** | [Stellar review page](https://coreguard-trust-and-defense.lovable.app/stellar) | [SCF application v3](docs/SCF-BUILD-APPLICATION-V3.md) · [Evidence matrix](docs/EVIDENCE-MATRIX.md) |
+| **Investor or funder** | [Investors page](https://coreguard-trust-and-defense.lovable.app/investors) | [Funding request form](https://coreguard-trust-and-defense.lovable.app/funding) · [Roadmap](ROADMAP.md) |
+| **Incubator or partner** | [Partnerships](https://coreguard-trust-and-defense.lovable.app/partnerships) | [Pilot Kit](docs/PILOT-KIT.md) — two weeks, one verifiable artifact |
+| **Developer** | [Developer quickstart](docs/DEVELOPER-QUICKSTART.md) | [SDK reference](https://coreguard-global.github.io/CoreGuard/DDE-SDK-REFERENCE.html) · [Products](https://coreguard-global.github.io/CoreGuard/PRODUCTS.html) |
+| **Security reviewer** | [Audit readiness pack](docs/AUDIT-READINESS-PACK-2026-11-16.md) | [Competitive landscape](docs/COMPETITIVE-LANDSCAPE.md) |
+
+---
+
+## ✅ Proof, not promises
+
+| Network | What is evidenced | Status |
+|---|---|---|
+| **Stellar Mainnet** | Soroban commitment anchor `CCKA2GYV…QMMXPSP` · first `commit()` tx `69044807…5dbc9fec` (ledger 65,337,373) | ✅ EXECUTED |
+| **Stellar Mainnet** | First signed funded swap gated by DEX-GATE/1 · tx `ac2a7990…640b9097` · **ledger 65,338,112** | ✅ CONFIRMED |
+| **Stellar** | PSAR/1 pre-sign authorization receipts · 11 frozen reject codes · [Freighter technical comment](https://github.com/stellar/freighter/issues/3087) | 🟠 BUILT · wallet integration not built |
+| **Core DAO Mainnet** | EvidenceRegistry `0x037dF08F…6AFf9EA6E` · verified agent execution · 43/43 Foundry proofs | ✅ LIVE |
+| **Agent Commerce** | AC-FW/1 · CGCR/1 · AGR/1 · AC-CS/1 on synthetic fixtures | 🟠 BUILT · TEST_EXECUTED |
+| **Pi Network** | Execution-truth plan prepared | ⏳ DRY_RUN / PLAN_ONLY |
+
+Every hash above is re-derivable offline from `docs/evidence/`. Full detail is in the technical reference below.
+
+---
+
+## 💠 SCF #46 — $150,000, released only against evidence
+
+<table>
+<tr>
+<td align="center" width="33%"><h2>$40K</h2><b>T1 · M1</b><br>SDK v1 + measured 15-minute quickstart, API reference, error-code catalogue</td>
+<td align="center" width="33%"><h2>$55K</h2><b>T2 · M2 + M3</b><br>Soroban <code>commit_authorized</code> lane from CI wasm · two external two-week pilots</td>
+<td align="center" width="33%"><h2>$55K</h2><b>T3 · M4</b><br>Independent review closed · enterprise policies, SLA, pricing, support</td>
+</tr>
+</table>
+
+**Use of funds:** engineering $84K · independent security review $18K · audit retainer $12K · pilot support $12K · infrastructure $6K · legal $6K · docs & DX $6K · contingency $6K (max 5%). Source: [SCF Build application v3](docs/SCF-BUILD-APPLICATION-V3.md).
+
+> **Requested, not awarded.** No external pilot is signed yet, no third-party audit is complete, and no revenue is claimed. That honesty is the product: `VERIFIED ≠ SAFE`.
+
+---
+
+## 🤝 Work with CoreGuard
+
+| Fund | Partner | Integrate | Talk |
+|:--:|:--:|:--:|:--:|
+| [Funding request →](https://coreguard-trust-and-defense.lovable.app/funding) | [Incubator & partnership →](https://coreguard-trust-and-defense.lovable.app/partnerships) | [Pilot Kit →](docs/PILOT-KIT.md) | [coreguardglobal@gmail.com](mailto:coreguardglobal@gmail.com) |
+
+<div align="center">
+<br>
+<img src="brand/coreguard-trust-3d.png" width="200" alt="More than security. It's trust.">
+<br><sub><b>More than security. It's trust.</b></sub>
+</div>
+
+---
+
+<div align="center">
+
+## 📚 Technical reference
+
+<sub>Everything below is the full, evidence-linked engineering record. Each claim points to a file in this repository.</sub>
+
+</div>
 
 ### ★ New — Agent Commerce Security, Phase 2 (16 Nov 2026)
 
@@ -248,7 +323,6 @@ node scripts/badge-wall.mjs --audit   # re-derive all 7 plate digests from the c
 node scripts/badge-wall.mjs           # regenerate plates + the composed wall after source changes
 ```  *Off-chain engine · Solidity registry · CGEP/1 draft spec. Real Core Mainnet execution verified · on-chain anchor live on Core (chainId 1116) · VERIFIED ANCHOR INTEGRITY — CoreGuard Verify · Protect · Empower*
 
-</div>
 
 ---
 
