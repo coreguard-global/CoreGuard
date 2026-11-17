@@ -76,3 +76,21 @@ leaves the binding `NOT_RUN` and can never block a complete offline VERIFIED.
 | Claim L3/L4 in v0.1 | INCONCLUSIVE | 4 |
 | Unknown level | UNVERIFIED | 3 |
 | RPC says tx does not exist on chain | INVALID | 2 |
+
+## Where to go next
+
+This page defines the contract. These pages exercise it, in the order a
+reviewer usually needs them:
+
+- [`reviewer-demo-script-2026-09.md`](reviewer-demo-script-2026-09.md) — the
+  judge-ready walkthrough. It is executable, not just prose:
+  `test/ci/demo-script-contract.test.js` extracts every `demo` block, runs it,
+  and fails the build when a command's output or exit code drifts.
+- [`sep-receipt-semantics-draft-2026-11-11.md`](sep-receipt-semantics-draft-2026-11-11.md)
+  — the CGEP/1 execution-receipt deep dive: verdict vocabulary, the L1
+  three-outcome chain rule, and offline re-derivation from a clean clone.
+- [`STELLAR-INTEGRATION-GUIDE.md`](STELLAR-INTEGRATION-GUIDE.md) — Freighter,
+  Soroban DEX and anchor integration paths.
+- Arabic editions of all three (`-ar.md`), declared with source digests in
+  [`i18n-pairs.json`](i18n-pairs.json) and kept honest by
+  `test/ci/bilingual-pairs.test.js`.
