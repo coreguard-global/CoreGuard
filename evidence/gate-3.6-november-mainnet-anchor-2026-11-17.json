@@ -1,0 +1,129 @@
+{
+  "gate": "3.6",
+  "title": "November 2026 owner-authorized Mainnet anchor on a fresh EvidenceRegistry (V1) instance",
+  "date": "2026-11-17T17:25:41Z",
+  "chainId": 1116,
+  "network": "core-mainnet",
+  "broadcastRpc": "https://rpc.coredao.org",
+  "gasPriceGwei": 60,
+
+  "ownerAuthorization": {
+    "grantor": "project owner",
+    "channel": "in-conversation owner decision (chat)",
+    "decisionDate": "2026-11-17",
+    "verbatimQuoteAr": "اعمل على الشبكة الرئيسية ع طول انا بديك الصلاحية",
+    "verbatimQuoteEn": "Work on the main network right away — I am giving you the authorization",
+    "decision": "anchor directly on Core Mainnet; supersedes the earlier owner note \"بس بعد مانخلص الاختبار الاول\" (\"only after we finish the first test\"), which had ordered a testnet-first attempt",
+    "scope": "on-chain anchoring of the CoreGuard evidence receipt on Core Mainnet (chainId 1116), using the owner-funded deployer key",
+    "keyHandling": "the deployer private key was read from the local .env at broadcast time and was never printed, logged, or committed"
+  },
+
+  "registry": {
+    "contract": "0x86da416fd82a6281dbe5200c15ebf96f26df4974",
+    "contractName": "EvidenceRegistry (V1)",
+    "immutable": true,
+    "codesize": 730,
+    "deployTx": "0xe3096687a34f03a04307b0898d71f0e5fbda37e90828f274e8fa50000c5784c8",
+    "deployBlock": "0x26a98f6",
+    "deployBlockDecimal": 40540406,
+    "deployStatus": "0x1",
+    "deployGasUsed": 211104,
+    "deployScript": "script/Deploy.s.sol (forge script --legacy --broadcast; vm.startBroadcast wrapper added after the first run proved simulation-only)"
+  },
+
+  "firstAttemptNote": "the first forge run executed WITHOUT --broadcast: forge reported 'No transactions to broadcast' and the address it printed (0xC7f2Cf4845C6db0e1a1e91ED41Bcd0FcC1b0E141) was a simulation artifact that never received code. No gas was spent on it. The real, confirmed deployment is the 0x86da…4974 instance above.",
+
+  "commitIntent": {
+    "tx": "0x3a08cb314e8e4e0a967c3abc6cc8c85c7c53686f8ef47e6307c1b30f68e90fb5",
+    "status": "0x1",
+    "block": "0x26a9922",
+    "blockDecimal": 40540450,
+    "gasUsed": 48530,
+    "intentId": "0xd4ddd02204f55662ef7db62b7a720c7e8dbff8d92a1cc621df22cf1b5dc22627",
+    "note": "the intentId is the receiptId itself — scripts/verify-anchor.ps1 compares the IntentCommitted event topic1 against the receiptId, so the receipt identity is what commitIntent binds"
+  },
+
+  "anchorProof": {
+    "tx": "0xb8a0d41c8a9324abe35f8e854eee0673f7a3df45e6dad02eecc27058046a42f8",
+    "status": "0x1",
+    "block": "0x26a9948",
+    "blockDecimal": 40540488,
+    "gasUsed": 49064,
+    "proofId": "0x172ba0a6ba483e05943f3cf1f42562c2f0d300192a80fbb697bcb602c735b2cd",
+    "blockHash": "0xfdc488f8b2eea4442319eadf5cb0561a0e69d8310f029b80c7f191552dfcdfcd",
+    "result": 1
+  },
+
+  "receiptId": "0xd4ddd02204f55662ef7db62b7a720c7e8dbff8d92a1cc621df22cf1b5dc22627",
+  "commitment": "0xcabce2bbba1581983dd524a70497746ece4aa791b0bbab14f1559ab525b000f3",
+  "commitmentSource": "scripts/compute-commitment.mjs over examples/transfer/receipt-valid.json (planned artifact committed as scripts/live-anchor-planned.json); both txs were eth_call-simulated successfully before each broadcast",
+
+  "resultVocabulary": {
+    "singleSourceOfTruth": "scripts/compute-commitment.mjs _RESULT_CODES / scripts/anchor-verdict.mjs vocabulary",
+    "VERIFIED_or_VALID": 1,
+    "INVALID": 0,
+    "INCONCLUSIVE_UNVERIFIED_UNVERIFIABLE_INCOMPLETE": 2,
+    "recorded": "anchorProof carried result=1 (= VALID under the anchor-verdict vocabulary)",
+    "v2CommentNote": "contracts/EvidenceRegistryV2.sol's enum comment lists VALID=0 — that comment is legacy and unenforced; V1 only checks result <= 2. This fixture follows the anchor-verdict vocabulary, so result=1 means VALID here."
+  },
+
+  "verdict": {
+    "verifier": "scripts/verify-anchor.ps1 -Level L2 (three-proofs verifier: A deployment, B commitment, C independent offline recompute)",
+    "level": "L2",
+    "verdict": "VERIFIED",
+    "verdictCode": "ANCHOR_INTEGRITY",
+    "requiredChecks": {
+      "C_recompute": "PASS",
+      "A_deploy": "PASS",
+      "A_deployTx": "PASS",
+      "B_anchor": "PASS",
+      "B_commitIntentTx": "PASS",
+      "B_anchorTx": "PASS"
+    },
+    "optionalChecks": {
+      "B_storageAnchor": "NOT_RUN — the verifier's frozen storage-slot constant is specific to the September proofId, so the November slot is not derivable from it; integrity is instead proven via canonical event topics + cross-provider readbacks",
+      "B_storageIntent": "NOT_RUN (same reason)"
+    },
+    "txBlockBinding": "PASS (eth_getTransactionByHash vs receipt.blockHash; txHash and blockHash are distinct fields)",
+    "canonicalSigs": {
+      "intentEventTopic0": "0x56a2b6506b90d822d75d1b4267b743b5e05fb15361f0393f58f223d0329cf6b4",
+      "anchorEventTopic0": "0x0c33ee02e1b358686f70819be25e8d45c5c15ca5d9b48c790441b349b30f3475"
+    },
+    "artifactNote": "scripts/verify-live.regenerated.json is the live verdict artifact; it is gitignored, so its values are copied into this committed fixture"
+  },
+
+  "crossRpc": {
+    "providers": ["https://rpc.coredao.org", "https://core.drpc.org"],
+    "checks": 6,
+    "passed": 6,
+    "method": "verifyCommitment(proofId, commitment) + verifyCommitment(receiptId-as-intentId, commitment) + isCommitted(proofId) + isCommitted(receiptId) re-issued on both providers — all returned true",
+    "providerNotes": "rpc.ankr.com/core now requires an API key (error -32053) and core.publicnode.com was unreachable; both were excluded and the two working independent providers were used"
+  },
+
+  "receiptBoundary": {
+    "anchoredReceipt": "examples/transfer/receipt-valid.json",
+    "honestNote": "the anchored receipt is the in-tree synthetic demo receipt, not a live counterparty transaction. It declares chainId 1114 (Testnet2), and it was anchored on Mainnet 1116 for permanence — a deliberate cross-chain persistence choice, recorded here so nobody later mistakes the anchor for Mainnet-executed payment evidence."
+  },
+
+  "septemberRegistriesUntouched": {
+    "V1_september": "0x037dF08F2d43c5D03759279Fe35664f6AFf9EA6E",
+    "V2_frozen": "0x66268a47e81b8f657798d7b5bbedc956df7b13fd",
+    "note": "both September instances remain exactly as they were (isCommitted on the V2 registry reverts for V1-shaped ids and its September records stay frozen). V2 requires EIP-712 per-call signatures (domain CoreGuardRegistry, digest via its commitIntentDigest/anchorProofDigest views) and no signing helper exists in this tree, so the November anchor used a fresh V1 instance instead of touching frozen evidence."
+  },
+
+  "gasAccounting": {
+    "preWaveBalanceWei": 910973040000000000,
+    "postWaveBalanceWei": 892451160000000000,
+    "spentWei": 18521880000000000,
+    "spentCore": 0.01852188,
+    "deployerNonceBefore": 9,
+    "deployerNonceAfter": 12,
+    "measuredAt": "2026-11-17T17:25:41Z"
+  },
+
+  "honesty": {
+    "verifiedNotSafe": "VERIFIED ≠ SAFE — the L2 verdict proves anchor integrity only (a specific commitment is on-chain and independently recomputed); it is NOT execution truth, NOT a security audit, and NOT external review. VERIFIED is reachable and may still coexist with UNKNOWN.",
+    "noOutcomePromises": "no funding, partnership, incubation, or adoption outcome is promised anywhere in public content",
+    "testCountsNeverHeadline": "test counts are reproducibility context, never the headline claim"
+  }
+}

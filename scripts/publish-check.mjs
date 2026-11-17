@@ -39,6 +39,7 @@ const PACKAGE_ORDER = [
   // closure; the dependency-truth check is what actually enforces it)
   "canonical", "crypto", "policy", "trace", "evidence", "replay", "evm",
   "provenance", "intent", "verifier", "firewall", "delivery", "sdk",
+  "agent-commerce",
 ];
 
 const fail = (msg) => { console.error(`publish-check: ${msg}`); process.exit(2); };
@@ -162,7 +163,7 @@ function checkFilesCoverage(dir, pkg, shipped) {
 }
 
 function checkEscapes(dir, pkg, shipped) {
-  for (const file of shipped.filter((f) => f.endsWith(".js"))) {
+  for (const file of shipped.filter((f) => /\.(js|mjs)$/.test(f))) {
     const src = readFileSync(join(REPO, "packages", dir, file), "utf8");
     for (const spec of relativeImports(src)) {
       const resolved = join(dir, file, "..", spec);
@@ -177,7 +178,7 @@ function checkEscapes(dir, pkg, shipped) {
 function checkDependencyTruth(dir, pkg, shipped) {
   const declared = new Set(Object.keys(pkg.dependencies ?? {}));
   const used = new Set();
-  for (const file of shipped.filter((f) => f.endsWith(".js"))) {
+  for (const file of shipped.filter((f) => /\.(js|mjs)$/.test(f))) {
     const src = readFileSync(join(REPO, "packages", dir, file), "utf8");
     for (const c of bareCoreguardImports(src)) {
       if (c !== `@coreguard/${dir}`) used.add(c);

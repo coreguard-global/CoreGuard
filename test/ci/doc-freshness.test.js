@@ -323,7 +323,7 @@ test("doc-freshness negative controls: each staleness mutation applies AND bites
     },
     {
       label: "the Pages deep links move off-org",
-      doc: [[`${LIVE.pagesHost}/coreguard`, "legacy-pages.github.io/old"]],
+      doc: [[`${LIVE.pagesHost}/CoreGuard`, "legacy-pages.github.io/old"]],
       expect: /stale DNS marker "legacy-pages\.github\.io"/,
     },
     {

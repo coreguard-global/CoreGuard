@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: 'Type RELEASE to confirm publishing all 13 @coreguard packages'
+        description: 'Type RELEASE to confirm publishing all 14 @coreguard packages'
         required: true
         default: ''
 

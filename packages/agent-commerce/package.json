@@ -1,0 +1,64 @@
+{
+  "name": "@coreguard/agent-commerce",
+  "version": "0.1.0",
+  "description": "CoreGuard Agent Commerce: consent receipts (CGCR/1) and fail-closed execution verification (AGR/1) for agentic purchases — SDK, REST surface, and a stdio MCP server (JSON-RPC 2.0, offline, zero keys)",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./mcp.mjs": "./mcp.mjs",
+    "./http.mjs": "./http.mjs",
+    "./client.mjs": "./client.mjs",
+    "./firewall.mjs": "./firewall.mjs",
+    "./risk.mjs": "./risk.mjs",
+    "./risk-cli.mjs": "./risk-cli.mjs",
+    "./attest.mjs": "./attest.mjs"
+  },
+  "bin": {
+    "coreguard-agent-commerce-mcp": "./bin/mcp.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "mcp.mjs",
+    "http.mjs",
+    "client.mjs",
+    "firewall.mjs",
+    "risk.mjs",
+    "risk-cli.mjs",
+    "attest.mjs",
+    "policy-context.mjs",
+    "consumption-store.mjs",
+    "bin/mcp.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@coreguard/canonical": "^0.1.0",
+    "@coreguard/evidence": "^0.1.0",
+    "@coreguard/policy": "^0.1.0",
+    "@coreguard/verifier": "^0.1.0"
+  },
+  "mcpName": "io.github.eslam-x/coreguard-agent-commerce",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coreguard-global/CoreGuard.git"
+  },
+  "homepage": "https://github.com/coreguard-global/CoreGuard#readme",
+  "bugs": {
+    "url": "https://github.com/coreguard-global/CoreGuard/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "agent-commerce",
+    "consent-receipt",
+    "fail-closed",
+    "agentic-payments",
+    "cgep",
+    "coreguard"
+  ],
+  "license": "MIT"
+}

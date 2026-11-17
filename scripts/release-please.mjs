@@ -8,7 +8,7 @@
  * Order of defense:
  *   1. NPM_TOKEN must be present in the environment — publish without a
  *      credential is refused before anything runs (no half-published trees).
- *   2. scripts/publish-check.mjs must exit 0 for all 13 packages — the
+ *   2. scripts/publish-check.mjs must exit 0 for all 14 packages — the
  *      tarball-content, escaped-import, dependency-truth and INSTALL PARITY
  *      gates run against packed tarballs installed into a scratch workspace.
  *   3. --dry-run prints the publish plan and exits without publishing.
@@ -27,6 +27,7 @@ const REPO = join(dirname(fileURLToPath(import.meta.url)), "..");
 const PACKAGES = [
   "canonical", "crypto", "policy", "trace", "evidence", "replay", "evm",
   "provenance", "intent", "verifier", "firewall", "delivery", "sdk",
+  "agent-commerce",
 ];
 
 const dryRun = process.argv.includes("--dry-run");
@@ -42,7 +43,7 @@ if (!token.trim()) {
 console.log("release-please: NPM_TOKEN present ✓");
 
 // gate 2 — the publish-check gate (spawned so its exit code is authoritative)
-console.log("release-please: running publish-check over all 13 packages…");
+console.log("release-please: running publish-check over all 14 packages…");
 const check = spawnSync(process.execPath, [join(REPO, "scripts", "publish-check.mjs")], {
   cwd: REPO,
   encoding: "utf8",
@@ -64,7 +65,7 @@ const versions = PACKAGES.map((d) => {
   const pkg = JSON.parse(readFileSync(join(REPO, "packages", d, "package.json"), "utf8"));
   return `${pkg.name}@${pkg.version}`;
 });
-console.log("release-please: publish plan (13 packages, dependency order):");
+console.log("release-please: publish plan (14 packages, dependency order):");
 for (const v of versions) console.log(`  ${v}`);
 
 if (dryRun) {
@@ -98,4 +99,4 @@ if (failed) {
   console.error(failed.tail);
   process.exit(1);
 }
-console.log(`release-please: all 13 packages published ✓ (log: ${log})`);
+console.log(`release-please: all 14 packages published ✓ (log: ${log})`);

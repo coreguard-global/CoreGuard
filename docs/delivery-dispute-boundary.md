@@ -118,9 +118,9 @@ curl -sS -X POST http://127.0.0.1:8787/peoples-court \
 curl -sS http://127.0.0.1:8787/health
 ```
 
-No terminal? Each command above runs in the published page with no server and no clone — try it live: [verify](https://eslam-x.github.io/coreguard/DDE-API-REFERENCE.html#run=honest) · [peoples-court](https://eslam-x.github.io/coreguard/DDE-API-REFERENCE.html#run=peoples-court) · [health](https://eslam-x.github.io/coreguard/DDE-API-REFERENCE.html#playground) — and the page deep-links every wire scenario in the table (`#run=tamper`, `#run=badjson`, `#run=oversize`, `#run=ratelimit`, `#run=notfound`).
+No terminal? Each command above runs in the published page with no server and no clone — try it live: [verify](https://coreguard-global.github.io/CoreGuard/DDE-API-REFERENCE.html#run=honest) · [peoples-court](https://coreguard-global.github.io/CoreGuard/DDE-API-REFERENCE.html#run=peoples-court) · [health](https://coreguard-global.github.io/CoreGuard/DDE-API-REFERENCE.html#playground) — and the page deep-links every wire scenario in the table (`#run=tamper`, `#run=badjson`, `#run=oversize`, `#run=ratelimit`, `#run=notfound`).
 The two live pages cross-link each other: the same fixture runs through the SDK gate on the
-[SDK reference page](https://eslam-x.github.io/coreguard/DDE-SDK-REFERENCE.html) (`#run=verify` → HOLD,
+[SDK reference page](https://coreguard-global.github.io/CoreGuard/DDE-SDK-REFERENCE.html) (`#run=verify` → HOLD,
 `#run=accepted` → RELEASE, `#run=tamper` → REFUSED) — the engine is identical, only the transport differs.
 Building an agent-incident review on this surface? The AIE-1 spec wraps the
 same endpoint and bundle as the verification surface any outside reviewer can
@@ -129,7 +129,7 @@ inherit from a cold clone:
 — its claims are executed, not trusted.
 
 Prefer to *see* the wire contract before running anything? The published
-[DDE-API-REFERENCE page](https://eslam-x.github.io/coreguard/DDE-API-REFERENCE.html)
+[DDE-API-REFERENCE page](https://coreguard-global.github.io/CoreGuard/DDE-API-REFERENCE.html)
 embeds the real DDE/1 handler and captures every status code below live in your
 browser tab — plus an external-probe box you can point at any running endpoint.
 For a shareable one-page summary of this whole section (drop-in link for
@@ -662,5 +662,5 @@ fail-closed checks; a flipped artifact byte fails closed; payout opens only
 on a signed party acceptance over explicit criteria — never on a receipt.
 One-page integration (every command CI-executed):
 https://github.com/coreguard-global/CoreGuard/blob/main/INTEGRATION.md
-Live engine, in-page: https://eslam-x.github.io/coreguard/DDE-API-REFERENCE.html
+Live engine, in-page: https://coreguard-global.github.io/CoreGuard/DDE-API-REFERENCE.html
 ```

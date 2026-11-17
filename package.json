@@ -92,9 +92,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/EslaM-X/coreguard.git"
+    "url": "git+https://github.com/coreguard-global/CoreGuard.git"
   },
-  "homepage": "https://github.com/EslaM-X/coreguard",
+  "homepage": "https://github.com/coreguard-global/CoreGuard#readme",
   "keywords": [
     "bitcoin-defi",
     "core-blockchain",
