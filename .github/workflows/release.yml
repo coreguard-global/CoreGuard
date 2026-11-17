@@ -24,6 +24,8 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Confirm input + credential
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ "${{ github.event.inputs.confirm }}" != "RELEASE" ]; then
             echo "refusing to run: type RELEASE in the confirm input to publish"; exit 1
