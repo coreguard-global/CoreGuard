@@ -1,5 +1,7 @@
 # SEP draft: fail-closed execution-receipt semantics for Stellar
 
+*العربية: [نسخة عربية من هذه المسوّدة](sep-receipt-semantics-draft-2026-11-11-ar.md) — the Arabic edition is a declared pair: its provenance line pins this file's digest, and `test/ci/bilingual-pairs.test.js` fails when the two drift apart.*
+
 **DRAFT instrument, 2026-11-11.** Authored under owner-delegated authority
 (the owner granted full delegation this date). This is a DRAFT proposal only:
 it is NOT submitted to any standards body, and any external submission

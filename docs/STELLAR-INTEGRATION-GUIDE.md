@@ -1,5 +1,7 @@
 # CoreGuard Stellar Integration Guide
 
+*العربية: [دليل التكامل — النسخة العربية](STELLAR-INTEGRATION-GUIDE-ar.md) — declared pair; the Arabic edition pins this file's digest and `test/ci/bilingual-pairs.test.js` fails when they drift.*
+
 ## Overview
 
 CoreGuard provides verifiable execution truth for Stellar. Every Stellar payment, Soroban contract invocation, and DEX transaction can be verified before submission with independently replayable evidence.

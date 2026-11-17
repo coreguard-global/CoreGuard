@@ -1,0 +1,23 @@
+{
+  "$comment": "Declared bilingual pairs. The Arabic edition carries `<!-- i18n: source=<path> sha256=<digest of the source at translation time> translated=<date> -->`, and test/ci/bilingual-pairs.test.js fails when the Arabic side disappears, when the English source's digest no longer equals the pin (the English text changed, so the translation is stale), or when an Arabic edition exists on disk without being declared here.",
+  "pairs": [
+    {
+      "id": "CG-BTY-005-deep-dive",
+      "en": "docs/sep-receipt-semantics-draft-2026-11-11.md",
+      "ar": "docs/sep-receipt-semantics-draft-2026-11-11-ar.md",
+      "note": "The CGEP/1 execution-receipt deep dive: verdict vocabulary, fail-closed rule, identity binding, AER-1 mapping."
+    },
+    {
+      "id": "CG-BTY-005-integration-guide",
+      "en": "docs/STELLAR-INTEGRATION-GUIDE.md",
+      "ar": "docs/STELLAR-INTEGRATION-GUIDE-ar.md",
+      "note": "The Freighter / Soroban DEX / anchor integration guide."
+    },
+    {
+      "id": "CG-BTY-005-demo-script",
+      "en": "docs/reviewer-demo-script-2026-09.md",
+      "ar": "docs/reviewer-demo-script-2026-09-ar.md",
+      "note": "The reviewer demo script. The executable block lives in the English edition only; the Arabic edition is a translation and says so."
+    }
+  ]
+}
