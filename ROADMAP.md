@@ -32,7 +32,7 @@
 | **Stellar** | SOROBAN/1 commitment anchor on Mainnet + first `commit()` call (ledger 65,337,373) | ✅ |
 | **Stellar** | First signed funded swap gated by DEX-GATE/1 — **ledger 65,338,112** | ✅ |
 | **Stellar** | PSAR/1 pre-sign authorization receipts · Freighter technical comment posted | 🟠 wallet integration not built |
-| **Agent Commerce** | Phase 2: AC-FW/1 · CGCR/1 · AGR/1 · AC-CS/1 — 1724/1724 tests on `main` | 🟠 synthetic fixtures |
+| **Agent Commerce** | Phase 2: AC-FW/1 · CGCR/1 · AGR/1 · AC-CS/1 — 1795/1795 tests on `main` | 🟠 synthetic fixtures |
 | **Stellar** | CGXA-SOROBAN/1 consent binding · ESCROW/1 bounty escrow · TRINITY/1 cross-network model | 🟠 no broadcast |
 | **Pi Network** | Execution-truth plan | 🟠 DRY_RUN / PLAN_ONLY |
 

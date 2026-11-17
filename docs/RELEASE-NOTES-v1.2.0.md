@@ -5,9 +5,9 @@
 > **Evidence-first, honesty-bound:** every item below cites committed code/tests/docs/artifacts or recorded outreach. No revenue, no customers, no partnerships, no external adoption, no third-party audit, and no live wallet integration are claimed. Where status is `NOT_BUILT`, `TEST_EXECUTED`, `DRY_RUN`, `PREPARED`, or `PLAN_ONLY`, it is stated as such.
 
 ## Canonical measured state (at publish — tag `33e5606`; snapshot unchanged since `a707d3d`)
-- **npm tests:** 1761 / 1761 pass (machine-pinned)
-- **Boundary audit:** 1143 files · 0 violations
-- **Docs-node contract:** 133 executed · 79 skip-listed · 30 covered
+- **npm tests:** 1795 / 1795 pass (machine-pinned)
+- **Boundary audit:** 1284 files · 0 violations
+- **Docs-node contract:** 133 executed · 82 skip-listed · 30 covered
 - **Foundry (contracts):** 43 / 43 pass
 - **Claims audit:** PASS (0 violations)
 - **Sources:** `docs/state-snapshot.json`, `docs/STATUS.md`, `docs/claims-registry.json`

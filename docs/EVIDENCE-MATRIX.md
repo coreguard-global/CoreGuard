@@ -65,7 +65,7 @@ today and cannot adopt the latter today.
 | `independent-verifier` — offline receipt verifier | BUILT | TEST_EXECUTED | NOT_BUILT — zero third-party runs | `packages/independent-verifier`; `test/independent-verifier/` |
 | C verifier (frozen reference) | BUILT | TEST_EXECUTED | NOT_BUILT | `test/verifier-c/` |
 | Universal DApp Shield (ARM model) | BUILT | POLICY_GATE_EXECUTED — 2 ALLOW, 2 REQUIRE_REVIEW, 1 DENY, 1 REFUSED | NOT_BUILT | `docs/evidence/universal-dapp-shield-executed.json` |
-| Claim registry CG-CL/1 | BUILT | TEST_EXECUTED — 29 claims, 17 VERIFIED, 0 violations | NOT_BUILT | `docs/claims-registry.json`; `npm run claims:audit` |
+| Claim registry CG-CL/1 | BUILT | TEST_EXECUTED — 31 claims, 19 VERIFIED, 0 violations | NOT_BUILT | `docs/claims-registry.json`; `npm run claims:audit` |
 | Release gate CG-RG/1 | BUILT | TEST_EXECUTED — 18/18 legs, self-audit in CI | NOT_BUILT | `docs/release-gate.json`; `npm run release:gate` |
 | Conformance report CG-CR/1 | BUILT | TEST_EXECUTED — `badgeIssuerCount 0`, revenue 0 | NOT_BUILT | `docs/conformance-report.json` |
 
@@ -96,7 +96,7 @@ today and cannot adopt the latter today.
 
 ## Totals
 
-Suite total: **1761 / 1761 pass**, machine-pinned in
+Suite total: **1795 / 1795 pass**, machine-pinned in
 `docs/state-snapshot.json` (the only authoritative count in the repo).
 Boundary audit: **0 violations**; file count lives in the same snapshot.
 

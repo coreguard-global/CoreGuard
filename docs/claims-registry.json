@@ -17,16 +17,16 @@
     "NOT_PERFORMED"
   ],
   "counts": {
-    "total": 29,
+    "total": 31,
     "byStatus": {
-      "VERIFIED": 17,
+      "VERIFIED": 19,
       "UNKNOWN": 6,
       "HYPOTHESIS": 0,
       "RESEARCH": 1,
       "GATED": 3,
       "NOT_PERFORMED": 2
     },
-    "verified": 17,
+    "verified": 19,
     "unknown": 6,
     "hypothesis": 0,
     "research": 1,
@@ -49,11 +49,11 @@
       "recheck": "npm test",
       "external": false,
       "derived": {
-        "testsTotal": 1761
+        "testsTotal": 1795
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-BOUNDARY-CLEAN",
@@ -68,12 +68,12 @@
       "recheck": "npm run boundary:audit",
       "external": false,
       "derived": {
-        "filesScanned": 1277,
+        "filesScanned": 1284,
         "violations": 0
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-DOCS-NODE-EXECUTED",
@@ -96,7 +96,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-L1-CHAIN-CONFIRMED",
@@ -115,7 +115,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-L3-PROOFS",
@@ -133,7 +133,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-L4-RESEARCH",
@@ -152,7 +152,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-LIVE-CHAIN-AUTHORITY",
@@ -166,7 +166,7 @@
       "derived": null,
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-ADAPTERS-DRY-RUN",
@@ -187,7 +187,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-WEBHOOK-RECEIVER",
@@ -211,7 +211,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-WEBHOOK-DELIVERIES",
@@ -225,7 +225,7 @@
       "derived": null,
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-X402-GATE",
@@ -245,7 +245,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-X402-LIVE-PAYMENT",
@@ -264,7 +264,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-REPLAY-LAB",
@@ -288,7 +288,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-SANDBOX-OFFLINE",
@@ -309,7 +309,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-STELLAR-PRESIGN-RECEIPT",
@@ -345,7 +345,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-ATTACK-LAB",
@@ -366,7 +366,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-CONFORMANCE-EMPTY",
@@ -386,7 +386,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-BADGE-NOT-ISSUED",
@@ -405,7 +405,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-BADGE-VERIFIABLE",
@@ -453,7 +453,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-PRICES-LOCKED",
@@ -474,7 +474,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-REVENUE-ZERO",
@@ -493,7 +493,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-NAMED-INTEGRATOR",
@@ -511,7 +511,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-REPUTATION-UNPROVEN",
@@ -531,7 +531,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-RISK-FINDINGS",
@@ -551,7 +551,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-OWNER-SIGNOFF",
@@ -570,7 +570,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-INDEPENDENT-REVIEW",
@@ -584,7 +584,7 @@
       "derived": null,
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-BUILD-ADOPTION-INDEPENDENT",
@@ -606,7 +606,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-ADOPTION-EXTERNAL-VERIFIERS",
@@ -622,7 +622,7 @@
       "derived": {},
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
     },
     {
       "id": "CL-RELEASE-TRIGGER",
@@ -642,7 +642,47 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-17T13:36:07Z"
+      "asOf": "2026-11-17T14:58:46Z"
+    },
+    {
+      "id": "CL-CG-TAS-1",
+      "area": "verification",
+      "claim": "Resolved-record provenance resolves its trust key from a caller-pinned, canonical anchor set (CG-TAS/1) with deterministic validity windows and fail-closed revocation; the record never selects or influences the set.",
+      "status": "VERIFIED",
+      "verificationLevel": "L1",
+      "evidence": [
+        "scripts/ladder/trust-anchor-set.mjs",
+        "test/integrations/trust-anchor-set.test.mjs",
+        "docs/AER1-TRUST-ANCHOR-SET-SPEC-V1-DRAFT.md"
+      ],
+      "recheck": "npm test",
+      "external": false,
+      "derived": {
+        "rule": "verifyResolvedRecordProvenanceViaAnchorSet(record, pinnedSet, ctx, { nowSeconds, anchorSetDigest? })"
+      },
+      "deriveError": null,
+      "downgraded": null,
+      "asOf": "2026-11-17T14:58:46Z"
+    },
+    {
+      "id": "CL-PROV-CAMPAIGNS-1",
+      "area": "engineering",
+      "claim": "Deterministic fuzz and source-mutation campaigns over the provenance layer (CG-RRP/1 + CG-TAS/1) report zero escapes and zero benign-drift on a fixed seed, reproducible offline.",
+      "status": "VERIFIED",
+      "verificationLevel": "L1",
+      "evidence": [
+        "scripts/ladder/provenance-fuzz.mjs",
+        "test/integrations/provenance-fuzz.test.mjs",
+        "test/integrations/provenance-mutations.test.mjs"
+      ],
+      "recheck": "npm test",
+      "external": false,
+      "derived": {
+        "gate": "escaped === 0 && benignFailures === 0 && contractViolations === 0 (fixed seed)"
+      },
+      "deriveError": null,
+      "downgraded": null,
+      "asOf": "2026-11-17T14:58:46Z"
     }
   ],
   "rules": [
@@ -653,7 +693,7 @@
   ],
   "audit": {
     "ok": true,
-    "total": 29,
+    "total": 31,
     "violations": [],
     "downgraded": 0
   }

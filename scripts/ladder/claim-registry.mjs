@@ -426,6 +426,36 @@ export const CLAIMS = Object.freeze([
     recheck: "npm run release:gate",
     derive: (src) => (src.milestones ? { triggers: 0, policy: "no v0.7.x on commit count" } : null),
   },
+  {
+    id: "CL-CG-TAS-1",
+    area: "verification",
+    claim: "Resolved-record provenance resolves its trust key from a caller-pinned, canonical anchor set (CG-TAS/1) with deterministic validity windows and fail-closed revocation; the record never selects or influences the set.",
+    status: "VERIFIED",
+    verificationLevel: "L1",
+    external: false,
+    evidence: [
+      "scripts/ladder/trust-anchor-set.mjs",
+      "test/integrations/trust-anchor-set.test.mjs",
+      "docs/AER1-TRUST-ANCHOR-SET-SPEC-V1-DRAFT.md",
+    ],
+    recheck: "npm test",
+    derive: () => ({ rule: "verifyResolvedRecordProvenanceViaAnchorSet(record, pinnedSet, ctx, { nowSeconds, anchorSetDigest? })" }),
+  },
+  {
+    id: "CL-PROV-CAMPAIGNS-1",
+    area: "engineering",
+    claim: "Deterministic fuzz and source-mutation campaigns over the provenance layer (CG-RRP/1 + CG-TAS/1) report zero escapes and zero benign-drift on a fixed seed, reproducible offline.",
+    status: "VERIFIED",
+    verificationLevel: "L1",
+    external: false,
+    evidence: [
+      "scripts/ladder/provenance-fuzz.mjs",
+      "test/integrations/provenance-fuzz.test.mjs",
+      "test/integrations/provenance-mutations.test.mjs",
+    ],
+    recheck: "npm test",
+    derive: () => ({ gate: "escaped === 0 && benignFailures === 0 && contractViolations === 0 (fixed seed)" }),
+  },
 ]);
 
 /* ------------------------------------------------------------- the build */

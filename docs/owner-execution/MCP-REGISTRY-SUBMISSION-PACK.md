@@ -1,7 +1,7 @@
 # MCP Registry — Submission Pack (preparation only)
 
 **Status:** preparation artifact for the CoreGuard Agent Commerce MCP server. **No registry submission/listing performed.** Submission is an **external, owner-performed** action (account/approval/process dependent).  
-**Server implementation:** `packages/agent-commerce/mcp.mjs` (stdio, newline-delimited JSON-RPC 2.0). **Evidence:** CI-pinned tests and demos on `main` (1724/1724, 1248 files/0 violations context; see `docs/state-snapshot.json`).
+**Server implementation:** `packages/agent-commerce/mcp.mjs` (stdio, newline-delimited JSON-RPC 2.0). **Evidence:** CI-pinned tests and demos on `main` (1795/1795, 1284 files/0 violations context; see `docs/state-snapshot.json`).
 
 ## 1) Server summary (for listing)
 

@@ -18,6 +18,7 @@
     "prepush": "node scripts/pre-push-check.mjs",
     "release:dry": "node scripts/release-please.mjs --dry-run",
     "mutation": "node scripts/mutation-lab.mjs",
+    "fuzz": "node scripts/ladder/provenance-fuzz.mjs",
     "corpus": "node benchmarks/generate-corpus.js",
     "analyze": "node packages/cli/src/index.js analyze",
     "verify": "node packages/cli/src/index.js verify",
