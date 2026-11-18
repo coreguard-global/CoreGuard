@@ -9,6 +9,11 @@ Thanks for your interest. CoreGuard is an **execution-truth / execution-integrit
 3. **Evidence over narrative.** Status labels and metrics must match committed sources (e.g. `docs/STATUS.md`, `docs/state-snapshot.json`, `docs/claims-registry.json`, `docs/surface-status.json`). If a change affects them, update/derive artifacts in the same change as required.
 4. **Scope discipline.** Guard against feature creep. If a feature belongs in the roadmap, propose it explicitly instead of silently expanding scope.
 
+## Prerequisites
+
+- **Node.js ≥ 18** (CI exercises the 22 and 24 matrix legs).
+- **Python 3.14** is required for the full `npm test` suite. `packages/verifier-c` pins the interpreter to `^3.14` (Dec-C-9, fail-closed): with any other version the four `test/verifier-c/*` files fail at load time with `verifier-c: python version pin violation (Dec-C-9)`. CI installs 3.14 through `actions/setup-python`; install it locally (or point `PYTHON` at it) before running the whole suite. Foundry is optional and only needed for the Solidity contract tests.
+
 ## Network-aware contributions (examples)
 
 - **Stellar:** PSAR/1 pre-sign receipts, agent-gate / signed-envelope flows, Freighter-related evaluation surfaces (technical, boundaries-only), Soroban anchor/gating, DEX integration examples — keep XDR/receipt binding, fail-closed semantics, and `integration NOT_BUILT` labels honest where applicable.
