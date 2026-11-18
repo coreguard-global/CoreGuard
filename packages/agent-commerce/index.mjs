@@ -37,6 +37,56 @@ import { assessRisk, AGR_VERSION } from "./risk.mjs";
 
 export { assessRisk, AGR_VERSION };
 
+// CG-OUT/1 — the outcome layer above the reject codes: five outcomes over
+// three layers, with ABSENT and NOT_CHECKED structurally unable to travel as a
+// block. The bridges map what the existing surfaces already print onto it, and
+// `authorizationDecision` is the one function that turns a vocabulary into
+// behaviour (absent and not-checked yield NONE, never PASS and never BLOCK).
+export {
+  OUTCOME_VERSION,
+  OUTCOMES,
+  OUTCOME_CODES,
+  NON_BLOCKING_OUTCOMES,
+  BLOCKING_OUTCOMES,
+  decideOutcome,
+  assertNotRenderedAsBlock,
+  selfCheck as outcomeSelfCheck,
+} from "./outcomes.mjs";
+
+// CG-ID/1 — identity split: recordId (who the record is) kept apart from
+// contentDigest (what these bytes are) so an anchorRef can ride alongside.
+export {
+  IDENTITY_VERSION,
+  IDENTITY_SCHEMA,
+  ANCHOR_KINDS,
+  recordIdFor,
+  splitIdentity,
+  normalizeAnchor,
+  compareIdentities,
+  anchorFacts,
+  selfCheck as identitySelfCheck,
+} from "./identity.mjs";
+
+// CG-OUT/1 profile reference — the three fields a protocol would carry
+// (receipt_id, profile, profile_version), with the version checked on arrival.
+export {
+  PROFILE_ID,
+  PROFILE_VERSION,
+  PROFILE_REFERENCE_SCHEMA,
+  REFERENCE_FIELDS,
+  makeProfileReference,
+  parseProfileReference,
+  selfCheck as profileSelfCheck,
+} from "./profile-ref.mjs";
+
+export {
+  BRIDGE_VERSION,
+  outcomeForVerificationReport,
+  outcomeForPsarResult,
+  authorizationDecision,
+  profileReferenceFor,
+} from "./outcomes-bridge.mjs";
+
 // AC-CS/1 — durable single-use consumption store adapter (file-backed,
 // Set-compatible; cross-process on host). NOT a distributed ledger, NOT an
 // on-chain marker (on-chain anchoring OWNER-GATED / NOT_BUILT).

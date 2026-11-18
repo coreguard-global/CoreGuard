@@ -134,9 +134,15 @@ export function decideOutcome({ presented, record, anchor } = {}) {
   }
 
   if (!recordLayer.evaluated) {
+    // A caller that knows WHY a layer was skipped says so; otherwise the layer
+    // names the version it did not implement, and only then falls back to the
+    // generic sentence. The reason is never dropped on the floor: "not checked"
+    // without a why is the vague answer this layer exists to replace.
     const why = recordLayer.version
       ? `the record layer did not evaluate version ${recordLayer.version}`
-      : "the record layer was not evaluated";
+      : recordLayer.reason
+        ? recordLayer.reason
+        : "the record layer was not evaluated";
     return result("NOT_CHECKED", OUTCOME_CODES.NOT_CHECKED, why, layers, {
       version: recordLayer.version,
     });

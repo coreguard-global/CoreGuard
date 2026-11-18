@@ -30,6 +30,7 @@ import { createEvidenceBundle, createReceipt } from "../../evidence/index.js";
 import { verifyReceipt } from "../../verifier/index.js";
 import { runVerification, deriveRpcBindings } from "../../verifier/run.js";
 import { runVerifyProvenanceCli } from "./verify-provenance.js";
+import { outcomeForVerificationReport } from "../../agent-commerce/outcomes-bridge.mjs";
 import { CoreTestnet2Adapter } from "../../canonical/chain-adapter.js";
 
 const VERIFIER_VERSION = "0.1.0";
@@ -69,6 +70,8 @@ Commands:
   verify     Independently verify an execution receipt
   verify-run External verification surface (CGEP/1:VERIFY-RUN). Exit codes:
              0=VERIFIED · 1=CLI/input error · 2=INVALID · 3=UNVERIFIED · 4=INCONCLUSIVE
+             Each run also prints a CG-OUT/1 Outcome beside the verdict, so an
+             unevaluated record reads NOT_CHECKED instead of a failure.
   verify-provenance
              AgentProof surface (CGEP/1:VERIFY-PROVENANCE). Exit codes same
              discipline: 0=verified · 1=CLI/input error · 2=invalid ·
@@ -292,6 +295,13 @@ async function cmdVerifyRun(args) {
     rpcChecks,
   });
 
+  // The verdict above is this verifier's own word (VERIFIED/INVALID/UNVERIFIED/
+  // INCONCLUSIVE, with exit codes consumers already depend on). The outcome is
+  // the layer above it: what a reader may CONCLUDE. They disagree on purpose in
+  // one place — UNVERIFIED and INCONCLUSIVE are not judgements, so they read as
+  // NOT_CHECKED rather than as failed verifications.
+  report.outcome = outcomeForVerificationReport(report);
+
   if (json) {
     console.log(JSON.stringify(report, null, 2));
   } else {
@@ -357,6 +367,10 @@ function printHumanReport(report) {
   console.log(`Receipt ID:    ${report.observed.receiptId}`);
   console.log(`Level:         ${report.verdict.verificationLevel}`);
   console.log(`Verdict:       ${report.verdict.verdict} (${report.verdict.code})`);
+  if (report.outcome) {
+    console.log(`Outcome:       ${report.outcome.outcome} (${report.outcome.code ?? "—"})`);
+    if (report.outcome.blocks === false) console.log(`               does not travel as BLOCK — ${report.outcome.reason}`);
+  }
   console.log(`Exit code:     ${report.exitCode}`);
   console.log(`${"─".repeat(56)}`);
   for (const check of report.verified) {

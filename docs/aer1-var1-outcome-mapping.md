@@ -1,10 +1,12 @@
 # AER-1 × VAR/1 — outcome mapping and canonicalization notes
 
-**Status:** working note, revision 3, 2026-11-18. Written in reply to Brennan
+**Status:** working note, revision 4, 2026-11-18. Written in reply to Brennan
 Zambo's review of VAR/1 in ACP discussion #328. Revision 2 records the AER-1
 side's answers to the three canonicalization questions (section 3) and the
-consequence for our own code vocabulary. It is not an ACP artifact, not a SEP,
-and not a claim of agreement by anyone but us.
+consequence for our own code vocabulary; revision 3 records their run of the
+five scenarios (section 4b); revision 4 records the split and the layer landing
+in code, so this note now describes shipped files rather than intentions. It is
+not an ACP artifact, not a SEP, and not a claim of agreement by anyone but us.
 
 **What this note is for.** Two models can describe the same artifact and still
 mean different things by "verified". This note puts the two vocabularies side by
@@ -64,7 +66,19 @@ AER-1's `metadata_hash` covers that separately. VAR/1 should too: a `record_id`
 computed over identity material (issuer, series, issuance counter) and an
 `anchor_ref`, with the content digest left to do only the content job. This is
 the change we would make first, and it is the one that makes an
-`unresolvable` outcome expressible at all — today we have nowhere to put it.
+`unresolvable` outcome expressible at all — before the split, we had nowhere to
+put it.
+
+**Built, revision 4** — `CG-ID/1`, `packages/agent-commerce/identity.mjs`. The
+split is exactly the three fields named above: `recordId` over
+`{issuer, scope, subject}`, `contentDigest` supplied by the caller and never
+derived from it, and `anchorRef` as `{kind, locator}`. The two properties that
+motivated the change are asserted rather than described: same record with new
+bytes keeps its name while its digest moves (`drifted: true`), and adding an
+anchor does not rename a record. Nine must-fail fixtures in
+`test/integrations/identity-split.test.mjs`, including the one that matters for
+the thread — an unresolvable anchor must never read as an absence, because "we
+could not reach the ledger" is a weaker claim than "there was nothing there".
 
 ## 3. Canonicalization: what is settled and what is not
 
@@ -183,14 +197,26 @@ That case is now a fixture in this tree rather than a quote: see `test/integrati
    `test/integrations/outcomes-layer.test.mjs`, including the one that leads:
    a non-adopter's silence is **not** a failed verification, asserted as a test
    rather than promised in prose.
-2. Identity split: `record_id` and `anchor_ref` as separate bindings from the
-   content digest.
+2. Identity split — **implemented** as `CG-ID/1`
+   (`packages/agent-commerce/identity.mjs`); see section 2 for what the split
+   asserts and where its fixtures live.
 3. The boundary, printed above the first heading rather than in a footnote:
    *a receipt proves the saved result was not changed after the fact; it does not
    prove the result was right.*
 4. A thin ACP reference — receipt id plus profile version — rather than an annex
    ACP owns. Canonicalization, hash construction and the outcome vocabulary
-   version on their own clock.
+   version on their own clock. **Implemented** as
+   `packages/agent-commerce/profile-ref.mjs`: three fields (`receipt_id`,
+   `profile`, `profile_version`), with a future `profile_version` refused by
+   name instead of rounded to the one we implement.
+5. The layer at the surfaces, not only in the library: `verify-run` prints an
+   `Outcome:` beside its verdict, PSAR/1 receipts carry `outcome` beside
+   `decision`, and AGR/1 answers `NO_DECISION` rather than `CLEAN` when the
+   receipt it was given is absent or unevaluated
+   (`packages/agent-commerce/outcomes-bridge.mjs`). A verifier that never
+   reached a judgement now reads as `NOT_CHECKED` in all three places, while
+   every existing verdict, exit code and reject code stays where consumers
+   already parse it.
 
 ## 7. Non-claims
 

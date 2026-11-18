@@ -12,6 +12,10 @@
     "./firewall.mjs": "./firewall.mjs",
     "./risk.mjs": "./risk.mjs",
     "./risk-cli.mjs": "./risk-cli.mjs",
+    "./outcomes.mjs": "./outcomes.mjs",
+    "./outcomes-bridge.mjs": "./outcomes-bridge.mjs",
+    "./identity.mjs": "./identity.mjs",
+    "./profile-ref.mjs": "./profile-ref.mjs",
     "./attest.mjs": "./attest.mjs"
   },
   "bin": {
@@ -26,6 +30,10 @@
     "firewall.mjs",
     "risk.mjs",
     "risk-cli.mjs",
+    "outcomes.mjs",
+    "outcomes-bridge.mjs",
+    "identity.mjs",
+    "profile-ref.mjs",
     "attest.mjs",
     "policy-context.mjs",
     "consumption-store.mjs",

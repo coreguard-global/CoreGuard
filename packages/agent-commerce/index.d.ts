@@ -322,3 +322,170 @@ export interface ConsumptionStoreView {
   readonly size: number;
   ids(): string[];
 }
+
+// ---------------------------------------------------------------------------
+// CG-OUT/1 — the outcome layer above the reject codes.
+//
+// Nothing here types a verdict as a boolean: `blocks` is not `!verified`, and
+// ABSENT is not a failure. Five names, one result shape, no sixth value.
+// ---------------------------------------------------------------------------
+
+export type OutcomeName =
+  | "VERIFIED"
+  | "VERIFICATION_FAILED"
+  | "ABSENT"
+  | "NOT_CHECKED"
+  | "UNRESOLVABLE_RECORD";
+
+export const OUTCOME_VERSION: "CG-OUT/1";
+export const OUTCOMES: readonly OutcomeName[];
+export const OUTCOME_CODES: Readonly<{
+  ABSENT: "ABSENT";
+  NOT_CHECKED: "NOT_CHECKED";
+  UNRESOLVABLE_RECORD: "UNRESOLVABLE_RECORD";
+}>;
+export const NON_BLOCKING_OUTCOMES: readonly OutcomeName[];
+export const BLOCKING_OUTCOMES: readonly OutcomeName[];
+
+export interface RecordLayerFacts {
+  evaluated?: boolean;
+  ok?: boolean;
+  code?: string | null;
+  reason?: string | null;
+  version?: string | null;
+}
+
+export interface AnchorLayerFacts {
+  present?: boolean;
+  evaluated?: boolean;
+  outcome?: "verified" | "absent" | "not_checked" | "unresolvable" | string | null;
+}
+
+export interface OutcomeResult {
+  outcome: OutcomeName;
+  code: string | null;
+  reason: string;
+  layers: Readonly<{
+    record: { evaluated: boolean; ok: boolean | null; code: string | null };
+    anchor: { present: boolean; evaluated: boolean; outcome: string | null };
+  }>;
+  blocks: boolean;
+  outcomeVersion: string;
+  detail: unknown;
+}
+
+export declare function decideOutcome(facts?: {
+  presented?: boolean;
+  record?: RecordLayerFacts | null;
+  anchor?: AnchorLayerFacts | null;
+}): OutcomeResult;
+
+export declare function assertNotRenderedAsBlock(outcome: OutcomeName): OutcomeName;
+
+export declare function outcomeSelfCheck(): Readonly<{
+  outcomeVersion: string;
+  outcomes: readonly OutcomeName[];
+  checks: ReadonlyArray<{ name: string; pass: boolean }>;
+  ok: boolean;
+}>;
+
+// ---------------------------------------------------------------------------
+// CG-ID/1 — identity split: the record's name, kept apart from its bytes.
+// ---------------------------------------------------------------------------
+
+export const IDENTITY_VERSION: "CG-ID/1";
+export const IDENTITY_SCHEMA: "coreguard.identity/1";
+export const ANCHOR_KINDS: readonly ("chain" | "transparency-log" | "notary" | "mirror")[];
+
+export interface AnchorReference {
+  kind: "chain" | "transparency-log" | "notary" | "mirror";
+  locator: string;
+}
+
+export interface SplitIdentity {
+  identityVersion: string;
+  schema: string;
+  recordId: string;
+  contentDigest: string;
+  anchorRef: AnchorReference | null;
+}
+
+export declare function recordIdFor(args: { issuer: string; scope: string; subject: string }): string;
+
+export declare function splitIdentity(args: {
+  issuer: string;
+  scope: string;
+  subject: string;
+  contentDigest: string;
+  anchor?: AnchorReference | null;
+}): SplitIdentity;
+
+export declare function normalizeAnchor(anchor: AnchorReference): AnchorReference;
+
+export declare function compareIdentities(
+  a: Pick<SplitIdentity, "recordId" | "contentDigest">,
+  b: Pick<SplitIdentity, "recordId" | "contentDigest">,
+): Readonly<{ sameRecord: boolean; sameBytes: boolean; drifted: boolean; verdictHint: string }>;
+
+export declare function anchorFacts(
+  identity: Pick<SplitIdentity, "anchorRef">,
+  options?: { resolved?: boolean | null },
+): Readonly<{
+  present: boolean;
+  evaluated: boolean;
+  outcome: "verified" | "absent" | "not_checked" | "unresolvable";
+}>;
+
+export declare function identitySelfCheck(): Readonly<{
+  identityVersion: string;
+  checks: ReadonlyArray<{ name: string; pass: boolean }>;
+  ok: boolean;
+}>;
+
+// ---------------------------------------------------------------------------
+// CG-OUT/1 profile reference — the three fields a protocol would carry.
+// ---------------------------------------------------------------------------
+
+export const PROFILE_ID: "CG-OUT/1";
+export const PROFILE_VERSION: 1;
+export const PROFILE_REFERENCE_SCHEMA: "coreguard.profile-ref/1";
+export const REFERENCE_FIELDS: readonly ["receipt_id", "profile", "profile_version"];
+
+export interface ProfileReference {
+  receipt_id: string;
+  profile: "CG-OUT/1";
+  profile_version: 1;
+}
+
+export declare function makeProfileReference(args: { receiptId: string }): ProfileReference;
+
+export declare function parseProfileReference(input: unknown): {
+  ok: boolean;
+  reference: ProfileReference | null;
+  error: string | null;
+};
+
+export declare function profileSelfCheck(): Readonly<{
+  profile: string;
+  checks: ReadonlyArray<{ name: string; pass: boolean }>;
+  ok: boolean;
+}>;
+
+// ---------------------------------------------------------------------------
+// Bridges — the outcome layer as the surfaces actually print it.
+// ---------------------------------------------------------------------------
+
+export const BRIDGE_VERSION: "CG-OUT-BRIDGE/1";
+
+export declare function outcomeForVerificationReport(report: unknown): OutcomeResult;
+
+export declare function outcomeForPsarResult(
+  result: { decision?: string; code?: string | null; reasons?: readonly string[] } | null,
+  options?: { receipt?: unknown },
+): OutcomeResult;
+
+export declare function authorizationDecision(
+  outcome: OutcomeResult | OutcomeName,
+): Readonly<{ decision: "PASS" | "BLOCK" | "NONE"; reason: string | null }>;
+
+export declare function profileReferenceFor(receiptId: string): ProfileReference;

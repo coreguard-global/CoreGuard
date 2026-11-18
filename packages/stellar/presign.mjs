@@ -49,6 +49,11 @@
  */
 
 import { createHash, createPrivateKey, createPublicKey, randomBytes, sign as edSign, verify as edVerify } from "node:crypto";
+// The outcome layer (CG-OUT/1) lives in a sibling workspace package and is
+// consumed from source, the way this repo's CLI consumes ../../canonical. A
+// PSAR/1 receipt can now be read two ways at once: `decision` is what this
+// verifier does (fail closed), `outcome` is what a consumer may conclude.
+import { outcomeForPsarResult } from "../agent-commerce/outcomes-bridge.mjs";
 
 export const PSAR_VERSION = "PSAR/1";
 export const PSAR_SCHEMA = "coreguard.psar/1";
@@ -321,7 +326,8 @@ export function verifyAuthorizationReceipt({ receipt, xdr, network, policy, nowS
     if (nowSeconds < receipt.issuedAt) return block("NOT_YET_VALID", `receipt is valid from ${receipt.issuedAt}`);
     if (nowSeconds >= receipt.expiresAt) return block("RECEIPT_EXPIRED", `receipt expired at ${receipt.expiresAt}`);
 
-    return { decision: "PASS", code: null, reasons: [], executionProof: EXECUTION_PROOF_FIELD, checkedAtSeconds: nowSeconds, receiptId: receipt.digest };
+    const passResult = { decision: "PASS", code: null, reasons: [], executionProof: EXECUTION_PROOF_FIELD, checkedAtSeconds: nowSeconds, receiptId: receipt.digest };
+    return { ...passResult, outcome: outcomeForPsarResult(passResult, { receipt }) };
   };
 
   try {
@@ -343,7 +349,19 @@ export function verifyAuthorizationReceipt({ receipt, xdr, network, policy, nowS
     } catch {
       receiptId = null; // a hostile getter must not break the BLOCK path itself
     }
-    return { decision: "BLOCK", code, reasons: [`${code}: ${reason}`], executionProof: EXECUTION_PROOF_FIELD, checkedAtSeconds: isNonNegativeInt(nowSeconds) ? nowSeconds : null, receiptId };
+    const blockResult = {
+      decision: "BLOCK",
+      code,
+      reasons: [`${code}: ${reason}`],
+      executionProof: EXECUTION_PROOF_FIELD,
+      checkedAtSeconds: isNonNegativeInt(nowSeconds) ? nowSeconds : null,
+      receiptId,
+    };
+    // The outcome is computed on the BLOCK path too, and it can differ from the
+    // decision on exactly one input: a receipt claiming a version this build
+    // does not implement. `decision` stays BLOCK (this build refuses); `outcome`
+    // is NOT_CHECKED with the version named (nobody judged that receipt).
+    return { ...blockResult, outcome: outcomeForPsarResult(blockResult, { receipt }) };
   }
 }
 
@@ -359,6 +377,7 @@ export function status() {
     proves: "the named authorization (network + exact XDR fingerprint + policy) passed pre-sign verification inside its window, issued by the pinned key",
     doesNotProve: "EXECUTION - a pre-sign receipt never proves the transaction executed; ledger read-back does that after submission",
     failClosed: "every check failure BLOCKs by name; a verifier error BLOCKs; verification failure is never a pass",
+    outcomeLayer: "CG-OUT/1 — every result carries `outcome` beside `decision`; an unimplemented version reads NOT_CHECKED, never VERIFICATION_FAILED",
     signerBoundary: "this module never signs a transaction and never holds wallet keys; the demo issuer is a deterministic stand-in",
     executed: false,
     receiptCaptured: false,

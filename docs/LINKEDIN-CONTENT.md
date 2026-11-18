@@ -12,7 +12,7 @@ We don't tell you if a transaction looks safe.
 We produce independently verifiable evidence of whether execution conformed to what was authorized.
 
 Key metrics:
-- 1812 tests passing (machine-pinned)
+- 1841 tests passing (machine-pinned)
 - 10,000-run benchmark: 0 false accepts, 0 false rejects
 - Core DAO mainnet: 2 contracts deployed & verified
 - Stellar testnet: Soroban contract deployed
@@ -53,8 +53,8 @@ CoreGuard Global — Traction Update
 
 ✅ Core DAO mainnet: 2 contracts deployed & verified
 ✅ Stellar testnet: Soroban contract deployed
-✅ 1812 tests passing
-✅ 1305 files scanned, 0 boundary violations
+✅ 1841 tests passing
+✅ 1312 files scanned, 0 boundary violations
 ✅ 10,000-run benchmark: 0 false accept/reject
 ✅ 18/18 release gate legs pass
 

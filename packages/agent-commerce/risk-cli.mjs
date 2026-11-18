@@ -11,8 +11,14 @@
  *   node packages/agent-commerce/risk-cli.mjs --input <file> [--out <file>] [--ledger <file>]
  *
  * Input JSON shape:
- *   { "intent": {...}, "policy": {...}, "trace": {...}, "consumed": false }
- *   (policy and consumed are optional; classes are frozen per AGR/1)
+ *   { "intent": {...}, "policy": {...}, "trace": {...}, "consumed": false,
+ *     "receiptOutcome": "ABSENT" }
+ *   (policy, consumed and receiptOutcome are optional; classes are frozen per AGR/1)
+ *
+ * receiptOutcome is a CG-OUT/1 outcome (or a CG-OUT/1 result object). When it
+ * says ABSENT or NOT_CHECKED the CLI still exits 0 and still prints a report,
+ * whose classification is NO_DECISION: there is nothing to assess, and printing
+ * CLEAN would assert an authorization that was never presented.
  *
  * Persistence:
  *   --out <file>    write the assessment report as JSON (overwritten/created)
@@ -94,6 +100,7 @@ export function runRiskCli(argv = process.argv.slice(2), io = {}) {
       policy: input.policy,
       trace: input.trace,
       consumed: input.consumed === true,
+      receiptOutcome: input.receiptOutcome ?? null,
     });
   } catch (e) {
     err("risk-cli: assessment refused: " + (e && e.message ? e.message : e));
@@ -118,6 +125,7 @@ export function runRiskCli(argv = process.argv.slice(2), io = {}) {
       const record = {
         spec: AGR_VERSION,
         classification: report.classification,
+        ...(report.authorization ? { authorization: report.authorization } : {}),
         violations: report.violations.map((v) => v.code),
         report,
       };

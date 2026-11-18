@@ -18,6 +18,7 @@
 
 import { evaluatePolicy } from "@coreguard/policy";
 import { tracePolicyContext } from "./policy-context.mjs";
+import { authorizationDecision } from "./outcomes-bridge.mjs";
 
 export const AGR_VERSION = "AGR/1";
 
@@ -111,9 +112,35 @@ function amountBig(value) {
  * Assess one executed order against one approved authorization.
  * Returns a deterministic report; `boundary` travels inside every report so a
  * reader of the committed file can see the taxonomy's ceiling, not just its verdict.
+ *
+ * receiptOutcome (optional) is a CG-OUT/1 outcome describing the receipt that
+ * authorizes this execution. It changes nothing about the drift taxonomy —
+ * drift is drift — and everything about what the report may be read as:
+ *
+ *   ABSENT / NOT_CHECKED  -> classification NO_DECISION, no violations listed
+ *                            as a judgement. There is no authorization to drift
+ *                            from. CLEAN would be a claim nobody made.
+ *   VERIFICATION_FAILED / UNRESOLVABLE_RECORD -> classification BLOCKED: the
+ *                            receipt did not clear its own checks, so drift
+ *                            findings are recorded but never read as the verdict.
+ *   VERIFIED              -> unchanged: CLEAN or VIOLATIONS, as before.
  */
-export function assessRisk({ intent, policy, trace, consumed = false }) {
+export function assessRisk({ intent, policy, trace, consumed = false, receiptOutcome = null }) {
   const violations = [];
+  const authorization = receiptOutcome ? toAuthorization(receiptOutcome) : null;
+
+  if (authorization && authorization.decision === "NONE") {
+    return {
+      spec: AGR_VERSION,
+      classification: "NO_DECISION",
+      decision: "NONE",
+      reason: authorization.reason,
+      authorization,
+      violations: [],
+      boundary:
+        "deterministic authorization-drift taxonomy (AGR/1) — never a probabilistic fraud score; VERIFIED ≠ SAFE",
+    };
+  }
 
   const push = (code, extra) => {
     const cls = RISK_CLASSES[code];
@@ -245,11 +272,31 @@ export function assessRisk({ intent, policy, trace, consumed = false }) {
 
   violations.sort((a, b) => (a.code < b.code ? -1 : a.code > b.code ? 1 : 0));
 
+  const classification =
+    authorization && authorization.decision === "BLOCK"
+      ? "BLOCKED"
+      : violations.length === 0
+        ? "CLEAN"
+        : "VIOLATIONS";
+
   return {
     spec: AGR_VERSION,
-    classification: violations.length === 0 ? "CLEAN" : "VIOLATIONS",
+    classification,
+    ...(authorization ? { decision: authorization.decision, authorization } : {}),
     violations,
     boundary:
       "deterministic authorization-drift taxonomy (AGR/1) — never a probabilistic fraud score; VERIFIED ≠ SAFE",
   };
+}
+
+/**
+ * Accept either a CG-OUT/1 result object or its bare name, and never guess a
+ * decision for a string this layer does not know. An unknown outcome name is
+ * BLOCK, because the only safe reading of "something we do not recognise" is
+ * "do not proceed" — and it is named as a verifier error, not as a drift class.
+ */
+function toAuthorization(receiptOutcome) {
+  const name = typeof receiptOutcome === "string" ? receiptOutcome : receiptOutcome?.outcome ?? null;
+  const decision = authorizationDecision(name);
+  return Object.freeze({ outcome: name, decision: decision.decision, reason: decision.reason });
 }
