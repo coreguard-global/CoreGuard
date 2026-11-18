@@ -1,0 +1,37 @@
+/* CoreGuard Luxe v2 — VERIFY • PROTECT • EMPOWER — premium layer for every GitHub Pages surface */
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap");
+:root{--cg-o:#FF8A00;--cg-o2:#FFB01F;--cg-d:#0B0F14;--cg-g:#4A5568;--cg-i:#F5F7FA;--cg-line:rgba(255,138,0,.18)}
+html{scroll-behavior:smooth}
+body{font-family:"Sora",-apple-system,"Segoe UI",system-ui,sans-serif!important;background:radial-gradient(1200px 600px at 90% -15%,rgba(255,138,0,.16),transparent 60%),radial-gradient(900px 500px at -10% 10%,rgba(255,176,31,.07),transparent 55%),linear-gradient(180deg,#0B0F14 0%,#080B0F 100%) fixed!important;color:var(--cg-i)!important;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;background-image:linear-gradient(rgba(255,138,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,138,0,.05) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse at top,#000 20%,transparent 70%);mask-image:radial-gradient(ellipse at top,#000 20%,transparent 70%)}
+body>*{position:relative;z-index:1}
+h1,h2,h3{font-family:"Sora",sans-serif!important;letter-spacing:-.02em}
+h1{background:linear-gradient(100deg,#F5F7FA 30%,#FFB01F 70%,#FF8A00);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+code,pre,kbd{font-family:"JetBrains Mono",ui-monospace,monospace!important}
+a{color:var(--cg-o2)}a:hover{color:var(--cg-o)}
+.card,.panel,.box,.tile{background:linear-gradient(160deg,rgba(24,30,40,.85),rgba(11,15,20,.9))!important;border:1px solid var(--cg-line)!important;border-radius:18px!important;box-shadow:0 20px 50px -25px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.04)!important;transition:transform .25s,border-color .25s,box-shadow .25s}
+.card:hover,.tile:hover{transform:translateY(-3px);border-color:rgba(255,138,0,.55)!important;box-shadow:0 30px 60px -25px rgba(255,138,0,.35)!important}
+.btn{border-radius:999px!important;font-weight:700!important;border:1px solid rgba(255,138,0,.5)!important;transition:all .2s}
+.btn.primary,.btn-primary{background:linear-gradient(135deg,#FFB01F,#FF8A00)!important;color:#0B0F14!important;border:0!important;box-shadow:0 10px 30px -8px rgba(255,138,0,.6)!important}
+.tag,.chip,.badge,.pill{border-radius:999px!important;border:1px solid rgba(255,138,0,.4)!important;background:rgba(255,138,0,.08)!important;color:#FFB01F!important}
+th{background:rgba(255,138,0,.1)!important;color:#FFB01F!important}td,th{border-color:rgba(255,138,0,.14)!important}
+::selection{background:rgba(255,138,0,.35)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:linear-gradient(#FF8A00,#B4540A);border-radius:10px}::-webkit-scrollbar-track{background:#0B0F14}
+#cg-bar{position:sticky;top:0;z-index:9999;backdrop-filter:blur(14px) saturate(1.4);background:rgba(11,15,20,.8);border-bottom:1px solid var(--cg-line);font-family:"Sora",sans-serif}
+#cg-bar .in{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:10px 20px}
+#cg-bar .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#F5F7FA;font-weight:800;letter-spacing:.04em}
+#cg-bar .logo img{width:34px;height:34px;filter:drop-shadow(0 0 12px rgba(255,138,0,.55))}
+#cg-bar .logo small{display:block;font:600 9px "JetBrains Mono",monospace;color:#FF8A00;letter-spacing:.18em}
+#cg-bar nav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+#cg-bar nav a{color:#C9D1DC;text-decoration:none;font-size:13px;font-weight:600;padding:7px 12px;border-radius:999px}
+#cg-bar nav a:hover,#cg-bar nav a.on{color:#0B0F14;background:#FF8A00}
+#cg-bar .cta{display:flex;gap:8px}
+#cg-bar .cta a{font-size:12px;font-weight:800;padding:8px 14px;border-radius:999px;text-decoration:none;white-space:nowrap}
+#cg-bar .cta .p{background:linear-gradient(135deg,#FFB01F,#FF8A00);color:#0B0F14;box-shadow:0 8px 24px -8px rgba(255,138,0,.7)}
+#cg-bar .cta .s{border:1px solid #FF8A00;color:#FFB01F}
+#cg-bar .tg{display:none;margin-left:auto;background:none;border:1px solid var(--cg-line);color:#F5F7FA;border-radius:10px;padding:6px 10px;font-size:18px}
+@media(max-width:900px){#cg-bar .tg{display:block}#cg-bar .in{flex-wrap:wrap}#cg-bar nav,#cg-bar .cta{display:none;width:100%}#cg-bar.open nav,#cg-bar.open .cta{display:flex}}
+#cg-foot{margin-top:60px;border-top:1px solid var(--cg-line);background:linear-gradient(180deg,transparent,rgba(255,138,0,.05));font-family:"Sora",sans-serif;color:#9AA6B5}
+#cg-foot .in{max-width:1240px;margin:0 auto;padding:36px 20px;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center}
+#cg-foot b{color:#F5F7FA}#cg-foot .tl{font:600 11px "JetBrains Mono",monospace;color:#FF8A00;letter-spacing:.22em}
+#cg-foot a{color:#C9D1DC;text-decoration:none;margin-right:16px;font-size:13px}#cg-foot a:hover{color:#FF8A00}
