@@ -287,3 +287,50 @@ export async function verifyExecution(consent, trace, { consumedSet } = {}) {
       "execution verification never decides delivery conformity (DDE/1); VERIFIED ≠ SAFE; the actor is declared, never detected",
   };
 }
+
+// CG-AER1/1 — a parser for AER-1 (draft-zambo-aer1-26) receipts. The committed
+// payload and the receipt id are kept apart, because the format keeps them
+// apart: the digest is recomputed, the id is bound only against something
+// external (an expected id, or a resolved record that must agree on the digest).
+export {
+  AER1_PARSER_VERSION,
+  SUPPORTED_RECEIPT_SCHEMAS,
+  parseAer1Record,
+  aer1Outcome,
+  selfCheck as aer1SelfCheck,
+} from "./aer1.mjs";
+
+// CG-ANCHOR/1 — the anchor service we run ourselves: Ed25519 attestations that
+// verify offline, an append-only hash-chained log, one Merkle root over it, and
+// a chain adapter that prepares a 32-byte memo and refuses mainnet by name.
+// No broadcast path exists in the module.
+export {
+  ANCHOR_VERSION,
+  ANCHOR_SCHEMA,
+  normalizeSubject,
+  generateIssuerKey,
+  keyIdFor,
+  signAttestation,
+  verifyAttestation as verifyAnchorAttestation,
+  leafHash,
+  merkleRoot,
+  createLog,
+  appendAnchor,
+  verifyLog,
+  resolveAnchor,
+  prepareChainAnchor,
+  selfCheck as anchorSelfCheck,
+} from "./anchor.mjs";
+
+// CG-COMPOSE/1 — one composition rule, two defensible answers. "composed"
+// lets an unresolvable anchor block the headline (best for a commerce consumer
+// that needs one answer now); "layered" keeps the record verdict fixed and
+// reports the rejection on the anchor layer (best for a record that outlives
+// any single anchor). The difference is a mode, not an argument.
+export {
+  COMPOSITION_VERSION,
+  COMPOSITION_MODES,
+  composeOutcome,
+  compareModes,
+  selfCheck as compositionSelfCheck,
+} from "./composition.mjs";

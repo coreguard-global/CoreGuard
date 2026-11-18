@@ -85,7 +85,9 @@
     "agent-gate": "node packages/agent-gate/demo.mjs",
     "trust:demo": "node examples/execution-trust/run.mjs",
     "trust:verify": "node examples/execution-trust/verify-third-party.mjs",
-    "agent-commerce:risk": "node packages/agent-commerce/risk-cli.mjs"
+    "agent-commerce:risk": "node packages/agent-commerce/risk-cli.mjs",
+    "aer1:corpus": "node scripts/aer1-corpus.mjs",
+    "anchor:log": "node scripts/anchor.mjs"
   },
   "engines": {
     "node": ">=18"
