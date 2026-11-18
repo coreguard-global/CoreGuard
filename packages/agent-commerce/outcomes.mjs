@@ -53,8 +53,16 @@ export const OUTCOME_CODES = Object.freeze({
   UNRESOLVABLE_RECORD: "UNRESOLVABLE_RECORD",
 });
 
-/** Outcomes that must never be rendered as a refusal, by anybody, anywhere. */
-export const NON_BLOCKING_OUTCOMES = Object.freeze(["ABSENT", "NOT_CHECKED"]);
+/**
+ * Outcomes that must never be rendered as a refusal, by anybody, anywhere.
+ * VERIFIED is on the list for the same reason ABSENT is: a pass is not a
+ * refusal either, and a caller that renders it as one is reporting a decision
+ * nobody made. Only VERIFICATION_FAILED and UNRESOLVABLE_RECORD may block.
+ */
+export const NON_BLOCKING_OUTCOMES = Object.freeze(["VERIFIED", "ABSENT", "NOT_CHECKED"]);
+
+/** The only two outcomes that may be presented as a refusal. */
+export const BLOCKING_OUTCOMES = Object.freeze(["VERIFICATION_FAILED", "UNRESOLVABLE_RECORD"]);
 
 /** Facts a caller may supply. Anything else is ignored, never inferred. */
 const isObject = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -80,7 +88,7 @@ const result = (outcome, code, reason, layers, detail) => {
     code: code ?? null,
     reason,
     layers,
-    blocks: !NON_BLOCKING_OUTCOMES.includes(outcome),
+    blocks: BLOCKING_OUTCOMES.includes(outcome),
     outcomeVersion: OUTCOME_VERSION,
     detail: detail ?? null,
   });
