@@ -35,3 +35,34 @@ th{background:rgba(255,138,0,.1)!important;color:#FFB01F!important}td,th{border-
 #cg-foot .in{max-width:1240px;margin:0 auto;padding:36px 20px;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center}
 #cg-foot b{color:#F5F7FA}#cg-foot .tl{font:600 11px "JetBrains Mono",monospace;color:#FF8A00;letter-spacing:.22em}
 #cg-foot a{color:#C9D1DC;text-decoration:none;margin-right:16px;font-size:13px}#cg-foot a:hover{color:#FF8A00}
+/* ===== Luxe v3 — real CoreGuard shield everywhere + motion ===== */
+.brand .mark,.mark,.logo-mark{background:url("cg-shield.png") center/contain no-repeat!important;box-shadow:none!important;color:transparent!important;font-size:0!important;filter:drop-shadow(0 0 10px rgba(255,138,0,.55));border-radius:0!important}
+header.hero,.hero{border-color:rgba(255,138,0,.28)!important;background:radial-gradient(700px 300px at 100% 0%,rgba(255,138,0,.14),transparent 60%),linear-gradient(160deg,rgba(24,30,40,.92),rgba(11,15,20,.95))!important;box-shadow:0 40px 90px -40px rgba(255,138,0,.35),inset 0 1px 0 rgba(255,255,255,.05)!important}
+header.hero::before,.hero::before{background:linear-gradient(90deg,transparent,#FF8A00,#FFB01F,#FF8A00,transparent)!important;background-size:200% 100%!important;animation:cgSweep 6s linear infinite}
+header.hero::after{content:"";position:absolute;right:-40px;bottom:-60px;width:340px;height:340px;background:url("cg-shield.png") center/contain no-repeat;opacity:.07;pointer-events:none;animation:cgFloat 9s ease-in-out infinite}
+@keyframes cgSweep{to{background-position:-200% 0}}
+@keyframes cgFloat{50%{transform:translateY(-14px) rotate(-3deg)}}
+@keyframes cgPulse{50%{filter:drop-shadow(0 0 20px rgba(255,138,0,.9))}}
+h2{position:relative;padding-bottom:.35em}
+h2::after{content:"";position:absolute;left:0;bottom:0;width:56px;height:3px;border-radius:3px;background:linear-gradient(90deg,#FF8A00,#FFB01F)}
+[dir=rtl] h2::after{left:auto;right:0}
+.kicker{border-color:rgba(255,138,0,.45)!important;box-shadow:0 0 24px -6px rgba(255,138,0,.5)}
+.kicker .dot{background:#FF8A00!important;box-shadow:0 0 0 0 rgba(255,138,0,.7);animation:cgDot 1.8s infinite}
+@keyframes cgDot{70%{box-shadow:0 0 0 9px rgba(255,138,0,0)}100%{box-shadow:0 0 0 0 rgba(255,138,0,0)}}
+.btn:hover{transform:translateY(-2px);border-color:#FF8A00!important;box-shadow:0 14px 34px -10px rgba(255,138,0,.55)!important}
+.lang span.on{background:linear-gradient(135deg,#FFB01F,#FF8A00)!important}
+#cg-bar .logo img{width:40px;height:40px;animation:cgPulse 4s ease-in-out infinite}
+#cg-bar .logo span{font-size:17px}
+#cg-bar .logo span b{color:#FF8A00}
+#cg-bar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,#FF8A00,transparent);opacity:.7}
+#cg-prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:10000;background:linear-gradient(90deg,#FF8A00,#FFB01F);box-shadow:0 0 12px #FF8A00}
+.cg-rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+.cg-rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.cg-rv{opacity:1;transform:none}*{animation:none!important}}
+#cg-foot .brandrow{display:flex;align-items:center;gap:14px}
+#cg-foot .brandrow img{width:52px;height:52px;filter:drop-shadow(0 0 14px rgba(255,138,0,.5))}
+#cg-foot .copy{width:100%;border-top:1px solid var(--cg-line);padding-top:16px;font:500 11px "JetBrains Mono",monospace;color:#6B7685;letter-spacing:.08em}
+.brand .mark,.mark{border:0!important;outline:0!important;background-color:transparent!important;width:38px!important;height:38px!important}
+#cg-bar .logo small{white-space:nowrap}
+#cg-bar nav{flex-wrap:nowrap}#cg-bar nav a{padding:7px 10px;white-space:nowrap}
+@media(max-width:1180px){#cg-bar .tg{display:block}#cg-bar .in{flex-wrap:wrap}#cg-bar nav,#cg-bar .cta{display:none;width:100%;flex-wrap:wrap}#cg-bar.open nav,#cg-bar.open .cta{display:flex}}
