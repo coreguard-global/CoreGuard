@@ -1,7 +1,14 @@
-# npm Publication — Readiness Review & Owner Execution Steps (preparation only)
+# npm Publication — Execution Record (post-publish truth sync)
 
-**Status:** preparation artifact. **No packages have been published.** Actual publication is **OWNER-GATED** (account/ownership, scope, credentials, explicit version/release decision).  
-**Measured repo state:** 1799/1799 tests, 1295 files / 0 boundary violations (canonical: `docs/state-snapshot.json`), CI green on `main` (see `docs/state-snapshot.json` / `docs/STATUS.md`).
+**Status:** publication executed on **2026-11-18** (owner-authorized). This document retains the readiness/steps context below and records what was actually published.  
+**Measured repo state (canonical):** 1799/1799 tests, 1295 files / 0 boundary violations (`docs/state-snapshot.json`), CI green on `main` context as recorded in repo docs.
+
+## 0) Publication outcome (recorded)
+
+- **Published to npmjs.org (public):** all 14 release-scope packages at `0.1.0` — `@coreguard/canonical`, `@coreguard/crypto`, `@coreguard/policy`, `@coreguard/trace`, `@coreguard/evidence`, `@coreguard/replay`, `@coreguard/evm`, `@coreguard/provenance`, `@coreguard/intent`, `@coreguard/verifier`, `@coreguard/firewall`, `@coreguard/delivery`, `@coreguard/sdk`, `@coreguard/agent-commerce`.
+- **Follow-up publish:** `@coreguard/agent-commerce@0.1.1` (bin packaging fix) and `@coreguard/agent-commerce@0.1.2` (corrected `mcpName` to `io.github.EslaM-X/coreguard-agent-commerce` for MCP registry ownership validation, bin preserved). Latest on npm: `0.1.2`.
+- **Verification (registry):** npm packument checks confirmed published versions/dist-tags (HTTP 200 / packument data) at time of publish.
+- **Boundaries:** publication does not imply adoption, endorsement, production guarantees, or safety guarantees (`VERIFIED ≠ SAFE`). On-chain/product-specific owner-gated actions remain as documented elsewhere.
 
 ## 1) Monorepo/package inventory (current)
 
@@ -43,8 +50,8 @@ Verify:
 5. **Post-publish:** tag/release notes, verify install in a clean project, update docs/registry entries to reference **published** versions only after success.
 6. **Rollback awareness:** npm unpublish/deprecate policies are limited by time/usage; treat publish as irreversible in practice.
 
-## 4) Honest boundaries
-- Do **not** claim npm publication, adoption, or support guarantees until artifacts are live and verified.
-- Keep security boundaries explicit (offline/deterministic surfaces, `VERIFIED ≠ SAFE`, synthetic demos, owner-gated/on-chain not implied).
+## 4) Honest boundaries (still binding)
+- npm artifacts are live/published as recorded above; **do not** claim external adoption, integrations, endorsements, funding outcomes, or production/support guarantees from publication alone.
+- Keep security boundaries explicit (offline/deterministic surfaces, `VERIFIED ≠ SAFE`, synthetic demos, owner-gated/on-chain actions not implied).
 
-*Preparation only; no publish performed by this document.*
+*Post-publish truth sync recorded 2026-11-18; retains readiness/steps context for auditability.*

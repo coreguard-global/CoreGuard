@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.eslam-x/coreguard-agent-commerce",
+  "name": "io.github.EslaM-X/coreguard-agent-commerce",
   "description": "Fail-closed consent receipts and execution verification for agentic purchases.",
   "repository": {
     "url": "https://github.com/coreguard-global/CoreGuard",
     "source": "github"
   },
-  "version": "0.1.0",
+  "version": "0.1.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@coreguard/agent-commerce",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "transport": {
         "type": "stdio"
       }

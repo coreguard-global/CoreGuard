@@ -1,6 +1,6 @@
 {
   "name": "@coreguard/agent-commerce",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "CoreGuard Agent Commerce: consent receipts (CGCR/1) and fail-closed execution verification (AGR/1) for agentic purchases — SDK, REST surface, and a stdio MCP server (JSON-RPC 2.0, offline, zero keys)",
   "type": "module",
   "main": "./index.mjs",
@@ -41,7 +41,7 @@
     "@coreguard/policy": "^0.1.0",
     "@coreguard/verifier": "^0.1.0"
   },
-  "mcpName": "io.github.eslam-x/coreguard-agent-commerce",
+  "mcpName": "io.github.EslaM-X/coreguard-agent-commerce",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/coreguard-global/CoreGuard.git"

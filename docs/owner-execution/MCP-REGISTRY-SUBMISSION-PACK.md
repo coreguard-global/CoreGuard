@@ -1,7 +1,16 @@
-# MCP Registry — Submission Pack (preparation only)
+# MCP Registry — Submission Record (post-publish truth sync)
 
-**Status:** preparation artifact for the CoreGuard Agent Commerce MCP server. **No registry submission/listing performed.** Submission is an **external, owner-performed** action (account/approval/process dependent).  
-**Server implementation:** `packages/agent-commerce/mcp.mjs` (stdio, newline-delimited JSON-RPC 2.0). **Evidence:** CI-pinned tests and demos on `main` (1799/1799, 1295 files/0 violations context; see `docs/state-snapshot.json`).
+**Status:** listing published/active on **2026-11-18** (owner-authorized). This document retains the submission-pack context below and records the executed listing.  
+**Server implementation:** `packages/agent-commerce/mcp.mjs` (stdio, newline-delimited JSON-RPC 2.0). **Evidence context:** CI-pinned tests and demos on `main` (1799/1799, 1295 files/0 violations context; see `docs/state-snapshot.json`).
+
+## 0) Listing outcome (recorded)
+
+- **Registry:** https://registry.modelcontextprotocol.io/
+- **Server name:** `io.github.EslaM-X/coreguard-agent-commerce`
+- **Version:** `0.1.2` (active)
+- **Package:** npm `@coreguard/agent-commerce@0.1.2` (stdio transport), with `mcpName` aligned to `io.github.EslaM-X/coreguard-agent-commerce`
+- **Artifacts updated in repo:** `packages/agent-commerce/server.json` and `packages/agent-commerce/package.json` reflect published/listed version and naming.
+- **Boundaries:** listing does not imply endorsement, adoption, integration, or production guarantees (`VERIFIED ≠ SAFE`; synthetic/demo scope as documented).
 
 ## 1) Server summary (for listing)
 
@@ -46,11 +55,10 @@ node packages/agent-commerce/mcp.mjs
 - Integration/pilot docs: `docs/AGENT-COMMERCE-PILOT-PLAN-2026-11-16.md`
 - Demos: `examples/agent-commerce-security-suite/`, `examples/agent-commerce-firewall/`, `examples/agent-commerce-attestation/`
 
-## 6) Submission checklist (owner)
-- [ ] Confirm target registry’s current requirements/metadata format and naming rules.
-- [ ] Freeze reviewed commit/tag; include exact version and integrity info.
-- [ ] Attach accurate tool schemas, run instructions, and security boundaries (no overclaims).
-- [ ] Submit from owner account; respond to review feedback with reproducible evidence.
-- [ ] After listing, verify install/run flow independently and update docs with the listing URL.
+## 6) Submission checklist (owner) — recorded
+- [x] Confirmed target registry requirements/metadata format and naming rules (including npm ownership validation alignment).
+- [x] Published package version `@coreguard/agent-commerce@0.1.2` with corrected `mcpName` and bin.
+- [x] Submitted and published listing: `io.github.EslaM-X/coreguard-agent-commerce@0.1.2` (active).
+- [ ] (Recommended follow-up) Independently verify install/run flow from a clean environment and capture reproducible evidence for any public claim.
 
-*Preparation only; no listing performed.*
+*Post-publish truth sync recorded 2026-11-18; retains submission-pack context for auditability.*

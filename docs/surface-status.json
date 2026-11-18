@@ -1,6 +1,6 @@
 {
   "schema": "coreguard.surface-status/1",
-  "updated": "2026-11-16",
+  "updated": "2026-11-18",
   "why": "One registry so that 'code exists', 'something was executed once' and 'an external project can adopt this' can never be averaged into a single flattering word.",
   "axes": {
     "code": ["BUILT", "BUILT_UNVERIFIED", "PLAN_ONLY", "NOT_BUILT"],
@@ -233,7 +233,7 @@
       "integration": "NOT_BUILT",
       "matrixRow": true,
       "evidence": ["packages/agent-commerce/index.mjs"],
-      "note": "Product 4 of the agent-commerce family: the commerce arc ships as SDK surface + MCP server (stdio JSON-RPC) + REST endpoints (POST /v1/authorize, POST /v1/verify, POST /v1/risk-assess). npm publication is owner-gated."
+      "note": "Product 4 of the agent-commerce family: the commerce arc ships as SDK surface + MCP server (stdio JSON-RPC) + REST endpoints (POST /v1/authorize, POST /v1/verify, POST /v1/risk-assess). The 14 `@coreguard/*` packages are published on npm (0.1.0 series), and `@coreguard/agent-commerce` is published at 0.1.2 with the stdio MCP bin and corrected mcpName. The MCP server is listed in the MCP Registry as `io.github.EslaM-X/coreguard-agent-commerce@0.1.2` (active). External adoption/integration remains NOT_BUILT; VERIFIED ≠ SAFE."
     },
     {
       "id": "agent-commerce-consumption-store",
