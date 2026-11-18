@@ -353,7 +353,7 @@ export {
 
 // CG-KEYS/1 — pinned trust, signed rotation chains and time-aware revocation.
 // An unknown key is NOT_CHECKED, never forged; retroactive revocation is a
-// distinct statement from "stop signing".
+// distinct statement from a routine retirement.
 export {
   KEYS_VERSION,
   KEYS_SCHEMA,
