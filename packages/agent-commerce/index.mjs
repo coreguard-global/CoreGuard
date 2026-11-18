@@ -334,3 +334,68 @@ export {
   compareModes,
   selfCheck as compositionSelfCheck,
 } from "./composition.mjs";
+
+// CG-REF/1 — the procedure behind a receipt_id. A name proves nothing on its
+// own: resolution produces bytes, the bytes are hashed against an expectation,
+// and "no expectation" is unresolvable rather than resolved.
+export {
+  REFERENCE_VERSION,
+  REFERENCE_SCHEMA,
+  ID_FORMS,
+  digestOf,
+  classifyReceiptId,
+  deriveLocatorCandidates,
+  planResolution,
+  resolveReceipt,
+  resolutionOutcome,
+  selfCheck as referenceSelfCheck,
+} from "./reference.mjs";
+
+// CG-KEYS/1 — pinned trust, signed rotation chains and time-aware revocation.
+// An unknown key is NOT_CHECKED, never forged; retroactive revocation is a
+// distinct statement from "stop signing".
+export {
+  KEYS_VERSION,
+  KEYS_SCHEMA,
+  KEY_STATUSES,
+  createKeyring,
+  pinKey,
+  rotateKey,
+  revokeKey,
+  checkKey,
+  verifyWithTrust,
+  selfCheck as keysSelfCheck,
+} from "./trust.mjs";
+
+// CG-SPEND/1 — single use as an append-only, signed, lock-guarded log rather
+// than a process-local boolean. Two systems that spent the same approval under
+// different nonces produce a `conflict`, which is the only honest way to say
+// "both of us thought we were first".
+export {
+  SPEND_VERSION,
+  SPEND_SCHEMA,
+  SPEND_STATES,
+  spendKeyFor,
+  createSpendLog,
+  makeSpendEntry,
+  verifySpendEntry,
+  checkSpent,
+  readSpendLog,
+  claimSpend,
+  mergeLogs,
+  selfCheck as spendSelfCheck,
+} from "./spend.mjs";
+
+// CG-DECIDE/1 — outcome to authorisation. Four decisions, not two, so missing
+// evidence can neither decline a sale nor masquerade as a pass.
+export {
+  DECISION_VERSION,
+  DECISION_SCHEMA,
+  DECISIONS,
+  POLICIES,
+  decidePayment,
+  explainDecision,
+  decisionMatrix,
+  assertDecisionInvariants,
+  selfCheck as decisionSelfCheck,
+} from "./decision.mjs";

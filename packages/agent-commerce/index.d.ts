@@ -701,3 +701,225 @@ export declare function compositionSelfCheck(): Readonly<{
   ok: boolean;
   checks: ReadonlyArray<{ name: string; pass: boolean }>;
 }>;
+
+// ---------------------------------------------------------------------------
+// CG-REF/1 — from `receipt_id` to bytes, with the four answers kept apart:
+// resolved, absent, unresolvable, tampered. A name alone proves nothing.
+// ---------------------------------------------------------------------------
+
+export const REFERENCE_VERSION: "CG-REF/1";
+export const REFERENCE_SCHEMA: "coreguard.reference/1";
+export const ID_FORMS: readonly ["urn-sha256", "url", "opaque"];
+
+export interface ReceiptIdFacts {
+  form: "urn-sha256" | "url" | "opaque";
+  receiptId: string;
+  digest: string | null;
+  contentAddressed: boolean;
+}
+
+export interface ResolutionStep {
+  tier: "inline" | "registry" | "locator";
+  proves: string;
+  possible: boolean;
+  candidates?: readonly string[];
+}
+
+export interface ResolutionPlan {
+  refVersion: string;
+  idForm: string;
+  contentAddressed: boolean;
+  idDigest: string | null;
+  steps: readonly ResolutionStep[];
+  strongestPossible: "resolved-by-content" | "resolved-by-expectation";
+}
+
+export interface ResolutionResult {
+  refVersion: string;
+  schema: string;
+  receiptId: string;
+  idForm: string;
+  source: "inline" | "registry" | "locator" | null;
+  state: "resolved" | "resolved-unchecked" | "absent" | "unresolvable" | "tampered";
+  digest: string | null;
+  expectedDigest: string | null;
+  bytes: string | null;
+  size: number;
+  checks: readonly { name: string; ok: boolean }[];
+  tried: readonly { tier: string; ok: boolean; url?: string; reason?: string; status?: number | null }[];
+  reason: string | null;
+}
+
+export declare function digestOf(bytes: string | Uint8Array): string;
+export declare function classifyReceiptId(receiptId: string): ReceiptIdFacts;
+export declare function deriveLocatorCandidates(input: { receiptId: string; issuerOrigin?: string; path?: string }): readonly string[];
+export declare function planResolution(input: { receiptId: string; issuerOrigin?: string }): ResolutionPlan;
+export declare function resolveReceipt(input: {
+  reference: { receiptId: string; profile?: string; issuerOrigin?: string };
+  inline?: { bytes: string | Uint8Array; digest?: string } | null;
+  registry?: ((id: string) => { bytes: string | Uint8Array; digest?: string } | null) | Map<string, { bytes: string | Uint8Array; digest?: string }> | null;
+  expectedDigest?: string | null;
+  fetchImpl?: ((url: string, init: { signal: AbortSignal; maxBytes: number }) => Promise<{ url?: string; status?: number; bytes?: string; digest?: string }>) | null;
+  maxBytes?: number;
+  timeoutMs?: number;
+  allowInsecureLoopback?: boolean;
+}): Promise<ResolutionResult>;
+export declare function resolutionOutcome(resolution: ResolutionResult): Readonly<{
+  outcome: OutcomeName;
+  blocks: boolean;
+  state: string;
+  reason: string | null;
+  source: string | null;
+  digest: string | null;
+}>;
+export declare function referenceSelfCheck(): Readonly<{ ok: boolean; checks: ReadonlyArray<{ name: string; pass: boolean }> }>;
+
+// ---------------------------------------------------------------------------
+// CG-KEYS/1 — pinned trust roots, signed rotation chains, time-aware revocations.
+// ---------------------------------------------------------------------------
+
+export const KEYS_VERSION: "CG-KEYS/1";
+export const KEYS_SCHEMA: "coreguard.keyring/1";
+export const KEY_STATUSES: readonly ["trusted", "rotated", "revoked", "expired", "not-yet-valid", "unknown"];
+
+export interface PinnedKey {
+  keyId: string;
+  publicKeyPem: string;
+  issuer: string | null;
+  notBefore: string | null;
+  notAfter: string | null;
+}
+
+export interface Keyring {
+  keysVersion: string;
+  schema: string;
+  id: string;
+  pinned: readonly PinnedKey[];
+  rotations: readonly Record<string, unknown>[];
+  revocations: readonly Record<string, unknown>[];
+}
+
+export interface KeyStatus {
+  keyId: string;
+  status: "trusted" | "rotated" | "revoked" | "expired" | "not-yet-valid" | "unknown";
+  trustedAtTime: boolean;
+  acceptsNew: boolean;
+  at: string;
+  reason: string | null;
+  issuer?: string | null;
+  chainFrom?: string | null;
+  depth?: number;
+  rotatedTo?: string | null;
+}
+
+export declare function createKeyring(input?: { id?: string }): Keyring;
+export declare function pinKey(keyring: Keyring, input: { publicKeyPem: string; issuer?: string | null; notBefore?: string | null; notAfter?: string | null }): Keyring;
+export declare function rotateKey(keyring: Keyring, input: { privateKeyPem: string; newPublicKeyPem: string; at: string; overlapUntil: string }): Keyring;
+export declare function revokeKey(keyring: Keyring, input: { privateKeyPem: string; keyId: string; at: string; retroactive?: boolean; reason?: string | null }): Keyring;
+export declare function checkKey(keyring: Keyring, input: { keyId: string; at: string }): KeyStatus;
+export declare function verifyWithTrust(attestation: AnchorAttestation, keyring: Keyring): Readonly<{
+  ok: boolean;
+  keyStatus: string;
+  outcome: OutcomeName;
+  acceptsNew: boolean;
+  reason: string | null;
+  checks: readonly { name: string; ok: boolean }[];
+  signatureOk: boolean;
+  chain: { from: string; depth: number | null } | null;
+}>;
+export declare function keysSelfCheck(): Readonly<{ ok: boolean; checks: ReadonlyArray<{ name: string; pass: boolean }> }>;
+
+// ---------------------------------------------------------------------------
+// CG-SPEND/1 — single use that survives a restart, a second worker and a second
+// system; disagreement between logs is a named conflict, not a duplicate.
+// ---------------------------------------------------------------------------
+
+export const SPEND_VERSION: "CG-SPEND/1";
+export const SPEND_SCHEMA: "coreguard.spend/1";
+export const SPEND_STATES: readonly ["unspent", "spent", "conflict", "busy", "unreadable"];
+
+export interface SpendEntry {
+  spendVersion: string;
+  schema: string;
+  type: "spend";
+  receiptDigest: string;
+  approvalNonce: string;
+  spendKey: string;
+  at: string;
+  orderRef: string | null;
+  issuer: { keyId: string; publicKeyPem: string };
+  signature: string;
+}
+
+export interface SpendLog {
+  spendVersion: string;
+  schema: string;
+  path: string | null;
+  entries: readonly SpendEntry[];
+}
+
+export interface SpendVerdict {
+  state: "unspent" | "spent" | "conflict" | "busy" | "unreadable";
+  reason: string | null;
+  matches: number;
+  sources: number;
+  entries?: readonly SpendEntry[];
+}
+
+export declare function spendKeyFor(input: { receiptDigest: string; approvalNonce: string }): string;
+export declare function createSpendLog(input?: { path?: string | null }): SpendLog;
+export declare function makeSpendEntry(input: { receiptDigest: string; approvalNonce: string; at: string; orderRef?: string | null; privateKeyPem: string }): SpendEntry;
+export declare function verifySpendEntry(entry: unknown): Readonly<{ ok: boolean; checks: readonly { name: string; ok: boolean }[] }>;
+export declare function checkSpent(
+  logs: SpendLog | readonly SpendLog[] | readonly SpendEntry[] | readonly unknown[],
+  input: { receiptDigest: string; approvalNonce: string },
+): SpendVerdict;
+export declare function readSpendLog(path: string): SpendLog;
+export declare function claimSpend(input: {
+  path: string;
+  receiptDigest: string;
+  approvalNonce: string;
+  at: string;
+  orderRef?: string | null;
+  privateKeyPem: string;
+  timeoutMs?: number;
+}): Readonly<{ ok: boolean; state: string; reason: string | null; entry: SpendEntry | null; entries: readonly SpendEntry[] }>;
+export declare function mergeLogs(logs: readonly unknown[]): Readonly<{
+  spendVersion: string;
+  entries: readonly SpendEntry[];
+  uniqueSpends: number;
+  conflicts: readonly { receiptDigest: string; nonces: readonly string[]; entries: readonly SpendEntry[] }[];
+}>;
+export declare function spendSelfCheck(): Readonly<{ ok: boolean; checks: ReadonlyArray<{ name: string; pass: boolean }> }>;
+
+// ---------------------------------------------------------------------------
+// CG-DECIDE/1 — outcome to authorisation. Only a failed check may decline;
+// missing evidence is an allow that says so, never a silent pass.
+// ---------------------------------------------------------------------------
+
+export const DECISION_VERSION: "CG-DECIDE/1";
+export const DECISION_SCHEMA: "coreguard.decision/1";
+export const DECISIONS: readonly ["ALLOW", "ALLOW_UNVERIFIED", "HOLD", "DECLINE"];
+export const POLICIES: readonly ["strict", "balanced", "availability"];
+
+export interface PaymentDecision {
+  decisionVersion: string;
+  schema: string;
+  decision: "ALLOW" | "ALLOW_UNVERIFIED" | "HOLD" | "DECLINE";
+  outcome: OutcomeName;
+  policy: "strict" | "balanced" | "availability";
+  code: string | null;
+  reason: string | null;
+  unverified: boolean;
+  verified: boolean;
+  blocks: boolean;
+  captureAllowed: boolean;
+  retry: boolean;
+  explain: string;
+}
+
+export declare function decidePayment(input: { outcome: OutcomeName; policy?: "strict" | "balanced" | "availability" }): PaymentDecision;
+export declare function explainDecision(input: { decision: PaymentDecision["decision"]; outcome: OutcomeName; policy: string }): string;
+export declare function decisionMatrix(): readonly PaymentDecision[];
+export declare function assertDecisionInvariants(): Readonly<{ ok: boolean; violations: readonly string[]; rows: number }>;
+export declare function decisionSelfCheck(): Readonly<{ ok: boolean; checks: ReadonlyArray<{ name: string; pass: boolean }> }>;

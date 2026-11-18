@@ -19,7 +19,11 @@
     "./attest.mjs": "./attest.mjs",
     "./aer1.mjs": "./aer1.mjs",
     "./anchor.mjs": "./anchor.mjs",
-    "./composition.mjs": "./composition.mjs"
+    "./composition.mjs": "./composition.mjs",
+    "./reference.mjs": "./reference.mjs",
+    "./trust.mjs": "./trust.mjs",
+    "./spend.mjs": "./spend.mjs",
+    "./decision.mjs": "./decision.mjs"
   },
   "bin": {
     "coreguard-agent-commerce-mcp": "./bin/mcp.mjs"
@@ -44,7 +48,11 @@
     "policy-context.mjs",
     "consumption-store.mjs",
     "bin/mcp.mjs",
-    "README.md"
+    "README.md",
+    "reference.mjs",
+    "trust.mjs",
+    "spend.mjs",
+    "decision.mjs"
   ],
   "engines": {
     "node": ">=18"
