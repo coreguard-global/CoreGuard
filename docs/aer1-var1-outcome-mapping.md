@@ -1,8 +1,10 @@
 # AER-1 × VAR/1 — outcome mapping and canonicalization notes
 
-**Status:** working note, 2026-11-18. Written in reply to Brennan Zambo's review of
-VAR/1 in ACP discussion #328. It is not an ACP artifact, not a SEP, and not a
-claim of agreement by anyone but us.
+**Status:** working note, revision 2, 2026-11-18. Written in reply to Brennan
+Zambo's review of VAR/1 in ACP discussion #328. Revision 2 records the AER-1
+side's answers to the three canonicalization questions (section 3) and the
+consequence for our own code vocabulary. It is not an ACP artifact, not a SEP,
+and not a claim of agreement by anyone but us.
 
 **What this note is for.** Two models can describe the same artifact and still
 mean different things by "verified". This note puts the two vocabularies side by
@@ -85,18 +87,35 @@ Settled by the corpus, and adopted here without argument:
   byte, or every implementation re-derives a different digest from the same
   record.
 
-Not settled, and the three questions that decide it:
+Asked here, and answered by the AER-1 side in the same thread on 2026-11-18.
+Recorded because the answers change what our codes mean:
 
-1. **An empty tool scope** — parse-time rejection, or policy-time? In our split,
-   "the policy could not be evaluated" must answer `not checked`. If a vector
-   pins it as failed, the outcome depends on which layer the verifier reached,
-   and that is a property of the verifier, not of the record.
-2. **A February 29 in 1900** — a proleptic-Gregorian calendar rule, or a range
-   check? Both are must-fail, and they disagree in 2100.
-3. **Version negotiation** — a v(n+1) record meeting a v(n) verifier. Our
-   position: `not checked` with a named code, never `verification failed`. It is
-   the case where a collapsed outcome layer passes every test and still misleads
-   in production.
+1. **An empty tool scope** is a record-layer rejection, not a policy result. The
+   corpus pins it as `ax-tool-empty-scope` with `"scope": ""` and the reason
+   "tool is not an object with name/version/scope strings". A record that fails a
+   shape rule fails for every conforming verifier alike, so the outcome is a
+   failed verification **of that record**. Their sharpening is the part worth
+   keeping: the outcome is a property of the record under the spec's rules, not
+   of which layer a given verifier happened to reach first. Our "policy could
+   not be evaluated" is a different fact and keeps its own answer — `not
+   checked` for that layer.
+   *Mapped to our vocabulary:* `MALFORMED_RECEIPT`, never `POLICY_MISMATCH`.
+2. **A February 29 in 1900** is a calendar rule, not a range check: the date must
+   exist in the proleptic Gregorian calendar, and the positive side is pinned in
+   the same set (`feb29-leap`, 2024-02-29, valid). 2100-02-29 fails for the same
+   reason as 1900 — divisible by 100, not by 400 — which is exactly the case a
+   range check gets wrong.
+   *Mapped to our vocabulary:* `MALFORMED_RECEIPT` (a `created_at` that is not a
+   valid calendar instant), never `NOT_YET_VALID`.
+3. **Version negotiation** — our position held, and the corpus pins the adjacent
+   case: a record whose committed bytes claim a version different from its
+   envelope is invalid outright (`version-downgrade`: envelope 0.3, bytes 0.4).
+   For a genuinely newer, self-consistent record meeting an older verifier, the
+   answer is `not checked` with the version named as the reason. Printing
+   `verification failed` condemns a record that was never evaluated; printing
+   `verified` claims an evaluation that never ran.
+   *Mapped to our vocabulary:* a new outcome, not a new reject code — nothing in
+   our eleven codes is honest here.
 
 ## 4. What we can execute today
 
