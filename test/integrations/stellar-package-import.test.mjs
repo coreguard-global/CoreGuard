@@ -5,9 +5,13 @@
  * This test does what a consumer does, minus the registry: a real `npm pack`,
  * a real extraction into a throwaway project OUTSIDE the repo, and imports by
  * package name (root and subpath) in a fresh Node process. No network, no
- * publish, no symlink into the repo tree except the one runtime dependency the
- * full adapter declares — and even that is a junction, so the module under test
- * is only ever the packed tarball.
+ * publish, no symlink into the repo tree except the two runtime dependencies the
+ * package declares (@stellar/stellar-sdk for the full adapter, @coreguard/agent-
+ * commerce for the CG-OUT/1 outcome layer) — both junctions, so the modules
+ * under test are only ever the packed tarball.
+ *
+ * The second one is not decoration: a receipt that carries an outcome is only
+ * worth anything if a consumer outside this repository can read that outcome.
  */
 
 import { test } from "node:test";
@@ -95,11 +99,22 @@ test("a consumer outside the repo imports it by name and gets the same verdicts"
   writeFileSync(join(consumer, "package.json"), JSON.stringify({ name: "consumer", type: "module", private: true }));
 
   // The full adapter declares @stellar/stellar-sdk; junction it so the ROOT
-  // import can be exercised offline. The receipt surface needs nothing.
+  // import can be exercised offline.
   mkdirSync(join(consumer, "node_modules", "@stellar"), { recursive: true });
   symlinkSync(
     join(REPO, "node_modules", "@stellar", "stellar-sdk"),
     join(consumer, "node_modules", "@stellar", "stellar-sdk"),
+    "junction",
+  );
+
+  // presign.mjs now imports @coreguard/agent-commerce/outcomes-bridge.mjs for
+  // the CG-OUT/1 outcome it prints beside the decision. A registry install would
+  // put it under node_modules; here it is a junction to the workspace package, so
+  // the import is exercised through a real package name rather than a sibling
+  // path that would only work inside this repo.
+  symlinkSync(
+    join(REPO, "packages", "agent-commerce"),
+    join(modules, "agent-commerce"),
     "junction",
   );
 
@@ -124,10 +139,14 @@ const pass = verifyAuthorizationReceipt({ receipt: issued.receipt, xdr, network:
 assert.equal(pass.decision, "PASS");
 assert.equal(pass.executionProof, "NOT_INCLUDED");
 assert.equal(pass.code, null);
+assert.equal(pass.outcome.outcome, "VERIFIED");
+assert.equal(pass.outcome.blocks, false);
 
 const tampered = verifyAuthorizationReceipt({ receipt: issued.receipt, xdr: xdr + " ", network: "TESTNET", policy, nowSeconds: NOW, issuerPublicKey: issuer.publicKeyHex });
 assert.equal(tampered.decision, "BLOCK");
 assert.equal(tampered.code, "XDR_BINDING_MISMATCH");
+assert.equal(tampered.outcome.outcome, "VERIFICATION_FAILED");
+assert.equal(tampered.outcome.code, "XDR_BINDING_MISMATCH");
 
 const expired = verifyAuthorizationReceipt({ receipt: issued.receipt, xdr, network: "TESTNET", policy, nowSeconds: issued.receipt.expiresAt, issuerPublicKey: issuer.publicKeyHex });
 assert.equal(expired.code, "RECEIPT_EXPIRED");

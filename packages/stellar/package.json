@@ -45,6 +45,7 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@coreguard/agent-commerce": "^0.1.2",
     "@stellar/stellar-sdk": "^17.4.0"
   },
   "publishConfig": {

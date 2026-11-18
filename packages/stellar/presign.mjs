@@ -49,11 +49,13 @@
  */
 
 import { createHash, createPrivateKey, createPublicKey, randomBytes, sign as edSign, verify as edVerify } from "node:crypto";
-// The outcome layer (CG-OUT/1) lives in a sibling workspace package and is
-// consumed from source, the way this repo's CLI consumes ../../canonical. A
-// PSAR/1 receipt can now be read two ways at once: `decision` is what this
-// verifier does (fail closed), `outcome` is what a consumer may conclude.
-import { outcomeForPsarResult } from "../agent-commerce/outcomes-bridge.mjs";
+// The outcome layer (CG-OUT/1) is a declared runtime dependency, not a sibling
+// path: a receipt has to be readable the same way after the package leaves this
+// repository. A PSAR/1 receipt can now be read two ways at once — `decision` is
+// what this verifier does (fail closed), `outcome` is what a consumer may
+// conclude — and the two differ on exactly one input, documented at the BLOCK
+// path below.
+import { outcomeForPsarResult } from "@coreguard/agent-commerce/outcomes-bridge.mjs";
 
 export const PSAR_VERSION = "PSAR/1";
 export const PSAR_SCHEMA = "coreguard.psar/1";
