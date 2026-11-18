@@ -16,7 +16,7 @@ CoreGuard produces cryptographic evidence of conformance that can be independent
 
 ### 4. Traction
 - ✅ 1799 tests passing (machine-pinned)
-- ✅ 1295 files, 0 boundary violations
+- ✅ 1303 files, 0 boundary violations
 - ✅ 10,000-run benchmark: 0 false accept, 0 false reject
 - ✅ Core DAO mainnet: 2 contracts deployed & verified
   - V1: `0x037dF08F2d43c5D03759279Fe35664f6AFf9EA6E`

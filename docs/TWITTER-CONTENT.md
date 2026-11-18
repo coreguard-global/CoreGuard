@@ -100,7 +100,7 @@ https://github.com/coreguard-global/CoreGuard
 CoreGuard is open source. Every claim is machine-verified.
 
 1799 tests passing.
-1295 files scanned.
+1303 files scanned.
 0 boundary violations.
 18/18 release gate legs.
 
