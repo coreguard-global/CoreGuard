@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>CoreGuard · numbers</title>
+<style>
+  :root { color-scheme: dark; --bg:#0B0F14; --panel:#111821; --line:#1F2A37; --ink:#E6EDF3; --dim:#9AA7B4; --accent:#FF8A00; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  main { max-width: 900px; margin: 0 auto; padding: 40px 20px 72px; }
+  h1 { font-size: 20px; letter-spacing: .02em; margin: 0 0 4px; }
+  .sub { color: var(--dim); margin: 0 0 24px; }
+  .pin { display:flex; flex-wrap:wrap; gap:8px 22px; padding:12px 16px; border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--dim); font-size:13px; margin-bottom:26px; }
+  .pin b { color: var(--ink); font-weight:600; }
+  table { width:100%; border-collapse: collapse; }
+  td { padding: 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 13px; }
+  td.k { color: var(--dim); width: 34%; }
+  td.v { font-weight: 700; color: var(--accent); width: 18%; white-space: nowrap; }
+  td.v .u { color: var(--dim); font-weight: 400; }
+  td.s { color: var(--dim); font-size: 12px; }
+  code { color: var(--ink); }
+  .n { margin-top: 3px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin: 32px 0 8px; }
+  ul { color: var(--dim); font-size: 13px; padding-left: 20px; }
+  .note { margin-top: 26px; padding: 14px 16px; border-left: 3px solid var(--accent); background: var(--panel); color: var(--dim); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>CoreGuard — numbers</h1>
+  <p class="sub">Machine-generated from the committed snapshot. Every row names the field it came from.</p>
+
+  <div class="pin">
+    <span>measured at <b>2026-11-18T19:25:36Z</b></span>
+    <span>commit <b>d18a3372d205</b></span>
+    <span>source <b>docs/state-snapshot.json</b></span>
+    <span>schema <b>CG-NUMBERS/1</b></span>
+  </div>
+
+  <table>
+    <tbody>
+      <tr>
+        <td class="k">Tests (full suite, machine-pinned)</td>
+        <td class="v">1841 <span class="u">tests</span></td>
+        <td class="s"><code>docs/state-snapshot.json#testsTotal</code><div class="n">Pass count of the last green `npm test`; the suite asserts this number.</div></td>
+      </tr>
+      <tr>
+        <td class="k">Boundary audit — files scanned</td>
+        <td class="v">1315 <span class="u">files</span></td>
+        <td class="s"><code>docs/state-snapshot.json#boundaryAudit.filesScanned</code><div class="n">Tracked files from `git ls-files` (ignored trees such as var/ are not counted).</div></td>
+      </tr>
+      <tr>
+        <td class="k">Boundary audit — violations</td>
+        <td class="v">0 <span class="u">violations</span></td>
+        <td class="s"><code>docs/state-snapshot.json#boundaryAudit.violations</code><div class="n">Zero is enforced by `npm run boundary:audit`.</div></td>
+      </tr>
+      <tr>
+        <td class="k">Docs contract — commands executed</td>
+        <td class="v">133 <span class="u">commands</span></td>
+        <td class="s"><code>docs/state-snapshot.json#docsNode.executed</code><div class="n">Documented node/npm commands that actually run in the docs harness.</div></td>
+      </tr>
+      <tr>
+        <td class="k">Docs contract — skip-listed</td>
+        <td class="v">82 <span class="u">commands</span></td>
+        <td class="s"><code>docs/state-snapshot.json#docsNode.skipListed</code><div class="n">Each skip has a named, still-true reason; unclassified commands fail the contract.</div></td>
+      </tr>
+      <tr>
+        <td class="k">Docs contract — docs covered</td>
+        <td class="v">30 <span class="u">docs</span></td>
+        <td class="s"><code>docs/state-snapshot.json#docsNode.docsCovered</code><div class="n">Documents that contributed at least one executed command.</div></td>
+      </tr>
+      <tr>
+        <td class="k">Commits ahead of v0.6.0</td>
+        <td class="v">498 <span class="u">commits</span></td>
+        <td class="s"><code>docs/state-snapshot.json#commitsAheadOfV060</code><div class="n">History depth, not a quality signal.</div></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Statuses</h2>
+  <table>
+    <tbody>
+      <tr><td class="k">Peoples Court harness</td><td class="v">PEOPLES_COURT_HARNESS_READY</td><td class="s"><code>docs/state-snapshot.json#peoplesCourtHarness</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>What these numbers are not</h2>
+  <ul>
+      <li>These are measurements of this repository at the commit above — not customers, revenue, adoption, or unique users.</li>
+      <li>A green test count proves the tests pass; it is not a security audit, certification, or production-readiness claim.</li>
+      <li>Boundary counts cover tracked files only; generated and ignored trees are excluded by design.</li>
+      <li>No third-party registry or download figures are included here, because this script performs no network calls.</li>
+  </ul>
+
+  <p class="note">
+    Regenerate with <code>node scripts/public-numbers.mjs --write</code>.
+    CI guard: <code>node scripts/public-numbers.mjs --check</code> fails when this page
+    and <code>docs/numbers.json</code> no longer match the snapshot.
+  </p>
+</main>
+</body>
+</html>

@@ -37,13 +37,20 @@
  * committed, and the script re-derives every byte from the strkeys.
  *
  * Run: node scripts/scf-rfp2-sighting-repro.mjs
- * Out: docs/evidence/scf-rfp2-sighting-repro.json
+ *      node scripts/scf-rfp2-sighting-repro.mjs --out /tmp/repro.json \
+ *        --metadata-from docs/evidence/scf-rfp2-sighting-repro.json
+ * Out: docs/evidence/scf-rfp2-sighting-repro.json (default)
+ *
+ * Replay hygiene: --out <path> redirects the artifact so a reviewer's replay
+ * never rewrites the committed evidence; --metadata-from <artifact> reuses that
+ * artifact's ranAtUtc/gitCommitAtRun, so a replay of the deterministic body is
+ * byte-identical to the committed file (no provenance churn mistaken for drift).
  */
 
 import { writeFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as S from "@stellar/stellar-sdk";
 
@@ -52,7 +59,21 @@ const { xdr, StrKey, scValToNative, encodeMuxedAccountToAddress } = SDK;
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = join(here, "..");
-const OUT = join(repo, "docs", "evidence", "scf-rfp2-sighting-repro.json");
+const DEFAULT_OUT = join(repo, "docs", "evidence", "scf-rfp2-sighting-repro.json");
+
+/** Optional replay flags. --out keeps the committed artifact clean;
+ *  --metadata-from reuses an existing artifact's two provenance fields. */
+function optionValue(argv, flag) {
+  const i = argv.indexOf(flag);
+  if (i === -1) return null;
+  const value = argv[i + 1];
+  if (!value || value.startsWith("--")) throw new Error(`${flag} requires a path argument`);
+  return value;
+}
+const argv = process.argv.slice(2);
+const outArg = optionValue(argv, "--out");
+const out = outArg ? resolve(process.cwd(), outArg) : DEFAULT_OUT;
+const metadataFrom = optionValue(argv, "--metadata-from");
 
 /**
  * The divergence pair. Throwaway Ed25519 keys generated once in-session
@@ -314,11 +335,19 @@ function sdkVersion() {
   }
 }
 
+let provenance = {
+  ranAtUtc: new Date().toISOString(),
+  gitCommitAtRun: execSync("git rev-parse HEAD", { cwd: repo }).toString().trim(),
+};
+if (metadataFrom) {
+  const prior = JSON.parse(readFileSync(resolve(process.cwd(), metadataFrom), "utf8"));
+  provenance = { ranAtUtc: prior.ranAtUtc, gitCommitAtRun: prior.gitCommitAtRun };
+}
+
 const artifact = {
   instrument: "SCF #46 RFP-2 (XDR/CAP-Coverage Audit Tool and Indexer-Hardening Guide) — submission reviewability evidence: one reproduced sighting class + sample corpus entries",
   sdkVersion: sdkVersion(),
-  ranAtUtc: new Date().toISOString(),
-  gitCommitAtRun: execSync("git rev-parse HEAD", { cwd: repo }).toString().trim(),
+  ...provenance,
   offline: true,
   networkUsed: false,
   keyMaterialCommitted: "none — throwaway public strkeys only; the demo seeds were discarded and never held funds",
@@ -332,9 +361,9 @@ const artifact = {
   },
 };
 
-writeFileSync(OUT, JSON.stringify(artifact, null, 2) + "\n");
+writeFileSync(out, JSON.stringify(artifact, null, 2) + "\n");
 
-console.log("SCF RFP-2 sighting-repro evidence written: " + OUT);
+console.log("SCF RFP-2 sighting-repro evidence written: " + out);
 console.log("  divergence reproduced: " + divergence.ordersDisagree);
 console.log("  entries: " + entries.map((e) => e.id + (e.roundTripVerified ? " [roundtrip ok]" : "")).join(", "));
 console.log("  #1789 observed on installed SDK: " + entries[3].expectedDecoded.fixedBehaviorOnInstalledSdk.slice(0, 80));

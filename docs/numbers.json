@@ -1,0 +1,79 @@
+{
+  "schema": "CG-NUMBERS/1",
+  "generatedBy": "scripts/public-numbers.mjs",
+  "generatedFrom": "docs/state-snapshot.json",
+  "measuredAtUtc": "2026-11-18T19:25:36Z",
+  "measuredOnCommit": "d18a3372d20565d339a36ebe6bd5eb4451c078db",
+  "metrics": [
+    {
+      "id": "tests",
+      "label": "Tests (full suite, machine-pinned)",
+      "value": 1841,
+      "unit": "tests",
+      "source": "docs/state-snapshot.json#testsTotal",
+      "note": "Pass count of the last green `npm test`; the suite asserts this number."
+    },
+    {
+      "id": "boundary-files",
+      "label": "Boundary audit — files scanned",
+      "value": 1315,
+      "unit": "files",
+      "source": "docs/state-snapshot.json#boundaryAudit.filesScanned",
+      "note": "Tracked files from `git ls-files` (ignored trees such as var/ are not counted)."
+    },
+    {
+      "id": "boundary-violations",
+      "label": "Boundary audit — violations",
+      "value": 0,
+      "unit": "violations",
+      "source": "docs/state-snapshot.json#boundaryAudit.violations",
+      "note": "Zero is enforced by `npm run boundary:audit`."
+    },
+    {
+      "id": "docs-executed",
+      "label": "Docs contract — commands executed",
+      "value": 133,
+      "unit": "commands",
+      "source": "docs/state-snapshot.json#docsNode.executed",
+      "note": "Documented node/npm commands that actually run in the docs harness."
+    },
+    {
+      "id": "docs-skip-listed",
+      "label": "Docs contract — skip-listed",
+      "value": 82,
+      "unit": "commands",
+      "source": "docs/state-snapshot.json#docsNode.skipListed",
+      "note": "Each skip has a named, still-true reason; unclassified commands fail the contract."
+    },
+    {
+      "id": "docs-covered",
+      "label": "Docs contract — docs covered",
+      "value": 30,
+      "unit": "docs",
+      "source": "docs/state-snapshot.json#docsNode.docsCovered",
+      "note": "Documents that contributed at least one executed command."
+    },
+    {
+      "id": "commits-ahead",
+      "label": "Commits ahead of v0.6.0",
+      "value": 498,
+      "unit": "commits",
+      "source": "docs/state-snapshot.json#commitsAheadOfV060",
+      "note": "History depth, not a quality signal."
+    }
+  ],
+  "statuses": [
+    {
+      "id": "peoples-court",
+      "label": "Peoples Court harness",
+      "value": "PEOPLES_COURT_HARNESS_READY",
+      "source": "docs/state-snapshot.json#peoplesCourtHarness"
+    }
+  ],
+  "nonClaims": [
+    "These are measurements of this repository at the commit above — not customers, revenue, adoption, or unique users.",
+    "A green test count proves the tests pass; it is not a security audit, certification, or production-readiness claim.",
+    "Boundary counts cover tracked files only; generated and ignored trees are excluded by design.",
+    "No third-party registry or download figures are included here, because this script performs no network calls."
+  ]
+}

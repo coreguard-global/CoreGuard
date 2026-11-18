@@ -19,6 +19,14 @@
  * returns UNKNOWN. Nothing here upgrades itself to VERIFIED: a receiver that
  * accepts a body proves the body is authentic, never that the claimed event
  * happened upstream.
+ *
+ * Idempotency bound (documented tradeoff, CG-WH/1): the seen-key map is capped
+ * at MAX_IDEMPOTENCY_ENTRIES (10,000) keys. When full, the OLDEST inserted key
+ * is evicted before a new outcome is stored. A key evicted while its own
+ * replay window is still open can therefore be redelivered and its handler run
+ * a second time — a deliberate memory bound, not an unbounded guarantee.
+ * Integrators expecting >10,000 distinct keys per window must raise `maxEntries`
+ * or shard across receivers; `seenKeys()` exposes the live count for monitoring.
  */
 
 import { createHmac, timingSafeEqual } from "node:crypto";
@@ -149,6 +157,8 @@ export function createWebhookReceiver({
   }
 
   function remember(key, outcome) {
+    // LRU memory bound (see header). Eviction is oldest-insertion first; a key
+    // replayed AFTER eviction but still inside its window is NOT a duplicate.
     if (seen.size >= maxEntries) {
       const oldest = seen.keys().next().value;
       seen.delete(oldest);
