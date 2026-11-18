@@ -174,17 +174,17 @@
       {
         "file": "../docs/GOVERNANCE-DASHBOARD.html",
         "sha256": "0xa03bdb2b96a2770f223a7a4466225112fd3a9803ecf648cd489f2e0c09cf37a4",
-        "bytes": 76747
+        "bytes": 76810
       },
       {
         "file": "../docs/coreguard-gate41-visual.html",
         "sha256": "0x5e58a28f0bbeabfcff1f614fcf737ebcd6c5e12a2e2d12585032521dba933e54",
-        "bytes": 145851
+        "bytes": 145986
       },
       {
         "file": "../docs/coreguard-gate41-visual-en.html",
         "sha256": "0xfc66f3119c2f45ce743b4b9ebb0d90d60301d045b839f52cbcd67fd253a3dc20",
-        "bytes": 71069
+        "bytes": 71123
       }
     ],
     "quarantineFiles": [
@@ -301,18 +301,18 @@
     },
     {
       "file": "../docs/GOVERNANCE-DASHBOARD.html",
-      "commit": "46fd43030c167d01fc673fb2b120fd6d3b98d18a",
-      "reason": "URL migration to coreguard-global/CoreGuard org"
+      "commit": "902cc14bb3a8f94ee7c4eb1c0974d68447e22d19",
+      "reason": "re-pinned to pre-PR65 main state (restored frozen evidence artifact after luxe-pages merge)"
     },
     {
       "file": "../docs/coreguard-gate41-visual.html",
-      "commit": "46fd43030c167d01fc673fb2b120fd6d3b98d18a",
-      "reason": "URL migration to coreguard-global/CoreGuard org"
+      "commit": "902cc14bb3a8f94ee7c4eb1c0974d68447e22d19",
+      "reason": "re-pinned to pre-PR65 main state (restored frozen evidence artifact after luxe-pages merge)"
     },
     {
       "file": "../docs/coreguard-gate41-visual-en.html",
-      "commit": "46fd43030c167d01fc673fb2b120fd6d3b98d18a",
-      "reason": "URL migration to coreguard-global/CoreGuard org"
+      "commit": "902cc14bb3a8f94ee7c4eb1c0974d68447e22d19",
+      "reason": "re-pinned to pre-PR65 main state (restored frozen evidence artifact after luxe-pages merge)"
     }
   ]
 }
