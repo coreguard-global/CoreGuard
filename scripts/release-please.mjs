@@ -73,12 +73,31 @@ if (dryRun) {
   process.exit(0);
 }
 
-// gate 4 — the publishes, dependency order, fail-fast
+// gate 4 - publishes in dependency order, fail-fast but idempotent for
+// already-published versions (avoids failed deployments when versions are live).
 mkdirSync(join(REPO, "tmp"), { recursive: true });
 const log = join(REPO, "tmp", "release-log.txt");
 let failed = null;
+let published = 0;
+let skipped = 0;
 for (const dir of PACKAGES) {
   if (failed) break;
+  const pkg = JSON.parse(readFileSync(join(REPO, "packages", dir, "package.json"), "utf8"));
+  const spec = `${pkg.name}@${pkg.version}`;
+
+  const view = spawnSync(NPM, ["view", spec, "version"], {
+    cwd: REPO,
+    encoding: "utf8",
+    maxBuffer: 8 * 1024 * 1024,
+    shell: SPAWN_SHELL,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  if (view.status === 0 && String(view.stdout ?? "").trim() === pkg.version) {
+    console.log(`skipped ${spec} (already published)`);
+    skipped++;
+    continue;
+  }
+
   const res = spawnSync(NPM, ["publish", "--access", "public"], {
     cwd: join(REPO, "packages", dir),
     encoding: "utf8",
@@ -87,16 +106,21 @@ for (const dir of PACKAGES) {
     stdio: ["ignore", "pipe", "pipe"],
   });
   if (res.status !== 0) {
-    failed = { dir, code: res.status, tail: String(res.stderr ?? "").split("\n").slice(-6).join("\n") };
+    failed = {
+      dir,
+      spec,
+      code: res.status,
+      tail: String(res.stderr ?? res.stdout ?? "").split("\n").slice(-8).join("\n"),
+    };
     break;
   }
-  const pkg = JSON.parse(readFileSync(join(REPO, "packages", dir, "package.json"), "utf8"));
-  console.log(`released ${pkg.name}@${pkg.version} ✓`);
+  console.log(`released ${spec} ✓`);
+  published++;
 }
 if (failed) {
-  writeFileSync(log, `release stopped at ${failed.dir} (exit ${failed.code})\n${failed.tail}\n`, "utf8");
-  console.error(`release-please: publish of @coreguard/${failed.dir} failed (exit ${failed.code}) — remaining packages NOT published; log: tmp/release-log.txt`);
+  writeFileSync(log, `release stopped at ${failed.spec} (exit ${failed.code})\n${failed.tail}\n`, "utf8");
+  console.error(`release-please: publish of ${failed.spec} failed (exit ${failed.code}) — remaining packages NOT published; log: tmp/release-log.txt`);
   console.error(failed.tail);
   process.exit(1);
 }
-console.log(`release-please: all 14 packages published ✓ (log: ${log})`);
+console.log(`release-please: complete ✓ (${published} published, ${skipped} already published; log: ${log})`);
