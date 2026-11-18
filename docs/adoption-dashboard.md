@@ -52,8 +52,8 @@ default.
 
 | Metric | Value |
 |---|---|
-| Test suite | 1799 |
-| Boundary audit | 1303 files / 0 violations |
+| Test suite | 1812 |
+| Boundary audit | 1305 files / 0 violations |
 | Docs-node contract | 133 executed · 82 skip-listed · 30 covered |
 | Live-submission harness | PEOPLES_COURT_HARNESS_READY |
 

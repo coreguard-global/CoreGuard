@@ -1,6 +1,6 @@
 # AER-1 × VAR/1 — outcome mapping and canonicalization notes
 
-**Status:** working note, revision 2, 2026-11-18. Written in reply to Brennan
+**Status:** working note, revision 3, 2026-11-18. Written in reply to Brennan
 Zambo's review of VAR/1 in ACP discussion #328. Revision 2 records the AER-1
 side's answers to the three canonicalization questions (section 3) and the
 consequence for our own code vocabulary. It is not an ACP artifact, not a SEP,
@@ -145,6 +145,22 @@ the identity binds to nothing. A conformance receipt that returns one digest for
 both jobs cannot express that state, which is the argument for the split in
 section 2.
 
+## 4b. Their run of the four scenarios (and the fifth)
+
+Reported by the AER-1 side in the thread on 2026-11-18 (`aer1-verify 0.2.31`), and reproduced here as they stated it rather than paraphrased:
+
+| scenario | their reported result |
+|---|---|
+| present-and-matched | verdict PASS; the anchor block independently reports `absent` because the receipt carries no anchor |
+| present-and-drifted | verdict FAIL on the check "sha256(canonical_bytes) equals output_hash" (committed `c2258bdf…`, recomputed `dc3ad40f…`) |
+| absent | checking an id that does not exist at the resolver returns "NO SUCH RECEIPT" — nothing is rendered as a failure |
+| intentionally-not-evaluated | record verdict PASS, anchor `present`, `evaluated: false`, outcome `not checked` |
+| present, anchor unresolvable | record verdict PASS, anchor `present`, `evaluated: true`, outcome `rejected: unresolvable record` |
+
+They also reported one live production case that argues our own point better than we did: a Zambo receipt where the identity verdict is `matched` and the server asserts `verified`, while the local verifier still returns FAIL on one check — the receipt carries an `input_hash` and the committed payload withholds the inputs, so that commitment cannot be recomputed and the verifier fails closed. Three layers, three answers, each correct about its own layer. A single PASS/BLOCK at the top would have hidden the only interesting fact in the run.
+
+That case is now a fixture in this tree rather than a quote: see `test/integrations/outcomes-layer.test.mjs`, "three layers disagreeing must not collapse into one PASS/BLOCK".
+
 ## 5. What we cannot execute, and why
 
 - **The full cross-version set** — 143 vectors, 146 checks. We vendor one file
@@ -159,10 +175,14 @@ section 2.
 
 ## 6. What changes in VAR/1 as a result
 
-1. Outcome layer above the reject codes: `ABSENT`, `NOT_CHECKED`, and a named
-   code for an unresolvable anchor, each with its own must-fail fixture. The
-   `ABSENT` fixture asserts that a non-adopter's silence is **not** a failed
-   verification.
+1. Outcome layer above the reject codes — **implemented** as `CG-OUT/1`
+   (`packages/agent-commerce/outcomes.mjs`): `ABSENT`, `NOT_CHECKED` and
+   `UNRESOLVABLE_RECORD` as outcomes that compose over three layers (record,
+   identity, anchor), with `ABSENT` and `NOT_CHECKED` never travelling as a
+   block. Thirteen must-fail fixtures in
+   `test/integrations/outcomes-layer.test.mjs`, including the one that leads:
+   a non-adopter's silence is **not** a failed verification, asserted as a test
+   rather than promised in prose.
 2. Identity split: `record_id` and `anchor_ref` as separate bindings from the
    content digest.
 3. The boundary, printed above the first heading rather than in a footnote:

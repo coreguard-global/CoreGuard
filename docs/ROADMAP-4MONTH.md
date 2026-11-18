@@ -21,7 +21,7 @@ Focused roadmap for SCF Build Award. 4 months, 3 core functions, verifiable deli
 - [ ] Documentation updated (done)
 
 ### Verification
-- `npm test` passes (1799 tests)
+- `npm test` passes (1812 tests)
 - `node scripts/current-state.mjs --check` passes
 - Contract ID verifiable on Stellar Expert
 
