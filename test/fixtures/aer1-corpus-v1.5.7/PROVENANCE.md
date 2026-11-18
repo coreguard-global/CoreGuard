@@ -50,3 +50,29 @@ binding can.
 
 A fixture edited by a single space fails check 1 by name, which is the only
 reason to record a digest at all.
+
+## Full corpus, added 2026-11-18
+
+The six id-binding vectors are still the family this build judges end to end,
+but the fixture directory now carries the **whole published set**: 72 files,
+143 vectors, 146 checks, laid out exactly as published (`base/…`,
+`workflow-merkle-seq-output-v1.json`). `corpus-index.json` is the published
+index, vendored with them.
+
+| Field | Value |
+|---|---|
+| Index | `https://zambo.dev/aer1/corpus.json` (vendored as `corpus-index.json`) |
+| Files | 72, each written byte-for-byte from `https://zambo.dev/aer1/corpus/v1.5.7/<path>` |
+| Per-file digests | all 72 match the `sha256` the index publishes for that path |
+| `evaluated_set_digest` | `sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2` — **reproduced** from the bytes on disk |
+| Top-level `id-binding-vectors.json` | byte-identical to `base/id-binding-vectors.json` (asserted by the runner's test), kept because the earlier fixture test pins its digest |
+
+What that buys, and what it does not: integrity is now a whole-corpus property
+rather than a six-file property, and every vector file the corpus publishes is
+present and named. Semantics is still one family — `scripts/aer1-corpus.mjs`
+prints the other 137 vectors as `NOT_CHECKED` with the family named, because a
+verifier that half-implements a family and reports it green is the failure mode
+the corpus exists to catch.
+
+`corpus-metadata.json` remains the metadata subset it says it is; the full file
+list now lives in `corpus-index.json`.

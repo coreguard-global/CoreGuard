@@ -489,3 +489,215 @@ export declare function authorizationDecision(
 ): Readonly<{ decision: "PASS" | "BLOCK" | "NONE"; reason: string | null }>;
 
 export declare function profileReferenceFor(receiptId: string): ProfileReference;
+
+// ---------------------------------------------------------------------------
+// CG-AER1/1 — a parser for AER-1 receipts (draft-zambo-aer1-26). The committed
+// payload and the receipt id are separate facts: the digest is recomputed, the
+// id is bound only against an expected id or a resolved record that must agree
+// on the digest.
+// ---------------------------------------------------------------------------
+
+export const AER1_PARSER_VERSION: "CG-AER1/1";
+export const SUPPORTED_RECEIPT_SCHEMAS: readonly string[];
+
+export interface Aer1Check {
+  name: string;
+  ok: boolean;
+  detail?: unknown;
+}
+
+export interface Aer1Digest {
+  claimed: string | null;
+  computed: string | null;
+  ok: boolean;
+  byteLength: number | null;
+  byteLengthClaimed: number | null;
+}
+
+export interface Aer1IdFacts {
+  present: boolean;
+  state: "unverified" | "verified-expected" | "verified-resolved" | "mismatch";
+  verdict: "matched" | "mismatched" | "resolved" | "unverified" | "absent";
+  expected: string | null;
+  resolved: { id: string | null; digest: string | null } | null;
+}
+
+export interface Aer1Parsed {
+  parserVersion: string;
+  version: string | null;
+  supportedVersion: boolean;
+  structure: readonly Aer1Check[];
+  structureOk: boolean;
+  digest: Aer1Digest;
+  id: Aer1IdFacts;
+  verdict: "pass" | "fail";
+  code: string | null;
+}
+
+/** Anchor facts in CG-OUT/1's vocabulary, as a caller measured them. */
+export interface AnchorFacts {
+  present?: boolean;
+  evaluated?: boolean;
+  outcome?: "verified" | "absent" | "not_checked" | "unresolvable" | string;
+}
+
+export declare function parseAer1Record(
+  record: unknown,
+  options?: { expectedId?: string; resolvedRecord?: unknown },
+): Aer1Parsed;
+
+export declare function aer1Outcome(parsed: Aer1Parsed, options?: { anchor?: AnchorFacts }): OutcomeResult;
+
+export declare function aer1SelfCheck(): Readonly<{
+  ok: boolean;
+  checks: ReadonlyArray<{ name: string; pass: boolean }>;
+}>;
+
+// ---------------------------------------------------------------------------
+// CG-ANCHOR/1 — the anchor service we run: offline-verifiable attestations, an
+// append-only hash-chained log, one Merkle root, and a prepare-only chain
+// adapter that refuses mainnet. No broadcast path is declared because none
+// exists.
+// ---------------------------------------------------------------------------
+
+export const ANCHOR_VERSION: "CG-ANCHOR/1";
+export const ANCHOR_SCHEMA: "coreguard.anchor/1";
+
+export interface AnchorSubject {
+  kind: string;
+  digest: string;
+}
+
+export interface AnchorAttestation {
+  anchorVersion: string;
+  schema: string;
+  subject: AnchorSubject;
+  sequence: number;
+  previous: string | null;
+  issuedAt: string;
+  issuer: { keyId: string; publicKeyPem: string };
+  signature: string;
+}
+
+export interface AnchorLog {
+  anchorVersion: string;
+  schema: string;
+  entries: readonly AnchorAttestation[];
+  root?: string;
+}
+
+export declare function normalizeSubject(subject: { kind: string; digest: string }): AnchorSubject;
+
+export declare function generateIssuerKey(): Readonly<{ publicKeyPem: string; privateKeyPem: string }>;
+
+export declare function keyIdFor(publicKeyPem: string): string;
+
+export declare function signAttestation(args: {
+  subject: { kind: string; digest: string };
+  issuedAt: string;
+  privateKeyPem: string;
+  sequence?: number;
+  previous?: string | null;
+}): AnchorAttestation;
+
+export declare function verifyAnchorAttestation(attestation: unknown): Readonly<{
+  ok: boolean;
+  checks: ReadonlyArray<{ name: string; ok: boolean }>;
+}>;
+
+export declare function leafHash(attestation: AnchorAttestation): string;
+
+export declare function merkleRoot(leaves: readonly string[]): string;
+
+export declare function createLog(): AnchorLog;
+
+export declare function appendAnchor(
+  log: AnchorLog,
+  args: { subject: { kind: string; digest: string }; issuedAt: string; privateKeyPem: string },
+): AnchorLog;
+
+export declare function verifyLog(log: AnchorLog): Readonly<{
+  ok: boolean;
+  checks: ReadonlyArray<{ name: string; ok: boolean }>;
+  root: string;
+}>;
+
+export declare function resolveAnchor(
+  log: AnchorLog,
+  digest: string,
+): Readonly<{
+  present: boolean;
+  evaluated: boolean;
+  outcome: "verified" | "absent" | "unresolvable";
+  matches?: number;
+  reason?: string;
+}>;
+
+export declare function prepareChainAnchor(
+  log: AnchorLog,
+  options?: { network?: string },
+): Readonly<{
+  ok: boolean;
+  adapter?: string;
+  network?: string;
+  memoHashHex?: string;
+  memoType?: string;
+  broadcast?: boolean;
+  root?: string;
+  entries?: number;
+  reason?: string;
+  checks?: ReadonlyArray<{ name: string; ok: boolean }>;
+}>;
+
+export declare function anchorSelfCheck(): Readonly<{
+  ok: boolean;
+  checks: ReadonlyArray<{ name: string; pass: boolean }>;
+}>;
+
+// ---------------------------------------------------------------------------
+// CG-COMPOSE/1 — the anchor composition difference as a mode. `composed` lets
+// an unresolvable anchor block the headline; `layered` keeps the record verdict
+// fixed and reports the rejection on the anchor layer.
+// ---------------------------------------------------------------------------
+
+export const COMPOSITION_VERSION: "CG-COMPOSE/1";
+export const COMPOSITION_MODES: readonly ["composed", "layered"];
+
+export type CompositionMode = "composed" | "layered";
+
+export interface CompositionResult {
+  compositionVersion: string;
+  mode: CompositionMode;
+  headline: OutcomeName;
+  record: Readonly<{ outcome: OutcomeName; moved: boolean }>;
+  anchor: Readonly<{ present: boolean; evaluated: boolean; outcome: string; rejected: string | null }>;
+  blocks: boolean;
+  resolutionSensitive: boolean;
+  code: string | null;
+  reason: string | null;
+  layers: unknown;
+}
+
+export declare function composeOutcome(input?: {
+  presented?: boolean;
+  record?: unknown;
+  anchor?: AnchorFacts;
+  mode?: CompositionMode;
+}): CompositionResult;
+
+export declare function compareModes(input?: {
+  presented?: boolean;
+  record?: unknown;
+  anchor?: AnchorFacts;
+}): Readonly<{
+  compositionVersion: string;
+  composed: CompositionResult;
+  layered: CompositionResult;
+  diverges: boolean;
+  recordStable: boolean;
+}>;
+
+export declare function compositionSelfCheck(): Readonly<{
+  ok: boolean;
+  checks: ReadonlyArray<{ name: string; pass: boolean }>;
+}>;
