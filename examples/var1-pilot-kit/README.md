@@ -71,12 +71,15 @@ sections above so a reader does not have to guess what was and was not shown.
 
 The reproducibility path is a fixed clock and a fixed seed:
 
-`node examples/var1-pilot-kit/run.mjs --seed 1111…1111 --at 2026-06-01T00:00:00Z`
+`node examples/var1-pilot-kit/run.mjs --seed 1111…1111 --at 2026-06-01T00:00:00Z --out ./var1-rerun`
 
 The same pair reproduces the merchant key, the receipt body, and therefore the
 receipt id. The merchant origin changes because the sandbox takes an ephemeral
 port; the record does not include the port, because a locator is not part of the
-thing it locates.
+thing it locates. Receipt bytes are deterministic for a given seed and clock;
+consumption rows are stateful (spend logs live in the output directory), so
+rerunning into the same `--out` reuses that ledger and will refuse already-spent
+rows by design — use a fresh `--out` to reproduce the full run.
 
 Options: `--out <dir>`, `--seed <64 hex>`, `--at <iso>`, `--policy
 strict|balanced|availability`, `--quiet`, `--help`.
