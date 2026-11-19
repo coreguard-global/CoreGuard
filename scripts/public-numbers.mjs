@@ -115,8 +115,9 @@ function renderHtml(doc) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; base-uri 'none'; form-action 'none'">
 <title>CoreGuard · numbers</title>
+<meta name="description" content="Machine-generated from the committed snapshot. Every row names the field it came from.">
 <style>
   :root { color-scheme: dark; --bg:#0B0F14; --panel:#111821; --line:#1F2A37; --ink:#E6EDF3; --dim:#9AA7B4; --accent:#FF8A00; }
   * { box-sizing: border-box; }
@@ -138,6 +139,20 @@ function renderHtml(doc) {
   ul { color: var(--dim); font-size: 13px; padding-left: 20px; }
   .note { margin-top: 26px; padding: 14px 16px; border-left: 3px solid var(--accent); background: var(--panel); color: var(--dim); font-size: 13px; }
 </style>
+<link rel="stylesheet" href="assets/coreguard-luxe.css">
+<script defer src="assets/coreguard-luxe.js"></script>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CoreGuard">
+<meta property="og:title" content="CoreGuard · numbers">
+<meta property="og:description" content="Machine-generated from the committed snapshot. Every row names the field it came from.">
+<meta property="og:url" content="https://coreguard-global.github.io/CoreGuard/NUMBERS.html">
+<meta property="og:image" content="https://coreguard-global.github.io/CoreGuard/assets/og-cover-1200.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CoreGuard · numbers">
+<meta name="twitter:description" content="Machine-generated from the committed snapshot. Every row names the field it came from.">
+<meta name="twitter:image" content="https://coreguard-global.github.io/CoreGuard/assets/og-cover-1200.png">
 </head>
 <body>
 <main>
