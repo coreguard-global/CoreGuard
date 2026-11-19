@@ -1,6 +1,6 @@
 # AER-1 × VAR/1 — outcome mapping and canonicalization notes
 
-**Status:** working note, revision 5, 2026-11-19. Written in reply to Brennan
+**Status:** working note, revision 6, 2026-11-19. Written in reply to Brennan
 Zambo's review of VAR/1 in ACP discussion #328. Revision 2 records the AER-1
 side's answers to the three canonicalization questions (section 3) and the
 consequence for our own code vocabulary; revision 3 records their run of the
@@ -8,8 +8,10 @@ five scenarios (section 4b); revision 4 records the split and the layer landing
 in code, so this note now describes shipped files rather than intentions;
 revision 5 records the first external run of the pilot kit and maps its fifteen
 rows onto AER-1's outcomes, including the two rows where the vocabularies
-answer differently (section 4c). It is not an ACP artifact, not a SEP, and not a
-claim of agreement by anyone but us.
+answer differently (section 4c); revision 6 records the AER-1 side's acceptance
+of the vector and of the two layer names, and the seeded external run this tree
+re-derived byte for byte (section 4d). It is not an ACP artifact, not a SEP, and
+not a claim of agreement beyond what section 4d quotes by name.
 
 **What this note is for.** Two models can describe the same artifact and still
 mean different things by "verified". This note puts the two vocabularies side by
@@ -245,6 +247,53 @@ A receipt standard that answers "did the saved result change" and a commerce
 layer that answers "was this the thing that was approved" are two questions,
 and the second one needs the first. The divergence in row 12 is the argument for
 keeping them apart, not for merging them.
+
+## 4d. What the other side adopted, and the run that can be checked
+
+Recorded after the mapping landed in the thread on 2026-11-19. This section
+quotes the AER-1 side where the wording carries weight, and marks the rest as
+our reading of it.
+
+**Names.** `present-consistent-nonconforming` is accepted as the vector's name,
+with both columns pinned and neither printed without the other, and it enters
+the published corpus with this note as its first citation. The layer spelling
+from section 4c is adopted as well: `record-unresolvable` against
+`anchor-unresolvable`, so the corpus pins the layer in the vector name. The
+vector itself lives in this tree as
+`test/fixtures/var1-corpus-v1/present-consistent-nonconforming.json`, asserted
+by `test/integrations/var1-corpus-vector.test.mjs`.
+
+**The run that can be checked.** The first external report quoted an unseeded
+receipt, and that side has since corrected it: a fresh merchant key means the id
+cannot be re-derived, by anyone, including them. The replacement is a seeded run
+at commit `5a1f3bd`, seed
+`e8cfcd1a93ce50d6d6ace046db9c878ba8e63d3873acc821c9c6d0742cd848cb` — the sha256
+of the string `zambo-external-seeded-run-2026-11-19`, so the seed carries no
+secret and is as checkable as the receipt — with the clock fixed at
+`2026-11-19T14:00:00Z`.
+
+Re-derived here from a clean clone of that commit, on a different machine and a
+different runtime (node v26.13.0 against their v24.22.1), twice, both runs 15 of
+15 rows with exit 0:
+
+| fact | value |
+|---|---|
+| receipt id | `urn:sha256:8c6c12bad40471d2c83d8f6ee2a0c07c8649045aa2e96726a4ee31bec13a72c7` |
+| body digest | `sha256:386d218c154ae444c878b1b4ee32daf3f5b32f8bd9de363aa854c89f099334b1` |
+| rows | 15/15 PASS, exit 0, both runs |
+| runtimes | v24.22.1 (theirs) · v26.13.0 (ours) |
+
+Both digests equal the ones reported from the other machine, byte for byte. That
+is the first fact in the exchange that is neither a claim by either side nor a
+sandbox run made here: the same inputs produce the same receipt on someone
+else's hardware, under a different Node major, with no account, no key and no
+call to either implementation. The unseeded report stays quoted only as the run
+that came first.
+
+**Still open, in the same vocabulary.** The kit writes no anchor, so
+`rejected: unresolvable record` is a row neither side can run inside it;
+`CG-ID/1` holds that fixture in this tree. An `anchor-unresolvable` vector is the
+obvious next one, and nothing here claims it exists yet.
 
 ## 5. What we cannot execute, and why
 
