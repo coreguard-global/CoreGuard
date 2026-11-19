@@ -1,5 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-active="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CoreGuard — All-in-one: everything in the repo</title>
+<meta name="description" content="Complete inventory: packages, scripts, examples, templates, workflows, contracts, pages, specs. Every item listed with its path.">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0B0F14">
+<style>
+  :root{
+    --bg:#0b0f14; --bg2:#10161d; --panel:#141c24; --panel2:#18222c;
+    --line:#243240; --line2:#2e3f50;
+    --ink:#e8eef4; --muted:#8fa3b5; --faint:#5f7386;
+    --green:#FFA31A; --green2:#FF8A00; --gold:#e0b64c; --blue:#4da3ff;
+    --radius:14px; --shadow:0 10px 30px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 "Segoe UI",system-ui,-apple-system,"Noto Sans Arabic",sans-serif}
+  main{max-width:1000px;margin:0 auto;padding:28px 20px 72px}
+  a{color:var(--green2)}
+  [data-lang-text]{display:none !important}
+  html[data-active="en"] span[data-lang-text="en"].inline{display:inline !important}
+  html[data-active="ar"] span[data-lang-text="ar"].inline{display:inline !important}
+  .sec-head{display:flex;align-items:baseline;gap:.8rem;margin-bottom:.4rem}
+  .sec-head h2{font-size:1.15rem;letter-spacing:.02em;margin:0}
+  .sec-sub{color:var(--faint);font-size:.92rem;margin:0 0 1.1rem;max-width:70ch}
+  ul.gov{list-style:none;margin:0;padding:0;display:grid;gap:.55rem}
+  ul.gov li{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:.7rem 1rem;display:flex;gap:.7rem;align-items:flex-start;transition:border-color .15s}
+  ul.gov li:hover{border-color:var(--line2)}
+  ul.gov .ic{color:var(--green);flex:0 0 auto;margin-top:.1rem}
+  ul.gov a{color:var(--ink);text-decoration:none;font-weight:600}
+  ul.gov a:hover{color:var(--green)}
+  ul.gov small{display:block;color:var(--muted);font-weight:400}
+  h2 .n{font-size:.8rem;color:var(--faint);font-weight:600;border:1px solid var(--line);
+    border-radius:6px;padding:.05rem .5rem;font-variant-numeric:tabular-nums}
+  [dir="rtl"] body,[dir="rtl"] ul.gov li{font-family:"Segoe UI","Noto Naskh Arabic","Noto Sans Arabic",system-ui,sans-serif}
+</style>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CoreGuard">
+<meta property="og:title" content="CoreGuard — All-in-one: everything in the repo">
+<meta property="og:description" content="Complete inventory: packages, scripts, examples, templates, workflows, contracts, pages, specs. Every item listed with its path.">
+<meta property="og:url" content="https://coreguard-global.github.io/CoreGuard/ALL-IN-ONE-SUMMARY.html">
+<meta property="og:image" content="https://coreguard-global.github.io/CoreGuard/assets/og-cover-1200.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CoreGuard — All-in-one: everything in the repo">
+<meta name="twitter:description" content="Complete inventory: packages, scripts, examples, templates, workflows, contracts, pages, specs. Every item listed with its path.">
+<meta name="twitter:image" content="https://coreguard-global.github.io/CoreGuard/assets/og-cover-1200.png">
+<link rel="stylesheet" href="assets/coreguard-luxe.css">
+<script defer src="assets/coreguard-luxe.js"></script>
+</head>
+<body>
+<main>
 <section><div class="sec-head"><h2><span data-lang-text="en" class="inline">ALL-IN-ONE — everything in the repo</span><span data-lang-text="ar" class="inline">كل شيء في المستودع</span></h2><span class="n">964</span></div>
 <p class="sec-sub"><span data-lang-text="en" class="inline">Complete inventory: packages, scripts, examples, templates, workflows, contracts, pages, specs. Every item listed with its path.</span><span data-lang-text="ar" class="inline">حصر كامل: الباقات، السكريبتات، الأمثلة، القوالب، سير العمل، العقود، الصفحات، المواصفات. كل عنصر بمساره.</span></p>
 <ul class="gov">
 <li><span class="ic">◆</span><div><a href="ALL-IN-ONE-CATALOG.md"><span data-lang-text="en" class="inline">ALL-IN-ONE-CATALOG.md</span><span data-lang-text="ar" class="inline">كتالوج شامل كامل</span></a><small><span data-lang-text="en" class="inline">38 packages · 70 scripts · 6 workflows · 13 examples · 2 templates · all 964 files</span><span data-lang-text="ar" class="inline">38 باقة · 70 سكريبت · 6 سير عمل · 13 مثال · 2 قالب · جميع 964 ملف</span></small></div></li>
 </ul></section>
+</main>
+<script>
+(function(){
+  var root=document.documentElement;
+  try{var s=localStorage.getItem("cg-lang");
+    if(s==="ar"){root.setAttribute("data-active","ar");root.setAttribute("lang","ar");root.setAttribute("dir","rtl");}
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
