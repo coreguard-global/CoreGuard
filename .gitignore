@@ -22,6 +22,7 @@ __pycache__/
 
 # generated demo output
 var/
+examples/var1-pilot-kit/artifacts/
 
 # Rust build artifacts
 soroban/**/target/

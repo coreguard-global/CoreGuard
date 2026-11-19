@@ -143,6 +143,15 @@ None of this requires ACP to adopt anybody's schema. The interoperability surfac
 stays two optional string fields; everything above is the profile's business, on
 the profile's own clock.
 
+## Run it
+
+The four mechanisms above are not a reading exercise. `docs/VAR1-PILOT-KIT.md`
+and `examples/var1-pilot-kit/` carry one command that runs a local reference
+merchant, signs a receipt, fetches it by content-addressed id, verifies it
+offline against one pin, spends the approval once across processes, and prints
+the rows where the verifier refuses. Exit 0 only if every row lands where the
+report says it should.
+
 ## Boundary
 
 No network in the modules except through injected functions. No private key in
