@@ -1,0 +1,26 @@
+{
+  "schema": "CG-CORPUS-PUBLICATION/1",
+  "corpus": "AER-1",
+  "source": "https://zambo.dev/aer1/corpus.json",
+  "draft": "draft-zambo-aer1-26",
+  "vectorCount": 143,
+  "checkedAt": "2026-11-19",
+  "checkedBy": "the AER-1 side, first-hand, reported in ACP discussion #328",
+  "ourVectors": {
+    "present-consistent-nonconforming": {
+      "status": "accepted-not-published",
+      "acceptedAt": "2026-11-19",
+      "note": "accepted under our name with both columns pinned; its corpus entry is pending the next publication, with the set digest recomputed then and docs/aer1-var1-outcome-mapping.md as its first citation"
+    },
+    "anchor-unresolvable": {
+      "status": "accepted-not-published",
+      "acceptedAt": "2026-11-19",
+      "note": "same commitment; the layer spelling record-unresolvable against anchor-unresolvable is adopted with it"
+    }
+  },
+  "limits": [
+    "This file records what was checked, with the date it was checked. It is not a live feed, and nothing in CI reaches the corpus: the guard can only hold our prose to this record, never refresh it.",
+    "A vector may be described as published only while its status here is `published`, and every paragraph that states corpus status must cite this file by path so a reader can date the claim.",
+    "Statuses are `accepted-not-published` and `published`; there is no third state, because 'submitted' and 'in review' are how a commitment gets quoted as an entry."
+  ]
+}
