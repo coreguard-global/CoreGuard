@@ -1,6 +1,6 @@
 # AER-1 × VAR/1 — outcome mapping and canonicalization notes
 
-**Status:** working note, revision 7, 2026-11-19. Written in reply to Brennan
+**Status:** working note, revision 8, 2026-11-19. Written in reply to Brennan
 Zambo's review of VAR/1 in ACP discussion #328. Revision 2 records the AER-1
 side's answers to the three canonicalization questions (section 3) and the
 consequence for our own code vocabulary; revision 3 records their run of the
@@ -12,8 +12,11 @@ answer differently (section 4c); revision 6 records the AER-1 side's acceptance
 of the vector and of the two layer names, and the seeded external run this tree
 re-derived byte for byte (section 4d); revision 7 adds the anchor-layer vector
 that closes the row section 4d had left open, pinned in both columns with its
-controls (section 4d). It is not an ACP artifact, not a SEP, and not a claim of
-agreement beyond what section 4d quotes by name.
+controls (section 4d); revision 8 separates acceptance from publication, because
+revision 6 could be read as claiming the vector was already in the live corpus,
+and records the third-machine confirmation of the seeded run (section 4d). It is
+not an ACP artifact, not a SEP, and not a claim of agreement beyond what section
+4d quotes by name.
 
 **What this note is for.** Two models can describe the same artifact and still
 mean different things by "verified". This note puts the two vocabularies side by
@@ -258,9 +261,12 @@ quotes the AER-1 side where the wording carries weight, and marks the rest as
 our reading of it.
 
 **Names.** `present-consistent-nonconforming` is accepted as the vector's name,
-with both columns pinned and neither printed without the other, and it enters
-the published corpus with this note as its first citation. The layer spelling
-from section 4c is adopted as well: `record-unresolvable` against
+with both columns pinned and neither printed without the other. Accepted is not
+published, and revision 8 fixes that wording: on 2026-11-19 the live corpus is
+still draft -26 at 143 vectors, and neither this name nor the two layer names
+appear in it. What exists is a commitment to the next corpus publication, with
+the set digest recomputed then and this note as its first citation. The layer
+spelling from section 4c is adopted as well: `record-unresolvable` against
 `anchor-unresolvable`, so the corpus pins the layer in the vector name. The
 vector itself lives in this tree as
 `test/fixtures/var1-corpus-v1/present-consistent-nonconforming.json`, asserted
@@ -286,12 +292,14 @@ different runtime (node v26.13.0 against their v24.22.1), twice, both runs 15 of
 | rows | 15/15 PASS, exit 0, both runs |
 | runtimes | v24.22.1 (theirs) · v26.13.0 (ours) |
 
-Both digests equal the ones reported from the other machine, byte for byte. That
-is the first fact in the exchange that is neither a claim by either side nor a
-sandbox run made here: the same inputs produce the same receipt on someone
-else's hardware, under a different Node major, with no account, no key and no
-call to either implementation. The unseeded report stays quoted only as the run
-that came first.
+Both digests equal the ones reported from the other machine, byte for byte. A
+third machine then reported the same receipt id and body digest at `8fb0808`,
+having diffed the kit as unchanged from `5a1f3bd`: the equality holds across
+three machines and two Node majors, not two. That is the first fact in the
+exchange that is neither a claim by either side nor a sandbox run made here —
+the same inputs produce the same receipt on someone else's hardware, with no
+account, no key and no call to either implementation. The unseeded report stays
+quoted only as the run that came first.
 
 **The vector that pins the layers.** The row above is closed as a fixture rather
 than a promise: `test/fixtures/var1-corpus-v1/anchor-unresolvable.json`, asserted
