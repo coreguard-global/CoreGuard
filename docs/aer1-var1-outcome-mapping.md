@@ -1,6 +1,6 @@
 # AER-1 × VAR/1 — outcome mapping and canonicalization notes
 
-**Status:** working note, revision 6, 2026-11-19. Written in reply to Brennan
+**Status:** working note, revision 7, 2026-11-19. Written in reply to Brennan
 Zambo's review of VAR/1 in ACP discussion #328. Revision 2 records the AER-1
 side's answers to the three canonicalization questions (section 3) and the
 consequence for our own code vocabulary; revision 3 records their run of the
@@ -10,8 +10,10 @@ revision 5 records the first external run of the pilot kit and maps its fifteen
 rows onto AER-1's outcomes, including the two rows where the vocabularies
 answer differently (section 4c); revision 6 records the AER-1 side's acceptance
 of the vector and of the two layer names, and the seeded external run this tree
-re-derived byte for byte (section 4d). It is not an ACP artifact, not a SEP, and
-not a claim of agreement beyond what section 4d quotes by name.
+re-derived byte for byte (section 4d); revision 7 adds the anchor-layer vector
+that closes the row section 4d had left open, pinned in both columns with its
+controls (section 4d). It is not an ACP artifact, not a SEP, and not a claim of
+agreement beyond what section 4d quotes by name.
 
 **What this note is for.** Two models can describe the same artifact and still
 mean different things by "verified". This note puts the two vocabularies side by
@@ -234,7 +236,8 @@ record-resolution failure, theirs an anchor failure. That is the inverse of the
 defect this thread keeps naming: not two facts printed as one word, but one word
 printed for two facts. The corpus should pin the layer in the vector name
 (`record-unresolvable` against `anchor-unresolvable`) before either side quotes
-the other's string.
+the other's string. Both sides adopted that spelling, and section 4d carries the
+fixture that pins the two layers apart rather than the sentence proposing it.
 
 The one AER-1 outcome the kit cannot produce is `rejected: unresolvable
 record`, because the kit writes no chain anchor. `CG-ID/1` has that fixture;
@@ -290,10 +293,37 @@ else's hardware, under a different Node major, with no account, no key and no
 call to either implementation. The unseeded report stays quoted only as the run
 that came first.
 
+**The vector that pins the layers.** The row above is closed as a fixture rather
+than a promise: `test/fixtures/var1-corpus-v1/anchor-unresolvable.json`, asserted
+by `test/integrations/var1-corpus-anchor-vector.test.mjs`. The execution is the
+one that was approved, so the record layer has nothing to refuse and reads
+VERIFIED and ALLOW; the receipt also carries an anchor whose log lives under an
+RFC 2606 `.invalid` host, so the anchor layer reports
+`rejected: unresolvable record`. Both columns are pinned in the file, and the
+controls are what make the pins worth having:
+
+| control | column it moves | what it rules out |
+|---|---|---|
+| anchor absent | `anchor_outcome: absent` | absence reading as a refusal, or as a failure |
+| anchor not checked | `anchor_outcome: not checked` | a verifier that never attempted resolution looking like one that attempted and failed |
+| resolvable log | `anchor_outcome: verified` | `unresolvable` as a standing verdict on anchors |
+| leaf hash that does not match | `anchor_outcome: verification failed` | a content failure borrowing the resource word |
+| name nobody can produce | `record_resolution: record-unresolvable` | a record failure borrowing `absent`, or borrowing the anchor column |
+| anchor stripped after signing | VAR/1 `VERIFICATION_FAILED` | a receipt that sheds its anchor and still reads clean |
+
+The last control deserves its own sentence, because it is the one that nearly
+proved nothing. The signature still verifies after the anchor is removed: it
+covers the attestation, and the attestation was not touched. What catches the
+removal is the subject binding between that attestation and the body it claims to
+be about. A verifier that checked only the signature would pass the stripped
+receipt, so the fixture asserts that named check instead of the overall verdict.
+
 **Still open, in the same vocabulary.** The kit writes no anchor, so
-`rejected: unresolvable record` is a row neither side can run inside it;
-`CG-ID/1` holds that fixture in this tree. An `anchor-unresolvable` vector is the
-obvious next one, and nothing here claims it exists yet.
+`rejected: unresolvable record` remains a row it cannot produce: this vector is
+carried as a corpus fixture with the anchor inside the signed body, and `CG-ID/1`
+holds the upstream-shaped one. Both anchor columns here are derived from AER-1's
+published rules, not from running their verifier, and the fixture says so in its
+own limits section.
 
 ## 5. What we cannot execute, and why
 

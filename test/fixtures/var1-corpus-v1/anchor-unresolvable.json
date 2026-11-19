@@ -1,0 +1,112 @@
+{
+  "schema": "CG-VECTOR/1",
+  "name": "anchor-unresolvable",
+  "profile": "VAR/1",
+  "why": "The other half of rows 13 and 14. There the two vocabularies collided on one word, `unresolvable`, because one string was carrying two facts: a record that cannot be resolved, and an anchor that cannot be resolved. This vector separates them by layer. The execution is the one that was approved, so the record layer has nothing to refuse and reads VERIFIED / ALLOW. The receipt also carries an anchor whose log name lives under a host that never resolves, so the anchor layer reports `rejected: unresolvable record`. Neither column is a correction of the other, and the word `unresolvable` is not allowed to travel between them.",
+  "approved": {
+    "merchant_id": "merchant-sandbox-books",
+    "payee": "acct_sandbox_books",
+    "currency": "USD",
+    "total_minor": 4900,
+    "items": [
+      {
+        "sku": "SEEDLING",
+        "name": "Seedling",
+        "qty": 1,
+        "unit_minor": 4900
+      }
+    ]
+  },
+  "executed": {
+    "merchant_id": "merchant-sandbox-books",
+    "payee": "acct_sandbox_books",
+    "currency": "USD",
+    "total_minor": 4900,
+    "items": [
+      {
+        "sku": "SEEDLING",
+        "name": "Seedling",
+        "qty": 1,
+        "unit_minor": 4900
+      }
+    ],
+    "order_ref": "order-2",
+    "executed_at": "2026-06-02T00:00:00Z"
+  },
+  "anchor": {
+    "schema_version": "cg-anchor/1",
+    "log": "https://ots.invalid/calendar",
+    "leaf_hash": "sha256:41b9c08bac93bc1417d2164afc1c623d1415ed7abfa5466ad53fe44122ad7c87",
+    "anchored_at": "2026-06-02T00:00:00Z",
+    "proof": {
+      "type": "ots",
+      "digest": "sha256"
+    }
+  },
+  "anchor_leaf_subject": "the executed order",
+  "approval_nonce": "nonce-anchor-unresolvable",
+  "at": "2026-06-02T00:00:00Z",
+  "seed": "3333333333333333333333333333333333333333333333333333333333333333",
+  "policy": "balanced",
+  "pins": {
+    "var1_outcome": "VERIFIED",
+    "var1_decision": "ALLOW",
+    "var1_drift_fields": [],
+    "signature_ok": true,
+    "key_status": "trusted",
+    "aer1_record_verdict": "verified",
+    "record_resolution": "resolved",
+    "anchor_present": true,
+    "anchor_evaluated": true,
+    "anchor_outcome": "rejected: unresolvable record",
+    "columns_disagree": true
+  },
+  "layer_names": {
+    "record": "record-unresolvable",
+    "anchor": "anchor-unresolvable",
+    "what_the_names_pin": "the layer, not the severity: a record-resolution failure and an anchor-resolution failure are different columns and neither may be printed as 'absent'"
+  },
+  "negative_controls": {
+    "anchor_absent": {
+      "anchor_present": false,
+      "anchor_evaluated": false,
+      "anchor_outcome": "absent",
+      "record_resolution": "resolved",
+      "var1_outcome": "VERIFIED",
+      "what_it_proves": "absent is a state, not a failure: the same execution with no anchor member reads absent at the anchor layer and still VERIFIED / ALLOW at the record layer"
+    },
+    "anchor_not_checked": {
+      "anchor_present": true,
+      "anchor_evaluated": false,
+      "anchor_outcome": "not checked",
+      "what_it_proves": "a verifier that never attempted resolution is not a verifier that attempted and failed; the unevaluated state does not collapse into either outcome"
+    },
+    "anchor_resolves": {
+      "anchor_present": true,
+      "anchor_evaluated": true,
+      "anchor_outcome": "verified",
+      "what_it_proves": "the unresolvable column is a resource result and not a standing verdict on anchors: give the same receipt a resolvable log and the anchor column reads verified while the record column does not move"
+    },
+    "anchor_bad_leaf": {
+      "anchor_present": true,
+      "anchor_evaluated": true,
+      "anchor_outcome": "verification failed",
+      "what_it_proves": "content failure and resource failure are different outcomes: a leaf hash that does not match the committed order is not 'unresolvable'"
+    },
+    "name_nobody_can_produce": {
+      "record_resolution": "record-unresolvable",
+      "anchor_outcome": "rejected: unresolvable record",
+      "var1_outcome": "VERIFIED",
+      "what_it_proves": "a urn:sha256 name whose bytes are not the bytes served is a record-resolution failure and not an absence, and it leaves the execution column alone — the two layer names in this fixture are not interchangeable"
+    },
+    "softened_pin": {
+      "what_it_proves": "a pin that claims the comfortable state must fail by name; here the comfortable claim is that an unresolvable anchor is merely absent"
+    }
+  },
+  "limits": [
+    "The AER-1 columns are computed from that standard's published rule for record and anchor outcomes, not by running aer1-verify. This tree implements no AER-1 verifier, so the columns are citations with checks under them.",
+    "Resolvability is decided by host class, not by network access: `.invalid` and `.test` never resolve under RFC 2606, and the resolvable control names a host without any request being made. No DNS, no HTTP, no log server.",
+    "The kit writes no anchor, so this vector is the one row the pilot kit cannot produce; it is carried as a corpus fixture with an anchor member inside the signed body, which is what makes the anchor unstrippable after the fact.",
+    "VAR/1 and AER-1 receipt shapes differ. The vector carries the same fact in both vocabularies; it does not claim the artifacts are interchangeable."
+  ]
+}

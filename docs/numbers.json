@@ -2,13 +2,13 @@
   "schema": "CG-NUMBERS/1",
   "generatedBy": "scripts/public-numbers.mjs",
   "generatedFrom": "docs/state-snapshot.json",
-  "measuredAtUtc": "2026-11-19T14:06:04Z",
-  "measuredOnCommit": "8fb0808fdcf673e8f16a24a29bf1a90d6233d4c2",
+  "measuredAtUtc": "2026-11-19T14:57:33Z",
+  "measuredOnCommit": "b6900543c8a077d4bfde08da541ecdbbac106816",
   "metrics": [
     {
       "id": "tests",
       "label": "Tests (full suite, machine-pinned)",
-      "value": 1907,
+      "value": 1916,
       "unit": "tests",
       "source": "docs/state-snapshot.json#testsTotal",
       "note": "Pass count of the last green `npm test`; the suite asserts this number."
@@ -16,7 +16,7 @@
     {
       "id": "boundary-files",
       "label": "Boundary audit — files scanned",
-      "value": 1416,
+      "value": 1418,
       "unit": "files",
       "source": "docs/state-snapshot.json#boundaryAudit.filesScanned",
       "note": "Tracked files from `git ls-files` (ignored trees such as var/ are not counted)."
@@ -56,7 +56,7 @@
     {
       "id": "commits-ahead",
       "label": "Commits ahead of v0.6.0",
-      "value": 512,
+      "value": 514,
       "unit": "commits",
       "source": "docs/state-snapshot.json#commitsAheadOfV060",
       "note": "History depth, not a quality signal."
