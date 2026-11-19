@@ -1,7 +1,7 @@
 {
   "name": "coreguard",
   "version": "0.1.0",
-  "description": "Verifiable Execution Truth Layer for Bitcoin DeFi on Core — execution evidence protocol (CGEP/1 Draft)",
+  "description": "Verifiable Execution Truth Layer for Bitcoin DeFi on Core \u2014 execution evidence protocol (CGEP/1 Draft)",
   "type": "module",
   "private": true,
   "workspaces": [
@@ -88,7 +88,9 @@
     "agent-commerce:risk": "node packages/agent-commerce/risk-cli.mjs",
     "pilot:var1": "node examples/var1-pilot-kit/run.mjs",
     "aer1:corpus": "node scripts/aer1-corpus.mjs",
-    "anchor:log": "node scripts/anchor.mjs"
+    "anchor:log": "node scripts/anchor.mjs",
+    "demo:agentbadge-seam": "node examples/agentbadge-receipt-seam/run.mjs",
+    "report:aer1-corpus": "node scripts/aer1-corpus-report.mjs"
   },
   "engines": {
     "node": ">=18"

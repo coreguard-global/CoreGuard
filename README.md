@@ -87,7 +87,7 @@ outside it.
 | **Stellar / SCF reviewer** | [Stellar review page](https://coreguard-trust-and-defense.lovable.app/stellar) | [SCF application v3](docs/SCF-BUILD-APPLICATION-V3.md) · [Evidence matrix](docs/EVIDENCE-MATRIX.md) |
 | **Investor or funder** | [Investors page](https://coreguard-trust-and-defense.lovable.app/investors) | [Funding request form](https://coreguard-trust-and-defense.lovable.app/funding) · [Roadmap](ROADMAP.md) |
 | **Incubator or partner** | [Partnerships](https://coreguard-trust-and-defense.lovable.app/partnerships) | [Pilot Kit](docs/PILOT-KIT.md) — two weeks, one verifiable artifact |
-| **Developer** | [Developer quickstart](docs/DEVELOPER-QUICKSTART.md) | [SDK reference](https://coreguard-global.github.io/CoreGuard/DDE-SDK-REFERENCE.html) · [Products](https://coreguard-global.github.io/CoreGuard/PRODUCTS.html) |
+| **Developer** | [Start here](docs/START-HERE.md) · [Developer quickstart](docs/DEVELOPER-QUICKSTART.md) | [SDK reference](https://coreguard-global.github.io/CoreGuard/DDE-SDK-REFERENCE.html) · [Products](https://coreguard-global.github.io/CoreGuard/PRODUCTS.html) |
 | **Security reviewer** | [Audit readiness pack](docs/AUDIT-READINESS-PACK-2026-11-16.md) | [Competitive landscape](docs/COMPETITIVE-LANDSCAPE.md) |
 
 ---
