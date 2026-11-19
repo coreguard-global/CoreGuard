@@ -12,23 +12,23 @@ From a CoreGuard checkout:
 
 ```bash
 # 1) Get the corpus into a local directory (corpus-index.json + the files it lists)
-#    Example: place the published corpus set under /tmp/aer1-corpus-live
-#
-# 2) Run the report tool
+#    For a live set, unpack it locally and point --dir at it.
+#    The vendored fixture works offline:
 node scripts/aer1-corpus-report.mjs \
-  --dir /tmp/aer1-corpus-live \
-  --out /tmp/aer1-corpus-run \
-  --label "aer1-corpus-<draft-or-date>"
+  --dir <corpus-dir> \
+  --out <out-dir> \
+  --label "aer1-corpus-vendored"
 ```
 
-This writes:
+Replace `<corpus-dir>` with your corpus directory (for the offline vendored
+fixture: `test/fixtures/aer1-corpus-v1.5.7`). This writes:
 - `report.json` — machine-readable (integrity, per-vector outcomes, not-evaluated families, repro metadata)
 - `REPORT.md` — shareable human-readable summary
 
 For the vendored corpus fixture (offline smoke):
 
 ```bash
-node scripts/aer1-corpus-report.mjs --out /tmp/aer1-corpus-run --label "vendored-v1.5.7"
+node scripts/aer1-corpus-report.mjs --dir <corpus-dir> --out <out-dir> --label "vendored-v1.5.7"
 ```
 
 ## What the report means

@@ -1,24 +1,24 @@
 {
-    "measuredAtUtc": "2026-11-19T17:22:39Z",
-    "gitCommit": "806acbf96450841e86718e1b873fb66637b79b01",
-    "commitsAheadOfV060": 527,
-    "testsTotal": 1925,
-    "boundaryAudit": {
-        "filesScanned": 1423,
-        "violations": 0,
-        "check": "PASS"
-    },
-    "peoplesCourtHarness": "PEOPLES_COURT_HARNESS_READY",
-    "docsNode": {
-        "executed": 133,
-        "skipListed": 82,
-        "docsCovered": 30
-    },
-    "reproduce": {
-        "tests": "npm test",
-        "audit": "npm run boundary:audit",
-        "harness": "npm run peoples-court:harness",
-        "docsNode": "node --test --test-concurrency=1 test/ci/docs-node-contract.test.js",
-        "snapshot": "node scripts/current-state.mjs --write --tests <full-suite pass count>"
-    }
+  "measuredAtUtc": "2026-11-19T19:30:51Z",
+  "gitCommit": "ad5a3141c98b8a93a3f462553aa019d7d993cc9b",
+  "commitsAheadOfV060": 522,
+  "testsTotal": 1925,
+  "boundaryAudit": {
+    "filesScanned": 1428,
+    "violations": 0,
+    "check": "PASS"
+  },
+  "peoplesCourtHarness": "PEOPLES_COURT_HARNESS_READY",
+  "docsNode": {
+    "executed": 139,
+    "skipListed": 83,
+    "docsCovered": 32
+  },
+  "reproduce": {
+    "tests": "npm test",
+    "audit": "npm run boundary:audit",
+    "harness": "npm run peoples-court:harness",
+    "docsNode": "node --test --test-concurrency=1 test/ci/docs-node-contract.test.js",
+    "snapshot": "node scripts/current-state.mjs --write --tests <full-suite pass count>"
+  }
 }

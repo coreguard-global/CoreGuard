@@ -65,8 +65,12 @@ To run a published AER-1 corpus set and share per-vector outcomes with integrity
 and "not-evaluated" families named explicitly:
 
 ```bash
-node scripts/aer1-corpus-report.mjs --dir <corpus-dir> --out <out-dir> --label "<label>"
+node scripts/aer1-corpus-report.mjs --dir <corpus-dir> --out <out-dir> --label "vendored-corpus"
 ```
+
+Replace `<corpus-dir>` with your local corpus directory (the vendored fixture
+lives at `test/fixtures/aer1-corpus-v1.5.7`; for a live set, unpack it locally
+first). This writes `report.json` and `REPORT.md` to `<out-dir>`.
 
 - Template & checklist: [docs/templates/AER1-CORPUS-RUN-REPORT-TEMPLATE.md](templates/AER1-CORPUS-RUN-REPORT-TEMPLATE.md)
 - Mapping note: [docs/aer1-var1-outcome-mapping.md](aer1-var1-outcome-mapping.md)

@@ -265,10 +265,21 @@ function buildSandbox(tmp) {
   // and writes ./var (inside the sandbox), so only the root file must be staged.
   assert.ok(existsSync(join(REPO, "demo.mjs")), "sandbox staging source missing in repo: demo.mjs");
   cpSync(join(REPO, "demo.mjs"), join(tmp, "demo.mjs"));
-  for (const rel of ["examples/delivery-fixture", "examples/vault", "examples/agent-platform-integration", "examples/real-fixture-intake", "examples/transfer", "examples/swap", "examples/multistep", "examples/provenance", "examples/reference-tribunal", "examples/platform-quickstart", "examples/stellar-dex-integration", "examples/stellar-presign"]) {
+  for (const rel of [
+    "examples/delivery-fixture", "examples/vault", "examples/agent-platform-integration", "examples/real-fixture-intake",
+    "examples/transfer", "examples/swap", "examples/multistep", "examples/provenance", "examples/reference-tribunal",
+    "examples/platform-quickstart", "examples/stellar-dex-integration", "examples/stellar-presign",
+    "examples/execution-trust", "examples/var1-pilot-kit", "examples/agentbadge-receipt-seam",
+  ]) {
     assert.ok(existsSync(join(REPO, rel)), `sandbox staging source missing in repo: ${rel}`);
     cpSync(join(REPO, rel), join(tmp, rel), { recursive: true });
     assert.ok(existsSync(join(tmp, rel)), `sandbox staging failed for: ${rel}`);
+  }
+  // Vendored AER-1 corpus fixture — read-only reference data used by corpus report docs/commands.
+  mkdirSync(join(tmp, "test", "fixtures"), { recursive: true });
+  for (const rel of ["test/fixtures/aer1-corpus-v1.5.7"]) {
+    assert.ok(existsSync(join(REPO, rel)), `sandbox staging source missing in repo: ${rel}`);
+    cpSync(join(REPO, rel), join(tmp, rel), { recursive: true });
   }
   // The sandbox omits the repo's root package.json by design (npm/cwd
   // semantics stay as the docs intend), but the STAGED example trees are
@@ -503,6 +514,8 @@ test("every documented node/npm command in the repo runs, is skip-listed with a 
             .replaceAll("--evidence evidence.json", "--evidence " + q(join(tmp, "examples/provenance/evidence.json")))
             .replaceAll("<fixture-dir>", q(join(tmp, "examples", "delivery-fixture")))
             .replaceAll("<candidate-dir>", q(candidateDir))
+            .replaceAll("<corpus-dir>", q(join(tmp, "test", "fixtures", "aer1-corpus-v1.5.7")))
+            .replaceAll("<label>", "docs-contract")
             // `--out <dir>` on the DIRECT generator forms (dispute-package-standard
             // / evidence-package-standard) lands in a fresh sandbox dir exactly
             // like the npm-run rewrite's pkg-out; `--case <dir>` on the adapter's
