@@ -1,0 +1,73 @@
+{
+  "schema": "CG-VECTOR/1",
+  "name": "present-consistent-nonconforming",
+  "profile": "VAR/1",
+  "why": "One receipt, two correct answers. The issuer signed exactly the execution it ran, so the committed bytes re-derive and AER-1 reads verified: nothing was changed after the fact. The execution is not the one that was approved, so a commerce layer has to decline. Neither answer is a correction of the other, and a vocabulary that lets the first print as the second is the failure this vector exists to pin.",
+  "approved": {
+    "merchant_id": "merchant-sandbox-books",
+    "payee": "acct_sandbox_books",
+    "currency": "USD",
+    "total_minor": 12900,
+    "items": [
+      {
+        "sku": "FIELD-NOTES",
+        "name": "Field Notes",
+        "qty": 1,
+        "unit_minor": 12900
+      }
+    ]
+  },
+  "executed": {
+    "merchant_id": "merchant-sandbox-books",
+    "payee": "acct_sandbox_books",
+    "currency": "USD",
+    "total_minor": 13900,
+    "items": [
+      {
+        "sku": "FIELD-NOTES",
+        "name": "Field Notes",
+        "qty": 1,
+        "unit_minor": 13900
+      }
+    ],
+    "order_ref": "order-1",
+    "executed_at": "2026-06-01T00:00:00Z"
+  },
+  "approval_nonce": "nonce-present-consistent-nonconforming",
+  "at": "2026-06-01T00:00:00Z",
+  "seed": "2222222222222222222222222222222222222222222222222222222222222222",
+  "policy": "balanced",
+  "pins": {
+    "aer1_record_verdict": "verified",
+    "var1_outcome": "VERIFICATION_FAILED",
+    "var1_decision": "DECLINE",
+    "var1_drift_fields": [
+      "total_minor",
+      "items[FIELD-NOTES].unit_minor"
+    ],
+    "signature_ok": true,
+    "key_status": "trusted",
+    "columns_disagree": true
+  },
+  "negative_controls": {
+    "flip_one_byte": {
+      "aer1_record_verdict": "verification failed",
+      "var1_outcome": "VERIFICATION_FAILED",
+      "what_it_proves": "the AER-1 column is derived from the committed bytes, not asserted; damage to the bytes moves it"
+    },
+    "approve_the_surcharge_up_front": {
+      "var1_outcome": "VERIFIED",
+      "var1_decision": "ALLOW",
+      "aer1_record_verdict": "verified",
+      "what_it_proves": "the decline is caused by the approval binding, not by the signature, the pin or the id: approve the same execution up front and the same order passes"
+    },
+    "softened_pin": {
+      "what_it_proves": "a pin that claims VERIFIED must fail by name, or the two columns are decoration"
+    }
+  },
+  "limits": [
+    "The AER-1 column is computed from that standard's published rule — the digest re-derives over the committed bytes — and not by running aer1-verify. This tree does not implement their verifier, so the column is a citation with a check under it, not a cross-implementation run.",
+    "AER-1's own receipt shape is not VAR/1's. The vector carries the same fact in both vocabularies; it does not claim the two artifacts are interchangeable.",
+    "No chain, no anchor, no broadcast: the vector exercises the record layer and the approval binding only."
+  ]
+}

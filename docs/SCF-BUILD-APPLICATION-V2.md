@@ -29,7 +29,7 @@ Per `docs/surface-status.json` and `docs/EVIDENCE-MATRIX.md`:
 | Freighter signing path | BUILT_UNVERIFIED | NONE | NOT_BUILT |
 | External adopter | — | — | **0** |
 
-Suite total: **1901 / 1901 pass**, pinned in
+Suite total: **1907 / 1907 pass**, pinned in
 `docs/state-snapshot.json`. Boundary audit: 0 violations. Claim registry: no
 `VERIFIED` claim without a committed artifact.
 
