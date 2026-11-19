@@ -95,6 +95,16 @@ it locates.
 The exit code is the verdict: 0 only when every row is the row the report says
 it should be. A pilot that passes by accident is worse than no pilot.
 
+## Sending back a report
+
+If you run this somewhere else and want the mapping into AER-1's vocabulary,
+send `report.json` as it was written. It already carries the receipt id, the
+policy, the node version and, if you passed one, the seed; nothing else is
+needed, and no account, key or call to CoreGuard is involved. A run with
+different flags is more useful than a copy of ours. A row that disagrees is the
+only thing that improves either side, and it becomes a fixture in this tree
+before it becomes a paragraph in a thread.
+
 ## Boundary
 
 This is a local reference merchant written for the kit, not a customer, not a

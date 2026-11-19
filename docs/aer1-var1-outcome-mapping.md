@@ -1,12 +1,15 @@
 # AER-1 × VAR/1 — outcome mapping and canonicalization notes
 
-**Status:** working note, revision 4, 2026-11-18. Written in reply to Brennan
+**Status:** working note, revision 5, 2026-11-19. Written in reply to Brennan
 Zambo's review of VAR/1 in ACP discussion #328. Revision 2 records the AER-1
 side's answers to the three canonicalization questions (section 3) and the
 consequence for our own code vocabulary; revision 3 records their run of the
 five scenarios (section 4b); revision 4 records the split and the layer landing
-in code, so this note now describes shipped files rather than intentions. It is
-not an ACP artifact, not a SEP, and not a claim of agreement by anyone but us.
+in code, so this note now describes shipped files rather than intentions;
+revision 5 records the first external run of the pilot kit and maps its fifteen
+rows onto AER-1's outcomes, including the two rows where the vocabularies
+answer differently (section 4c). It is not an ACP artifact, not a SEP, and not a
+claim of agreement by anyone but us.
 
 **What this note is for.** Two models can describe the same artifact and still
 mean different things by "verified". This note puts the two vocabularies side by
@@ -174,6 +177,74 @@ Reported by the AER-1 side in the thread on 2026-11-18 (`aer1-verify 0.2.31`), a
 They also reported one live production case that argues our own point better than we did: a Zambo receipt where the identity verdict is `matched` and the server asserts `verified`, while the local verifier still returns FAIL on one check — the receipt carries an `input_hash` and the committed payload withholds the inputs, so that commitment cannot be recomputed and the verifier fails closed. Three layers, three answers, each correct about its own layer. A single PASS/BLOCK at the top would have hidden the only interesting fact in the run.
 
 That case is now a fixture in this tree rather than a quote: see `test/integrations/outcomes-layer.test.mjs`, "three layers disagreeing must not collapse into one PASS/BLOCK".
+
+## 4c. The pilot kit's fifteen rows, judged as AER-1 would judge them
+
+`examples/var1-pilot-kit` was run from a clean clone on 2026-11-19 at the commit
+the external report named (`5a1f3bd`) and again at the tip that carried the
+daily content sync: fifteen rows, exit 0, the same row outcomes both times. That
+report quotes its own receipt id; an unseeded run draws a fresh merchant key, so
+the id differs per machine by design, and `--seed` with `--at` is what makes the
+bytes reproducible.
+
+This is the mapping that report asked for: the same fifteen rows judged under
+AER-1's vocabulary rather than ours. Where the answers differ, the difference is
+named. A table that agreed on every row would be describing one model twice.
+
+| # | the row | VAR/1 outcome | AER-1 outcome | comment |
+|---|---|---|---|---|
+| 1 | approval committed by digest | no record yet | no row | AER-1 judges records; an approval before a receipt is outside it |
+| 2 | merchant executes and signs | record produced | no verdict | issuance is the issuer's business in both models |
+| 3 | fetched by its content-addressed id | `resolved` (locator) | identity `resolved` | their `id-resolution-agreement` vector, same fact |
+| 4 | signature, pin, intent and execution agree | `VERIFIED` | `verified` | the same word on the same bytes, and the claims are not the same size: AER-1 says the saved result did not change, VAR/1 also says the execution matched the approval |
+| 5 | a valid receipt from an unpinned key | `NOT_CHECKED` | `not checked` | section 13 leaves issuer authentication outside AER-1; the pin lives at the profile layer in both |
+| 6-10 | spent once, second claim, second system, four processes, HTTP replay | `spent` / `conflict` / one winner / replayed | no row | consumption and transport are outside a receipt's claim in both models |
+| 11 | a mirror serves wrong bytes on the right path | `VERIFICATION_FAILED` | `verification failed`, identity `mismatched` | the digest does not re-derive; content and identity fail together |
+| 12 | a valid signature over a surcharged execution | `VERIFICATION_FAILED` (`total_minor`) | `verified` | **the first divergence** — see below |
+| 13 | a content-addressed name nobody can produce | `UNRESOLVABLE_RECORD` | `absent` | **the second divergence** — the same bytes, a different word |
+| 14 | a locator with nothing behind it | `ABSENT` | `absent` | agreement, and the reason row 13 has to differ |
+| 15 | outcome to decision, six cells | the table | no row | AER-1 ends at the verdict; a decision is a consumer's policy |
+
+### Row 12: the receipt is honest, the execution is not
+
+One row asserts four things at once: `signature_ok: true`, `key_status:
+trusted`, `resolution.state: resolved`, and `outcome: VERIFICATION_FAILED` on
+`total_minor`. The merchant really did sign that execution, so AER-1's
+`verified` is correct about the bytes. Our `DECLINE` is a claim one layer up:
+the execution is not the one that was approved. Neither verdict should move,
+and the pair is the clearest statement of why the layers exist — a system that
+only asks the first question approves the surcharge, with a valid signature.
+Proposed corpus vector: `present-consistent-nonconforming`.
+
+### Rows 13 and 14: one word, two facts
+
+AER-1's `absent` means the resolver has nothing under that id, and it renders
+nothing as a failure on purpose. Row 14 is exactly that, and both models agree.
+Row 13 is not, because our id is content-addressed: `urn:sha256:...` is not a
+place, it is a claim about bytes, so a resolver with nothing under it has not
+answered "no record" — it has left a claim unsatisfied. Hence
+`UNRESOLVABLE_RECORD`.
+
+AER-1 also uses the phrase `rejected: unresolvable record`, for a different
+fact: a record that is present whose anchor cannot be resolved. The same words
+therefore name two different rows across the two vocabularies — ours is a
+record-resolution failure, theirs an anchor failure. That is the inverse of the
+defect this thread keeps naming: not two facts printed as one word, but one word
+printed for two facts. The corpus should pin the layer in the vector name
+(`record-unresolvable` against `anchor-unresolvable`) before either side quotes
+the other's string.
+
+The one AER-1 outcome the kit cannot produce is `rejected: unresolvable
+record`, because the kit writes no chain anchor. `CG-ID/1` has that fixture;
+the kit does not, and a row this tree cannot run is not a row it gets to claim.
+
+### What this table is not
+
+It is not a request to widen AER-1, and not a finding that AER-1 is incomplete.
+A receipt standard that answers "did the saved result change" and a commerce
+layer that answers "was this the thing that was approved" are two questions,
+and the second one needs the first. The divergence in row 12 is the argument for
+keeping them apart, not for merging them.
 
 ## 5. What we cannot execute, and why
 
