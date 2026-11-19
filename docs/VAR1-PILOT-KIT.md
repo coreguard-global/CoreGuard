@@ -90,7 +90,10 @@ ledger.
 receipt id. `--out` chooses where the report lands. The merchant origin changes
 between runs because the sandbox takes an ephemeral loopback port; the origin is
 deliberately not part of the receipt, because a locator is not part of the thing
-it locates.
+it locates. Receipt bytes are deterministic for a given seed and clock;
+consumption rows are stateful (spend logs live in the output directory), so
+rerunning into the same `--out` reuses that ledger and will refuse already-spent
+rows by design — use a fresh `--out` to reproduce the full run.
 
 The exit code is the verdict: 0 only when every row is the row the report says
 it should be. A pilot that passes by accident is worse than no pilot.
