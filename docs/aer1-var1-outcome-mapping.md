@@ -265,8 +265,9 @@ with both columns pinned and neither printed without the other. Accepted is not
 published, and revision 8 fixes that wording: on 2026-11-19 the live corpus is
 still draft -26 at 143 vectors, and neither this name nor the two layer names
 appear in it. What exists is a commitment to the next corpus publication, with
-the set digest recomputed then and this note as its first citation. The layer
-spelling from section 4c is adopted as well: `record-unresolvable` against
+the set digest recomputed then and this note as its first citation, while the
+status itself is kept in `docs/aer1-corpus-publication.json`, checked on the date
+above. The layer spelling from section 4c is adopted as well: `record-unresolvable` against
 `anchor-unresolvable`, so the corpus pins the layer in the vector name. The
 vector itself lives in this tree as
 `test/fixtures/var1-corpus-v1/present-consistent-nonconforming.json`, asserted
