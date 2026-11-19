@@ -201,7 +201,9 @@ ${limits}
 
 The same seed and clock reproduce these receipt bytes:
 
-\`node examples/var1-pilot-kit/run.mjs --seed ${report.seedHex ?? "<64 hex>"} --at ${report.at} --out ${report.outDir}\`
+\`node examples/var1-pilot-kit/run.mjs --seed ${report.seedHex ?? "<64 hex>"} --at ${report.at} --out ${report.outDir}-repro\`
+
+Receipt bytes are deterministic for a given seed and clock. Consumption rows are stateful (spend logs live in the output directory), so rerunning into the same \`--out\` reuses that ledger and will refuse already-spent rows by design; use a fresh \`--out\` to reproduce the full run.
 
 The exit code is the verdict: 0 only if every row above is PASS.
 `;
@@ -700,7 +702,8 @@ async function main() {
         "The pin arrives out of band from the merchant's startup output. A production deployment needs a key directory or an allowlist, with rotation and revocation on the profile's clock.",
         "ALLOW_UNVERIFIED is a decision to proceed without evidence, not a verification result. A deployment that requires evidence must refuse it at its own policy layer; the label exists so that choice is visible instead of implicit.",
         "No chain, no broadcast, no mainnet. prepareChainAnchor exists elsewhere in the repository and refuses mainnet by name; this kit does not call it.",
-        "Reproducing the run with --seed reproduces keys and receipt bytes. It does not turn the sandbox into a second party.",
+        "Receipt bytes are deterministic for a given seed and clock. Consumption rows are stateful: spend logs live in the output directory, so rerunning into the same --out reuses that ledger and refuses already-spent rows by design. Use a fresh --out to reproduce the full run.",
+        "Reproducing the receipt bytes does not turn the sandbox into a second party.",
       ],
       verdict: allOk ? "PASS" : "FAIL",
       outDir,
