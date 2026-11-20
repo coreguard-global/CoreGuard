@@ -186,6 +186,24 @@ audit retainer exists because a review without a fix window is theatre.
 
 Full SCF application: [docs/SCF-BUILD-APPLICATION-V3.md](docs/SCF-BUILD-APPLICATION-V3.md).
 
+### Funding routes, run in parallel rather than sequentially
+
+Grants are one route, not the plan. These run at the same time, and none of them
+is counted as income until it is in writing:
+
+| Route | What it is | Current state | Next concrete step |
+|---|---|---|---|
+| **SCF #46 Build Award** (this ask) | $150,000 milestone-gated, four months | **Submitted and under review** — one interest form per cycle, so no second submission is possible this round | Follow the review; answer questions with artifacts, not narrative |
+| **SCF RFP track — RFP-2 (XDR/CAP coverage audit tool and indexer hardening)** | A separate, scoped RFP instrument: manifest schema, corpus, JS/Go/Rust conformance runner, indexer-hardening guide | **Submission package ready and committed**; the deliverables are proposed work, not built | Submit through the RFP channel named in the current handbook; keep the reviewer path one command long |
+| **Referral from a Stellar developer or organisation** | The fastest credibility multiplier: a named team that has read the code vouches for the work | One public technical exchange exists (Freighter #3087, ACP #328); **no referral has been requested or given** | Ask the reviewer who already reproduced the kit for a sentence we may quote, and for an introduction to one wallet or DEX team |
+| **Programmes listed in the SCF handbook** (e.g. Instawards, Audit Bank — verify eligibility against the current handbook before applying) | Smaller, faster instruments for a specific deliverable or a review-shaped cost | **Not applied** — eligibility and timing must be read from the live handbook, not assumed | Pick the one programme whose deliverable matches a milestone already defined here; never submit the same ask twice |
+| **Commercial partner pilots** | A two-week scoped pilot paid by the partner, independent of any grant | **None signed** | The target list and offer are in [docs/PARTNERSHIPS.md](docs/PARTNERSHIPS.md); run it in parallel with the grant, not after it |
+
+Two rules for this table. First, every route is **requested, not awarded**, until
+a signed document or a paid invoice exists. Second, no route is allowed to change
+the product story to fit a funder's language: the milestones above are what gets
+delivered, whichever instrument pays for them.
+
 ## 9 · Milestones
 
 Three phases. Dates are months from award, not calendar promises.
