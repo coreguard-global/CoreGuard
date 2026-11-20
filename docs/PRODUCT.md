@@ -62,7 +62,7 @@ Full kit: [PILOT-KIT.md](PILOT-KIT.md) · commercial framing: [PARTNERSHIPS.md](
 | Surface | Status |
 |---|---|
 | Four-pillar engine + offline verifier | BUILT · TEST_EXECUTED |
-| Stellar mainnet anchor and first gated funded swap | EXECUTED / CONFIRMED — see [EVIDENCE.md](EVIDENCE.md) |
+| Stellar mainnet anchor and first gated funded swap | EXECUTED / CONFIRMED — see [EVIDENCE-MATRIX.md](EVIDENCE-MATRIX.md) |
 | Core DAO evidence registry | LIVE on mainnet · 43/43 Foundry proofs |
 | Authorized lane deployed on Stellar mainnet | NOT DEPLOYED |
 | Wallet (Freighter) integration | NOT BUILT — technical evaluation comment on record |
