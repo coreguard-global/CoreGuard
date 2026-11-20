@@ -2,8 +2,8 @@
   "schema": "CG-NUMBERS/1",
   "generatedBy": "scripts/public-numbers.mjs",
   "generatedFrom": "docs/state-snapshot.json",
-  "measuredAtUtc": "2026-11-19T17:22:39Z",
-  "measuredOnCommit": "835081a45260688b7a583517fd52c4c64a7262bf",
+  "measuredAtUtc": "2026-11-20T15:43:41Z",
+  "measuredOnCommit": "bdc46bc442b4ec88ead907899213761fdf80211f",
   "metrics": [
     {
       "id": "tests",
@@ -16,7 +16,7 @@
     {
       "id": "boundary-files",
       "label": "Boundary audit — files scanned",
-      "value": 1423,
+      "value": 1435,
       "unit": "files",
       "source": "docs/state-snapshot.json#boundaryAudit.filesScanned",
       "note": "Tracked files from `git ls-files` (ignored trees such as var/ are not counted)."
@@ -32,7 +32,7 @@
     {
       "id": "docs-executed",
       "label": "Docs contract — commands executed",
-      "value": 133,
+      "value": 139,
       "unit": "commands",
       "source": "docs/state-snapshot.json#docsNode.executed",
       "note": "Documented node/npm commands that actually run in the docs harness."
@@ -40,7 +40,7 @@
     {
       "id": "docs-skip-listed",
       "label": "Docs contract — skip-listed",
-      "value": 82,
+      "value": 83,
       "unit": "commands",
       "source": "docs/state-snapshot.json#docsNode.skipListed",
       "note": "Each skip has a named, still-true reason; unclassified commands fail the contract."
@@ -48,7 +48,7 @@
     {
       "id": "docs-covered",
       "label": "Docs contract — docs covered",
-      "value": 30,
+      "value": 32,
       "unit": "docs",
       "source": "docs/state-snapshot.json#docsNode.docsCovered",
       "note": "Documents that contributed at least one executed command."
@@ -56,7 +56,7 @@
     {
       "id": "commits-ahead",
       "label": "Commits ahead of v0.6.0",
-      "value": 527,
+      "value": 525,
       "unit": "commits",
       "source": "docs/state-snapshot.json#commitsAheadOfV060",
       "note": "History depth, not a quality signal."
