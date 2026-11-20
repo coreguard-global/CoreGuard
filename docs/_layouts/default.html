@@ -3,9 +3,42 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% if page.title %}{{ page.title }} · {% endif %}CoreGuard</title>
-<link rel="icon" type="image/svg+xml" href="{{ '/assets/favicon.svg' | relative_url }}">
+<meta name="description" content="CoreGuard — the execution trust layer. VERIFY • PROTECT • EMPOWER.">
+<meta property="og:type" content="article"><meta property="og:title" content="{% if page.title %}{{ page.title }} · {% endif %}CoreGuard">
+<meta property="og:image" content="{{ '/assets/og-cover-1200.png' | absolute_url }}"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0B0F14">
+<link rel="icon" type="image/png" href="{{ '/assets/favicon-32.png' | relative_url }}">
 <link rel="stylesheet" href="{{ '/assets/coreguard-luxe.css' | relative_url }}">
-<style>.cg-md{max-width:920px;margin:0 auto;padding:40px 22px 20px;line-height:1.75}.cg-md img{max-width:100%}.cg-md pre{background:#10161F;border:1px solid rgba(255,138,0,.18);border-radius:14px;padding:16px;overflow:auto}.cg-md blockquote{border-left:3px solid #FF8A00;margin:0;padding:4px 18px;color:#C9D1DC}</style>
+<style>
+body{background:#0B0F14;color:#F5F7FA}
+.cg-hero{position:relative;overflow:hidden;padding:72px 22px 46px;text-align:center;border-bottom:1px solid rgba(255,138,0,.18);background:radial-gradient(900px 380px at 50% -10%,rgba(255,138,0,.22),transparent 70%),linear-gradient(180deg,#0E141C,#0B0F14)}
+.cg-hero img{width:74px;height:74px;filter:drop-shadow(0 0 28px rgba(255,138,0,.55));animation:cgf 6s ease-in-out infinite}
+.cg-hero .k{display:inline-block;margin:18px 0 10px;padding:6px 14px;border:1px solid rgba(255,138,0,.4);border-radius:999px;color:#FF8A00;font:600 12px/1 ui-monospace,monospace;letter-spacing:.18em}
+.cg-hero h1{margin:0 auto;max-width:900px;font-size:clamp(30px,5vw,54px);line-height:1.08;letter-spacing:-.02em;background:linear-gradient(90deg,#F5F7FA,#FFB25C 55%,#FF8A00);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cg-hero p{color:#A7B0BD;margin:14px auto 0;max-width:640px}
+@keyframes cgf{50%{transform:translateY(-6px)}}
+.cg-wrap{display:grid;grid-template-columns:240px minmax(0,1fr);gap:40px;max-width:1180px;margin:0 auto;padding:40px 22px 60px}
+.cg-toc{position:sticky;top:90px;align-self:start;max-height:75vh;overflow:auto;border-left:1px solid rgba(255,138,0,.2);padding-left:14px;font-size:13px}
+.cg-toc b{display:block;color:#FF8A00;letter-spacing:.14em;font-size:11px;margin-bottom:10px}
+.cg-toc a{display:block;color:#A7B0BD;text-decoration:none;padding:5px 0}.cg-toc a:hover{color:#FF8A00}
+.cg-md{line-height:1.8;font-size:16.5px;min-width:0}
+.cg-md>h1:first-child{display:none}
+.cg-md h2{margin:52px 0 16px;font-size:28px;padding-bottom:10px;border-bottom:1px solid rgba(255,138,0,.22)}
+.cg-md h2::before{content:"";display:inline-block;width:10px;height:10px;margin-right:12px;border-radius:2px;background:#FF8A00;box-shadow:0 0 16px #FF8A00;transform:rotate(45deg)}
+.cg-md h3{margin:34px 0 10px;color:#FFB25C}
+.cg-md a{color:#FF8A00}.cg-md img{max-width:100%}
+.cg-md code{background:rgba(255,138,0,.1);color:#FFC58A;padding:2px 6px;border-radius:6px;font-size:.9em}
+.cg-md pre{background:#10161F;border:1px solid rgba(255,138,0,.18);border-radius:14px;padding:18px;overflow:auto}.cg-md pre code{background:none;color:#E6EBF2;padding:0}
+.cg-md blockquote{border-left:3px solid #FF8A00;margin:22px 0;padding:14px 20px;background:linear-gradient(90deg,rgba(255,138,0,.09),transparent);border-radius:0 12px 12px 0;color:#D3DAE3}
+.cg-md table{width:100%;border-collapse:separate;border-spacing:0;margin:22px 0;border:1px solid rgba(255,138,0,.2);border-radius:14px;overflow:hidden;display:block;overflow-x:auto}
+.cg-md th{background:rgba(255,138,0,.12);color:#FFB25C;text-align:left}.cg-md th,.cg-md td{padding:11px 14px;border-bottom:1px solid rgba(74,85,104,.4)}
+.cg-md tr:hover td{background:rgba(255,138,0,.04)}
+.cg-md hr{border:0;height:1px;background:linear-gradient(90deg,transparent,#FF8A00,transparent);margin:44px 0}
+@media(max-width:900px){.cg-wrap{grid-template-columns:1fr}.cg-toc{display:none}}
+</style>
 </head>
-<body><main class="cg-md">{{ content }}</main>
+<body>
+<section class="cg-hero"><img src="{{ '/assets/cg-shield.png' | relative_url }}" alt="CoreGuard shield"><div class="k">VERIFY • PROTECT • EMPOWER</div><h1 id="cg-title">{{ page.title | default: "CoreGuard" }}</h1><p>The execution trust layer for AI agents and on-chain payments. Evidence over narrative.</p></section>
+<div class="cg-wrap"><aside class="cg-toc" id="cg-toc"><b>ON THIS PAGE</b></aside><main class="cg-md">{{ content }}</main></div>
+<script>(function(){var m=document.querySelector(".cg-md"),h=m.querySelector("h1"),t=document.getElementById("cg-title");if(h&&t.textContent.trim()==="CoreGuard"){t.textContent=h.textContent;document.title=h.textContent+" · CoreGuard";}var toc=document.getElementById("cg-toc"),hs=m.querySelectorAll("h2");if(!hs.length){toc.remove();document.querySelector(".cg-wrap").style.gridTemplateColumns="1fr";}[].forEach.call(hs,function(x,i){if(!x.id)x.id="s"+i;var a=document.createElement("a");a.href="#"+x.id;a.textContent=x.textContent;toc.appendChild(a);});})();</script>
 <script src="{{ '/assets/coreguard-luxe.js' | relative_url }}"></script></body></html>
