@@ -160,7 +160,7 @@ node demo.mjs
 node --test test/integrations/agent-commerce-sdk.test.mjs test/integrations/agent-commerce-mcp.test.mjs test/integrations/agent-commerce-http.test.mjs
 ```
 
-Spec, console, and instruments: [AGENT-COMMERCE-SECURITY-SPEC-V1.md](AGENT-COMMERCE-SECURITY-SPEC-V1.md) · [agent-commerce-console.html](agent-commerce-console.html) · [EXECUTION-TRUST-LAYER.md](EXECUTION-TRUST-LAYER.md) · [COMPETITIVE-LANDSCAPE.md](COMPETITIVE-LANDSCAPE.md) · [PILOT-KIT.md](PILOT-KIT.md). Outreach/funding documents are instruments only (no contact/integration/endorsement claimed).
+Spec, console, and instruments: [AGENT-COMMERCE-SECURITY-SPEC-V1.md](AGENT-COMMERCE-SECURITY-SPEC-V1.md) · [agent-commerce-console.html](agent-commerce-console.html) · [POSITIONING.md](POSITIONING.md) · [COMPETITIVE-LANDSCAPE.md](COMPETITIVE-LANDSCAPE.md) · [PILOT-KIT.md](PILOT-KIT.md). Outreach/funding documents are instruments only (no contact/integration/endorsement claimed).
 
 ---
 

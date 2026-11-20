@@ -81,7 +81,7 @@ first). This writes `report.json` and `REPORT.md` to `<out-dir>`.
 |---|---|
 | Integrate the 3-call surface (authorize / enforce / verify) | [docs/DEVELOPER-QUICKSTART.md](DEVELOPER-QUICKSTART.md) · [docs/DDE-SDK-REFERENCE.md](DDE-SDK-REFERENCE.md) |
 | Run an evaluation/pilot and produce a verifiable artifact | [docs/VAR1-PILOT-KIT.md](VAR1-PILOT-KIT.md) · [docs/PILOT-KIT.md](PILOT-KIT.md) |
-| Understand outcomes, decisions, and boundaries | [docs/aer1-var1-outcome-mapping.md](aer1-var1-outcome-mapping.md) · [docs/EXECUTION-TRUST-LAYER.md](EXECUTION-TRUST-LAYER.md) |
+| Understand outcomes, decisions, and boundaries | [docs/aer1-var1-outcome-mapping.md](aer1-var1-outcome-mapping.md) · [docs/POSITIONING.md](POSITIONING.md) |
 | Explore agent-commerce surfaces (firewall, consent receipts, risk, attestation) | [docs/AGENT-COMMERCE-SECURITY-SPEC-V1.md](AGENT-COMMERCE-SECURITY-SPEC-V1.md) · [examples/](../examples/) |
 | Review evidence and positioning | [docs/EVIDENCE-MATRIX.md](EVIDENCE-MATRIX.md) · [docs/COMPETITIVE-LANDSCAPE.md](COMPETITIVE-LANDSCAPE.md) · [README.md](../README.md) |
 

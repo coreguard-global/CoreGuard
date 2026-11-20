@@ -91,7 +91,7 @@ as the company's definition:
 
 | Network | Status (measured) |
 |---|---|
-| **Stellar** | Mainnet anchor + first gated funded swap executed — evidence in [EVIDENCE.md](EVIDENCE.md) |
+| **Stellar** | Mainnet anchor + first gated funded swap executed — evidence in [EVIDENCE-MATRIX.md](EVIDENCE-MATRIX.md) |
 | **Core DAO** | EvidenceRegistry live on mainnet, 43/43 Foundry proofs |
 | **Pi Network** | Prepared / DRY_RUN / PLAN_ONLY — no status promotion |
 
@@ -118,8 +118,8 @@ contradicts the measured snapshot.
 
 | For | Read |
 |---|---|
-| Investor / funder | [COREGUARD-INVESTMENT-READINESS.md](../COREGUARD-INVESTMENT-READINESS.md) · [INVESTORS.md](INVESTORS.md) |
+| Investor / funder | [COREGUARD-INVESTMENT-READINESS.md](../COREGUARD-INVESTMENT-READINESS.md) |
 | Buyer / design partner | [PRODUCT.md](PRODUCT.md) · [PARTNERSHIPS.md](PARTNERSHIPS.md) · [PILOT-KIT.md](PILOT-KIT.md) |
 | Security reviewer | [SECURITY-REVIEWS.md](SECURITY-REVIEWS.md) · [AUDIT-READINESS-PACK-2026-11-16.md](AUDIT-READINESS-PACK-2026-11-16.md) |
 | Engineer | [START-HERE.md](START-HERE.md) · [ARCHITECTURE.md](ARCHITECTURE.md) |
-| Proof, not promises | [EVIDENCE.md](EVIDENCE.md) · [STATUS.md](STATUS.md) |
+| Proof, not promises | [EVIDENCE-MATRIX.md](EVIDENCE-MATRIX.md) · [STATUS.md](STATUS.md) |

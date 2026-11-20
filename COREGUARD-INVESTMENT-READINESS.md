@@ -82,29 +82,28 @@ Engineering discipline is part of the product: deterministic suites, an
 adversarial corpus, a boundary audit that fails CI on prose that contradicts the
 measured state, a claims registry whose ceiling rule forbids asserting a status
 stronger than the evidence cites, and a doc scanner that fails on any stale
-number. In the current tree that is **1925/1925 tests**, 43/43 Foundry proofs,
-0 boundary violations across the scanned files.
+number. The measured totals (suite total, contract proofs, boundary files,
+violations) are not restated here: the single source is
+[docs/STATUS.md](docs/STATUS.md) and its machine-pinned
+[state-snapshot.json](docs/state-snapshot.json).
 
 Architecture detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) ·
-[docs/EXECUTION-TRUST-LAYER.md](docs/EXECUTION-TRUST-LAYER.md).
+positioning: [docs/POSITIONING.md](docs/POSITIONING.md) ·
+product: [docs/PRODUCT.md](docs/PRODUCT.md).
 
 ## 4 · Mainnet Evidence
 
-Executed, not planned:
-
-| Network | Evidence | Status |
-|---|---|---|
-| **Stellar mainnet** | Soroban commitment anchor `CCKA2GYV…QMMXPSP`, first `commit()` tx `69044807…5dbc9fec`, ledger 65,337,373 | EXECUTED |
-| **Stellar mainnet** | First signed funded swap gated by DEX-GATE/1, tx `ac2a7990…640b9097`, ledger 65,338,112 | CONFIRMED |
-| **Core DAO mainnet** | Evidence registry `0x037dF08F…6AFf9EA6E`, verified agent execution, 43/43 Foundry proofs | LIVE |
-| **Pi Network** | Execution-truth plan | PREPARED / DRY_RUN — no status promotion |
+Transaction ids, ledgers and per-surface statuses live in one place:
+**[docs/EVIDENCE-MATRIX.md](docs/EVIDENCE-MATRIX.md)** (three axes per surface,
+with the evidence path for each row). In one sentence, without restating the
+records: the Stellar mainnet anchor and the first gated funded swap are executed
+and confirmed; the Core DAO evidence registry is live; Pi is prepared, with no
+status promotion.
 
 What is **not** deployed: the authorized lane on Stellar mainnet, the Soroban
 `commit_authorized` path in production, and any wallet integration. Those are
-the funded milestones, not current facts.
-
-Full per-surface matrix: [docs/EVIDENCE.md](docs/EVIDENCE.md) ·
-[docs/EVIDENCE-MATRIX.md](docs/EVIDENCE-MATRIX.md).
+the funded milestones, not current facts — and the matrix is the file that says
+so per surface.
 
 ## 5 · Independent Reproduction
 
@@ -151,13 +150,11 @@ Open core, commercial operation. The verifier and receipt format stay MIT and
 free to run offline — charging for the ability to check a receipt would destroy
 the premise.
 
-| Product | Revenue | Buyer |
-|---|---|---|
-| **CoreGuard SDK** | Subscription or enterprise licence | Wallet/DEX/agent-platform engineering teams |
-| **Managed Verification** | Per-verification service fee | Teams that want evidence without running infrastructure |
-| **Enterprise Integration** | Integration fee + annual support/SLA | FinTech, payment gateways, escrow, exchanges |
-
-Detail, open-core boundary and licence discipline: [docs/BUSINESS-MODEL.md](docs/BUSINESS-MODEL.md).
+Three lines, stated once — SDK subscription or licence, managed verification per
+receipt, enterprise integration with support and SLA. Pricing shapes, the
+open-core boundary, the MIT caveats and what we would refuse to sell are in
+**[docs/BUSINESS-MODEL.md](docs/BUSINESS-MODEL.md)**; they are not repeated here
+so a pricing experiment cannot leave two documents disagreeing.
 
 ## 8 · Funding Requirements
 
@@ -252,7 +249,7 @@ Roles, independence rules and advisor status: [docs/TEAM.md](docs/TEAM.md).
 | # | Document | What it settles |
 |:--:|---|---|
 | 1 | [docs/STATUS.md](docs/STATUS.md) | Every measured number, regenerated per push |
-| 2 | [docs/EVIDENCE.md](docs/EVIDENCE.md) | What is executed on mainnet, and what is not |
+| 2 | [docs/EVIDENCE-MATRIX.md](docs/EVIDENCE-MATRIX.md) | What is executed on each surface, and what is not |
 | 3 | [docs/POSITIONING.md](docs/POSITIONING.md) | One company, one product, six markets |
 | 4 | [docs/PRODUCT.md](docs/PRODUCT.md) | What is actually being sold |
 | 5 | [docs/BUSINESS-MODEL.md](docs/BUSINESS-MODEL.md) | Who pays, and for what |
