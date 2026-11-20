@@ -7,8 +7,10 @@
 
 # CoreGuard
 
-### The Execution Trust Layer for Stellar
-**Every autonomous transaction deserves a receipt a stranger can verify.**
+### Independent Execution Trust Infrastructure
+**Security and verification infrastructure for AI agents, wallets, payments and decentralized applications.**
+
+*One company: **CoreGuard Global**. One product: **CoreGuard Agent Execution Security** — Authorization Firewall · Execution Verification · Verifiable Consent Receipts. Stellar, Core DAO and Pi are integrations, not the identity.*
 
 <sub><b>VERIFY</b> &nbsp;•&nbsp; <b>PROTECT</b> &nbsp;•&nbsp; <b>EMPOWER</b> &nbsp;—&nbsp; More than security. It's trust.</sub>
 
@@ -19,7 +21,7 @@
 [![Core DAO](https://img.shields.io/badge/Core%20DAO-Live%20on%20Mainnet-FF8A00?style=for-the-badge&labelColor=0B0F14)](https://coreguard-trust-and-defense.lovable.app/networks/core-dao)
 [![SCF](https://img.shields.io/badge/SCF%20%2346-%24150K%20requested-4A5568?style=for-the-badge&labelColor=0B0F14)](docs/SCF-BUILD-APPLICATION-V3.md)
 
-[**Website**](https://coreguard-trust-and-defense.lovable.app/) · [**Stellar review**](https://coreguard-trust-and-defense.lovable.app/stellar) · [**Investors**](https://coreguard-trust-and-defense.lovable.app/investors) · [**Docs & catalog**](https://coreguard-global.github.io/CoreGuard/) · [**Roadmap**](ROADMAP.md) · [**Brand kit**](brand/)
+[**Website**](https://coreguard-trust-and-defense.lovable.app/) · [**Product**](docs/PRODUCT.md) · [**Investor readiness**](COREGUARD-INVESTMENT-READINESS.md) · [**Stellar review**](https://coreguard-trust-and-defense.lovable.app/stellar) · [**Docs & catalog**](https://coreguard-global.github.io/CoreGuard/) · [**Roadmap**](ROADMAP.md) · [**Brand kit**](brand/)
 
 </div>
 
@@ -28,6 +30,8 @@
 ## ⛨ In 30 seconds
 
 AI agents and apps now sign transactions faster than any human can review them. Wallets show *what a transaction looks like*. **CoreGuard proves *what actually executed is what was authorized*** — and hands anyone an offline-verifiable receipt.
+
+The product is one layer with three parts: an **Authorization Firewall** (a signed authorization bound to the exact transaction bytes), **Execution Verification** (a named `PASS` or refusal — never a score), and **Verifiable Consent Receipts** (an artifact plus an offline verifier). It runs *beside* the wallet, DEX, payment rail or chain — it does not replace them. Canonical positioning: [docs/POSITIONING.md](docs/POSITIONING.md).
 
 <table>
 <tr>
@@ -85,7 +89,7 @@ outside it.
 | You are… | Start here | Then |
 |---|---|---|
 | **Stellar / SCF reviewer** | [Stellar review page](https://coreguard-trust-and-defense.lovable.app/stellar) | [SCF application v3](docs/SCF-BUILD-APPLICATION-V3.md) · [Evidence matrix](docs/EVIDENCE-MATRIX.md) |
-| **Investor or funder** | [Investors page](https://coreguard-trust-and-defense.lovable.app/investors) | [Funding request form](https://coreguard-trust-and-defense.lovable.app/funding) · [Roadmap](ROADMAP.md) |
+| **Investor or funder** | [Investment readiness](COREGUARD-INVESTMENT-READINESS.md) · [one-screen version](docs/INVESTORS.md) | [Business model](docs/BUSINESS-MODEL.md) · [Roadmap](ROADMAP.md) · [Funding request form](https://coreguard-trust-and-defense.lovable.app/funding) |
 | **Incubator or partner** | [Partnerships](https://coreguard-trust-and-defense.lovable.app/partnerships) | [Pilot Kit](docs/PILOT-KIT.md) — two weeks, one verifiable artifact |
 | **Developer** | [Start here](docs/START-HERE.md) · [Developer quickstart](docs/DEVELOPER-QUICKSTART.md) | [SDK reference](https://coreguard-global.github.io/CoreGuard/DDE-SDK-REFERENCE.html) · [Products](https://coreguard-global.github.io/CoreGuard/PRODUCTS.html) |
 | **Security reviewer** | [Audit readiness pack](docs/AUDIT-READINESS-PACK-2026-11-16.md) | [Competitive landscape](docs/COMPETITIVE-LANDSCAPE.md) |

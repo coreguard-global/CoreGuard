@@ -24,6 +24,18 @@
 
 ---
 
+## Three phases — dates, deliverables, acceptance
+
+Investor-facing detail and budget: [COREGUARD-INVESTMENT-READINESS.md](COREGUARD-INVESTMENT-READINESS.md).
+
+| Phase | When (from award) | Ships | Accepted when |
+|---|---|---|---|
+| **1 · Productise** | Months 1–2 | SDK v1 with a measured 15-minute quickstart; Soroban `commit_authorized` deployed to testnet from CI-built wasm, with TTL/archival policy and a read-back artifact | A new developer reaches `PASS`/`BLOCK` in ≤ 15 minutes with the transcript committed; the deploy + authorized commit + named refusal are reproducible from committed bytes |
+| **2 · Prove with outsiders** | Month 3 | Two scoped two-week pilots — one DEX/wallet, one AI-agent payments — each with a published report including failures | Two external teams ran their own flow; at least one paid engagement or signed LOI |
+| **3 · Institutional readiness** | Month 4 | Independent security review closed with remediation; enterprise policy pack (multi-approval, spend limits, audit export); SLA and pricing published | A non-CoreGuard operator verifies a receipt from public artifacts only |
+
+Nothing in phase 2 or 3 is claimed as started: no pilot is signed and no review is engaged.
+
 ## 🟢 Independent external trial — reproduced by a stranger's machine
 
 > **19 Nov 2026 · public record:** [ACP discussion #328](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/discussions/328)
