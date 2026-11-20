@@ -1,9 +1,19 @@
 # Funding
 
-CoreGuard is a **verifiable execution-truth layer for Bitcoin DeFi on Core**.
+CoreGuard is **independent execution trust infrastructure**: a verification and
+authorization layer that proves what executed is what was authorized, and hands
+an outsider a receipt they can check offline. The company is **CoreGuard
+Global**; the product and protocol is **CoreGuard**, sold first as **Agent
+Execution Security** ([positioning](POSITIONING.md)).
+
 We are a small, auditor-honest team asking for **milestone-based** funding to
-ship the protocol to production and to the community — and to become the trust
-layer Core's BTCFI ecosystem builds on.
+ship the product to production and to its first external pilots. Core is one
+integration, not the identity: CoreGuard also runs on Stellar (executed mainnet
+anchor and first gated swap) with a planned Pi lane.
+
+**Status of the ask:** $150,000 requested, **not awarded**. No revenue, no
+customers, no signed pilot, no third-party security review. The tranche release
+criteria are in [COREGUARD-INVESTMENT-READINESS.md](../COREGUARD-INVESTMENT-READINESS.md#8--funding-requirements).
 
 ## Ask (milestone-gated, Core-native)
 
@@ -53,9 +63,12 @@ CoreGuard is Core-native by design:
 
 ## Commercial path
 
-- **Verification as a service** for BTCFI protocols and auditors.
-- **Versioned receipts** for institutions/auditors needing execution evidence.
-- **Firewall licensing** (v0.2+) for smart-account wallets.
+- **CoreGuard SDK** — subscription or enterprise licence.
+- **Managed verification** — per-verification service fee.
+- **Enterprise integration** — integration plus support and SLA.
+
+Open core: the verifier and receipt format stay MIT and free to run offline.
+Detail: [BUSINESS-MODEL.md](BUSINESS-MODEL.md).
 
 ## Contact
 

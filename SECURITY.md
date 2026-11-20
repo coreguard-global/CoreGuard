@@ -42,6 +42,8 @@ Include, where possible:
 
 ## Security reviews & assurance (honest status)
 
+> One-page status of what has and has not been reviewed externally: [docs/SECURITY-REVIEWS.md](docs/SECURITY-REVIEWS.md). Today: **no independent security review has been performed**; an independent *technical reproduction* of the open test kit is the only external signal.
+
 - **Automated/measured assurance:** deterministic test suites, adversarial corpus, boundary/claims audits, docs/CI contracts, and (for Core DAO contracts) Foundry unit/invariant/fuzz tests as recorded in `docs/STATUS.md` and `docs/state-snapshot.json`.
 - **Internal/project self-reviews:** e.g. PSAR/1 critical self-review (`docs/psar-security-review-2026-11-12.md`) — **project-authored**, not a third-party audit.
 - **Third-party security audit:** **not performed / not claimed** unless explicitly recorded with evidence.
