@@ -270,6 +270,7 @@ function buildSandbox(tmp) {
     "examples/transfer", "examples/swap", "examples/multistep", "examples/provenance", "examples/reference-tribunal",
     "examples/platform-quickstart", "examples/stellar-dex-integration", "examples/stellar-presign",
     "examples/execution-trust", "examples/var1-pilot-kit", "examples/agentbadge-receipt-seam",
+    "examples/agent-commerce-mcp",
   ]) {
     assert.ok(existsSync(join(REPO, rel)), `sandbox staging source missing in repo: ${rel}`);
     cpSync(join(REPO, rel), join(tmp, rel), { recursive: true });
