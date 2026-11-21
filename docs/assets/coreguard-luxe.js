@@ -1,8 +1,9 @@
 /* CoreGuard Luxe v3 — VERIFY • PROTECT • EMPOWER */
 (function(){
   if(document.getElementById("cg-bar"))return;
-  var s=document.currentScript&&document.currentScript.src,base=s?s.replace(/assets\/coreguard-luxe\.js.*$/,""):"/CoreGuard/";
+  var s=document.currentScript&&document.currentScript.src,base=s?s.replace(/assets\/coreguard-luxe\.js.*$/,"" ):"/CoreGuard/";
   var SITE="https://coreguard-trust-and-defense.lovable.app",here=location.pathname.split("/").pop()||"index.html",A=base+"assets/";
+  if(here==="DDE-SDK-REFERENCE.html"||here==="DDE-API-REFERENCE.html"){var ref=document.createElement("script");ref.src=A+"coreguard-reference.js";ref.defer=true;document.head.appendChild(ref);}
   // Tab icon + phone icons = the real CoreGuard shield
   [].slice.call(document.querySelectorAll('link[rel~="icon"],link[rel="apple-touch-icon"]')).forEach(function(l){l.parentNode.removeChild(l);});
   [["icon","image/png","32x32","favicon-32.png"],["icon","image/png","512x512","icon-512.png"],["apple-touch-icon","image/png","180x180","apple-touch-icon.png"]].forEach(function(d){var l=document.createElement("link");l.rel=d[0];l.type=d[1];l.sizes=d[2];l.href=A+d[3];document.head.appendChild(l);});
