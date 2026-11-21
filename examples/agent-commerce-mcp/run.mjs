@@ -6,7 +6,7 @@
  * process and drives it exactly as an MCP client would:
  *
  *   1. initialize            -> server info + boundary notes
- *   2. tools/list            -> the four tools and their schemas
+ *   2. tools/list            -> the ten tools and their schemas
  *   3. coreguard_authorize   -> a CGCR/1 consent receipt for a 470.00 order
  *   4. coreguard_verify_execution (570.00) -> INVALID, VALUE_ESCALATION named
  *   5. coreguard_verify_execution (470.00) -> VERIFIED
@@ -123,7 +123,7 @@ try {
   check("initialize reports the package version", /^[0-9]+\.[0-9]+\.[0-9]+/.test(init.result.serverInfo.version), init.result.serverInfo.version);
 
   const list = await request("tools/list", {});
-  check("four tools, each with input and output schemas", list.result.tools.length === 4 && list.result.tools.every((t) => t.inputSchema && t.outputSchema), list.result.tools.map((t) => t.name).join(", "));
+  check("ten tools, each with input and output schemas", list.result.tools.length === 10 && list.result.tools.every((t) => t.inputSchema && t.outputSchema), list.result.tools.map((t) => t.name).join(", "));
 
   const authz = await call("coreguard_authorize", { intent: intent("47000"), policy: policy(), declaredTrace: trace("47000"), nowSeconds: NOW });
   const consent = authz.structuredContent;

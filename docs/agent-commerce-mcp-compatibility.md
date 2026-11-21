@@ -45,7 +45,7 @@ Add an entry only after an actual run. Include evidence (command output snippet,
 
 ## Minimum acceptance for a "RUN-BY-HAND" entry
 
-- [ ] Client discovers 4 tools (`coreguard_authorize`, `coreguard_verify_consent`, `coreguard_verify_execution`, `coreguard_assess_risk`).
+- [ ] Client discovers 10 tools (`coreguard_authorize`, `coreguard_verify_consent`, `coreguard_verify_execution`, `coreguard_assess_risk`, `coreguard_inspect_identity`, `coreguard_build_attestation`, `coreguard_verify_attestation`, `coreguard_decide_outcome`, `coreguard_profile_reference`, `coreguard_consumption_status`).
 - [ ] Tool schemas/parameters visible in client UI (or inspectable).
 - [ ] `coreguard_authorize` returns CGCR/1 record with `structuredContent`.
 - [ ] `coreguard_verify_execution` exact trace returns `VERIFIED`.

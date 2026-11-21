@@ -1,7 +1,7 @@
 {
   "name": "@coreguard/agent-commerce",
   "version": "0.1.2",
-  "description": "CoreGuard Agent Commerce: consent receipts (CGCR/1) and fail-closed execution verification (AGR/1) for agentic purchases \u2014 SDK, REST surface, and a stdio MCP server (JSON-RPC 2.0, offline, zero keys)",
+  "description": "CoreGuard Agent Commerce: consent receipts (CGCR/1) and fail-closed execution verification (AGR/1) for agentic purchases — SDK, REST surface, and a stdio MCP server (JSON-RPC 2.0, offline, zero keys)",
   "type": "module",
   "main": "./index.mjs",
   "exports": {
@@ -23,36 +23,38 @@
     "./reference.mjs": "./reference.mjs",
     "./trust.mjs": "./trust.mjs",
     "./spend.mjs": "./spend.mjs",
-    "./decision.mjs": "./decision.mjs"
+    "./decision.mjs": "./decision.mjs",
+    "./control-plane.mjs": "./control-plane.mjs"
   },
   "bin": {
     "coreguard-agent-commerce-mcp": "./bin/mcp.mjs"
   },
   "files": [
-    "index.mjs",
-    "index.d.ts",
-    "mcp.mjs",
-    "http.mjs",
-    "client.mjs",
-    "firewall.mjs",
-    "risk.mjs",
-    "risk-cli.mjs",
-    "outcomes.mjs",
-    "outcomes-bridge.mjs",
-    "identity.mjs",
-    "profile-ref.mjs",
+    "README.md",
     "aer1.mjs",
     "anchor.mjs",
-    "composition.mjs",
     "attest.mjs",
-    "policy-context.mjs",
-    "consumption-store.mjs",
     "bin/mcp.mjs",
-    "README.md",
+    "client.mjs",
+    "composition.mjs",
+    "consumption-store.mjs",
+    "control-plane.mjs",
+    "decision.mjs",
+    "firewall.mjs",
+    "http.mjs",
+    "identity.mjs",
+    "index.d.ts",
+    "index.mjs",
+    "mcp.mjs",
+    "outcomes-bridge.mjs",
+    "outcomes.mjs",
+    "policy-context.mjs",
+    "profile-ref.mjs",
     "reference.mjs",
-    "trust.mjs",
+    "risk-cli.mjs",
+    "risk.mjs",
     "spend.mjs",
-    "decision.mjs"
+    "trust.mjs"
   ],
   "engines": {
     "node": ">=18"
