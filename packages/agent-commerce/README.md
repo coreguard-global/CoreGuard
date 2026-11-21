@@ -124,13 +124,16 @@ bad line never terminates the server.
 
 ## Try it without a client
 
-```
+```bash
+# Runnable demo (approve → refuse → verify → malformed)
 node examples/agent-commerce-mcp/run.mjs
+
+# Runtime smoke check (real stdio MCP child, publish/MCPRush readiness evidence)
+node scripts/agent-commerce-mcp-smoke.mjs
 ```
 
-Spawns the real server and prints approve → refuse → verify → malformed call,
-ending in `PASS (8/8)`. Expected output and what each line proves:
-`examples/agent-commerce-mcp/README.md`.
+The demo ends in `PASS (8/8)`. The smoke check ends in `6/6 PASS` and exits non-zero on any failure.
+Expected demo output: `examples/agent-commerce-mcp/README.md`.
 
 ## SDK, without MCP
 
@@ -158,3 +161,22 @@ by going through MCP.
   they diverge.
 
 License: MIT.
+
+
+## Release readiness / MCPRush evidence
+
+- **Release notes:** `docs/releases/0.1.3.md`
+- **Publish readiness checklist:** `docs/releases/0.1.3-publish-readiness.md`
+- **Security & threat model:** `docs/agent-commerce-mcp-security.md`
+- **Client compatibility matrix + run log:** `docs/agent-commerce-mcp-compatibility.md`
+- **Runtime smoke (real stdio):** `node scripts/agent-commerce-mcp-smoke.mjs`
+- **60s demo script:** `docs/agent-commerce-mcp-demo-60s.md`
+- **MCP contract tests:** `node --test test/integrations/agent-commerce-mcp.test.mjs`
+
+## Honest boundaries (read before integrating)
+
+- **`VERIFIED ≠ SAFE`** — verification means the observed execution matches the approved/committed bytes under the checked rules; it is not a blanket safety or fraud guarantee.
+- **Offline / no external contacts** — this package does not contact commerce platforms, payment networks, wallets, or PSPs.
+- **Single-use consumption is process-local** — durable cross-process/distributed replay protection is `NOT_BUILT`.
+- **Caller-supplied observed trace** — execution verification checks the trace you provide against the consent; it does not independently fetch or prove external payment/network truth.
+- **No fake "Tested" claims** — client compatibility is marked CONFIG-DOCUMENTED until a real run is recorded in the compatibility run log.
