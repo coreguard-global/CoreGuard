@@ -35,6 +35,13 @@ includes the failures and a go / no-go decision. The artifact is the sales asset
 if their engineer cannot verify the receipt on their own machine, the deal is not
 real.
 
+**The first cohort — three slots, filled in this order.** One Stellar team (wallet
+or DEX), one Core DAO team, and one agentic-commerce company. One signed pilot is
+enough to start and to publish; three is the target before the independent
+review, because a review of a layer nobody uses reviews a library. Every slot
+gets the same two-week scope below, with no bespoke promises, so the reports stay
+comparable and a failure in one is legible against the others.
+
 | Week | Deliverable |
 |---|---|
 | 1 | Wire the authorization/verification path behind a flag on one real flow; capture envelopes and policy fields |

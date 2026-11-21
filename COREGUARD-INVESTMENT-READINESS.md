@@ -201,6 +201,15 @@ a signed document or a paid invoice exists. Second, no route is allowed to chang
 the product story to fit a funder's language: the milestones above are what gets
 delivered, whichever instrument pays for them.
 
+**What this ask is not.** It is a milestone-gated development request to a grant
+programme, not an equity round. **$150,000 is not a valuation**: it prices no
+shares, it implies no cap and no ownership, and it is not evidence that the
+company is worth any particular number or that the money will be granted. Every
+figure above is a cost estimate attached to a named artifact, and the review and
+pilot lines buy work that has not happened yet. If a deck, a conversation or a
+summary turns this ask into a valuation, a priced round or an assurance of
+funding, that framing is wrong and this file is the one to quote.
+
 ## 9 · Milestones
 
 Three phases. Dates are months from award, not calendar promises.

@@ -206,7 +206,7 @@ npm run quickstart
 | **Release gate + independence proof** | 18 legs; self-audits its own source; zero-denominator = failure. | SHIPPED | `npm run release:gate:independence` |
 | **canonical measured state** | One machine-measured snapshot; `npm test` enforces the suite total against it. | SHIPPED | [`state-snapshot.json`](state-snapshot.json) · `node scripts/current-state.mjs --check` |
 | **STATUS.md** | The reviewer's single source of truth, row-bound to the committed artifacts. | SHIPPED | [STATUS.md](STATUS.md) |
-| **Release freeze records** | Byte-exact, commit-anchored freeze records with per-file SHA-256 and reachability checks. | SHIPPED | [`release/freeze/`](../release/freeze) |
+| **Release freeze records** | Byte-exact, commit-anchored freeze records with per-file SHA-256 and reachability checks. | SHIPPED | [`release/freeze/`](../coreguard-assurance-v4.2.2-remediation/release/freeze/) |
 | **Surface liveness** | Proves every public surface answers before it is cited. | SHIPPED | `node scripts/surface-liveness.mjs --self-check` |
 | **Pages settle guard** | Push-time guard that pins the Pages build to the commit whose build must finish. | SHIPPED | [`.githooks/pre-push`](../.githooks/pre-push) |
 
