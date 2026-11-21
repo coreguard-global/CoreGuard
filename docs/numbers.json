@@ -2,8 +2,8 @@
   "schema": "CG-NUMBERS/1",
   "generatedBy": "scripts/public-numbers.mjs",
   "generatedFrom": "docs/state-snapshot.json",
-  "measuredAtUtc": "2026-11-21T13:58:46Z",
-  "measuredOnCommit": "376aeff19774f4e4b742e1f582065f869a351c3f",
+  "measuredAtUtc": "2026-11-21T14:32:49Z",
+  "measuredOnCommit": "40f69f82f3696cde931fe903608125bf0a8cfee6",
   "metrics": [
     {
       "id": "tests",
@@ -16,7 +16,7 @@
     {
       "id": "boundary-files",
       "label": "Boundary audit — files scanned",
-      "value": 1449,
+      "value": 1451,
       "unit": "files",
       "source": "docs/state-snapshot.json#boundaryAudit.filesScanned",
       "note": "Tracked files from `git ls-files` (ignored trees such as var/ are not counted)."
@@ -56,7 +56,7 @@
     {
       "id": "commits-ahead",
       "label": "Commits ahead of v0.6.0",
-      "value": 536,
+      "value": 540,
       "unit": "commits",
       "source": "docs/state-snapshot.json#commitsAheadOfV060",
       "note": "History depth, not a quality signal."
