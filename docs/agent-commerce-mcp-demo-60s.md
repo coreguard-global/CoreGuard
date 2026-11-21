@@ -4,10 +4,10 @@
 
 ## Setup (before recording)
 
+From a local CoreGuard clone (repo root), with dependencies installed:
+
 ```bash
-git clone https://github.com/coreguard-global/CoreGuard.git
-cd CoreGuard
-npm install   # or use existing workspace install
+node --version
 ```
 
 ## 60-second flow
