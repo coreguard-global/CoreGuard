@@ -9,6 +9,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { readFileSync } from "node:fs";
 import { dirname, resolve, join } from "node:path";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -213,4 +214,72 @@ test("selfCheck names its own gates", async () => {
   const { selfCheck } = await import(pathToFileURL(join(here, "../../packages/agent-commerce/mcp.mjs")).href);
   const results = selfCheck();
   assert.ok(results.every(([, ok]) => ok === true), JSON.stringify(results));
+});
+
+test("serverInfo.version is the package version, not a hand-written string", async () => {
+  const pkg = JSON.parse(readFileSync(join(here, "../../packages/agent-commerce/package.json"), "utf8"));
+  await withServer(async ({ request }) => {
+    const res = await request("initialize", {});
+    assert.equal(res.result.serverInfo.version, pkg.version);
+  });
+  const mod = await import(pathToFileURL(join(here, "../../packages/agent-commerce/mcp.mjs")).href);
+  assert.equal(mod.SERVER_INFO.version, pkg.version);
+});
+
+test("every tool publishes an output schema and returns structured content", async () => {
+  await withServer(async ({ request }) => {
+    await request("initialize", {});
+    const list = await request("tools/list", {});
+    for (const t of list.result.tools) {
+      assert.equal(t.outputSchema?.type, "object", `${t.name} outputSchema`);
+      assert.ok(t.outputSchema.description && t.outputSchema.description.length > 40, `${t.name} output description`);
+      assert.ok(t.inputSchema.required.length > 0, `${t.name} required inputs`);
+    }
+    const authz = await request("tools/call", {
+      name: "coreguard_authorize",
+      arguments: { intent: testIntent(), policy: testPolicy(), declaredTrace: trace(), nowSeconds: NOW },
+    });
+    assert.equal(authz.result.isError, undefined);
+    assert.deepEqual(authz.result.structuredContent, JSON.parse(authz.result.content[0].text));
+  });
+});
+
+test("missing and malformed arguments fail with the stable error contract, and the server survives", async () => {
+  await withServer(async ({ request }) => {
+    await request("initialize", {});
+    const missing = await request("tools/call", {
+      name: "coreguard_authorize",
+      arguments: { intent: testIntent(), policy: testPolicy(), declaredTrace: trace() },
+    });
+    assert.equal(missing.result.isError, true);
+    assert.equal(missing.result.structuredContent.error.code, "MISSING_ARGUMENT");
+    assert.ok(missing.result.content[0].text.startsWith("MISSING_ARGUMENT: nowSeconds"));
+
+    const malformed = await request("tools/call", {
+      name: "coreguard_authorize",
+      arguments: { intent: testIntent(), policy: testPolicy(), declaredTrace: trace(), nowSeconds: 1794657600 },
+    });
+    assert.equal(malformed.result.structuredContent.error.code, "INVALID_ARGUMENT");
+
+    const notAnObject = await request("tools/call", { name: "coreguard_verify_execution", arguments: { consent: "nope", trace: trace() } });
+    assert.equal(notAnObject.result.structuredContent.error.code, "INVALID_ARGUMENT");
+
+    const stillAlive = await request("ping", {});
+    assert.deepEqual(stillAlive.result, {});
+  });
+});
+
+test("an unauthorized escalation is refused end-to-end through the real server", async () => {
+  await withServer(async ({ request }) => {
+    await request("initialize", {});
+    const authz = await request("tools/call", {
+      name: "coreguard_authorize",
+      arguments: { intent: testIntent("47000"), policy: testPolicy(), declaredTrace: trace("47000"), nowSeconds: NOW },
+    });
+    const consent = JSON.parse(authz.result.content[0].text);
+    // the order was approved at 470.00 and arrives at 570.00
+    const escalated = await request("tools/call", { name: "coreguard_verify_execution", arguments: { consent, trace: trace("57000") } });
+    assert.equal(escalated.result.structuredContent.verdict, "INVALID");
+    assert.ok(escalated.result.structuredContent.risk.violations.some((v) => v.code === "VALUE_ESCALATION"));
+  });
 });
