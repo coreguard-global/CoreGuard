@@ -4,7 +4,7 @@
  *
  * Proves, with a live JSON-RPC 2.0 stdio process:
  *   - initialize responds with the expected protocol/version identity
- *   - tools/list exposes the 4 tools with inputSchema + outputSchema
+ *   - tools/list exposes the 10 tools with inputSchema + outputSchema
  *   - coreguard_authorize returns a CGCR/1 receipt (structuredContent)
  *   - coreguard_verify_execution returns VERIFIED on exact execution
  *   - coreguard_verify_execution returns INVALID with named drift on escalation
@@ -104,11 +104,16 @@ async function main() {
     });
 
     let listed;
-    await run('tools/list exposes 4 tools with inputSchema+outputSchema', async () => {
+    await run('tools/list exposes 10 tools with inputSchema+outputSchema', async () => {
       listed = await request('tools/list', {});
       const tools = listed.result?.tools || [];
       const names = tools.map(t => t.name).sort();
-      assert(JSON.stringify(names) === JSON.stringify(['coreguard_assess_risk','coreguard_authorize','coreguard_verify_consent','coreguard_verify_execution']), 'unexpected tool names');
+      const expected = [
+        'coreguard_assess_risk','coreguard_authorize','coreguard_build_attestation','coreguard_consumption_status',
+        'coreguard_decide_outcome','coreguard_inspect_identity','coreguard_profile_reference',
+        'coreguard_verify_attestation','coreguard_verify_consent','coreguard_verify_execution'
+      ];
+      assert(JSON.stringify(names) === JSON.stringify(expected), `unexpected tool names: ${names.join(',')}`);
       for (const t of tools) {
         assert(t.inputSchema?.type === 'object', `${t.name} missing inputSchema`);
         assert(t.outputSchema?.type === 'object', `${t.name} missing outputSchema`);
@@ -142,6 +147,53 @@ async function main() {
       assert(out.verdict === 'INVALID', `expected INVALID, got ${out.verdict}`);
       const codes = (out.risk?.violations || []).map(v => v.code);
       assert(codes.length > 0, 'expected named drift violations');
+    });
+
+    await run('coreguard_inspect_identity returns identity and anchor facts', async () => {
+      const r = await request('tools/call', { name: 'coreguard_inspect_identity', arguments: { issuer: 'did:example:agent', scope: 'commerce', subject: 'order-1', contentDigest: '11'.repeat(32), callerContext: { traceId: 'smoke-trace' } } });
+      assert(!r.result?.isError, `unexpected error: ${r.result?.content?.[0]?.text}`);
+      const out = r.result.structuredContent;
+      assert(out.identity?.recordId, 'missing identity.recordId');
+      assert(out.anchorFacts, 'missing anchorFacts');
+      assert(out.callerContext?.traceId === 'smoke-trace', 'callerContext not echoed');
+    });
+
+    await run('coreguard_profile_reference make/parse roundtrip', async () => {
+      const made = await request('tools/call', { name: 'coreguard_profile_reference', arguments: { action: 'make', receiptId: '0x' + '22'.repeat(32) } });
+      assert(!made.result?.isError, made.result?.content?.[0]?.text);
+      const ref = made.result.structuredContent.profileReference;
+      const parsed = await request('tools/call', { name: 'coreguard_profile_reference', arguments: { action: 'parse', reference: ref } });
+      assert(!parsed.result?.isError, parsed.result?.content?.[0]?.text);
+      assert(parsed.result.structuredContent.parsed?.ok === true, 'parse not ok');
+    });
+
+    await run('coreguard_decide_outcome maps verification report', async () => {
+      const r = await request('tools/call', { name: 'coreguard_decide_outcome', arguments: { report: { verdict: 'INVALID', checks: [{ code: 'X', ok: false }] }, receiptId: '0x' + '33'.repeat(32) } });
+      assert(!r.result?.isError, r.result?.content?.[0]?.text);
+      assert(r.result.structuredContent.outcome, 'missing outcome');
+      assert(r.result.structuredContent.decision, 'missing decision');
+    });
+
+    await run('coreguard_consumption_status process-local check/consume/release', async () => {
+      const key = 'receipt-smoke-1';
+      const c1 = await request('tools/call', { name: 'coreguard_consumption_status', arguments: { receiptId: key, action: 'check' } });
+      assert(c1.result.structuredContent.consumed === false, 'expected not consumed');
+      const c2 = await request('tools/call', { name: 'coreguard_consumption_status', arguments: { receiptId: key, action: 'consume' } });
+      assert(c2.result.structuredContent.consumed === true, 'expected consumed after consume');
+      assert(c2.result.structuredContent.ledger === 'process-local', 'expected process-local');
+      const c3 = await request('tools/call', { name: 'coreguard_consumption_status', arguments: { receiptId: key, action: 'release' } });
+      assert(c3.result.structuredContent.consumed === false, 'expected released');
+    });
+
+    await run('coreguard_build_attestation + verify_attestation roundtrip', async () => {
+      const built = await request('tools/call', { name: 'coreguard_build_attestation', arguments: { consent, executedTrace: trace('1200'), adapterId: 'core-dao-anchor', nowSeconds: NOW } });
+      assert(!built.result?.isError, `build failed: ${built.result?.content?.[0]?.text}`);
+      const { attestation, attestationId } = built.result.structuredContent;
+      assert(attestationId, 'missing attestationId');
+      const ver = await request('tools/call', { name: 'coreguard_verify_attestation', arguments: { attestation, attestationId, consent, executedTrace: trace('1200') } });
+      assert(!ver.result?.isError, `verify failed: ${ver.result?.content?.[0]?.text}`);
+      const decision = ver.result.structuredContent.decision || ver.result.structuredContent.verdict || ver.result.structuredContent.status;
+      assert(typeof decision === 'string', 'missing decision/verdict/status');
     });
 
     await run('malformed input returns stable structured error and server survives', async () => {

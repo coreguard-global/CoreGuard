@@ -923,3 +923,30 @@ export declare function explainDecision(input: { decision: PaymentDecision["deci
 export declare function decisionMatrix(): readonly PaymentDecision[];
 export declare function assertDecisionInvariants(): Readonly<{ ok: boolean; violations: readonly string[]; rows: number }>;
 export declare function decisionSelfCheck(): Readonly<{ ok: boolean; checks: ReadonlyArray<{ name: string; pass: boolean }> }>;
+
+// ---------------------------------------------------------------------------
+// CGCP/0.1 — local/file-backed control plane MVP (honest boundaries).
+// NOT_BUILT: multi-user RBAC/SSO, distributed HA, cross-device sync, KMS.
+// ---------------------------------------------------------------------------
+
+export const CONTROL_PLANE_VERSION: "CGCP/0.1";
+export const CONTROL_PLANE_BOUNDARY: string;
+
+export interface ControlPlaneAgent { id: string; status?: string; [k: string]: unknown; }
+export interface ControlPlanePolicy { id: string; status?: string; spendLimitMinor?: string | number | null; allowMerchants?: string[]; denyMerchants?: string[]; allowAddresses?: string[]; denyAddresses?: string[]; [k: string]: unknown; }
+export interface ControlPlaneEvaluation { allowed: boolean; reasons: string[]; agentId?: string; policyId?: string; merchant?: string; address?: string; amountMinor?: string | number | null; at: string; }
+export interface ControlPlaneAuditReport { version: string; boundary: string; generatedAt: string; counts: Record<string, number>; agents: unknown[]; policies: unknown[]; revocations: unknown[]; recentExecutions: unknown[]; recentAudit: unknown[]; }
+export interface ControlPlane {
+  version: string;
+  boundary: string;
+  storePath: string;
+  upsertAgent(agent: ControlPlaneAgent): ControlPlaneAgent;
+  upsertPolicy(policy: ControlPlanePolicy): ControlPlanePolicy;
+  revokeAgent(agentId: string, reason?: string): ControlPlaneAgent;
+  recordApproval(approval: Record<string, unknown> & { id: string; agentId: string }): Record<string, unknown>;
+  recordExecution(execution: Record<string, unknown> & { id: string }): Record<string, unknown>;
+  evaluate(input: { agentId?: string; policyId?: string; merchant?: string; address?: string; amountMinor?: string | number | null }): ControlPlaneEvaluation;
+  auditReport(input?: { limit?: number }): ControlPlaneAuditReport;
+  getState(): Record<string, unknown>;
+}
+export declare function createControlPlane(input: { storePath: string }): ControlPlane;

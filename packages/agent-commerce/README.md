@@ -10,7 +10,7 @@ bytes approved, and for verifying any executed trace against that receipt.
 - **Fail-closed execution verification** — a consent plus an executed trace
   yields a verdict with named drift classes (AGR/1 taxonomy); incomplete or
   ambiguous evidence is never treated as a pass.
-- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing four tools,
+- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing ten tools,
   all offline, all deterministic, zero keys.
 
 MIT. Node ≥ 18. No network calls, no stored credentials, no wall clock.
@@ -46,8 +46,9 @@ report.
 ## Tools
 
 Every tool declares `inputSchema` and `outputSchema`, and returns
-`structuredContent` next to the JSON text content. All four are offline and
-deterministic.
+`structuredContent` next to the JSON text content. All ten are offline and
+deterministic. Every tool accepts optional `callerContext` (object) which is echoed
+in `structuredContent.callerContext` and never used as a cryptographic input.
 
 ### `coreguard_authorize`
 
@@ -106,6 +107,84 @@ Deterministic AGR/1 classification of one executed order against one approval.
 Output: `{ classification, violations[], … }`. A rule-based conformance
 classification, **not** a probabilistic fraud score.
 
+### `coreguard_inspect_identity`
+
+Inspects CG-ID/1 identity split (recordId/contentDigest/anchor facts), with optional comparison.
+
+| Input | Type | Required | Meaning |
+|---|---|---|---|
+| `issuer` | string | yes | identity issuer |
+| `scope` | string | yes | identity scope |
+| `subject` | string | yes | identity subject |
+| `contentDigest` | string | yes | 64-char lowercase hex digest (no `0x` prefix) |
+| `anchor` | object | no | `{ kind, locator }` anchor reference |
+| `other` | object | no | another identity object for comparison |
+
+Output: `{ identity, anchorFacts, comparison? }`.
+
+### `coreguard_build_attestation`
+
+Builds a CGXA/1 offline execution attestation. No broadcast; no chain/network contact.
+
+| Input | Type | Required | Meaning |
+|---|---|---|---|
+| `consent` | object | yes | CGCR/1 consent record |
+| `executedTrace` | object | yes | executed trace observed by caller |
+| `adapterId` | string | yes | CGXA adapter id |
+| `nowSeconds` | integer or digit string | yes | pinned epoch; never wall clock |
+
+Output: `{ spec, attestation, attestationId }`.
+
+### `coreguard_verify_attestation`
+
+Verifies a CGXA/1 attestation against consent and executed trace. Offline, fail-closed.
+
+| Input | Type | Required |
+|---|---|---|
+| `attestation` | object | yes |
+| `attestationId` | string | yes |
+| `consent` | object | yes |
+| `executedTrace` | object | yes |
+
+Output: attestation verification result including `decision` (e.g. `VERIFIED`/refused) and boundary details.
+
+### `coreguard_decide_outcome`
+
+Maps a verification report to CG-OUT/1 outcome and authorization decision.
+
+| Input | Type | Required | Meaning |
+|---|---|---|---|
+| `report` | object | yes | verification report / bridge-compatible report |
+| `receiptId` | string | no | receipt id for optional profile reference |
+
+Output: `{ outcome, decision, profileReference? }`. `ABSENT`/`NOT_CHECKED` never render as BLOCK; `VERIFIED ≠ SAFE`.
+
+### `coreguard_profile_reference`
+
+Creates or parses a CG-OUT/1 profile reference.
+
+| Input | Type | Required | Meaning |
+|---|---|---|---|
+| `action` | string | yes | `make` or `parse` |
+| `receiptId` | string | for make | receipt id |
+| `reference` | object/string | for parse | reference to parse |
+
+Output: `{ action, profileReference? , parsed? }`.
+
+### `coreguard_consumption_status`
+
+Checks/consumes/releases a receiptId in a consumption ledger.
+
+| Input | Type | Required | Meaning |
+|---|---|---|---|
+| `receiptId` | string | yes | receipt/consent key |
+| `action` | string | no | `check` (default), `consume`, or `release` |
+| `storePath` | string | no | AC-CS/1 file-backed store path for same-host cross-process use |
+
+Output: `{ receiptId, action, consumed, ledger, boundary }`.
+
+**Boundary:** default ledger is **process-local** to this MCP server process. With `storePath`, uses AC-CS/1 file-backed store (**same host, cross-process only**). **NOT_BUILT:** distributed/device sync, consensus, HA replication, on-chain anchoring.
+
 ## Errors
 
 Failures are tool results, never exceptions and never a process exit:
@@ -132,7 +211,7 @@ node examples/agent-commerce-mcp/run.mjs
 node scripts/agent-commerce-mcp-smoke.mjs
 ```
 
-The demo ends in `PASS (8/8)`. The smoke check ends in `6/6 PASS` and exits non-zero on any failure.
+The demo ends in `PASS (8/8)`. The smoke check ends in `11/11 PASS` and exits non-zero on any failure.
 Expected demo output: `examples/agent-commerce-mcp/README.md`.
 
 ## SDK, without MCP

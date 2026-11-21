@@ -33,6 +33,20 @@ import {
   assessRisk,
   AGENT_COMMERCE_VERSION,
   CONSENT_SPEC,
+  splitIdentity,
+  compareIdentities,
+  anchorFacts,
+  buildAttestation,
+  verifyAttestation,
+  outcomeForVerificationReport,
+  authorizationDecision,
+  makeProfileReference,
+  parseProfileReference,
+  createConsumptionStore,
+  CONSUMPTION_STORE_BOUNDARY,
+  CGXA_VERSION,
+  SOROBAN_CONSENT_BINDING_VERSION,
+  buildSorobanConsentBinding,
 } from "./index.mjs";
 
 const PROTOCOL_VERSION = "2025-06-18";
@@ -52,6 +66,12 @@ const TOOL_NAMES = Object.freeze([
   "coreguard_verify_consent",
   "coreguard_verify_execution",
   "coreguard_assess_risk",
+  "coreguard_inspect_identity",
+  "coreguard_build_attestation",
+  "coreguard_verify_attestation",
+  "coreguard_decide_outcome",
+  "coreguard_profile_reference",
+  "coreguard_consumption_status",
 ]);
 
 /**
@@ -90,6 +110,19 @@ function requireObjects(args, keys) {
   return null;
 }
 
+function optionalObject(args, key) {
+  if (args[key] === undefined) return null;
+  if (!isPlainObject(args[key])) return { code: ERROR_CODES.INVALID_ARGUMENT, detail: `${key} must be a JSON object when supplied` };
+  return null;
+}
+function requireString(args, key) {
+  if (args[key] === undefined) return { code: ERROR_CODES.MISSING_ARGUMENT, detail: `${key} is required` };
+  if (typeof args[key] !== "string" || args[key].length === 0) {
+    return { code: ERROR_CODES.INVALID_ARGUMENT, detail: `${key} must be a non-empty string` };
+  }
+  return null;
+}
+
 /** Per-tool input validation. Returns null when the arguments are usable. */
 const VALIDATORS = Object.freeze({
   coreguard_authorize(args) {
@@ -99,13 +132,17 @@ const VALIDATORS = Object.freeze({
     if (typeof args.nowSeconds !== "string" || !/^[0-9]+$/.test(args.nowSeconds)) {
       return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "nowSeconds must be a pinned unix-seconds string (digits only), not a number and never the wall clock" };
     }
-    return null;
+    return optionalObject(args, "callerContext");
   },
   coreguard_verify_consent(args) {
-    return requireObjects(args, ["consent"]);
+    const missing = requireObjects(args, ["consent"]);
+    if (missing) return missing;
+    return optionalObject(args, "callerContext");
   },
   coreguard_verify_execution(args) {
-    return requireObjects(args, ["consent", "trace"]);
+    const missing = requireObjects(args, ["consent", "trace"]);
+    if (missing) return missing;
+    return optionalObject(args, "callerContext");
   },
   coreguard_assess_risk(args) {
     const missing = requireObjects(args, ["intent", "policy", "trace"]);
@@ -113,13 +150,87 @@ const VALIDATORS = Object.freeze({
     if (args.consumed !== undefined && typeof args.consumed !== "boolean") {
       return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "consumed must be a boolean when supplied" };
     }
-    return null;
+    return optionalObject(args, "callerContext");
+  },
+  coreguard_inspect_identity(args) {
+    const missing = requireString(args, "issuer") || requireString(args, "scope") || requireString(args, "subject") || requireString(args, "contentDigest");
+    if (missing) return missing;
+    if (args.anchor !== undefined && args.anchor !== null && !isPlainObject(args.anchor)) {
+      return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "anchor must be a JSON object when supplied" };
+    }
+    const otherErr = optionalObject(args, "other");
+    if (otherErr) return otherErr;
+    return optionalObject(args, "callerContext");
+  },
+  coreguard_build_attestation(args) {
+    const missing = requireObjects(args, ["consent", "executedTrace"]);
+    if (missing) return missing;
+    const a = requireString(args, "adapterId");
+    if (a) return a;
+    if (args.nowSeconds === undefined) return { code: ERROR_CODES.MISSING_ARGUMENT, detail: "nowSeconds is required" };
+    const ns = args.nowSeconds;
+    const ok = (typeof ns === "number" && Number.isInteger(ns) && ns >= 0) || (typeof ns === "string" && /^[0-9]+$/.test(ns));
+    if (!ok) {
+      return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "nowSeconds must be a pinned non-negative integer (or digit string)" };
+    }
+    return optionalObject(args, "callerContext");
+  },
+  coreguard_verify_attestation(args) {
+    const missing = requireObjects(args, ["attestation", "consent", "executedTrace"]);
+    if (missing) return missing;
+    const id = requireString(args, "attestationId");
+    if (id) return id;
+    return optionalObject(args, "callerContext");
+  },
+  coreguard_decide_outcome(args) {
+    const missing = requireObjects(args, ["report"]);
+    if (missing) return missing;
+    if (args.receiptId !== undefined && (typeof args.receiptId !== "string" || args.receiptId.length === 0)) {
+      return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "receiptId must be a non-empty string when supplied" };
+    }
+    return optionalObject(args, "callerContext");
+  },
+  coreguard_profile_reference(args) {
+    const action = args.action;
+    if (action !== "make" && action !== "parse") {
+      return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "action must be \"make\" or \"parse\"" };
+    }
+    if (action === "make") {
+      const r = requireString(args, "receiptId");
+      if (r) return r;
+    }
+    if (action === "parse") {
+      if (args.reference === undefined) return { code: ERROR_CODES.MISSING_ARGUMENT, detail: "reference is required for action=parse" };
+      if (!isPlainObject(args.reference) && typeof args.reference !== "string") {
+        return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "reference must be an object or string for action=parse" };
+      }
+    }
+    return optionalObject(args, "callerContext");
+  },
+  coreguard_consumption_status(args) {
+    const r = requireString(args, "receiptId");
+    if (r) return r;
+    const action = args.action ?? "check";
+    if (!["check", "consume", "release"].includes(action)) {
+      return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "action must be check, consume, or release" };
+    }
+    if (args.storePath !== undefined && (typeof args.storePath !== "string" || args.storePath.length === 0)) {
+      return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "storePath must be a non-empty string when supplied" };
+    }
+    return optionalObject(args, "callerContext");
   },
 });
 
 function integerStringSchema(description) {
   return { type: "string", description, pattern: "^[0-9]+$" };
 }
+
+const CALLER_CONTEXT_PROPERTY = {
+  callerContext: {
+    type: "object",
+    description: "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input.",
+  },
+};
 
 const TOOLS = Object.freeze([
   {
@@ -133,18 +244,19 @@ const TOOLS = Object.freeze([
         policy: { type: "object", description: "CGEP/1 policy (value limit + target/recipient/selector allowlists)" },
         declaredTrace: { type: "object", description: "the exact submit-order payload the approval covers" },
         nowSeconds: integerStringSchema("pinned approval epoch (unix seconds) — never the wall clock"),
+        ...CALLER_CONTEXT_PROPERTY,
       },
       required: ["intent", "policy", "declaredTrace", "nowSeconds"],
     },
     outputSchema: {
       type: "object",
-      description:
-        "CGCR/1 consent record: spec (always CGCR/1) plus receipt — the pinned commitments over the approved intent, policy and declared submit payload, with the caller-supplied timestamp. Every commitment is re-derivable from the record's own approved bytes.",
+      description: "CGCR/1 consent record with pinned commitments over approved bytes.",
       properties: {
         spec: { type: "string", description: "always CGCR/1" },
-        receipt: { type: "object", description: "pinned receipt: commitment digests, approved bytes' digests, timestamp, single-use flag" },
-        intent: { type: "object", description: "the approved order as committed" },
-        policy: { type: "object", description: "the committed policy as approved" },
+        receipt: { type: "object", description: "pinned receipt commitments and timestamp" },
+        intent: { type: "object" },
+        policy: { type: "object" },
+        callerContext: { type: "object", description: "echoed caller context when supplied" },
       },
       additionalProperties: true,
     },
@@ -155,16 +267,19 @@ const TOOLS = Object.freeze([
       "Verify a consent record's integrity and binding: recompute every commitment against the record's own approved bytes. Any tampered byte fails closed.",
     inputSchema: {
       type: "object",
-      properties: { consent: { type: "object", description: "CGCR/1 consent record as returned by coreguard_authorize" } },
+      properties: {
+        consent: { type: "object", description: "CGCR/1 consent record as returned by coreguard_authorize" },
+        ...CALLER_CONTEXT_PROPERTY,
+      },
       required: ["consent"],
     },
     outputSchema: {
       type: "object",
-      description:
-        "Integrity verdict for the record's own bytes: the commitments are recomputed and compared. A tampered or truncated record yields a non-VERIFIED result (fail-closed) rather than an exception.",
+      description: "Integrity verdict for the record's own bytes; fail-closed on tamper.",
       properties: {
         verdict: { type: "string", description: "VERIFIED or INVALID/UNKNOWN — never SAFE" },
-        spec: { type: "string", description: "the schema the record was verified against (CGCR/1)" },
+        spec: { type: "string" },
+        callerContext: { type: "object" },
       },
       additionalProperties: true,
     },
@@ -172,25 +287,26 @@ const TOOLS = Object.freeze([
   {
     name: "coreguard_verify_execution",
     description:
-      "Verify an executed order against a consent record, fail-closed: exact execution -> VERIFIED; any drift -> INVALID with the drifted field named (AGR/1). Single-use consents are consumed by their first verified execution (process-local).",
+      "Verify an executed order against a consent record, fail-closed: exact execution -> VERIFIED; any drift -> INVALID with the drifted field named (AGR/1). Single-use consents are consumed by first verified execution (process-local by default; file-backed host store via AC-CS/1 when supplied by caller integration).",
     inputSchema: {
       type: "object",
       properties: {
         consent: { type: "object", description: "CGCR/1 consent record" },
         trace: { type: "object", description: "the executed order payload as observed" },
+        ...CALLER_CONTEXT_PROPERTY,
       },
       required: ["consent", "trace"],
     },
     outputSchema: {
       type: "object",
-      description:
-        "Fail-closed execution verdict: verdict is VERIFIED only when the executed trace re-derives the approved commitments exactly and no drift class fired; otherwise INVALID with the drifted fields named under risk. Also reports whether the single-use consent was consumed (process-local).",
+      description: "Fail-closed execution verdict with AGR/1 risk report and consumption boundary.",
       properties: {
         spec: { type: "string", description: "AC-SDK/1" },
         verdict: { type: "string", description: "VERIFIED or INVALID" },
-        risk: { type: "object", description: "AGR/1 report: classification, named violations with code and severity" },
-        consumed: { type: "boolean", description: "true once this consent has been consumed by a verified execution" },
-        consumedLedger: { type: "string", description: "states the process-local boundary of the consumed ledger" },
+        risk: { type: "object" },
+        consumed: { type: "boolean" },
+        consumedLedger: { type: "string" },
+        callerContext: { type: "object" },
       },
       additionalProperties: true,
     },
@@ -198,7 +314,7 @@ const TOOLS = Object.freeze([
   {
     name: "coreguard_assess_risk",
     description:
-      "Classify one executed order against one approved authorization with the deterministic AGR/1 taxonomy (named classes + severities). Not a probabilistic fraud score; VERIFIED ≠ SAFE.",
+      "Classify one executed order against one approved authorization with the deterministic AGR/1 taxonomy. Not a probabilistic fraud score; VERIFIED ≠ SAFE.",
     inputSchema: {
       type: "object",
       properties: {
@@ -206,32 +322,249 @@ const TOOLS = Object.freeze([
         policy: { type: "object", description: "the committed policy" },
         trace: { type: "object", description: "the executed order payload" },
         consumed: { type: "boolean", description: "whether this authorization was already consumed", default: false },
+        ...CALLER_CONTEXT_PROPERTY,
       },
       required: ["intent", "policy", "trace"],
     },
     outputSchema: {
       type: "object",
-      description:
-        "Deterministic AGR/1 risk report over one executed order: classification (CLEAN or the fired classes), named violations with severity, and the taxonomy version. This is a rule-based conformance classification, not a probabilistic fraud score.",
+      description: "Deterministic AGR/1 risk report with classification, named violations, and taxonomy metadata.",
       properties: {
-        classification: { type: "string", description: "CLEAN when no drift class fired" },
-        violations: { type: "array", description: "named drift classes with code and severity" },
+        classification: { type: "string" },
+        violations: { type: "array" },
+        callerContext: { type: "object" },
+      },
+      additionalProperties: true,
+    },
+  },
+  {
+    name: "coreguard_inspect_identity",
+    description:
+      "Inspect CG-ID/1 identity split: recordId (who) vs contentDigest (what), with optional anchor facts and optional comparison to another identity. Offline and deterministic.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        issuer: { type: "string", description: "identity issuer" },
+        scope: { type: "string", description: "identity scope" },
+        subject: { type: "string", description: "identity subject" },
+        contentDigest: { type: "string", description: "content digest as 64-char lowercase hex (no 0x prefix)" },
+        anchor: { type: "object", description: "optional anchor reference" },
+        other: { type: "object", description: "optional other identity for comparison" },
+        ...CALLER_CONTEXT_PROPERTY,
+      },
+      required: ["issuer", "scope", "subject", "contentDigest"],
+    },
+    outputSchema: {
+      type: "object",
+      description: "CG-ID/1 identity view with anchor facts and optional comparison.",
+      properties: {
+        identity: { type: "object" },
+        anchorFacts: { type: "object" },
+        comparison: { type: "object" },
+        callerContext: { type: "object" },
+      },
+      additionalProperties: true,
+    },
+  },
+  {
+    name: "coreguard_build_attestation",
+    description:
+      "Build a CGXA/1 offline execution attestation from a consent record and executed trace. No broadcast; no chain/network contact. nowSeconds must be pinned.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        consent: { type: "object", description: "CGCR/1 consent record" },
+        executedTrace: { type: "object", description: "executed trace observed by caller" },
+        adapterId: { type: "string", description: "CGXA adapter id" },
+        nowSeconds: { description: "pinned approval epoch (unix seconds) as non-negative integer or digit string — never wall clock", oneOf: [{ type: "integer", minimum: 0 }, { type: "string", pattern: "^[0-9]+$" }] },
+        ...CALLER_CONTEXT_PROPERTY,
+      },
+      required: ["consent", "executedTrace", "adapterId", "nowSeconds"],
+    },
+    outputSchema: {
+      type: "object",
+      description: "CGXA/1 offline attestation payload with attestation record and deterministic attestationId.",
+      properties: {
+        attestation: { type: "object" },
+        attestationId: { type: "string" },
+        callerContext: { type: "object" },
+      },
+      additionalProperties: true,
+    },
+  },
+  {
+    name: "coreguard_verify_attestation",
+    description:
+      "Verify a CGXA/1 attestation against its consent and executed trace. Offline, fail-closed; no chain/network contact.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        attestation: { type: "object", description: "CGXA/1 attestation" },
+        attestationId: { type: "string", description: "attestation identifier" },
+        consent: { type: "object", description: "CGCR/1 consent record" },
+        executedTrace: { type: "object", description: "executed trace" },
+        ...CALLER_CONTEXT_PROPERTY,
+      },
+      required: ["attestation", "attestationId", "consent", "executedTrace"],
+    },
+    outputSchema: {
+      type: "object",
+      description: "CGXA/1 attestation verification result with deterministic verdict and boundary-aware details.",
+      properties: {
+        verdict: { type: "string" },
+        callerContext: { type: "object" },
+      },
+      additionalProperties: true,
+    },
+  },
+  {
+    name: "coreguard_decide_outcome",
+    description:
+      "Map a verification report to CG-OUT/1 outcome and authorization decision. ABSENT/NOT_CHECKED never render as BLOCK; VERIFIED ≠ SAFE.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        report: { type: "object", description: "verification report or bridge-compatible report object" },
+        receiptId: { type: "string", description: "optional receipt id for profile reference" },
+        ...CALLER_CONTEXT_PROPERTY,
+      },
+      required: ["report"],
+    },
+    outputSchema: {
+      type: "object",
+      description: "CG-OUT/1 outcome, authorization decision, and optional profile reference.",
+      properties: {
+        outcome: { type: "object" },
+        decision: { type: "object" },
+        profileReference: { type: "object" },
+        callerContext: { type: "object" },
+      },
+      additionalProperties: true,
+    },
+  },
+  {
+    name: "coreguard_profile_reference",
+    description:
+      "Create or parse a CG-OUT/1 profile reference. action='make' requires receiptId; action='parse' requires reference.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        action: { type: "string", enum: ["make", "parse"], description: "make or parse" },
+        receiptId: { type: "string", description: "receipt id for action=make" },
+        reference: { description: "profile reference object/string for action=parse" },
+        ...CALLER_CONTEXT_PROPERTY,
+      },
+      required: ["action"],
+    },
+    outputSchema: {
+      type: "object",
+      description: "CG-OUT/1 profile reference result for make or parse actions with explicit action echo.",
+      properties: {
+        action: { type: "string" },
+        profileReference: { type: "object" },
+        parsed: { type: "object" },
+        callerContext: { type: "object" },
+      },
+      additionalProperties: true,
+    },
+  },
+  {
+    name: "coreguard_consumption_status",
+    description:
+      "Check/consume/release a receiptId in a consumption ledger. Default is process-local (this MCP process only). If storePath is supplied, uses AC-CS/1 file-backed store (cross-process on same host only). Distributed/device sync and on-chain anchoring are NOT_BUILT.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        receiptId: { type: "string", description: "receipt/consent identifier key" },
+        action: { type: "string", enum: ["check", "consume", "release"], description: "check, consume, or release", default: "check" },
+        storePath: { type: "string", description: "optional AC-CS/1 file-backed store path for same-host cross-process consumption" },
+        ...CALLER_CONTEXT_PROPERTY,
+      },
+      required: ["receiptId"],
+    },
+    outputSchema: {
+      type: "object",
+      description: "Consumption status with explicit ledger boundary.",
+      properties: {
+        receiptId: { type: "string" },
+        action: { type: "string" },
+        consumed: { type: "boolean" },
+        ledger: { type: "string", description: "process-local or file-backed-host" },
+        boundary: { type: "string" },
+        callerContext: { type: "object" },
       },
       additionalProperties: true,
     },
   },
 ]);
 
+function withCallerContext(value, args) {
+  if (!args?.callerContext || !isPlainObject(args.callerContext)) return value;
+  if (value && typeof value === "object" && !Array.isArray(value)) return { ...value, callerContext: args.callerContext };
+  return { value, callerContext: args.callerContext };
+}
+
 async function callTool(name, args, { consumedSet } = {}) {
   if (!TOOL_NAMES.includes(name)) return failure(ERROR_CODES.UNKNOWN_TOOL, `unknown tool: ${String(name)}`);
-  const problem = VALIDATORS[name]?.(args ?? {});
+  const a = args ?? {};
+  const problem = VALIDATORS[name]?.(a);
   if (problem) return failure(problem.code, problem.detail);
   try {
-    if (name === "coreguard_authorize") return success(await createConsent(args));
-    if (name === "coreguard_verify_consent") return success(await verifyConsent(args.consent));
-    if (name === "coreguard_verify_execution") return success(await verifyExecution(args.consent, args.trace, { consumedSet }));
+    if (name === "coreguard_authorize") return success(withCallerContext(await createConsent(a), a));
+    if (name === "coreguard_verify_consent") return success(withCallerContext(await verifyConsent(a.consent), a));
+    if (name === "coreguard_verify_execution") return success(withCallerContext(await verifyExecution(a.consent, a.trace, { consumedSet }), a));
     if (name === "coreguard_assess_risk") {
-      return success(assessRisk({ intent: args.intent, policy: args.policy, trace: args.trace, consumed: args.consumed === true }));
+      return success(withCallerContext(assessRisk({ intent: a.intent, policy: a.policy, trace: a.trace, consumed: a.consumed === true }), a));
+    }
+    if (name === "coreguard_inspect_identity") {
+      const identity = splitIdentity({
+        issuer: a.issuer, scope: a.scope, subject: a.subject, contentDigest: a.contentDigest, anchor: a.anchor ?? null,
+      });
+      const facts = anchorFacts(identity);
+      const comparison = a.other ? compareIdentities(identity, splitIdentity(a.other)) : undefined;
+      return success(withCallerContext({ identity, anchorFacts: facts, ...(comparison ? { comparison } : {}) }, a));
+    }
+    if (name === "coreguard_build_attestation") {
+      const nowSeconds = typeof a.nowSeconds === "string" ? Number(a.nowSeconds) : a.nowSeconds;
+      const out = await buildAttestation({ consent: a.consent, executedTrace: a.executedTrace, adapterId: a.adapterId, nowSeconds });
+      return success(withCallerContext(out, a));
+    }
+    if (name === "coreguard_verify_attestation") {
+      const out = await verifyAttestation({ attestation: a.attestation, attestationId: a.attestationId, consent: a.consent, executedTrace: a.executedTrace });
+      return success(withCallerContext(out, a));
+    }
+    if (name === "coreguard_decide_outcome") {
+      const outcome = outcomeForVerificationReport(a.report);
+      const decision = authorizationDecision(outcome);
+      const profileReference = a.receiptId ? makeProfileReference({ receiptId: a.receiptId }) : undefined;
+      return success(withCallerContext({ outcome, decision, ...(profileReference ? { profileReference } : {}) }, a));
+    }
+    if (name === "coreguard_profile_reference") {
+      if (a.action === "make") return success(withCallerContext({ action: "make", profileReference: makeProfileReference({ receiptId: a.receiptId }) }, a));
+      return success(withCallerContext({ action: "parse", parsed: parseProfileReference(a.reference) }, a));
+    }
+    if (name === "coreguard_consumption_status") {
+      const action = a.action ?? "check";
+      const key = a.receiptId;
+      if (a.storePath) {
+        const store = createConsumptionStore(a.storePath);
+        let consumed;
+        if (action === "consume") { store.add(key); consumed = store.has(key); }
+        else if (action === "release") { store.delete(key); consumed = store.has(key); }
+        else consumed = store.has(key);
+        return success(withCallerContext({
+          receiptId: key, action, consumed, ledger: "file-backed-host", boundary: CONSUMPTION_STORE_BOUNDARY,
+        }, a));
+      }
+      const set = consumedSet ?? new Set();
+      let consumed;
+      if (action === "consume") { consumed = set.has(key); set.add(key); consumed = set.has(key); }
+      else if (action === "release") { set.delete(key); consumed = set.has(key); }
+      else consumed = set.has(key);
+      return success(withCallerContext({
+        receiptId: key, action, consumed, ledger: "process-local",
+        boundary: "process-local only; NOT_BUILT for cross-process/device distributed sync or on-chain anchoring in this MCP process",
+      }, a));
     }
     return failure(ERROR_CODES.UNKNOWN_TOOL, `unknown tool: ${String(name)}`);
   } catch (err) {
@@ -297,7 +630,7 @@ export function createMcpHandler({ write } = {}) {
 
 export function selfCheck() {
   return [
-    ["tools exposed", TOOL_NAMES.join(",") === "coreguard_authorize,coreguard_verify_consent,coreguard_verify_execution,coreguard_assess_risk"],
+    ["tools exposed", TOOL_NAMES.length === 10 && TOOL_NAMES[0] === "coreguard_authorize" && TOOL_NAMES[9] === "coreguard_consumption_status"],
     ["protocol version pinned", PROTOCOL_VERSION === "2025-06-18"],
     ["spec surfaced", CONSENT_SPEC === "CGCR/1" && AGENT_COMMERCE_VERSION === "AC-SDK/1"],
     ["boundary travels", SERVER_BOUNDARY.includes("VERIFIED ≠ SAFE") && SERVER_BOUNDARY.includes("NOT_BUILT")],
@@ -305,6 +638,7 @@ export function selfCheck() {
     ["every tool declares an output schema", TOOLS.every((t) => t.outputSchema?.type === "object")],
     ["every tool declares required inputs", TOOLS.every((t) => Array.isArray(t.inputSchema?.required) && t.inputSchema.required.length > 0)],
     ["error contract is exported", ERROR_CODES.MISSING_ARGUMENT === "MISSING_ARGUMENT"],
+    ["caller context supported", TOOLS.every((t) => t.inputSchema?.properties?.callerContext?.type === "object")],
   ];
 }
 

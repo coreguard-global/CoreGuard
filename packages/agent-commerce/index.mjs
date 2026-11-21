@@ -399,3 +399,10 @@ export {
   assertDecisionInvariants,
   selfCheck as decisionSelfCheck,
 } from "./decision.mjs";
+
+// CGCP/0.1 — local/file-backed control plane MVP (honest boundaries).
+export {
+  CONTROL_PLANE_VERSION,
+  CONTROL_PLANE_BOUNDARY,
+  createControlPlane,
+} from "./control-plane.mjs";

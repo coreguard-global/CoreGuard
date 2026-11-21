@@ -9,8 +9,9 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { readFileSync } from "node:fs";
+import { readFileSync, mkdtempSync, rmSync } from "node:fs";
 import { dirname, resolve, join } from "node:path";
+import { tmpdir } from "node:os";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const MCP_PATH = resolve(here, "../../packages/agent-commerce/mcp.mjs");
@@ -141,17 +142,30 @@ test("MCP initialize answers the pinned protocol version and server info", async
   });
 });
 
-test("tools/list exposes exactly the four provider-independent tools", async () => {
+test("tools/list exposes the 10 provider-independent tools with schemas", async () => {
   await withServer(async ({ request }) => {
     await request("initialize", {});
     const res = await request("tools/list", {});
     assert.deepEqual(
       res.result.tools.map((t) => t.name),
-      ["coreguard_authorize", "coreguard_verify_consent", "coreguard_verify_execution", "coreguard_assess_risk"]
+      [
+        "coreguard_authorize",
+        "coreguard_verify_consent",
+        "coreguard_verify_execution",
+        "coreguard_assess_risk",
+        "coreguard_inspect_identity",
+        "coreguard_build_attestation",
+        "coreguard_verify_attestation",
+        "coreguard_decide_outcome",
+        "coreguard_profile_reference",
+        "coreguard_consumption_status",
+      ]
     );
     for (const t of res.result.tools) {
       assert.ok(t.description && t.description.length > 30, t.name);
       assert.ok(t.inputSchema && t.inputSchema.type === "object");
+      assert.ok(t.outputSchema && t.outputSchema.type === "object", `${t.name} missing outputSchema`);
+      assert.ok(t.inputSchema.properties?.callerContext, `${t.name} missing callerContext`);
     }
   });
 });
@@ -282,4 +296,113 @@ test("an unauthorized escalation is refused end-to-end through the real server",
     assert.equal(escalated.result.structuredContent.verdict, "INVALID");
     assert.ok(escalated.result.structuredContent.risk.violations.some((v) => v.code === "VALUE_ESCALATION"));
   });
+});
+
+test("coreguard_inspect_identity returns split identity, anchor facts, and optional comparison", async () => {
+  await withServer(async ({ request }) => {
+    await request("initialize", {});
+    const res = await request("tools/call", {
+      name: "coreguard_inspect_identity",
+      arguments: {
+        issuer: "did:example:agent", scope: "commerce", subject: "order-1",
+        contentDigest: "11".repeat(32),
+        anchor: { kind: "chain", locator: "eip155:1116:0xabc" },
+        other: { issuer: "did:example:agent", scope: "commerce", subject: "order-2", contentDigest: "22".repeat(32) },
+        callerContext: { traceId: "t-1" },
+      },
+    });
+    assert.equal(res.result.isError, undefined);
+    const out = res.result.structuredContent;
+    assert.ok(out.identity?.recordId);
+    assert.ok(out.anchorFacts);
+    assert.ok(out.comparison);
+    assert.equal(out.callerContext.traceId, "t-1");
+  });
+});
+
+test("coreguard_build_attestation + coreguard_verify_attestation roundtrip over real consent", async () => {
+  await withServer(async ({ request }) => {
+    await request("initialize", {});
+    const authz = await request("tools/call", {
+      name: "coreguard_authorize",
+      arguments: { intent: testIntent(), policy: testPolicy(), declaredTrace: trace(), nowSeconds: NOW },
+    });
+    const consent = JSON.parse(authz.result.content[0].text);
+    const built = await request("tools/call", {
+      name: "coreguard_build_attestation",
+      arguments: { consent, executedTrace: trace(), adapterId: "core-dao-anchor", nowSeconds: NOW },
+    });
+    assert.equal(built.result.isError, undefined, built.result?.content?.[0]?.text || JSON.stringify(built.result));
+    const { attestation, attestationId } = built.result.structuredContent;
+    assert.ok(attestationId);
+    assert.ok(attestation);
+    const ver = await request("tools/call", {
+      name: "coreguard_verify_attestation",
+      arguments: { attestation, attestationId, consent, executedTrace: trace() },
+    });
+    assert.equal(ver.result.isError, undefined, ver.result?.content?.[0]?.text || JSON.stringify(ver.result));
+    assert.equal(typeof (ver.result.structuredContent.decision || ver.result.structuredContent.verdict), "string");
+  });
+});
+
+test("coreguard_decide_outcome maps report to CG-OUT/1 decision and optional profile reference", async () => {
+  await withServer(async ({ request }) => {
+    await request("initialize", {});
+    const res = await request("tools/call", {
+      name: "coreguard_decide_outcome",
+      arguments: { report: { verdict: "INVALID", checks: [{ code: "VALUE_ESCALATION", ok: false }] }, receiptId: "0x" + "33".repeat(32) },
+    });
+    assert.equal(res.result.isError, undefined);
+    const out = res.result.structuredContent;
+    assert.ok(out.outcome);
+    assert.ok(out.decision);
+    assert.ok(out.profileReference);
+  });
+});
+
+test("coreguard_profile_reference make and parse roundtrip", async () => {
+  await withServer(async ({ request }) => {
+    await request("initialize", {});
+    const receiptId = "0x" + "44".repeat(32);
+    const made = await request("tools/call", { name: "coreguard_profile_reference", arguments: { action: "make", receiptId } });
+    assert.equal(made.result.isError, undefined);
+    const ref = made.result.structuredContent.profileReference;
+    const parsed = await request("tools/call", { name: "coreguard_profile_reference", arguments: { action: "parse", reference: ref } });
+    assert.equal(parsed.result.isError, undefined);
+    assert.equal(parsed.result.structuredContent.parsed.ok, true);
+  });
+});
+
+test("coreguard_consumption_status is process-local by default and honest about boundary", async () => {
+  await withServer(async ({ request }) => {
+    await request("initialize", {});
+    const key = "receipt-process-local";
+    let r = await request("tools/call", { name: "coreguard_consumption_status", arguments: { receiptId: key, action: "check" } });
+    assert.equal(r.result.structuredContent.consumed, false);
+    assert.equal(r.result.structuredContent.ledger, "process-local");
+    r = await request("tools/call", { name: "coreguard_consumption_status", arguments: { receiptId: key, action: "consume" } });
+    assert.equal(r.result.structuredContent.consumed, true);
+    r = await request("tools/call", { name: "coreguard_consumption_status", arguments: { receiptId: key, action: "release" } });
+    assert.equal(r.result.structuredContent.consumed, false);
+  });
+});
+
+test("coreguard_consumption_status supports AC-CS/1 file-backed host store", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "cg-cs-"));
+  const storePath = join(dir, "consumption.json");
+  try {
+    await withServer(async ({ request }) => {
+      await request("initialize", {});
+      const key = "receipt-file-backed";
+      let r = await request("tools/call", { name: "coreguard_consumption_status", arguments: { receiptId: key, action: "consume", storePath } });
+      assert.equal(r.result.isError, undefined);
+      assert.equal(r.result.structuredContent.consumed, true);
+      assert.equal(r.result.structuredContent.ledger, "file-backed-host");
+      assert.ok(r.result.structuredContent.boundary.includes("NOT a distributed ledger") || r.result.structuredContent.boundary.includes("NOT"));
+      r = await request("tools/call", { name: "coreguard_consumption_status", arguments: { receiptId: key, action: "check", storePath } });
+      assert.equal(r.result.structuredContent.consumed, true);
+    });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
