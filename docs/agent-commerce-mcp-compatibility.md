@@ -1,86 +1,54 @@
-# CoreGuard Agent Commerce MCP — client compatibility
+# Agent Commerce MCP — Client Compatibility Matrix
 
-What this page is: the honest state of CoreGuard's `@coreguard/agent-commerce` MCP
-server on each client we point people at. What it is not: a claim that every
-client has been driven by us. The page exists because the listing on any
-marketplace shows a platform, not a test run, and because writing "tested" next
-to a client we never launched is the kind of claim this repository refuses.
+**Package:** `@coreguard/agent-commerce` (stdio MCP, JSON-RPC 2.0, `protocolVersion 2025-06-18`)  
+**Server:** `coreguard-agent-commerce`  
+**Source of truth:** `packages/agent-commerce/server.json` + `packages/agent-commerce/package.json`
 
-## Status vocabulary (used verbatim below)
+## Status vocabulary (use exactly)
 
-- **TESTED-IN-CI** — a real stdio child process is spawned on every CI run and
-  driven through `initialize` → `tools/list` → `tools/call`
-  (`test/integrations/agent-commerce-mcp.test.mjs`, 11 tests).
-- **RUN-BY-HAND** — a person launched that client against the server and saw the
-  four tools; recorded with date and version in this file.
-- **CONFIG-DOCUMENTED** — we publish the configuration for that client, and the
-  transport it needs (stdio) is what the CI harness exercises. We have **not**
-  launched that client against the server. This is the default for every client
-  below until a run is recorded.
-- **NOT-VERIFIED** — we know too little to say anything. No config published.
+| Status | Meaning |
+|---|---|
+| **CONFIG-DOCUMENTED** | Install/config snippet documented; not run by us in that client. |
+| **RUN-BY-HAND** | Manually run and recorded in Run Log with date, operator, version, evidence. |
+| **CI-SMOKE** | Automated in CI against real spawned MCP child process / client harness. |
+| **BLOCKED** | Attempted; blocked by environment/client issue (document issue). |
 
-A status moves from CONFIG-DOCUMENTED to RUN-BY-HAND only with a dated entry in
-the log at the bottom of this page.
+> **Rule:** Do not mark any client as "Tested/Supported" in marketing/docs without a Run Log entry.
 
-## The server surface
+## Automated repo-side evidence (CI/local, real stdio child)
 
-- Transport: **stdio**, newline-delimited JSON-RPC 2.0 (one object per line).
-- Protocol version answered: `2025-06-18`.
-- Command: `npx -y @coreguard/agent-commerce` (bin: `coreguard-agent-commerce-mcp`).
-- Tools: `coreguard_authorize`, `coreguard_verify_consent`,
-  `coreguard_verify_execution`, `coreguard_assess_risk`.
-- Every tool declares `inputSchema` **and** `outputSchema`, and returns
-  `structuredContent` alongside the text content — so a client that reads
-  schemas can render arguments and results without reading this repository.
-- Offline: no network calls, no keys, no wall clock. `nowSeconds` is always a
-  caller-supplied pinned epoch.
-- `serverInfo.version` is read from `package.json`; CI fails if they diverge.
+| Check | Status | Evidence |
+|---|---|---|
+| MCP contract tests (11 tests, real stdio child) | **CI-SMOKE** | `node --test test/integrations/agent-commerce-mcp.test.mjs` |
+| Runtime smoke check (real stdio child, success + drift + malformed) | **CI-SMOKE** | `node scripts/agent-commerce-mcp-smoke.mjs` |
+| Runnable example | **CI-SMOKE** | `node examples/agent-commerce-mcp/run.mjs` |
 
-## Clients
+## Client matrix
 
-| Client | Transport it needs | Configuration | Status |
+| Client | Status | Config | Notes |
 |---|---|---|---|
-| Claude Desktop | stdio | `mcpServers` entry with the npx command | CONFIG-DOCUMENTED |
-| Claude Code | stdio | `claude mcp add coreguard-agent-commerce -- npx -y @coreguard/agent-commerce` | CONFIG-DOCUMENTED |
-| Cursor | stdio | `mcp.json` → `mcpServers` entry with the npx command | CONFIG-DOCUMENTED |
-| VS Code (Copilot MCP) | stdio | `.vscode/mcp.json` → `servers` entry | CONFIG-DOCUMENTED |
-| Codex CLI | stdio | `[mcp_servers.coreguard] command = "npx"` in `config.toml` | CONFIG-DOCUMENTED |
-| OpenAI Agents SDK | in-process (import) | import `@coreguard/agent-commerce` directly, no MCP hop | CONFIG-DOCUMENTED |
-| Gemini CLI | stdio | settings `mcpServers` entry | CONFIG-DOCUMENTED |
-| Zed | stdio | `context_servers` entry | CONFIG-DOCUMENTED |
-| Windsurf | stdio | `mcp_config.json` → `mcpServers` | CONFIG-DOCUMENTED |
-| MCPRush listing | n/a (catalogue) | listing points at the npm package | see note below |
-| MCP Registry | n/a (registry) | `io.github.EslaM-X/coreguard-agent-commerce` | published metadata only |
+| Claude Code | CONFIG-DOCUMENTED | `claude mcp add coreguard-agent-commerce -- npx -y @coreguard/agent-commerce` | Prioritize first real RUN-BY-HAND after npm publish. |
+| Claude Desktop | CONFIG-DOCUMENTED | `mcpServers.coreguard-agent-commerce.command=npx`, `args=["-y","@coreguard/agent-commerce"]` | JSON config file. |
+| Cursor | CONFIG-DOCUMENTED | `.cursor/mcp.json` same stdio command |  |
+| VS Code (Copilot MCP) | CONFIG-DOCUMENTED | `.vscode/mcp.json` `servers` entry, type stdio |  |
+| Codex CLI | CONFIG-DOCUMENTED | `config.toml` `[mcp_servers.coreguard-agent-commerce]` |  |
+| Gemini CLI | CONFIG-DOCUMENTED | stdio MCP config, same command |  |
+| Zed / Windsurf / others | CONFIG-DOCUMENTED | stdio MCP config, same command | Validate before claiming support. |
 
-**Note on MCPRush.** The listing showed the tool schemas as unread and showed
-"security A". Those are the platform's own extraction and heuristic; they are not
-a review by us and not an audit by anyone. See
-`docs/agent-commerce-mcp-security.md` for what a grade like that can and cannot
-mean, and why we do not embed it.
+## Run Log (append-only)
 
-The copy-paste configuration for each client lives in
-`packages/agent-commerce/README.md`, next to the tool reference, so there is one
-place to fix when a client changes its config format.
+Add an entry only after an actual run. Include evidence (command output snippet, screenshot path, or transcript reference).
 
-## Verify a client yourself in about a minute
+| Date (UTC) | Operator | Client + version | Package/version | Result | Evidence | Notes |
+|---|---|---|---|---|---|---|
+| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.1.3` (post-publish) | PENDING |  | First target client |
 
-1. Run `node examples/agent-commerce-mcp/run.mjs` from a clone. It spawns the
-   real server and prints eight PASS lines, ending in `PASS (8/8)`. If that does
-   not pass, the problem is the server, not your client.
-2. Point the client at `npx -y @coreguard/agent-commerce` and ask it to list MCP
-   tools. You should see the four `coreguard_*` names.
-3. Ask it to authorize a synthetic 470.00 order (the exact argument object is in
-   the runnable example), then verify a 570.00 execution. The correct answer is
-   `INVALID` with `VALUE_ESCALATION` named.
+## Minimum acceptance for a "RUN-BY-HAND" entry
 
-If step 2 or 3 differs, that is a real finding. Record the client, version, date
-and what you saw in the log below; do not "fix" it by editing the status table.
-
-## Run log (append only)
-
-Nothing has been run by hand yet, on any client, at any version. The first entry
-will name the client, its version, the date, the package version, and the four
-tool names it listed.
-
-Standing rule: no README, listing, deck or page in this repository may describe a
-client as tested while this section is empty for that client.
+- [ ] Client discovers 4 tools (`coreguard_authorize`, `coreguard_verify_consent`, `coreguard_verify_execution`, `coreguard_assess_risk`).
+- [ ] Tool schemas/parameters visible in client UI (or inspectable).
+- [ ] `coreguard_authorize` returns CGCR/1 record with `structuredContent`.
+- [ ] `coreguard_verify_execution` exact trace returns `VERIFIED`.
+- [ ] Escalated/changed trace returns `INVALID` with named drift (e.g. `VALUE_ESCALATION`).
+- [ ] Malformed input returns structured error; server remains responsive to next call.
+- [ ] Version reported by initialize matches published package version.

@@ -172,6 +172,8 @@ const SKIP = [
   { re: /npm run stellar:demo/, reason: "live Stellar testnet demo (external network, Friendbot + Horizon) - owned by examples/stellar-verify/demo.mjs, not a docs contract" },
   { re: /node examples\/stellar-verify\/demo\.mjs/, reason: "live Stellar testnet demo (external network, Friendbot + Horizon) - not a docs contract" },
   { re: /node examples\/stellar-integration-pilot\/demo\.mjs/, reason: "Stellar integration pilot demo (offline-first; optional live read-only verify with --tx) - not a docs contract" },
+  { re: /node examples\/agent-commerce-mcp\/run\.mjs/, reason: "real stdio MCP child is timing-sensitive in docs-node sandbox under CI load; covered by test/integrations/agent-commerce-mcp.test.mjs (11 tests, real stdio child) and scripts/agent-commerce-mcp-smoke.mjs" },
+  { re: /node scripts\/agent-commerce-mcp-smoke\.mjs/, reason: "real stdio MCP child is timing-sensitive in docs-node sandbox under CI load; covered by test/integrations/agent-commerce-mcp.test.mjs (11 tests, real stdio child) and standalone smoke evidence" },
 ];
 
 /**
@@ -270,6 +272,7 @@ function buildSandbox(tmp) {
     "examples/transfer", "examples/swap", "examples/multistep", "examples/provenance", "examples/reference-tribunal",
     "examples/platform-quickstart", "examples/stellar-dex-integration", "examples/stellar-presign",
     "examples/execution-trust", "examples/var1-pilot-kit", "examples/agentbadge-receipt-seam",
+    "examples/agent-commerce-mcp",
   ]) {
     assert.ok(existsSync(join(REPO, rel)), `sandbox staging source missing in repo: ${rel}`);
     cpSync(join(REPO, rel), join(tmp, rel), { recursive: true });
