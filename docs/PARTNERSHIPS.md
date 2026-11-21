@@ -47,6 +47,8 @@ comparable and a failure in one is legible against the others.
 | 1 | Wire the authorization/verification path behind a flag on one real flow; capture envelopes and policy fields |
 | 2 | Adversarial cases (amount, destination, expiry, network, replay) + evidence bundle verified outside this repo + read-out |
 
+Send-ready: [PILOT-SOW.md](PILOT-SOW.md) (sign and start without a call) · [PILOT-REPORT-TEMPLATE.md](PILOT-REPORT-TEMPLATE.md) (the report, failures included).
+
 Offer details: [PILOT-KIT.md](PILOT-KIT.md). Plan: [AGENT-COMMERCE-PILOT-PLAN-2026-11-16.md](AGENT-COMMERCE-PILOT-PLAN-2026-11-16.md).
 
 ## Outreach discipline

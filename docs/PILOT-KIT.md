@@ -9,6 +9,11 @@ safety, detection, or endorsement — those are not what is being tested.
 authorization and firewall; you keep a bundle of receipts that anyone — your
 auditor, your investor, a stranger with the CLI — can re-verify offline.
 
+**To send it:** [PILOT-SOW.md](PILOT-SOW.md) is the contract-shaped version —
+scope, frozen success criteria, obligations, exit and publication terms, with the
+five lines a partner replies with instead of a call. [PILOT-REPORT-TEMPLATE.md](PILOT-REPORT-TEMPLATE.md)
+is the report both sides sign at the read-out, failures included.
+
 ## 1 · Scope (10 working days, one flow)
 
 | Days | What happens | Who |
