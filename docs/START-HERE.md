@@ -79,7 +79,7 @@ first). This writes `report.json` and `REPORT.md` to `<out-dir>`.
 
 | Goal | Where to go |
 |---|---|
-| Integrate the 3-call surface (authorize / enforce / verify) | [docs/DEVELOPER-QUICKSTART.md](DEVELOPER-QUICKSTART.md) · [docs/DDE-SDK-REFERENCE.md](DDE-SDK-REFERENCE.md) |
+| Integrate the 3-call surface (authorize / enforce / verify) | [docs/DEVELOPER-QUICKSTART.md](DEVELOPER-QUICKSTART.md) · [docs/DDE-SDK-REFERENCE.html](DDE-SDK-REFERENCE.html) |
 | Run an evaluation/pilot and produce a verifiable artifact | [docs/VAR1-PILOT-KIT.md](VAR1-PILOT-KIT.md) · [docs/PILOT-KIT.md](PILOT-KIT.md) |
 | Understand outcomes, decisions, and boundaries | [docs/aer1-var1-outcome-mapping.md](aer1-var1-outcome-mapping.md) · [docs/POSITIONING.md](POSITIONING.md) |
 | Explore agent-commerce surfaces (firewall, consent receipts, risk, attestation) | [docs/AGENT-COMMERCE-SECURITY-SPEC-V1.md](AGENT-COMMERCE-SECURITY-SPEC-V1.md) · [examples/](../examples/) |

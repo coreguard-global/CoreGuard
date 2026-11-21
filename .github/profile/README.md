@@ -4,13 +4,14 @@
   <img src="https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/assets/coreguard-logo-transparent.png" width="170" alt="CoreGuard">
 </a>
 
-# CoreGuard
+# CoreGuard Global
 
 **VERIFY&nbsp;•&nbsp;PROTECT&nbsp;•&nbsp;EMPOWER**
 
-**The verifiable execution truth layer + fail-closed agent economy — for Bitcoin DeFi.**
+**Independent Execution Trust Infrastructure** — security and verification infrastructure for AI agents, wallets, payments and decentralized applications.
 
-*<sub>طبقة الحقيقة التنفيذية القابلة للتحقق لتمويل البيتكوين — ‏الحكم لا يستقر إلا حيث تثبتُه الأدلة</sub>*
+*<sub>طبقة ثقة تنفيذ مستقلة — بنية تحقق وأمان للوكلاء الذكيين والمحافظ والمدفوعات والتطبيقات اللامركزية.</sub>*
+*One organisation: **CoreGuard Global**. One product: **CoreGuard Agent Execution Security** — Authorization Firewall · Execution Verification · Verifiable Consent Receipts. Stellar, Core DAO and Pi are integrations, not the identity. This file mirrors the organisation profile served from `coreguard-global/.github`; the copy there is the one displayed on GitHub.*
 
 CoreGuard tells you whether execution **conformed to what was authorized** — not merely why it looked plausible. Evidence is deterministic, independently replayable by anyone, and audited on every push; **`UNKNOWN` stays HELD** until evidence closes it.
 
@@ -19,7 +20,7 @@ CoreGuard tells you whether execution **conformed to what was authorized** — n
 | | |
 |---|---|
 | 🔗 | [![Website](https://img.shields.io/badge/website-coreguard--global.github.io%2FCoreGuard-FF8A00?style=flat-square&labelColor=0B0F14)](https://coreguard-global.github.io/CoreGuard/) [![Core Mainnet](https://img.shields.io/badge/Core%20Mainnet-anchor%20·%20chainId%201116-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/DEPLOYMENT.md) [![Stellar mainnet](https://img.shields.io/badge/Stellar%20mainnet-anchors%20·%20gates%20·%20PSAR%2F1-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/EVIDENCE-MATRIX.md#stellar) [![Trust gate](https://img.shields.io/badge/trust%20gate-live%20anchor%20·%20independent--verify%20ladder-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/TRUST.md) |
-| 📊 | [![Tests](https://img.shields.io/badge/tests-1841%2F1841%20·%20machine--pinned-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/STATUS.md) [![Boundary](https://img.shields.io/badge/boundary-1418%20files%20·%200%20violations-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/STATUS.md) [![Foundry](https://img.shields.io/badge/foundry-43%2F43%20·%20CI--measured-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/STATUS.md) [![Claims audit](https://img.shields.io/badge/claims%20audit-PASS-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/STATUS.md) |
+| 📊 | [![Tests](https://img.shields.io/badge/tests-1925%2F1925%20·%20machine--pinned-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/STATUS.md) [![Boundary](https://img.shields.io/badge/boundary-1446%20files%20·%200%20violations-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/STATUS.md) [![Foundry](https://img.shields.io/badge/foundry-43%2F43%20·%20CI--measured-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/STATUS.md) [![Claims audit](https://img.shields.io/badge/claims%20audit-PASS-FF8A00?style=flat-square&labelColor=0B0F14)](https://github.com/coreguard-global/CoreGuard/blob/main/docs/STATUS.md) |
 
 <br>
 

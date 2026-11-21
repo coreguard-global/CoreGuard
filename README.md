@@ -261,7 +261,7 @@ Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · 
 
 | Network | English headline | العنوان بالعربية |
 |---|---|---|
-| Core DAO | The execution truth layer for Bitcoin DeFi on Core. | طبقة حقيقة التنفيذ لـ Bitcoin DeFi على Core. |
+| Core DAO | Anchored execution evidence on Core mainnet (chainId 1116) — an integration, not the identity. | دليل تنفيذ مُثبَّت (anchored) على Core mainnet (chainId 1116) — تكامل، وليس الهوية. |
 | Stellar | Fail-closed execution for Soroban and Stellar DEX flows. | تنفيذ آمن (fail-closed) لعمليات Soroban و Stellar DEX. |
 | Pi Network | Execution truth for Pi Network — commerce shield, wallet guard, verified badge, 7-run ladder, mainnet anchor (prepared), attestation service (planned), cross-network with Core + Stellar. | حقيقة تنفيذ لـ Pi Network — درع تجارة، حماية محفظة، شارة تاجر موثّق، سلم 7 درجات، مرساة شبكة رئيسية (مستعدة)، خدمة توثيق (مخطط لها)، ومرساة مشترك مع Core وStellar. |
 
