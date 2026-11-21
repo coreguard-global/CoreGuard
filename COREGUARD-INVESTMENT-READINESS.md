@@ -225,7 +225,7 @@ Three phases. Dates are months from award, not calendar promises.
 
 | Milestone | Deliverable | Acceptance criterion |
 |---|---|---|
-| **M3** Two pilots | One DEX/wallet and one AI-agent payments partner; written scope and success criteria before work starts; published report per pilot including failures | Two external teams ran CoreGuard against their own flow; at least one paid engagement or signed LOI; both reports published |
+| **M3** Two pilots | One DEX/wallet and one AI-agent payments partner; written scope and success criteria before work starts ([PILOT-SOW.md](docs/PILOT-SOW.md), frozen at signature); published report per pilot including failures ([PILOT-REPORT-TEMPLATE.md](docs/PILOT-REPORT-TEMPLATE.md)) | Two external teams ran CoreGuard against their own flow; at least one paid engagement or signed LOI; both reports published |
 
 ### Phase 3 — Institutional readiness (Month 4) · T3
 
