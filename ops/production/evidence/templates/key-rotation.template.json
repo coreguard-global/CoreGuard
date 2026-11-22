@@ -1,0 +1,19 @@
+{
+  "status": "TEMPLATE_NOT_EXECUTED",
+  "drill": "key-rotation",
+  "executedAt": null,
+  "environment": "REPLACE_TARGET_ENV",
+  "operator": "REPLACE_OPERATOR",
+  "inputs": {},
+  "observations": [],
+  "metrics": {},
+  "artifacts": [
+    {
+      "type": "log",
+      "ref": "REPLACE",
+      "sha256": "REPLACE"
+    }
+  ],
+  "pass": null,
+  "notes": "Template only. Real target-environment evidence required."
+}

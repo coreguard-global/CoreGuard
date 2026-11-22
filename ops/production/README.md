@@ -14,9 +14,15 @@
 - `env.example` - configuration template.
 - `k8s/` - reference manifests (NOT_PROVISIONED).
 - `terraform/` - reference skeleton (NOT_PROVISIONED).
-- `drills/` - drill scripts/templates and evidence capture checklist.
+- `drills/` - drill scripts/templates, validators, readiness report generator.
 - `runbooks/` - operator runbooks.
-- `evidence/templates/` - evidence templates for real drills.
+- `evidence/` - evidence schema, required drills, templates.
+
+## Readiness tooling
+- `node ops/production/drills/validate-env-template.mjs`
+- `node ops/production/drills/validate-evidence.mjs <evidence-dir>`
+- `node ops/production/drills/generate-readiness-report.mjs <evidence-dir> <out.md>`
+- Report verdicts: `NOT_READY` or `EVIDENCE_COMPLETE_FOR_INDEPENDENT_REVIEW`; it never claims production ready/SLA.
 
 ## Required external actions (owner/operator)
 1. Provision managed Postgres HA/replication/failover in target cloud.
