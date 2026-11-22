@@ -52,7 +52,7 @@ import {
   existsSync,
 } from "node:fs";
 import { dirname } from "node:path";
-import { randomUUID, createHash } from "node:crypto";
+import { randomUUID, createHash, createHmac } from "node:crypto";
 
 export const CONTROL_PLANE_VERSION = "CGCP/1";
 export const CONTROL_PLANE_SCHEMA = "coreguard.control-plane/1";
@@ -1059,16 +1059,22 @@ export function createControlPlane({
     });
   }
 
-  function auditAnchor() {
+  function auditAnchor(options = {}) {
     return view((state) => {
       const chain = verifyAuditChain(state);
-      return {
+      const anchor = {
         ok: chain.ok,
         headHash: chain.headHash,
         length: chain.length,
         at: nowIso(),
-        boundary: "Local audit head anchor. NOT_BUILT: external witness/anchoring service, HSM signatures, or on-chain anchoring.",
       };
+      const hmacKey = options.hmacKey ?? process.env.COREGUARD_CONTROL_PLANE_ANCHOR_HMAC_KEY ?? null;
+      if (hmacKey) {
+        anchor.hmacSha256 = createHmac("sha256", String(hmacKey)).update(canonicalJson({ headHash: anchor.headHash, length: anchor.length })).digest("hex");
+        anchor.hmac = "hmac-sha256";
+      }
+      anchor.boundary = "Local audit head anchor. Optional HMAC is local shared-key integrity only. NOT_BUILT: external witness/anchoring service, KMS/HSM signatures, or on-chain anchoring.";
+      return anchor;
     });
   }
 
@@ -1079,16 +1085,26 @@ export function createControlPlane({
       const expectedLength = expected.length ?? null;
       const headOk = expectedHead == null ? true : chain.headHash === expectedHead;
       const lengthOk = expectedLength == null ? true : chain.length === expectedLength;
+      let hmacOk = true;
+      const hmacKey = expected.hmacKey ?? process.env.COREGUARD_CONTROL_PLANE_ANCHOR_HMAC_KEY ?? null;
+      if (expected.hmacSha256) {
+        if (!hmacKey) hmacOk = false;
+        else {
+          const actual = createHmac("sha256", String(hmacKey)).update(canonicalJson({ headHash: chain.headHash, length: chain.length })).digest("hex");
+          hmacOk = actual === String(expected.hmacSha256);
+        }
+      }
       return {
-        ok: chain.ok && headOk && lengthOk,
+        ok: chain.ok && headOk && lengthOk && hmacOk,
         chainOk: chain.ok,
         headOk,
         lengthOk,
+        hmacOk,
         expectedHead,
         expectedLength,
         actualHead: chain.headHash,
         actualLength: chain.length,
-        boundary: "Local anchor comparison only. NOT_BUILT: external witness/anchoring service.",
+        boundary: "Local anchor comparison only. Optional HMAC is local shared-key integrity only. NOT_BUILT: external witness/anchoring service.",
       };
     });
   }

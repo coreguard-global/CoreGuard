@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { pathToFileURL } from "node:url";
 /**
  * CoreGuard Control Plane CLI (CGCP/1) — operator surface over the same plane
  * the SDK and HTTP API use. Every command prints canonical JSON to stdout and
@@ -57,201 +58,215 @@ function out(value) {
 async function main() {
   const { positional, flags } = parseArgs(process.argv.slice(2));
   const storePath = flags.store ?? process.env.COREGUARD_CONTROL_PLANE_STORE ?? "./.coreguard/control-plane.json";
-  const plane = createControlPlane({ storePath, lockTimeoutMs: Number(flags["lock-timeout-ms"] ?? 5000), create: cmd === "init" });
+  const plane = createControlPlane({ storePath, lockTimeoutMs: Number(flags["lock-timeout-ms"] ?? 5000), create: positional[0] === "init" });
   const [command, sub] = positional;
-
-  switch (command) {
-    case undefined:
-    case "help":
-      out({
-        version: CONTROL_PLANE_VERSION,
-        boundary: CONTROL_PLANE_BOUNDARY,
-        store: storePath,
-        commands: [
-          "init",
-          "agent upsert|list|revoke",
-          "policy upsert|list|revoke",
-          "approval request|decide|get",
-          "evaluate|authorize|exec|verification",
-          "spend|report|verify|serve",
-        ],
-      });
-      return;
-
-    case "init":
-      out({ version: CONTROL_PLANE_VERSION, storePath, created: plane.getState().createdAt, boundary: CONTROL_PLANE_BOUNDARY });
-      return;
-
-    case "agent": {
-      if (sub === "upsert") {
-        out(
-          plane.upsertAgent({
-            id: requireFlag(flags, "id"),
-            name: flags.name ?? null,
-            policyId: flags.policy ?? null,
-            status: flags.status ?? undefined,
-            metadata: flags.metadata ? JSON.parse(flags.metadata) : undefined,
-          }),
-        );
+  const auditMeta = (flags.actor || flags["request-id"]) ? { actor: flags.actor ?? null, requestId: flags["request-id"] ?? null, source: "cli" } : null;
+  const dispatch = async () => {
+    switch (command) {
+      case undefined:
+      case "help":
+        out({
+          version: CONTROL_PLANE_VERSION,
+          boundary: CONTROL_PLANE_BOUNDARY,
+          store: storePath,
+          commands: [
+            "init",
+            "agent upsert|list|revoke",
+            "policy upsert|list|revoke",
+            "approval request|decide|get",
+            "evaluate|authorize|exec|verification",
+            "spend|report|verify|anchor|serve",
+          ],
+        });
         return;
-      }
-      if (sub === "list") return out({ agents: plane.listAgents() });
-      if (sub === "revoke") return out(plane.revokeAgent(requireFlag(flags, "id"), flags.reason ?? ""));
-      break;
-    }
 
-    case "policy": {
-      if (sub === "upsert") {
-        out(
-          plane.upsertPolicy({
-            id: requireFlag(flags, "id"),
-            name: flags.name ?? null,
-            status: flags.status ?? undefined,
-            note: flags.note ?? null,
-            spendLimitMinor: flags["spend-limit"] ?? null,
-            dailyLimitMinor: flags["daily-limit"] ?? null,
-            totalLimitMinor: flags["total-limit"] ?? null,
-            requireApprovalAboveMinor: flags["approval-above"] ?? null,
-            currency: flags.currency ?? null,
-            allowMerchants: list(flags["allow-merchants"]),
-            denyMerchants: list(flags["deny-merchants"]),
-            allowAddresses: list(flags["allow-addresses"]),
-            denyAddresses: list(flags["deny-addresses"]),
-          }),
-        );
+      case "init":
+        out({ version: CONTROL_PLANE_VERSION, storePath, created: plane.getState().createdAt, boundary: CONTROL_PLANE_BOUNDARY });
         return;
-      }
-      if (sub === "list") return out({ policies: plane.listPolicies() });
-      if (sub === "revoke") return out(plane.revokePolicy(requireFlag(flags, "id"), flags.reason ?? ""));
-      break;
-    }
 
-    case "approval": {
-      if (sub === "request") {
-        out(
-          plane.requestApproval({
-            id: flags.id,
+      case "agent": {
+        if (sub === "upsert") {
+          out(
+            plane.upsertAgent({
+              id: requireFlag(flags, "id"),
+              name: flags.name ?? null,
+              policyId: flags.policy ?? null,
+              status: flags.status ?? undefined,
+              metadata: flags.metadata ? JSON.parse(flags.metadata) : undefined,
+            }),
+          );
+          return;
+        }
+        if (sub === "list") return out({ agents: plane.listAgents() });
+        if (sub === "revoke") return out(plane.revokeAgent(requireFlag(flags, "id"), flags.reason ?? ""));
+        break;
+      }
+
+      case "policy": {
+        if (sub === "upsert") {
+          out(
+            plane.upsertPolicy({
+              id: requireFlag(flags, "id"),
+              name: flags.name ?? null,
+              status: flags.status ?? undefined,
+              note: flags.note ?? null,
+              spendLimitMinor: flags["spend-limit"] ?? null,
+              dailyLimitMinor: flags["daily-limit"] ?? null,
+              totalLimitMinor: flags["total-limit"] ?? null,
+              requireApprovalAboveMinor: flags["approval-above"] ?? null,
+              currency: flags.currency ?? null,
+              allowMerchants: list(flags["allow-merchants"]),
+              denyMerchants: list(flags["deny-merchants"]),
+              allowAddresses: list(flags["allow-addresses"]),
+              denyAddresses: list(flags["deny-addresses"]),
+            }),
+          );
+          return;
+        }
+        if (sub === "list") return out({ policies: plane.listPolicies() });
+        if (sub === "revoke") return out(plane.revokePolicy(requireFlag(flags, "id"), flags.reason ?? ""));
+        break;
+      }
+
+      case "approval": {
+        if (sub === "request") {
+          out(
+            plane.requestApproval({
+              id: flags.id,
+              agentId: requireFlag(flags, "agent"),
+              policyId: flags.policy ?? null,
+              merchant: flags.merchant ?? null,
+              address: flags.address ?? null,
+              amountMinor: flags.amount ?? null,
+              currency: flags.currency ?? null,
+              requestedBy: flags.by ?? null,
+              expiresAt: flags.expires ?? null,
+            }),
+          );
+          return;
+        }
+        if (sub === "decide") {
+          out(
+            plane.decideApproval(requireFlag(flags, "id"), {
+              decision: requireFlag(flags, "decision"),
+              decidedBy: flags.by ?? null,
+              reason: flags.reason ?? null,
+            }),
+          );
+          return;
+        }
+        if (sub === "get") {
+          const record = plane.getApproval(requireFlag(flags, "id"));
+          if (!record) throw new Error("unknown approval");
+          out(record);
+          return;
+        }
+        break;
+      }
+
+      case "evaluate":
+        return out(
+          plane.evaluate({
             agentId: requireFlag(flags, "agent"),
             policyId: flags.policy ?? null,
             merchant: flags.merchant ?? null,
             address: flags.address ?? null,
             amountMinor: flags.amount ?? null,
             currency: flags.currency ?? null,
-            requestedBy: flags.by ?? null,
-            expiresAt: flags.expires ?? null,
+            approvalId: flags.approval ?? null,
           }),
         );
-        return;
-      }
-      if (sub === "decide") {
-        out(
-          plane.decideApproval(requireFlag(flags, "id"), {
-            decision: requireFlag(flags, "decision"),
-            decidedBy: flags.by ?? null,
-            reason: flags.reason ?? null,
+
+      case "authorize":
+        return out(
+          plane.authorize({
+            agentId: requireFlag(flags, "agent"),
+            policyId: flags.policy ?? null,
+            merchant: flags.merchant ?? null,
+            address: flags.address ?? null,
+            amountMinor: flags.amount ?? null,
+            currency: flags.currency ?? null,
+            approvalId: flags.approval ?? null,
           }),
         );
+
+      case "exec":
+        return out(
+          plane.commitExecution({
+            id: flags.id,
+            agentId: requireFlag(flags, "agent"),
+            policyId: flags.policy ?? null,
+            merchant: flags.merchant ?? null,
+            address: flags.address ?? null,
+            amountMinor: requireFlag(flags, "amount"),
+            currency: flags.currency ?? null,
+            approvalId: flags.approval ?? null,
+            receiptId: flags.receipt ?? null,
+            verdict: flags.verdict ?? null,
+            orderRef: flags.order ?? null,
+          }),
+        );
+
+      case "verification":
+        return out(
+          plane.recordVerification({
+            executionId: flags.execution ?? null,
+            receiptId: flags.receipt ?? null,
+            verdict: flags.verdict ?? null,
+            source: flags.source ?? null,
+          }),
+        );
+
+      case "spend":
+        return out(plane.spend({ agentId: flags.agent ?? null, policyId: flags.policy ?? null }));
+
+
+      case "report":
+        return out(plane.auditReport({ limit: Number(flags.limit ?? 200) }));
+
+      case "verify":
+        return out(plane.verifyLedger());
+
+      case "anchor":
+        return out(plane.auditAnchor());
+
+      case "serve": {
+        const keyFile = flags["api-key-file"] ?? process.env.COREGUARD_CONTROL_PLANE_API_KEY_FILE;
+        let apiKey = flags["api-key"] ?? process.env.COREGUARD_CONTROL_PLANE_API_KEY;
+        const usedInlineKey = !!(flags["api-key"] && flags["api-key"] !== true);
+        if ((!apiKey || apiKey === true) && keyFile && keyFile !== true) {
+          apiKey = readFileSync(String(keyFile), "utf8").trim();
+        }
+        if (!apiKey || apiKey === true) throw new Error("--api-key-file, --api-key, or COREGUARD_CONTROL_PLANE_API_KEY/COREGUARD_CONTROL_PLANE_API_KEY_FILE is required");
+        if (usedInlineKey) {
+          process.stderr.write(JSON.stringify({ warning: "DEPRECATED_FLAG", detail: "--api-key is visible in process listings; prefer --api-key-file or COREGUARD_CONTROL_PLANE_API_KEY_FILE / secret mount." }) + "\n");
+        }
+        if (String(apiKey).length < 32) {
+          process.stderr.write(JSON.stringify({ warning: "WEAK_API_KEY", detail: "API key should be >= 32 chars with high entropy; short keys are easier to brute force." }) + "\n");
+        }
+        const started = await startControlPlaneServer({
+          controlPlane: plane,
+          apiKey: String(apiKey),
+          port: Number(flags.port ?? 8787),
+          host: flags.host ?? "127.0.0.1",
+        });
+        out({ serving: started.url, version: CONTROL_PLANE_VERSION, boundary: CONTROL_PLANE_BOUNDARY, security: { inlineKeyDeprecated: usedInlineKey, keyFileUsed: !!(keyFile && keyFile !== true) } });
         return;
       }
-      if (sub === "get") {
-        const record = plane.getApproval(requireFlag(flags, "id"));
-        if (!record) throw new Error("unknown approval");
-        out(record);
-        return;
-      }
-      break;
     }
 
-    case "evaluate":
-      return out(
-        plane.evaluate({
-          agentId: requireFlag(flags, "agent"),
-          policyId: flags.policy ?? null,
-          merchant: flags.merchant ?? null,
-          address: flags.address ?? null,
-          amountMinor: flags.amount ?? null,
-          currency: flags.currency ?? null,
-          approvalId: flags.approval ?? null,
-        }),
-      );
-
-    case "authorize":
-      return out(
-        plane.authorize({
-          agentId: requireFlag(flags, "agent"),
-          policyId: flags.policy ?? null,
-          merchant: flags.merchant ?? null,
-          address: flags.address ?? null,
-          amountMinor: flags.amount ?? null,
-          currency: flags.currency ?? null,
-          approvalId: flags.approval ?? null,
-        }),
-      );
-
-    case "exec":
-      return out(
-        plane.commitExecution({
-          id: flags.id,
-          agentId: requireFlag(flags, "agent"),
-          policyId: flags.policy ?? null,
-          merchant: flags.merchant ?? null,
-          address: flags.address ?? null,
-          amountMinor: requireFlag(flags, "amount"),
-          currency: flags.currency ?? null,
-          approvalId: flags.approval ?? null,
-          receiptId: flags.receipt ?? null,
-          verdict: flags.verdict ?? null,
-          orderRef: flags.order ?? null,
-        }),
-      );
-
-    case "verification":
-      return out(
-        plane.recordVerification({
-          executionId: flags.execution ?? null,
-          receiptId: flags.receipt ?? null,
-          verdict: flags.verdict ?? null,
-          source: flags.source ?? null,
-        }),
-      );
-
-    case "spend":
-      return out(plane.spend({ agentId: flags.agent ?? null, policyId: flags.policy ?? null }));
-
-    case "init":
-      return out({ ok: true, storePath, version: CONTROL_PLANE_VERSION, boundary: CONTROL_PLANE_BOUNDARY });
-
-    case "report":
-      return out(plane.auditReport({ limit: Number(flags.limit ?? 200) }));
-
-    case "verify":
-      return out(plane.verifyLedger());
-
-    case "anchor":
-      return out(plane.auditAnchor());
-
-    case "serve": {
-      const keyFile = flags["api-key-file"] ?? process.env.COREGUARD_CONTROL_PLANE_API_KEY_FILE;
-      let apiKey = flags["api-key"] ?? process.env.COREGUARD_CONTROL_PLANE_API_KEY;
-      if ((!apiKey || apiKey === true) && keyFile && keyFile !== true) {
-        apiKey = readFileSync(String(keyFile), "utf8").trim();
-      }
-      if (!apiKey || apiKey === true) throw new Error("--api-key-file, --api-key, or COREGUARD_CONTROL_PLANE_API_KEY is required");
-      const started = await startControlPlaneServer({
-        controlPlane: plane,
-        apiKey: String(apiKey),
-        port: Number(flags.port ?? 8787),
-        host: flags.host ?? "127.0.0.1",
-      });
-      out({ serving: started.url, version: CONTROL_PLANE_VERSION, boundary: CONTROL_PLANE_BOUNDARY });
-      return;
-    }
-  }
-
-  throw new Error(`unknown command: ${positional.join(" ") || "(none)"}`);
+    throw new Error(`unknown command: ${positional.join(" ") || "(none)"}`);
+  };
+  if (auditMeta) await plane.withAuditMeta(auditMeta, dispatch);
+  else await dispatch();
 }
 
-main().catch((err) => {
-  process.stderr.write(JSON.stringify({ error: { code: "CLI_ERROR", detail: err?.message ?? String(err) } }) + "\n");
-  process.exit(1);
-});
+const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isMain) {
+  main().catch((err) => {
+    process.stderr.write(JSON.stringify({ error: { code: "CLI_ERROR", detail: err?.message ?? String(err) } }) + "\n");
+    process.exit(1);
+  });
+}
+
+export { main };

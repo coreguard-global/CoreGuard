@@ -158,7 +158,7 @@ node packages/agent-commerce/control-plane-cli.mjs --store ./cp.json report
 node packages/agent-commerce/control-plane-cli.mjs --store ./cp.json serve --port 8787
 ```
 
-`serve` reads the key from `--api-key` or `COREGUARD_CONTROL_PLANE_API_KEY`.
+`serve` prefers `--api-key-file` / `COREGUARD_CONTROL_PLANE_API_KEY_FILE` (secret mount/file). `--api-key` is kept for compat but emits a deprecation warning (visible in process listings).
 
 ## BUILT vs NOT_BUILT
 
@@ -173,9 +173,15 @@ authenticated HTTP API, operator CLI, single-host cross-process locking, report 
 - multi-user identity, RBAC/ABAC, SSO/SAML/OIDC/SCIM, tenant isolation;
 - distributed storage, replication, consensus, HA, cross-region failover;
 - KMS/HSM-backed key management, regulated secret custody;
-- managed hosting, rate limiting/WAF, production SLO/SLA, on-call;
+- managed hosting, production SLO/SLA, on-call;
 - payment processing, custody, or PSP integrations;
-- an external anchor for the audit head (the chain is internally consistent, not notarised).
+- external witness/anchoring service for audit head (local hash chain + optional local HMAC/export exist; external notarization NOT_BUILT).
+
+## Operations and production track
+
+- **Runbook (bounded, current MVP):** `docs/control-plane-operations-runbook.md`
+- **Production PRD/ADR (proposed, NOT_BUILT):** `docs/control-plane-production-prd-adr.md`
+- **Security review:** `docs/security/CONTROL-PLANE-SECURITY-REVIEW-2026-11-22.md`
 
 Those are a separate hardened service, not a flag on this one. The public OpenAPI-style
 route list above is the contract to build against if that service is commissioned.
