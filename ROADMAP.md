@@ -36,29 +36,23 @@ Investor-facing detail and budget: [COREGUARD-INVESTMENT-READINESS.md](COREGUARD
 
 Nothing in phase 2 or 3 is claimed as started: no pilot is signed and no review is engaged.
 
-## 🟢 Independent external trial — reproduced by a stranger's machine
+## 🟢 External reproduction — a machine that had never touched this kit
 
 > **19 Nov 2026 · public record:** [ACP discussion #328](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/discussions/328)
 
-The **Zambo / AER-1 team** — authors of an independent agent-execution-receipt standard — cloned CoreGuard fresh at commit `5a1f3bd`, counted the CI checks themselves, and ran the VAR/1 pilot kit with one command. The seeded receipt then re-derived **byte-for-byte on three machines** across two Node runtimes.
+An outside payments team — **AgentBadge** (buidl25) — reported an independent run of the VAR/1 pilot kit on a machine that had never touched it: **15/15 rows, exit 0, run twice**, with a byte-identical seeded receipt on a Node runtime outside our tested set. The same public report names one **disagreeing row**: an identical rerun into the same `outDir` reopens a ledger that already recorded the spend, so 3 rows fail on the second run — a real kit limitation, documented rather than hidden. The **AER-1 team** reviewed the model separately in the same thread; that is standards feedback, not a trial, and their name is not attached to the external run.
 
 | Signal | Result | Source |
 |---|:--:|---|
 | Pilot-kit rows on a fresh clone, run twice | **15 / 15 · exit 0** | [external report](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/discussions/328#discussioncomment-19722647) |
-| CI check runs counted externally on the commit | **12 / 12** | same report |
-| Seeded receipt identical on 3 machines (node v24 · v26) | **byte-identical** | [seeded run](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/discussions/328#discussioncomment-19750155) · [third machine](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/discussions/328#discussioncomment-19752157) |
-| `present-consistent-nonconforming` fixture tests re-run externally | **6 / 6** | third-machine check |
+| Seeded receipt across the reporter's runs | **byte-identical** | [seeded run](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/discussions/328#discussioncomment-19750155) |
+| Same-`outDir` rerun (reported disagreement) | **12 / 15** — stateful spend rows | same report |
+| AER-1 team review in the same thread | **standards feedback, not a trial** | [ACP #328](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/discussions/328) |
 | AER-1 × VAR/1 outcome mapping agreed in public | **5 outcomes mapped** | [mapping note](https://github.com/coreguard-global/CoreGuard/blob/main/docs/aer1-var1-outcome-mapping.md) |
 
-```text
-$ node examples/var1-pilot-kit/run.mjs --seed e8cfcd1a93ce50d6d6ace046db9c878ba8e63d3873acc821c9c6d0742cd848cb --at 2026-11-19T14:00:00Z
-receipt  urn:sha256:8c6c12bad40471d2c83d8f6ee2a0c07c8649045aa2e96726a4ee31bec13a72c7
-body     sha256:386d218c154ae444c878b1b4ee32daf3f5b32f8bd9de363aa854c89f099334b1
-```
+**What shipped in that window (our work, not the reporter's):** `VAR/1` one-command pilot kit · `CG-OUT/1` outcome layer (five outcomes; `ABSENT` / `NOT_CHECKED` never travel as a block) · `CG-ID/1` record identity split · AER-1 parser + full 72-file corpus run · `CG-ANCHOR/1` own anchor service + `CG-COMPOSE/1` composition policy · Agent Commerce discovery, key trust, spend ledger and payment policy · two-column corpus vectors (`present-consistent-nonconforming`, `anchor-unresolvable`).
 
-**What came out of it — shipped Nov 15–19:** `VAR/1` one-command pilot kit · `CG-OUT/1` outcome layer (five outcomes; `ABSENT` / `NOT_CHECKED` never travel as a block) · `CG-ID/1` record identity split · AER-1 parser + full 72-file corpus run · `CG-ANCHOR/1` own anchor service + `CG-COMPOSE/1` composition policy · Agent Commerce discovery, key trust, spend ledger and payment policy · two-column corpus vectors (`present-consistent-nonconforming`, `anchor-unresolvable`).
-
-> **Scope, stated plainly:** this is an independent *technical reproduction* of our open kit by another standards team. It is **not** a commercial pilot, customer, partnership, audit or endorsement. `VERIFIED ≠ SAFE`.
+> **Scope, stated plainly:** this is an independent *technical reproduction* of our open kit by an outside payments team (AgentBadge). It is **not** a commercial pilot, customer, partnership, audit or endorsement, and it is **not** an AER-1 trial. `VERIFIED ≠ SAFE`.
 
 **Founder:** [EslaM HeshAM (MR-X)](https://coreguard-trust-and-defense.lovable.app/founder) · Website: [coreguard-trust-and-defense.lovable.app](https://coreguard-trust-and-defense.lovable.app)
 

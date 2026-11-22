@@ -107,11 +107,14 @@ so per surface.
 
 ## 5 · Independent Reproduction
 
-On 19 Nov 2026 the **Zambo / AER-1** team — authors of an independent
-agent-execution-receipt standard, with no relationship to this project — cloned
-the repository at a pinned commit, counted the CI checks themselves, and ran the
-VAR/1 pilot kit with one command. The seeded receipt re-derived byte-for-byte on
-three machines across two Node runtimes.
+On 19 Nov 2026 an outside payments team — **AgentBadge** (buidl25), with no
+relationship to this project — reported an independent run of the VAR/1 pilot kit
+on a machine that had never touched it: 15/15 rows, exit 0, run twice, with a
+byte-identical seeded receipt on a Node runtime outside our tested set. The same
+public report names one disagreeing row (an identical rerun into the same
+`outDir` reopens a spent ledger) — a kit limitation we document. The AER-1 team
+reviewed the model separately in that thread; that is standards feedback, not a
+trial, and their name is not attached to the external run.
 
 | Signal | Result |
 |---|---|
@@ -123,7 +126,7 @@ three machines across two Node runtimes.
 Public record: [ACP discussion #328](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/discussions/328).
 
 **Limits of this signal, stated plainly:** it is a technical reproduction of an
-open kit by another standards team. It is not a customer, a commercial pilot, a
+open kit by an outside payments team; it is not an AER-1 trial. It is not a customer, a commercial pilot, a
 partnership, an audit or an endorsement. It proves reproducibility by someone who
 does not work here — nothing more.
 

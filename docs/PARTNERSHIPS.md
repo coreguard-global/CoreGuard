@@ -7,7 +7,7 @@ them is how a target list becomes a fake traction slide.
 
 | Relationship | What it is | Where it is recorded |
 |---|---|---|
-| **Zambo / AER-1 team** — independent standards group | Reproduced our open VAR/1 pilot kit on a fresh clone, counted CI checks themselves, re-derived a seeded receipt byte-for-byte on three machines. **A technical reproduction, not a pilot, customer or endorsement.** | [ACP discussion #328](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/discussions/328) |
+| **AgentBadge (buidl25)** — outside payments team | Reported an independent run of the open VAR/1 pilot kit on a fresh machine: 15/15 rows twice, byte-identical seeded receipt, plus one named disagreement (same-`outDir` rerun). **A technical reproduction, not a pilot, customer or endorsement; not an AER-1 trial.** | [ACP discussion #328](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/discussions/328) |
 | **Stellar / Freighter** (#3087) | Public technical evaluation comment on PSAR/1 pre-sign receipts. **An issue comment, not an integration and not a review.** | [stellar/freighter#3087](https://github.com/stellar/freighter/issues/3087) |
 | **Signed pilots** | **None.** | — |
 | **Paid customers** | **None.** | — |
