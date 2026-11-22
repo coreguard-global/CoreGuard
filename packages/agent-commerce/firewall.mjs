@@ -185,7 +185,7 @@ export async function authorizeRequest({ consent = null, intent = null, policy =
 
     // Single-use replay state at request time — consulted, never consumed.
     const ledger = consent.intent.singleUse ? (consumedSet ?? null) : null;
-    if (ledger && consent.receiptId && ledger.has(consent.receiptId)) {
+    if (ledger && consent.receiptId && (await ledger.has(consent.receiptId))) {
       reasons.push(reject("SINGLE_USE_CONSUMED", { field: "consent.receiptId", detail: "this single-use authorization was already consumed by a verified execution" }));
     }
   }

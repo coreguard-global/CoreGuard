@@ -9,7 +9,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
@@ -128,6 +128,87 @@ test("file-backed store prevents single-use replay across process-style reopen (
     const replay = await verifyExecution(consent, trace(), { consumedSet: ledger2 });
     assert.equal(replay.verdict, "INVALID");
     assert.ok(replay.risk.violations.some((v) => v.code === "SINGLE_USE_REUSE"));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("tryAdd is an atomic claim: exactly one caller is told it was first", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cg-cs-"));
+  try {
+    const file = join(dir, "ledger.json");
+    const a = createConsumptionStore(file);
+    const b = createConsumptionStore(file);
+    assert.equal(a.tryAdd("receipt-1"), true);
+    assert.equal(b.tryAdd("receipt-1"), false, "a second process-style store must not claim the same id");
+    assert.equal(b.has("receipt-1"), true, "the second store sees the first store's commit immediately");
+    assert.equal(a.tryAdd("receipt-1"), false);
+    assert.equal(a.ids().length, 1);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("AC-CS/1 accepts an asynchronous shared ledger adapter (awaitable has/add)", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "cg-cs-"));
+  try {
+    const consent = await createConsent({ intent: intent(), policy: policy(), declaredTrace: trace(), nowSeconds: NOW });
+    const remote = new Set();
+    const asyncLedger = {
+      async has(id) {
+        await new Promise((r) => setImmediate(r));
+        return remote.has(id);
+      },
+      async add(id) {
+        await new Promise((r) => setImmediate(r));
+        remote.add(id);
+      },
+    };
+    const first = await verifyExecution(consent, trace(), { consumedSet: asyncLedger });
+    assert.equal(first.verdict, "VERIFIED");
+    assert.match(first.consumedLedger, /caller-supplied ledger/);
+    const replay = await verifyExecution(consent, trace(), { consumedSet: asyncLedger });
+    assert.equal(replay.verdict, "INVALID");
+    assert.ok(replay.risk.violations.some((v) => v.code === "SINGLE_USE_REUSE"));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("four real processes racing for the same 20 receipts: each receipt is claimed exactly once", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "cg-cs-race-"));
+  try {
+    const file = join(dir, "ledger.json");
+    const workerPath = join(dir, "worker.mjs");
+    const moduleUrl = new URL("../../packages/agent-commerce/consumption-store.mjs", import.meta.url).href;
+    writeFileSync(
+      workerPath,
+      [
+        `import { createConsumptionStore } from ${JSON.stringify(moduleUrl)};`,
+        `const store = createConsumptionStore(process.argv[2], { lockTimeoutMs: 20000 });`,
+        `const wins = [];`,
+        `for (let i = 0; i < 20; i += 1) if (store.tryAdd('receipt-' + i)) wins.push(i);`,
+        `process.stdout.write(JSON.stringify(wins));`,
+      ].join("\n"),
+    );
+    const { spawn } = await import("node:child_process");
+    const runWorker = () =>
+      new Promise((resolve, reject) => {
+        const child = spawn(process.execPath, [workerPath, file], { stdio: ["ignore", "pipe", "pipe"] });
+        let out = "";
+        let err = "";
+        child.stdout.on("data", (c) => (out += c));
+        child.stderr.on("data", (c) => (err += c));
+        child.on("error", reject);
+        child.on("exit", (code) =>
+          code === 0 ? resolve(JSON.parse(out || "[]")) : reject(new Error(`worker exited ${code}: ${err}`)),
+        );
+      });
+
+    const results = await Promise.all([runWorker(), runWorker(), runWorker(), runWorker()]);
+    const allWins = results.flat().sort((x, y) => x - y);
+    assert.deepEqual(allWins, Array.from({ length: 20 }, (_, i) => i), "each of the 20 ids must have exactly one winner");
+    assert.equal(createConsumptionStore(file).ids().length, 20);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

@@ -179,11 +179,11 @@ Checks/consumes/releases a receiptId in a consumption ledger.
 |---|---|---|---|
 | `receiptId` | string | yes | receipt/consent key |
 | `action` | string | no | `check` (default), `consume`, or `release` |
-| `storePath` | string | no | AC-CS/1 file-backed store path for same-host cross-process use |
+| `storePath` | string | no | AC-CS/1 file-backed store path; defaults to `COREGUARD_CONSUMPTION_STORE` when set |
 
 Output: `{ receiptId, action, consumed, ledger, boundary }`.
 
-**Boundary:** default ledger is **process-local** to this MCP server process. With `storePath`, uses AC-CS/1 file-backed store (**same host, cross-process only**). **NOT_BUILT:** distributed/device sync, consensus, HA replication, on-chain anchoring.
+**Boundary:** the default ledger is **process-local** to this MCP server process. With `storePath` (or `COREGUARD_CONSUMPTION_STORE`), the AC-CS/1 store is used: lock-guarded and atomic across processes **on one host**. Cross-host reconciliation is CG-SPEND/1 log merge (`spend.mjs`), not this file. **NOT_BUILT:** a distributed/global register, consensus, HA replication, on-chain anchoring.
 
 ## Errors
 
@@ -214,6 +214,50 @@ node scripts/agent-commerce-mcp-smoke.mjs
 The demo ends in `PASS (8/8)`. The smoke check ends in `11/11 PASS` and exits non-zero on any failure.
 Expected demo output: `examples/agent-commerce-mcp/README.md`.
 
+```bash
+# Control plane: policies, approvals, spend caps, revocation, audit chain (HTTP, offline)
+node examples/agent-commerce-control-plane/run.mjs
+```
+
+## Policy & Evidence Control Plane (CGCP/1)
+
+Beyond the per-order check, a team needs the operational layer: which agents exist,
+which policy each runs under, what was approved, what was executed, what was
+verified, what has been spent, and what was revoked. CGCP/1 is that layer, in this
+package and self-hosted.
+
+```js
+import { createControlPlane } from "@coreguard/agent-commerce/control-plane.mjs";
+
+const cp = createControlPlane({ storePath: "./control-plane.json" });
+cp.upsertPolicy({ id: "p1", spendLimitMinor: "5000", dailyLimitMinor: "20000",
+  requireApprovalAboveMinor: "2000", allowMerchants: ["merchant-a"] });
+cp.upsertAgent({ id: "a1", policyId: "p1" });
+
+cp.evaluate({ agentId: "a1", merchant: "merchant-a", amountMinor: "2500" });
+// { allowed: false, reasons: ["APPROVAL_REQUIRED"], ... }
+const ap = cp.requestApproval({ agentId: "a1", policyId: "p1", merchant: "merchant-a", amountMinor: "2500" });
+cp.decideApproval(ap.id, { decision: "approved", decidedBy: "ops@example" });
+cp.commitExecution({ agentId: "a1", merchant: "merchant-a", amountMinor: "2500", approvalId: ap.id });
+
+cp.verifyLedger(); // { ok: true, chain: { ok: true, length, headHash } }
+```
+
+- Immutable policy versions (an upsert appends, never rewrites history).
+- Per-transaction, trailing-24h and lifetime spend caps; merchant/address allow+deny lists.
+- Approvals bound to one order (agent, policy, merchant, address, amount) with expiry.
+- Commits re-evaluate, so a revocation or a limit breach between authorise and commit is refused.
+- Append-only hash-chained audit with `verifyAuditChain()`; tamper detection names the first broken entry.
+- Lock-guarded single-host store; authenticated HTTP API (`control-plane-http.mjs`) and CLI (`control-plane-cli.mjs`).
+
+```text
+node packages/agent-commerce/control-plane-cli.mjs serve --port 8787
+```
+
+**NOT_BUILT:** multi-tenant isolation, RBAC/SSO/SCIM, distributed HA/consensus, KMS/HSM,
+managed SLA, payment custody. One host, one API key, one JSON store. Architecture:
+`docs/control-plane-architecture.md`; operations: `docs/control-plane-runbook.md`.
+
 ## SDK, without MCP
 
 ```js
@@ -230,7 +274,7 @@ by going through MCP.
   with any provider.
 - **VERIFIED ≠ SAFE** — a verdict states that commitments re-derive; it is not a
   guarantee of any broader outcome.
-- Single-use consumption is process-local; durable anchoring is `NOT_BUILT`.
+- Single-use consumption is process-local by default; the AC-CS/1 store makes it durable and atomic across processes on one host. Cross-host reconciliation is CG-SPEND/1 log merge; a global/on-chain register is `NOT_BUILT`.
 - The executed trace is caller-supplied. Fetching it from a chain or a PSP is an
   integration this package does not contain.
 - No third-party security review, no certification. Marketplace grades are
@@ -251,11 +295,13 @@ License: MIT.
 - **Runtime smoke (real stdio):** `node scripts/agent-commerce-mcp-smoke.mjs`
 - **60s demo script:** `docs/agent-commerce-mcp-demo-60s.md`
 - **MCP contract tests:** `node --test test/integrations/agent-commerce-mcp.test.mjs`
+- **Control plane architecture / runbook:** `docs/control-plane-architecture.md` · `docs/control-plane-runbook.md`
+- **Control plane demo (HTTP, offline):** `node examples/agent-commerce-control-plane/run.mjs`
 
 ## Honest boundaries (read before integrating)
 
 - **`VERIFIED ≠ SAFE`** — verification means the observed execution matches the approved/committed bytes under the checked rules; it is not a blanket safety or fraud guarantee.
 - **Offline / no external contacts** — this package does not contact commerce platforms, payment networks, wallets, or PSPs.
-- **Single-use consumption is process-local** — durable cross-process/distributed replay protection is `NOT_BUILT`.
+- **Single-use consumption scope** — process-local by default; AC-CS/1 gives a lock-guarded file ledger across processes on one host; CG-SPEND/1 merges logs across hosts; a global register and on-chain anchoring are `NOT_BUILT`.
 - **Caller-supplied observed trace** — execution verification checks the trace you provide against the consent; it does not independently fetch or prove external payment/network truth.
 - **No fake "Tested" claims** — client compatibility is marked CONFIG-DOCUMENTED until a real run is recorded in the compatibility run log.

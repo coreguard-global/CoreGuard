@@ -207,10 +207,16 @@ export interface ExecutionVerdict {
  * default ledger is process-local (durable single-use anchoring NOT_BUILT —
  * pass an external `consumedSet` for cross-session consumption control).
  */
+/** A consumption ledger may be synchronous (Set, AC-CS/1) or asynchronous (a shared/remote store). */
+export interface ConsumptionLedger {
+  has(id: string): boolean | Promise<boolean>;
+  add(id: string): unknown | Promise<unknown>;
+}
+
 export declare function verifyExecution(
   consent: ConsentRecord,
   trace: DeclaredTrace,
-  options?: { consumedSet?: { has(id: string): boolean; add(id: string): unknown } },
+  options?: { consumedSet?: ConsumptionLedger },
 ): Promise<ExecutionVerdict>;
 
 // ---------------------------------------------------------------------------
@@ -306,6 +312,8 @@ export interface ConsumptionStore {
   boundary: string;
   has(id: string): boolean;
   add(id: string): ConsumptionStore;
+  /** Atomic cross-process claim: true only for the caller that added the id. */
+  tryAdd(id: string): boolean;
   delete(id: string): boolean;
   clear(): void;
   readonly size: number;
@@ -925,28 +933,239 @@ export declare function assertDecisionInvariants(): Readonly<{ ok: boolean; viol
 export declare function decisionSelfCheck(): Readonly<{ ok: boolean; checks: ReadonlyArray<{ name: string; pass: boolean }> }>;
 
 // ---------------------------------------------------------------------------
-// CGCP/0.1 — local/file-backed control plane MVP (honest boundaries).
-// NOT_BUILT: multi-user RBAC/SSO, distributed HA, cross-device sync, KMS.
+// CGCP/1 — self-hosted Policy & Evidence Control Plane.
+// BUILT: agents, immutable policy versions, approvals, rolling spend windows,
+// execution and verification ledgers, revocation, hash-chained audit, an
+// authenticated HTTP API and a CLI.
+// NOT_BUILT: multi-tenant RBAC/SSO/SCIM, distributed HA/consensus, KMS/HSM,
+// managed SLA, payment custody. Single host, single API key, file-backed.
 // ---------------------------------------------------------------------------
 
-export const CONTROL_PLANE_VERSION: "CGCP/0.1";
+export const CONTROL_PLANE_VERSION: "CGCP/1";
+export const CONTROL_PLANE_SCHEMA: "coreguard.control-plane/1";
 export const CONTROL_PLANE_BOUNDARY: string;
+export const CONTROL_PLANE_DECISION_REASONS: readonly string[];
 
-export interface ControlPlaneAgent { id: string; status?: string; [k: string]: unknown; }
-export interface ControlPlanePolicy { id: string; status?: string; spendLimitMinor?: string | number | null; allowMerchants?: string[]; denyMerchants?: string[]; allowAddresses?: string[]; denyAddresses?: string[]; [k: string]: unknown; }
-export interface ControlPlaneEvaluation { allowed: boolean; reasons: string[]; agentId?: string; policyId?: string; merchant?: string; address?: string; amountMinor?: string | number | null; at: string; }
-export interface ControlPlaneAuditReport { version: string; boundary: string; generatedAt: string; counts: Record<string, number>; agents: unknown[]; policies: unknown[]; revocations: unknown[]; recentExecutions: unknown[]; recentAudit: unknown[]; }
+export interface ControlPlanePolicySpec {
+  spendLimitMinor: string | null;
+  dailyLimitMinor: string | null;
+  totalLimitMinor: string | null;
+  requireApprovalAboveMinor: string | null;
+  currency: string | null;
+  allowMerchants: string[];
+  denyMerchants: string[];
+  allowAddresses: string[];
+  denyAddresses: string[];
+  rules: unknown[];
+}
+
+export interface ControlPlanePolicyVersion {
+  version: number;
+  hash: string;
+  at: string;
+  note: string | null;
+  spec: ControlPlanePolicySpec;
+}
+
+export interface ControlPlaneAgent {
+  id: string;
+  name?: string | null;
+  status: "active" | "inactive" | "revoked";
+  policyId: string | null;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ControlPlanePolicy {
+  id: string;
+  name: string;
+  status: "active" | "inactive" | "revoked";
+  currentVersion: number;
+  versions: ControlPlanePolicyVersion[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ControlPlaneApproval {
+  id: string;
+  agentId: string;
+  policyId: string | null;
+  merchant: string | null;
+  address: string | null;
+  amountMinor: string | null;
+  currency: string | null;
+  status: "pending" | "approved" | "rejected";
+  requestedAt: string;
+  requestedBy: string | null;
+  expiresAt: string;
+  decidedAt: string | null;
+  decidedBy: string | null;
+  reason: string | null;
+  hash: string | null;
+}
+
+export interface ControlPlaneDecision {
+  version: string;
+  allowed: boolean;
+  reasons: string[];
+  checks: Record<string, unknown>;
+  agentId: string | null;
+  policyId: string | null;
+  policyVersion: number | null;
+  merchant: string | null;
+  address: string | null;
+  amountMinor: string | null;
+  currency: string | null;
+  approvalId: string | null;
+  at: string;
+  boundary: string;
+}
+
+export interface ControlPlaneExecution {
+  id: string;
+  agentId: string | null;
+  policyId: string | null;
+  policyVersion: number | null;
+  merchant: string | null;
+  address: string | null;
+  amountMinor: string | null;
+  currency: string | null;
+  approvalId: string | null;
+  receiptId: string | null;
+  verdict: string | null;
+  orderRef: string | null;
+  at: string;
+  decisionHash: string;
+  hash: string;
+}
+
+export interface ControlPlaneSpendSummary {
+  agentId: string | null;
+  policyId: string | null;
+  executions: number;
+  rolling24hMinor: string;
+  totalMinor: string;
+  boundary: string;
+}
+
+export interface ControlPlaneCommitResult {
+  committed: boolean;
+  duplicate: boolean;
+  reasons?: string[];
+  executionId: string;
+  execution?: ControlPlaneExecution;
+  decision?: ControlPlaneDecision;
+  spend?: { agentId: string | null; policyId: string | null; rolling24hMinor: string; totalMinor: string };
+  boundary: string;
+}
+
+export interface ControlPlaneAuditEntry {
+  seq: number;
+  type: string;
+  at: string;
+  detail: unknown;
+  prevHash: string;
+  hash: string;
+}
+
+export interface ControlPlaneChainStatus {
+  ok: boolean;
+  length: number;
+  brokenAt: number | null;
+  reason: string | null;
+  headHash: string;
+}
+
+export interface ControlPlaneAuditReport {
+  version: string;
+  schema: string;
+  boundary: string;
+  generatedAt: string;
+  counts: Record<string, number>;
+  chain: ControlPlaneChainStatus;
+  agents: ControlPlaneAgent[];
+  policies: Array<ControlPlanePolicy & { active: ControlPlanePolicyVersion | null }>;
+  revocations: Array<{ agentId: string; reason: string; at: string }>;
+  recentExecutions: ControlPlaneExecution[];
+  recentVerifications: Array<Record<string, unknown>>;
+  recentAudit: ControlPlaneAuditEntry[];
+  reportHash: string;
+}
+
+export interface ControlPlaneLedgerVerification {
+  ok: boolean;
+  chain: ControlPlaneChainStatus;
+  executions: number;
+  executionHashesOk: boolean;
+  approvals: number;
+  approvalHashesOk: boolean;
+  boundary: string;
+}
+
 export interface ControlPlane {
   version: string;
+  schema: string;
   boundary: string;
   storePath: string;
-  upsertAgent(agent: ControlPlaneAgent): ControlPlaneAgent;
-  upsertPolicy(policy: ControlPlanePolicy): ControlPlanePolicy;
+  upsertAgent(agent: Partial<ControlPlaneAgent> & { id: string }): ControlPlaneAgent;
+  getAgent(agentId: string): ControlPlaneAgent | null;
+  listAgents(): ControlPlaneAgent[];
+  bindPolicy(agentId: string, policyId: string): ControlPlaneAgent;
   revokeAgent(agentId: string, reason?: string): ControlPlaneAgent;
+  upsertPolicy(policy: Partial<ControlPlanePolicySpec> & { id: string; name?: string; status?: string; note?: string | null }): ControlPlanePolicy;
+  getPolicy(policyId: string): ControlPlanePolicy | null;
+  listPolicies(): ControlPlanePolicy[];
+  revokePolicy(policyId: string, reason?: string): ControlPlanePolicy;
+  requestApproval(request: { agentId: string; id?: string; policyId?: string | null; merchant?: string | null; address?: string | null; amountMinor?: string | null; currency?: string | null; requestedBy?: string | null; expiresAt?: string | null }): ControlPlaneApproval;
+  decideApproval(approvalId: string, decision: { decision: "approved" | "rejected"; decidedBy?: string | null; reason?: string | null }): ControlPlaneApproval;
+  getApproval(approvalId: string): ControlPlaneApproval | null;
   recordApproval(approval: Record<string, unknown> & { id: string; agentId: string }): Record<string, unknown>;
+  evaluate(request: { agentId?: string | null; policyId?: string | null; merchant?: string | null; address?: string | null; amountMinor?: string | null; currency?: string | null; approvalId?: string | null }): ControlPlaneDecision;
+  authorize(request: { agentId?: string | null; policyId?: string | null; merchant?: string | null; address?: string | null; amountMinor?: string | null; currency?: string | null; approvalId?: string | null }): ControlPlaneDecision & { decisionId: string };
+  commitExecution(execution: { agentId: string; id?: string; policyId?: string | null; merchant?: string | null; address?: string | null; amountMinor: string; currency?: string | null; approvalId?: string | null; receiptId?: string | null; verdict?: string | null; orderRef?: string | null }): ControlPlaneCommitResult;
   recordExecution(execution: Record<string, unknown> & { id: string }): Record<string, unknown>;
-  evaluate(input: { agentId?: string; policyId?: string; merchant?: string; address?: string; amountMinor?: string | number | null }): ControlPlaneEvaluation;
+  recordVerification(verification: Record<string, unknown>): Record<string, unknown>;
+  listExecutions(input?: { limit?: number }): ControlPlaneExecution[];
+  listVerifications(input?: { limit?: number }): Array<Record<string, unknown>>;
+  spend(input?: { agentId?: string | null; policyId?: string | null }): ControlPlaneSpendSummary;
   auditReport(input?: { limit?: number }): ControlPlaneAuditReport;
+  verifyLedger(): ControlPlaneLedgerVerification;
   getState(): Record<string, unknown>;
 }
-export declare function createControlPlane(input: { storePath: string }): ControlPlane;
+
+export declare function createControlPlane(input: {
+  storePath: string;
+  now?: () => Date;
+  lockTimeoutMs?: number;
+  staleLockMs?: number;
+}): ControlPlane;
+
+export declare function verifyAuditChain(state: unknown): ControlPlaneChainStatus;
+
+export declare function createControlPlaneHandler(input: {
+  controlPlane: ControlPlane;
+  apiKey: string;
+  maxBodyBytes?: number;
+}): (req: unknown, res: unknown) => Promise<void>;
+
+export declare function createControlPlaneServer(input: {
+  controlPlane: ControlPlane;
+  apiKey: string;
+  maxBodyBytes?: number;
+}): unknown;
+
+export declare function startControlPlaneServer(input: {
+  storePath?: string;
+  apiKey: string;
+  port?: number;
+  host?: string;
+  controlPlane?: ControlPlane | null;
+  maxBodyBytes?: number;
+}): Promise<{
+  server: unknown;
+  controlPlane: ControlPlane;
+  url: string;
+  port: number;
+  close(): Promise<void>;
+}>;

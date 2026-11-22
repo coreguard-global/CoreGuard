@@ -59,7 +59,14 @@ const SERVER_INFO = Object.freeze({ name: "coreguard-agent-commerce", version: P
 const SERVER_BOUNDARY =
   "offline verification surface — binds approvals and verifies executions on committed machinery; " +
   "no contact with any commerce platform or payment network; VERIFIED ≠ SAFE; " +
-  "single-use consumption is process-local (durable anchoring NOT_BUILT)";
+  "single-use consumption is process-local by default — pass storePath or set COREGUARD_CONSUMPTION_STORE for an " +
+  "AC-CS/1 lock-guarded file ledger (cross-process on this host); cross-host reconciliation is CG-SPEND/1 merge; " +
+  "on-chain anchoring NOT_BUILT";
+
+// Optional deployment-wide AC-CS/1 ledger path. Unset keeps the documented
+// process-local default; setting it makes single-use durable across processes
+// on this host without changing any tool arguments.
+const DEFAULT_CONSUMPTION_STORE = process.env.COREGUARD_CONSUMPTION_STORE?.trim() || null;
 
 const TOOL_NAMES = Object.freeze([
   "coreguard_authorize",
@@ -471,13 +478,13 @@ const TOOLS = Object.freeze([
   {
     name: "coreguard_consumption_status",
     description:
-      "Check/consume/release a receiptId in a consumption ledger. Default is process-local (this MCP process only). If storePath is supplied, uses AC-CS/1 file-backed store (cross-process on same host only). Distributed/device sync and on-chain anchoring are NOT_BUILT.",
+      "Check/consume/release a receiptId in a consumption ledger. Default is process-local (this MCP process only). If storePath is supplied (or COREGUARD_CONSUMPTION_STORE is set), uses the AC-CS/1 lock-guarded file store, which is atomic across processes on the same host. Cross-host reconciliation is CG-SPEND/1 merge; on-chain anchoring is NOT_BUILT.",
     inputSchema: {
       type: "object",
       properties: {
         receiptId: { type: "string", description: "receipt/consent identifier key" },
         action: { type: "string", enum: ["check", "consume", "release"], description: "check, consume, or release", default: "check" },
-        storePath: { type: "string", description: "optional AC-CS/1 file-backed store path for same-host cross-process consumption" },
+        storePath: { type: "string", description: "optional AC-CS/1 file-backed store path for same-host cross-process consumption (default: COREGUARD_CONSUMPTION_STORE)" },
         ...CALLER_CONTEXT_PROPERTY,
       },
       required: ["receiptId"],
@@ -489,7 +496,7 @@ const TOOLS = Object.freeze([
         receiptId: { type: "string" },
         action: { type: "string" },
         consumed: { type: "boolean" },
-        ledger: { type: "string", description: "process-local or file-backed-host" },
+        ledger: { type: "string", description: "process-local or file-backed (AC-CS/1, cross-process on this host)" },
         boundary: { type: "string" },
         callerContext: { type: "object" },
       },
@@ -546,14 +553,15 @@ async function callTool(name, args, { consumedSet } = {}) {
     if (name === "coreguard_consumption_status") {
       const action = a.action ?? "check";
       const key = a.receiptId;
-      if (a.storePath) {
-        const store = createConsumptionStore(a.storePath);
+      const storePath = a.storePath ?? DEFAULT_CONSUMPTION_STORE;
+      if (storePath) {
+        const store = createConsumptionStore(storePath);
         let consumed;
-        if (action === "consume") { store.add(key); consumed = store.has(key); }
+        if (action === "consume") { consumed = store.tryAdd(key) || store.has(key); }
         else if (action === "release") { store.delete(key); consumed = store.has(key); }
         else consumed = store.has(key);
         return success(withCallerContext({
-          receiptId: key, action, consumed, ledger: "file-backed-host", boundary: CONSUMPTION_STORE_BOUNDARY,
+          receiptId: key, action, consumed, ledger: "file-backed (AC-CS/1, lock-guarded across processes on this host)", boundary: CONSUMPTION_STORE_BOUNDARY,
         }, a));
       }
       const set = consumedSet ?? new Set();
@@ -563,7 +571,7 @@ async function callTool(name, args, { consumedSet } = {}) {
       else consumed = set.has(key);
       return success(withCallerContext({
         receiptId: key, action, consumed, ledger: "process-local",
-        boundary: "process-local only; NOT_BUILT for cross-process/device distributed sync or on-chain anchoring in this MCP process",
+        boundary: "process-local only; set storePath or COREGUARD_CONSUMPTION_STORE for the AC-CS/1 file ledger (cross-process on this host); cross-host sync is CG-SPEND/1 merge; on-chain anchoring NOT_BUILT",
       }, a));
     }
     return failure(ERROR_CODES.UNKNOWN_TOOL, `unknown tool: ${String(name)}`);

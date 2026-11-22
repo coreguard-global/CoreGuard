@@ -263,7 +263,10 @@ export async function verifyConsent(consent) {
 export async function verifyExecution(consent, trace, { consumedSet } = {}) {
   requireConsent(consent);
   const ledger = consumedSet ?? processConsumed;
-  const alreadyConsumed = ledger.has(consent.receiptId);
+  // Ledger reads/writes are awaited so an asynchronous adapter (a shared or
+  // remote consumption store) is a first-class injection. A plain Set still
+  // works unchanged: awaiting a non-promise is the value itself.
+  const alreadyConsumed = (await ledger.has(consent.receiptId)) === true;
 
   const verification = await verifyReceipt(consent.receipt, null, consent.intent, consent.policy, trace);
   const risk = assessRisk({ intent: consent.intent, policy: consent.policy, trace, consumed: alreadyConsumed });
@@ -272,7 +275,7 @@ export async function verifyExecution(consent, trace, { consumedSet } = {}) {
   const drift = nameDrift(consent.intent, trace);
   const verified = verification.result === "VERIFIED" && !hardFail && risk.classification === "CLEAN";
 
-  if (verified && consent.intent.singleUse) ledger.add(consent.receiptId);
+  if (verified && consent.intent.singleUse) await ledger.add(consent.receiptId);
 
   return {
     spec: AGENT_COMMERCE_VERSION,
@@ -282,7 +285,9 @@ export async function verifyExecution(consent, trace, { consumedSet } = {}) {
     risk,
     driftNamed: drift,
     consumed: alreadyConsumed || verified,
-    consumedLedger: "process-local (durable single-use anchoring NOT_BUILT)",
+    consumedLedger: consumedSet
+      ? "caller-supplied ledger — process-local Set, AC-CS/1 file store (cross-process on this host), or an asynchronous shared store; a global register and on-chain anchoring are NOT_BUILT"
+      : "process-local — pass an AC-CS/1 store for cross-process anchoring on this host; cross-host reconciliation is CG-SPEND/1; a global register and on-chain anchoring are NOT_BUILT",
     boundary:
       "execution verification never decides delivery conformity (DDE/1); VERIFIED ≠ SAFE; the actor is declared, never detected",
   };
@@ -400,9 +405,21 @@ export {
   selfCheck as decisionSelfCheck,
 } from "./decision.mjs";
 
-// CGCP/0.1 — local/file-backed control plane MVP (honest boundaries).
+// CGCP/1 — self-hosted Policy & Evidence Control Plane: versioned policies,
+// approvals, spend windows, execution/verification ledgers, revocation, a
+// hash-chained audit trail, an authenticated HTTP API and a CLI. Single host,
+// single API key; multi-tenant RBAC/SSO, distributed HA and KMS are NOT_BUILT.
 export {
   CONTROL_PLANE_VERSION,
+  CONTROL_PLANE_SCHEMA,
   CONTROL_PLANE_BOUNDARY,
+  CONTROL_PLANE_DECISION_REASONS,
   createControlPlane,
+  verifyAuditChain,
 } from "./control-plane.mjs";
+
+export {
+  createControlPlaneHandler,
+  createControlPlaneServer,
+  startControlPlaneServer,
+} from "./control-plane-http.mjs";
