@@ -6,7 +6,7 @@
 ## 0) Publication outcome (recorded)
 
 - **Published to npmjs.org (public):** all 14 release-scope packages at `0.1.0` — `@coreguard/canonical`, `@coreguard/crypto`, `@coreguard/policy`, `@coreguard/trace`, `@coreguard/evidence`, `@coreguard/replay`, `@coreguard/evm`, `@coreguard/provenance`, `@coreguard/intent`, `@coreguard/verifier`, `@coreguard/firewall`, `@coreguard/delivery`, `@coreguard/sdk`, `@coreguard/agent-commerce`.
-- **Follow-up publish:** `@coreguard/agent-commerce@0.1.1` (bin packaging fix) and `@coreguard/agent-commerce@0.1.2` (corrected `mcpName` to `io.github.EslaM-X/coreguard-agent-commerce` for MCP registry ownership validation, bin preserved). Latest on npm: `0.1.2`.
+- **Follow-up publish:** `@coreguard/agent-commerce@0.1.1` (bin packaging fix) and `@coreguard/agent-commerce@0.1.2` (corrected `mcpName` to `io.github.EslaM-X/coreguard-agent-commerce` for MCP registry ownership validation, bin preserved). Latest on npm: `0.1.3` (published 2026-11-22 by the gated `npm release` workflow, run 45031522325; `latest` tag moved to `0.1.3`).
 - **Verification (registry):** npm packument checks confirmed published versions/dist-tags (HTTP 200 / packument data) at time of publish.
 - **Boundaries:** publication does not imply adoption, endorsement, production guarantees, or safety guarantees (`VERIFIED ≠ SAFE`). On-chain/product-specific owner-gated actions remain as documented elsewhere.
 

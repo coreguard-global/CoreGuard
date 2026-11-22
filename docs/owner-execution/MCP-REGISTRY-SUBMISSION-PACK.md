@@ -7,8 +7,8 @@
 
 - **Registry:** https://registry.modelcontextprotocol.io/
 - **Server name:** `io.github.EslaM-X/coreguard-agent-commerce`
-- **Version:** `0.1.2` (active)
-- **Package:** npm `@coreguard/agent-commerce@0.1.2` (stdio transport), with `mcpName` aligned to `io.github.EslaM-X/coreguard-agent-commerce`
+- **Version:** `0.1.3` (npm `latest`); registry listing still records `0.1.2` until republished
+- **Package:** npm `@coreguard/agent-commerce@0.1.3` (stdio transport), with `mcpName` aligned to `io.github.EslaM-X/coreguard-agent-commerce`
 - **Artifacts updated in repo:** `packages/agent-commerce/server.json` and `packages/agent-commerce/package.json` reflect published/listed version and naming.
 - **Boundaries:** listing does not imply endorsement, adoption, integration, or production guarantees (`VERIFIED ≠ SAFE`; synthetic/demo scope as documented).
 
@@ -59,6 +59,7 @@ node packages/agent-commerce/mcp.mjs
 - [x] Confirmed target registry requirements/metadata format and naming rules (including npm ownership validation alignment).
 - [x] Published package version `@coreguard/agent-commerce@0.1.2` with corrected `mcpName` and bin.
 - [x] Submitted and published listing: `io.github.EslaM-X/coreguard-agent-commerce@0.1.2` (active).
+- [ ] Republish the listing from `server.json` 0.1.3 — **PENDING** (owner MCP Registry auth).
 - [ ] (Recommended follow-up) Independently verify install/run flow from a clean environment and capture reproducible evidence for any public claim.
 
 *Post-publish truth sync recorded 2026-11-18; retains submission-pack context for auditability.*
