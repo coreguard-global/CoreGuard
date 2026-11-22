@@ -98,13 +98,14 @@ for (const dir of PACKAGES) {
     continue;
   }
 
-  const res = spawnSync(NPM, ["publish", "--access", "public"], {
+  const res = spawnSync(NPM, ["publish", "--access", "public", "--loglevel=notice"], {
     cwd: join(REPO, "packages", dir),
     encoding: "utf8",
     maxBuffer: 32 * 1024 * 1024,
     shell: SPAWN_SHELL,
     stdio: ["ignore", "pipe", "pipe"],
   });
+  const output = `${res.stdout ?? ""}${res.stderr ?? ""}`;
   if (res.status !== 0) {
     failed = {
       dir,
@@ -114,7 +115,31 @@ for (const dir of PACKAGES) {
     };
     break;
   }
-  console.log(`released ${spec} ✓`);
+  // A zero exit code is not proof: confirm the registry actually serves the
+  // version before claiming success (a silent no-op publish must fail loudly).
+  let confirmed = false;
+  for (let attempt = 0; attempt < 6 && !confirmed; attempt++) {
+    if (attempt > 0) await new Promise((r) => setTimeout(r, 5000));
+    const check = spawnSync(NPM, ["view", spec, "version"], {
+      cwd: REPO,
+      encoding: "utf8",
+      maxBuffer: 8 * 1024 * 1024,
+      shell: SPAWN_SHELL,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    confirmed = check.status === 0 && String(check.stdout ?? "").trim() === pkg.version;
+  }
+  if (!confirmed) {
+    failed = {
+      dir,
+      spec,
+      code: "unconfirmed",
+      tail: `npm publish exited 0 but the registry does not serve ${spec}\n${output.split("\n").slice(-12).join("\n")}`,
+    };
+    break;
+  }
+  console.log(output.split("\n").filter((l) => l.trim()).slice(-4).join("\n"));
+  console.log(`released ${spec} ✓ (confirmed on registry)`);
   published++;
 }
 if (failed) {
