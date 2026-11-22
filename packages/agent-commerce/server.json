@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.EslaM-X/coreguard-agent-commerce",
-  "description": "Fail-closed consent, verification, attestation, identity, outcome, and consumption controls for agentic commerce (10 MCP tools).",
+  "description": "Fail-closed consent receipts and execution verification for agentic purchases. 10 MCP tools.",
   "repository": {
     "url": "https://github.com/coreguard-global/CoreGuard",
     "source": "github"
