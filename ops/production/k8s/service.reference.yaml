@@ -1,0 +1,11 @@
+# REFERENCE ONLY - NOT_PROVISIONED
+apiVersion: v1
+kind: Service
+metadata:
+  name: cgcp-control-plane
+spec:
+  selector: { app: cgcp-control-plane }
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8787

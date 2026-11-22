@@ -26,3 +26,7 @@
 - No real SSO/SCIM/KMS/HSM/external anchor deployment.
 - No custody/settlement.
 - VERIFIED ≠ SAFE.
+
+## Integration Pack
+- `docs/production-integration-pack.md` — reference manifests/runbooks/drill templates (`INTEGRATION_READY, NOT_PROVISIONED`).
+- Local simulation script: `ops/production/drills/local-backup-restore-sim.mjs` (LOCAL_SIMULATION_NOT_PRODUCTION_EVIDENCE).

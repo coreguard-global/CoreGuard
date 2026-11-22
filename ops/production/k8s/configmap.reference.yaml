@@ -1,0 +1,11 @@
+# REFERENCE ONLY - NOT_PROVISIONED
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cgcp-config
+data:
+  NODE_ENV: "production"
+  PORT: "8787"
+  CGCP_STORE_MODE: "postgres"
+  AUTH_MODE: "oidc"
+  OTEL_SERVICE_NAME: "cgcp-control-plane"
