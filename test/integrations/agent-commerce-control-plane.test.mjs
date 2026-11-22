@@ -327,3 +327,96 @@ test("the report carries counts, the active spec, chain status and a body hash",
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("CP-01: missing amountMinor is refused when monetary policy applies and cannot be committed", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
+  try {
+    const cp = planeIn(dir);
+    cp.upsertAgent({ id: "a1" });
+    cp.upsertPolicy({ id: "p1", spendLimitMinor: "1000", dailyLimitMinor: "1000", requireApprovalAboveMinor: "500" });
+
+    const evalMissing = cp.evaluate({ agentId: "a1", policyId: "p1", merchant: "m1" });
+    assert.equal(evalMissing.allowed, false);
+    assert.ok(evalMissing.reasons.includes("AMOUNT_REQUIRED"));
+
+    const committed = cp.commitExecution({ id: "e1", agentId: "a1", policyId: "p1", merchant: "m1" });
+    assert.equal(committed.committed, false);
+    assert.ok(committed.reasons.includes("AMOUNT_REQUIRED"));
+    assert.equal(cp.spend({ agentId: "a1" }).totalMinor, "0");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("CP-02: missing merchant/address/currency are refused when policy declares those constraints", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
+  try {
+    const cp = planeIn(dir);
+    cp.upsertAgent({ id: "a1" });
+    cp.upsertPolicy({
+      id: "p1",
+      allowMerchants: ["m-good"],
+      allowAddresses: ["0xgood"],
+      currency: "USD",
+      spendLimitMinor: "1000",
+    });
+
+    const missing = cp.evaluate({ agentId: "a1", policyId: "p1", amountMinor: "400" });
+    assert.equal(missing.allowed, false);
+    assert.ok(missing.reasons.includes("MERCHANT_MISSING"));
+    assert.ok(missing.reasons.includes("ADDRESS_MISSING"));
+    assert.ok(missing.reasons.includes("CURRENCY_MISSING"));
+
+    const commit = cp.commitExecution({ id: "e1", agentId: "a1", policyId: "p1", amountMinor: "400" });
+    assert.equal(commit.committed, false);
+    assert.ok(commit.reasons.includes("MERCHANT_MISSING"));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("CP-03: malformed approval expiresAt is rejected at creation and never treated as valid", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
+  try {
+    const cp = planeIn(dir);
+    cp.upsertAgent({ id: "a1" });
+    cp.upsertPolicy({ id: "p1", spendLimitMinor: "10000", requireApprovalAboveMinor: "100" });
+
+    assert.throws(
+      () => cp.requestApproval({ id: "ap-bad", agentId: "a1", policyId: "p1", merchant: "m1", amountMinor: "500", expiresAt: "not-a-date" }),
+      /expiresAt/,
+    );
+
+    // Simulate legacy/corrupted state: an unparseable expiresAt must not authorise.
+    const storePath = join(dir, "cp.json");
+    const state = JSON.parse(readFileSync(storePath, "utf8"));
+    state.approvals["ap-legacy"] = {
+      id: "ap-legacy",
+      agentId: "a1",
+      policyId: "p1",
+      merchant: "m1",
+      address: null,
+      amountMinor: "500",
+      currency: null,
+      status: "approved",
+      requestedAt: PINNED_NOW,
+      requestedBy: null,
+      expiresAt: "not-a-date",
+      decidedAt: PINNED_NOW,
+      decidedBy: "ops",
+      reason: null,
+      hash: "sha256:legacy",
+    };
+    writeFileSync(storePath, JSON.stringify(state, null, 2));
+
+    const evalLegacy = cp.evaluate({ agentId: "a1", policyId: "p1", merchant: "m1", amountMinor: "500", approvalId: "ap-legacy" });
+    assert.equal(evalLegacy.allowed, false);
+    assert.ok(evalLegacy.reasons.includes("APPROVAL_EXPIRES_AT_INVALID"));
+
+    const commit = cp.commitExecution({ id: "e1", agentId: "a1", policyId: "p1", merchant: "m1", amountMinor: "500", approvalId: "ap-legacy" });
+    assert.equal(commit.committed, false);
+    assert.ok(commit.reasons.includes("APPROVAL_EXPIRES_AT_INVALID"));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

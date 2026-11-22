@@ -1,5 +1,7 @@
 # @coreguard/agent-commerce
 
+[![Coreguard Agent Commerce MCP server](https://mcprush.com/badge/coreguard-agent-commerce-mcp/card.svg)](https://mcprush.com/to/coreguard-agent-commerce-mcp?ref=badge)
+
 Consent receipts and fail-closed execution verification for agentic purchases —
 an offline, deterministic surface for binding a user's approval to the exact
 bytes approved, and for verifying any executed trace against that receipt.
