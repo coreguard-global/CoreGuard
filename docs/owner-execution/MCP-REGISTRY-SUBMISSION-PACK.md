@@ -7,7 +7,7 @@
 
 - **Registry:** https://registry.modelcontextprotocol.io/
 - **Server name:** `io.github.EslaM-X/coreguard-agent-commerce`
-- **Version:** `0.1.3` (npm `latest`); registry listing still records `0.1.2` until republished
+- **Version:** `0.1.3` (npm `latest`); registry listing republished 2026-11-22 and reports `active` / `isLatest`
 - **Package:** npm `@coreguard/agent-commerce@0.1.3` (stdio transport), with `mcpName` aligned to `io.github.EslaM-X/coreguard-agent-commerce`
 - **Artifacts updated in repo:** `packages/agent-commerce/server.json` and `packages/agent-commerce/package.json` reflect published/listed version and naming.
 - **Boundaries:** listing does not imply endorsement, adoption, integration, or production guarantees (`VERIFIED ≠ SAFE`; synthetic/demo scope as documented).
@@ -20,7 +20,7 @@
 - **Purpose:** offline, deterministic, fail-closed verification/binding surfaces for agent commerce — bind approvals (consent), verify consent, verify execution, assess risk (AGR/1). No network calls to commerce/payment providers.
 - **Boundary (must be stated):** synthetic/demo data only; `VERIFIED ≠ SAFE`; single-use consumption is process-local unless a host provides durable anchoring (AC-CS/1 is same-host, not distributed/on-chain); no contact/integration/endorsement claimed with OpenAI, AmEx, Mastercard, Visa, or any provider.
 
-## 2) Tools exposed (4)
+## 2) Tools exposed (4 at first submission; 10 on 0.1.3 — see `mcp.mjs`)
 
 | Tool | Description (concise) | Required inputs (high level) |
 |---|---|---|
@@ -48,6 +48,22 @@ node packages/agent-commerce/mcp.mjs
 - **Limits/boundaries:** process-local consumption unless caller injects durable same-host store; no on-chain broadcast; not a fraud guarantee.
 - **Supply chain:** pin to a reviewed commit/release; run in least-privilege environments.
 
+## 4a) Credential handling for registry auth (required)
+
+**Rule.** Authenticate to the registry with the **GitHub device flow** (`mcp-publisher login github`) or, in CI, with **GitHub OIDC**. If a token is genuinely unavoidable, use a **fine-grained PAT** scoped to this single task — profile read only, no repository or organization permissions, shortest practical expiry — and treat it as disposable.
+
+**Why this note exists.** The 0.1.3 republication on 2026-11-22 exchanged a **classic** personal access token through `POST /v0/auth/github-at`. That token carried broad scopes, including `admin:org`, `delete_repo`, `repo` and `workflow`. It was transmitted only over HTTPS to `registry.modelcontextprotocol.io` and was never written into the repository, a log file, or this document — but a credential with that blast radius should not authorize a directory write. A classic token is also the wrong shape for the registry: it cannot be limited to "publish this one server".
+
+**Rotation steps (no secret values anywhere in this list).**
+
+1. **Revoke the exposed credential.** GitHub → Settings → Developer settings → Personal access tokens → *Tokens (classic)* → the token used → **Delete**. For a fine-grained token: *Tokens (fine-grained)* → **Revoke**.
+2. **Review its activity.** On the same settings page, open the token's activity (and the account security log) for the last 24 hours: look for unfamiliar registry calls, new deploy keys, new organization members, or package deletions.
+3. **Re-issue with least privilege, only if still needed.** Fine-grained PAT → owner = your account → repository access = *No repositories* → permissions = *Profile: read-only* → expiry ≤ 7 days. Nothing else.
+4. **Replace every reference.** Update the workspace/CI secret that supplies `GH_TOKEN` and any local shell profile that exports it. Do not paste the value into chat, an issue, a commit, a `server.json`, or a log.
+5. **Prove the rotation.** Exchange the replacement credential, read the server version back from the registry, and confirm the old token now fails with `401`. Confirm `isLatest` still points at the intended version.
+6. **Separate the concerns.** The npm release path uses its own granular `NPM_TOKEN`; never reuse it for registry auth, and never reuse the registry credential for npm, GitHub API automation or git pushes.
+7. **Record the outcome** in this checklist (date + which credential type), without the credential itself.
+
 ## 5) Evidence links (public)
 - Repo: https://github.com/coreguard-global/CoreGuard
 - Spec: `docs/AGENT-COMMERCE-SECURITY-SPEC-V1.md`
@@ -60,6 +76,7 @@ node packages/agent-commerce/mcp.mjs
 - [x] Published package version `@coreguard/agent-commerce@0.1.2` with corrected `mcpName` and bin.
 - [x] Submitted and published listing: `io.github.EslaM-X/coreguard-agent-commerce@0.1.2` (active).
 - [x] Republished the listing for 0.1.3 (2026-11-22) via the registry API after a GitHub token exchange; the API reports `active` / `isLatest`. Note: the registry caps `description` at 100 characters.
+- [ ] Rotate the classic token used for that exchange and switch future republications to device flow or a fine-grained least-privilege token (section 4a). **OPEN**
 - [ ] (Recommended follow-up) Independently verify install/run flow from a clean environment and capture reproducible evidence for any public claim.
 
 *Post-publish truth sync recorded 2026-11-18; retains submission-pack context for auditability.*
