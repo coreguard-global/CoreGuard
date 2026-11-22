@@ -463,3 +463,18 @@ test("CP-12 boundary improvement: auditAnchor reports local head and verifyAncho
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("CP-12 bounded improvement: optional local HMAC anchor verifies with same key and fails with wrong key", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
+  try {
+    const cp = planeIn(dir);
+    cp.upsertAgent({ id: "a1" });
+    const anchor = cp.auditAnchor({ hmacKey: "secret-key-123" });
+    assert.equal(anchor.hmac, "hmac-sha256");
+    assert.match(anchor.hmacSha256, /^[0-9a-f]{64}$/);
+    assert.equal(cp.verifyAnchor({ ...anchor, hmacKey: "secret-key-123" }).ok, true);
+    assert.equal(cp.verifyAnchor({ ...anchor, hmacKey: "wrong-key" }).hmacOk, false);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
