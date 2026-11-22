@@ -50,7 +50,7 @@ jobs:
       - name: Gate — release-please (publish-check + plan + publish)
         env:
           # setup-node writes .npmrc with `//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}`;
-          # passing only NPM_TOKEN left `npm publish` unauthenticated and the registry
+          # passing only NPM_TOKEN left the publish step unauthenticated and the registry
           # answered 404 on PUT (run 45028993970). Both names carry the same secret.
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
