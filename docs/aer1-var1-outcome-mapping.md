@@ -273,34 +273,28 @@ vector itself lives in this tree as
 `test/fixtures/var1-corpus-v1/present-consistent-nonconforming.json`, asserted
 by `test/integrations/var1-corpus-vector.test.mjs`.
 
-**The run that can be checked.** The first external report quoted an unseeded
-receipt, and that side has since corrected it: a fresh merchant key means the id
-cannot be re-derived, by anyone, including them. The replacement is a seeded run
-at commit `5a1f3bd`, seed
-`e8cfcd1a93ce50d6d6ace046db9c878ba8e63d3873acc821c9c6d0742cd848cb` — the sha256
-of the string `zambo-external-seeded-run-2026-11-19`, so the seed carries no
-secret and is as checkable as the receipt — with the clock fixed at
-`2026-11-19T14:00:00Z`.
+**The run that can be checked.** The public record for this exchange is one
+outside run, reported by `buidl25` for **AgentBadge** on 2026-11-19: a fresh
+clone at `76b3a63`, node **v23.3.0** — a major outside our v24/v26 set. Unseeded
+15/15, exit 0. Then a seeded run, seed
+`1dd12dd553b67b172a324d59eb0bf020ffacf306052bfd8dbd73755ed160bb7f` (sha256 of
+`agentbadge-external-seeded-run-2026-11-19`, so the seed carries no secret) with
+the clock at `2026-11-19T16:40:00Z`, run twice with a fresh `--out` each time:
+15/15 and exit 0 both times, receipt
+`urn:sha256:98bc587f2ced2054ff2255b79b4ec43dbcd2f4f5d6c138a6e33a291ec86f876b`
+identical across both. That is byte-determinism produced on someone else's
+hardware: the canonicalization claim held on v23.
 
-Re-derived here from a clean clone of that commit, on a different machine and a
-different runtime (node v26.13.0 against their v24.22.1), twice, both runs 15 of
-15 rows with exit 0:
+The same report names the row that disagrees. An identical rerun **into the same
+`outDir`** fails 12/15 (rows 6, 8, 9 — `refused · spent`, `conflict`,
+`0 winner · 4 spent`), because `outDir = f(at, seed)` and the spend logs live
+inside it, so an identical rerun reopens a ledger that already recorded the
+spend. A fresh `--out` restores 15/15 with identical bytes. That is a kit-level
+limitation, recorded in this tree rather than argued away.
 
-| fact | value |
-|---|---|
-| receipt id | `urn:sha256:8c6c12bad40471d2c83d8f6ee2a0c07c8649045aa2e96726a4ee31bec13a72c7` |
-| body digest | `sha256:386d218c154ae444c878b1b4ee32daf3f5b32f8bd9de363aa854c89f099334b1` |
-| rows | 15/15 PASS, exit 0, both runs |
-| runtimes | v24.22.1 (theirs) · v26.13.0 (ours) |
-
-Both digests equal the ones reported from the other machine, byte for byte. A
-third machine then reported the same receipt id and body digest at `8fb0808`,
-having diffed the kit as unchanged from `5a1f3bd`: the equality holds across
-three machines and two Node majors, not two. That is the first fact in the
-exchange that is neither a claim by either side nor a sandbox run made here —
-the same inputs produce the same receipt on someone else's hardware, with no
-account, no key and no call to either implementation. The unseeded report stays
-quoted only as the run that came first.
+Our own seeded run (seed `e8cfcd1a…`, `--at 2026-11-19T14:00:00Z`, receipt
+`8c6c12ba…`) re-derives locally; it is **our** run, not the external one, and
+this note does not compare its digest to theirs.
 
 **The vector that pins the layers.** The row above is closed as a fixture rather
 than a promise: `test/fixtures/var1-corpus-v1/anchor-unresolvable.json`, asserted
