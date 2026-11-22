@@ -24,7 +24,9 @@
     "./trust.mjs": "./trust.mjs",
     "./spend.mjs": "./spend.mjs",
     "./decision.mjs": "./decision.mjs",
-    "./control-plane.mjs": "./control-plane.mjs"
+    "./control-plane.mjs": "./control-plane.mjs",
+    "./control-plane-http.mjs": "./control-plane-http.mjs",
+    "./control-plane-cli.mjs": "./control-plane-cli.mjs"
   },
   "bin": {
     "coreguard-agent-commerce-mcp": "./bin/mcp.mjs"
@@ -39,6 +41,8 @@
     "composition.mjs",
     "consumption-store.mjs",
     "control-plane.mjs",
+    "control-plane-http.mjs",
+    "control-plane-cli.mjs",
     "decision.mjs",
     "firewall.mjs",
     "http.mjs",

@@ -22,6 +22,7 @@
 | MCP contract tests (11 tests, real stdio child) | **CI-SMOKE** | `node --test test/integrations/agent-commerce-mcp.test.mjs` |
 | Runtime smoke check (real stdio child, success + drift + malformed) | **CI-SMOKE** | `node scripts/agent-commerce-mcp-smoke.mjs` |
 | Runnable example | **CI-SMOKE** | `node examples/agent-commerce-mcp/run.mjs` |
+| Control-plane HTTP arc (real server, ephemeral port) | **CI-SMOKE** | `node --test test/integrations/agent-commerce-control-plane-http.test.mjs` |
 
 ## Client matrix
 
@@ -41,7 +42,9 @@ Add an entry only after an actual run. Include evidence (command output snippet,
 
 | Date (UTC) | Operator | Client + version | Package/version | Result | Evidence | Notes |
 |---|---|---|---|---|---|---|
-| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.1.3` (post-publish) | PENDING |  | First target client |
+| 2026-11-22 | CI / agent session | Raw stdio MCP client harness (`node --test test/integrations/agent-commerce-mcp.test.mjs`, 11 tests) | local workspace `0.1.2` (unpublished 0.1.3 surface) | **CI-SMOKE PASS** | test output | Not a third-party client; proves initialize/tools/list/ten `structuredContent` calls over a real child process. |
+| 2026-11-22 | agent session | Claude Code CLI 2.1.329 | n/a | **BLOCKED** | `claude -p` → “Not logged in · Please run /login” | CLI is installed in this environment but has no account session; no client run is claimed. |
+| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.1.3` (post-publish) | PENDING |  | First target client once npm publish + a logged-in session exist |
 
 ## Minimum acceptance for a "RUN-BY-HAND" entry
 

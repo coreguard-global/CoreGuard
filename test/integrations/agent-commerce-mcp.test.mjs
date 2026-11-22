@@ -397,7 +397,7 @@ test("coreguard_consumption_status supports AC-CS/1 file-backed host store", asy
       let r = await request("tools/call", { name: "coreguard_consumption_status", arguments: { receiptId: key, action: "consume", storePath } });
       assert.equal(r.result.isError, undefined);
       assert.equal(r.result.structuredContent.consumed, true);
-      assert.equal(r.result.structuredContent.ledger, "file-backed-host");
+      assert.match(r.result.structuredContent.ledger, /^file-backed \(AC-CS\/1/);
       assert.ok(r.result.structuredContent.boundary.includes("NOT a distributed ledger") || r.result.structuredContent.boundary.includes("NOT"));
       r = await request("tools/call", { name: "coreguard_consumption_status", arguments: { receiptId: key, action: "check", storePath } });
       assert.equal(r.result.structuredContent.consumed, true);
