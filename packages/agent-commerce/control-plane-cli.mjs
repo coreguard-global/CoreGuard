@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { pathToFileURL } from "node:url";
 /**
  * CoreGuard Control Plane CLI (CGCP/1) — operator surface over the same plane
  * the SDK and HTTP API use. Every command prints canonical JSON to stdout and
@@ -57,12 +58,10 @@ function out(value) {
 async function main() {
   const { positional, flags } = parseArgs(process.argv.slice(2));
   const storePath = flags.store ?? process.env.COREGUARD_CONTROL_PLANE_STORE ?? "./.coreguard/control-plane.json";
-  const plane = createControlPlane({ storePath, lockTimeoutMs: Number(flags["lock-timeout-ms"] ?? 5000), create: cmd === "init" });
+  const plane = createControlPlane({ storePath, lockTimeoutMs: Number(flags["lock-timeout-ms"] ?? 5000), create: positional[0] === "init" });
   const [command, sub] = positional;
   const auditMeta = (flags.actor || flags["request-id"]) ? { actor: flags.actor ?? null, requestId: flags["request-id"] ?? null, source: "cli" } : null;
   const dispatch = async () => {
-    const [command, sub] = positional;
-
     switch (command) {
       case undefined:
       case "help":
@@ -257,12 +256,17 @@ async function main() {
     }
 
     throw new Error(`unknown command: ${positional.join(" ") || "(none)"}`);
-  }
   };
   if (auditMeta) await plane.withAuditMeta(auditMeta, dispatch);
   else await dispatch();
+}
 
-main().catch((err) => {
-  process.stderr.write(JSON.stringify({ error: { code: "CLI_ERROR", detail: err?.message ?? String(err) } }) + "\n");
-  process.exit(1);
-});
+const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isMain) {
+  main().catch((err) => {
+    process.stderr.write(JSON.stringify({ error: { code: "CLI_ERROR", detail: err?.message ?? String(err) } }) + "\n");
+    process.exit(1);
+  });
+}
+
+export { main };
