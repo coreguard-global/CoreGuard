@@ -233,7 +233,7 @@
       "integration": "NOT_BUILT",
       "matrixRow": true,
       "evidence": ["packages/agent-commerce/index.mjs"],
-      "note": "Product 4 of the agent-commerce family: the commerce arc ships as SDK surface + MCP server (stdio JSON-RPC) + REST endpoints (POST /v1/authorize, POST /v1/verify, POST /v1/risk-assess). The 14 `@coreguard/*` packages are published on npm (0.1.0 series), and `@coreguard/agent-commerce` is published at 0.1.2 with the stdio MCP bin and corrected mcpName. The MCP server is listed in the MCP Registry as `io.github.EslaM-X/coreguard-agent-commerce@0.1.2` (active). External adoption/integration remains NOT_BUILT; VERIFIED ≠ SAFE."
+      "note": "Product 4 of the agent-commerce family: the commerce arc ships as SDK surface + MCP server (stdio JSON-RPC) + REST endpoints (POST /v1/authorize, POST /v1/verify, POST /v1/risk-assess). The 14 `@coreguard/*` packages are published on npm (0.1.0 series), and `@coreguard/agent-commerce` is published at 0.1.3 (2026-11-22) with the stdio MCP bin and corrected mcpName. The MCP server is listed in the MCP Registry as `io.github.EslaM-X/coreguard-agent-commerce@0.1.2` (active; listing not yet republished for 0.1.3). External adoption/integration remains NOT_BUILT; VERIFIED ≠ SAFE."
     },
     {
       "id": "agent-commerce-consumption-store",

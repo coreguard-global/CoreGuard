@@ -28,7 +28,7 @@
 
 | Client | Status | Config | Notes |
 |---|---|---|---|
-| Claude Code | CONFIG-DOCUMENTED | `claude mcp add coreguard-agent-commerce -- npx -y @coreguard/agent-commerce` | Prioritize first real RUN-BY-HAND after npm publish. |
+| Claude Code | CONFIG-REGISTERED | `claude mcp add coreguard-agent-commerce -- npx -y @coreguard/agent-commerce` | Registered and connected (`claude mcp list` → `✔ Connected`); a model-driven tool call still needs a signed-in session. |
 | Claude Desktop | CONFIG-DOCUMENTED | `mcpServers.coreguard-agent-commerce.command=npx`, `args=["-y","@coreguard/agent-commerce"]` | JSON config file. |
 | Cursor | CONFIG-DOCUMENTED | `.cursor/mcp.json` same stdio command |  |
 | VS Code (Copilot MCP) | CONFIG-DOCUMENTED | `.vscode/mcp.json` `servers` entry, type stdio |  |
@@ -42,9 +42,11 @@ Add an entry only after an actual run. Include evidence (command output snippet,
 
 | Date (UTC) | Operator | Client + version | Package/version | Result | Evidence | Notes |
 |---|---|---|---|---|---|---|
-| 2026-11-22 | CI / agent session | Raw stdio MCP client harness (`node --test test/integrations/agent-commerce-mcp.test.mjs`, 11 tests) | local workspace `0.1.2` (unpublished 0.1.3 surface) | **CI-SMOKE PASS** | test output | Not a third-party client; proves initialize/tools/list/ten `structuredContent` calls over a real child process. |
+| 2026-11-22 | CI / agent session | Raw stdio MCP client harness (`node --test test/integrations/agent-commerce-mcp.test.mjs`, 11 tests) | local workspace `0.1.3` | **CI-SMOKE PASS** | test output | Not a third-party client; proves initialize/tools/list/ten `structuredContent` calls over a real child process. |
+| 2026-11-22 | agent session | Clean `npm i @coreguard/agent-commerce@0.1.3` + raw stdio | npm `@coreguard/agent-commerce@0.1.3` | **CI-SMOKE PASS** | install + initialize transcript | Published artifact (not the workspace): `serverInfo.version` `0.1.3`, 10 tools listed, `control-plane*.mjs` present. |
+| 2026-11-22 | agent session | Claude Code CLI 2.1.329 | `@coreguard/agent-commerce` (user scope) | **CONFIG-REGISTERED** | `claude mcp add --scope user …` then `claude mcp list` → `✔ Connected` | The client connected to the stdio server over its own transport; no model turn or tool call ran (no signed-in session), so this is **not** a RUN-BY-HAND. |
 | 2026-11-22 | agent session | Claude Code CLI 2.1.329 | n/a | **BLOCKED** | `claude -p` → “Not logged in · Please run /login” | CLI is installed in this environment but has no account session; no client run is claimed. |
-| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.1.3` (post-publish) | PENDING |  | First target client once npm publish + a logged-in session exist |
+| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.1.3` (published) | PENDING |  | Needs a signed-in session to exercise the ten tools; connection alone is already recorded above. |
 
 ## Minimum acceptance for a "RUN-BY-HAND" entry
 
