@@ -2,8 +2,8 @@
   "schema": "CG-NUMBERS/1",
   "generatedBy": "scripts/public-numbers.mjs",
   "generatedFrom": "docs/state-snapshot.json",
-  "measuredAtUtc": "2026-11-22T15:15:58Z",
-  "measuredOnCommit": "e49db1c51b51fbd5f2137b93600d76f31d970f9c",
+  "measuredAtUtc": "2026-11-22T15:33:59Z",
+  "measuredOnCommit": "fdfbb05c944b73a84f39980da5480a6df4f2ad50",
   "metrics": [
     {
       "id": "tests",
@@ -16,7 +16,7 @@
     {
       "id": "boundary-files",
       "label": "Boundary audit — files scanned",
-      "value": 1472,
+      "value": 1473,
       "unit": "files",
       "source": "docs/state-snapshot.json#boundaryAudit.filesScanned",
       "note": "Tracked files from `git ls-files` (ignored trees such as var/ are not counted)."
