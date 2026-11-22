@@ -26,7 +26,13 @@
     "./decision.mjs": "./decision.mjs",
     "./control-plane.mjs": "./control-plane.mjs",
     "./control-plane-http.mjs": "./control-plane-http.mjs",
-    "./control-plane-cli.mjs": "./control-plane-cli.mjs"
+    "./control-plane-cli.mjs": "./control-plane-cli.mjs",
+    "./prod/schema.mjs": "./prod/schema.mjs",
+    "./prod/sqlite-storage.mjs": "./prod/sqlite-storage.mjs",
+    "./prod/migrate.mjs": "./prod/migrate.mjs",
+    "./prod/rbac.mjs": "./prod/rbac.mjs",
+    "./prod/observability.mjs": "./prod/observability.mjs",
+    "./prod/kms-anchor.mjs": "./prod/kms-anchor.mjs"
   },
   "bin": {
     "coreguard-agent-commerce-mcp": "./bin/mcp.mjs"
@@ -58,7 +64,13 @@
     "risk-cli.mjs",
     "risk.mjs",
     "spend.mjs",
-    "trust.mjs"
+    "trust.mjs",
+    "prod/schema.mjs",
+    "prod/sqlite-storage.mjs",
+    "prod/migrate.mjs",
+    "prod/rbac.mjs",
+    "prod/observability.mjs",
+    "prod/kms-anchor.mjs"
   ],
   "engines": {
     "node": ">=18"
