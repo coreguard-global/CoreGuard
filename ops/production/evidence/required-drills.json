@@ -1,0 +1,7 @@
+[
+  "backup-restore-integrity",
+  "failover-rpo-rto",
+  "key-rotation",
+  "tenant-isolation-authz",
+  "anchor-verify-after-restore"
+]
