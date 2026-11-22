@@ -59,7 +59,7 @@ node packages/agent-commerce/mcp.mjs
 - [x] Confirmed target registry requirements/metadata format and naming rules (including npm ownership validation alignment).
 - [x] Published package version `@coreguard/agent-commerce@0.1.2` with corrected `mcpName` and bin.
 - [x] Submitted and published listing: `io.github.EslaM-X/coreguard-agent-commerce@0.1.2` (active).
-- [ ] Republish the listing from `server.json` 0.1.3 — **PENDING** (owner MCP Registry auth).
+- [x] Republished the listing for 0.1.3 (2026-11-22) via the registry API after a GitHub token exchange; the API reports `active` / `isLatest`. Note: the registry caps `description` at 100 characters.
 - [ ] (Recommended follow-up) Independently verify install/run flow from a clean environment and capture reproducible evidence for any public claim.
 
 *Post-publish truth sync recorded 2026-11-18; retains submission-pack context for auditability.*
