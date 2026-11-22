@@ -8,7 +8,7 @@
     {
       "id": "tests",
       "label": "Tests (full suite, machine-pinned)",
-      "value": 1963,
+      "value": 1967,
       "unit": "tests",
       "source": "docs/state-snapshot.json#testsTotal",
       "note": "Pass count of the last green `npm test`; the suite asserts this number."
