@@ -28,6 +28,10 @@
 <!-- COREGUARD:MCPRUSH:BEGIN -->
 ## CoreGuard Agent Commerce — Now listed on MCPRush
 
+<p align="center"><a href="https://mcprush.com/to/coreguard-agent-commerce-mcp?ref=badge"><img width="380" height="200" src="https://mcprush.com/badge/coreguard-agent-commerce-mcp/card.svg" alt="Coreguard Agent Commerce MCP server — MCPRush grade badge" loading="lazy" /></a></p>
+
+**Graded A on MCPRush — before anyone installs.** A live badge that updates itself. It is MCPRush's automated directory grade, not an independent security audit.
+
 **Discover the open-source consent and execution-verification tools.**
 CoreGuard Agent Commerce appears in the [MCPRush directory](https://mcprush.com/eslam-x/coreguard-agent-commerce-mcp).
 This is a publicly indexed marketplace listing, checked on 21 November 2026; it is **not** a partnership, endorsement, funding award or independent security audit.
