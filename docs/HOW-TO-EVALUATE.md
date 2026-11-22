@@ -78,7 +78,7 @@ node demo.mjs
 
 ## Quick checklist | قائمة فحص سريعة
 
-- [ ] `npm test` = **1967 / 1967 PASS**
+- [ ] `npm test` = **1972 / 1972 PASS**
 - [ ] `claims:audit` = **PASS**
 - [ ] `boundary:audit` = **PASS**
 - [ ] `release:gate:independence` = **GATE_PASS**
