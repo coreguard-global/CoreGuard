@@ -17,6 +17,7 @@
  * BOUNDARY: single-host, single-API-key. No RBAC/SSO/tenancy (NOT_BUILT).
  */
 
+import { readFileSync } from "node:fs";
 import { createControlPlane, CONTROL_PLANE_VERSION, CONTROL_PLANE_BOUNDARY } from "./control-plane.mjs";
 import { startControlPlaneServer } from "./control-plane-http.mjs";
 
@@ -56,7 +57,7 @@ function out(value) {
 async function main() {
   const { positional, flags } = parseArgs(process.argv.slice(2));
   const storePath = flags.store ?? process.env.COREGUARD_CONTROL_PLANE_STORE ?? "./.coreguard/control-plane.json";
-  const plane = createControlPlane({ storePath, lockTimeoutMs: Number(flags["lock-timeout-ms"] ?? 5000) });
+  const plane = createControlPlane({ storePath, lockTimeoutMs: Number(flags["lock-timeout-ms"] ?? 5000), create: cmd === "init" });
   const [command, sub] = positional;
 
   switch (command) {
@@ -217,18 +218,28 @@ async function main() {
     case "spend":
       return out(plane.spend({ agentId: flags.agent ?? null, policyId: flags.policy ?? null }));
 
+    case "init":
+      return out({ ok: true, storePath, version: CONTROL_PLANE_VERSION, boundary: CONTROL_PLANE_BOUNDARY });
+
     case "report":
       return out(plane.auditReport({ limit: Number(flags.limit ?? 200) }));
 
     case "verify":
       return out(plane.verifyLedger());
 
+    case "anchor":
+      return out(plane.auditAnchor());
+
     case "serve": {
-      const apiKey = flags["api-key"] ?? process.env.COREGUARD_CONTROL_PLANE_API_KEY;
-      if (!apiKey || apiKey === true) throw new Error("--api-key or COREGUARD_CONTROL_PLANE_API_KEY is required");
+      const keyFile = flags["api-key-file"] ?? process.env.COREGUARD_CONTROL_PLANE_API_KEY_FILE;
+      let apiKey = flags["api-key"] ?? process.env.COREGUARD_CONTROL_PLANE_API_KEY;
+      if ((!apiKey || apiKey === true) && keyFile && keyFile !== true) {
+        apiKey = readFileSync(String(keyFile), "utf8").trim();
+      }
+      if (!apiKey || apiKey === true) throw new Error("--api-key-file, --api-key, or COREGUARD_CONTROL_PLANE_API_KEY is required");
       const started = await startControlPlaneServer({
         controlPlane: plane,
-        apiKey,
+        apiKey: String(apiKey),
         port: Number(flags.port ?? 8787),
         host: flags.host ?? "127.0.0.1",
       });

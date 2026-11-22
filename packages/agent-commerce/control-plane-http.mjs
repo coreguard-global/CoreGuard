@@ -13,10 +13,18 @@
  */
 
 import { createServer } from "node:http";
-import { timingSafeEqual } from "node:crypto";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { CONTROL_PLANE_BOUNDARY, CONTROL_PLANE_VERSION, createControlPlane } from "./control-plane.mjs";
 
 const MAX_BODY_BYTES = 256 * 1024;
+const MAX_LIMIT = 1000;
+
+function parseLimit(value, def = 100) {
+  if (value == null || value === "") return def;
+  const n = Number.parseInt(String(value), 10);
+  if (!Number.isFinite(n) || n < 1) return def;
+  return Math.min(n, MAX_LIMIT);
+}
 
 function json(res, status, body) {
   const payload = JSON.stringify(body);
@@ -33,9 +41,9 @@ function apiError(res, status, code, detail) {
 }
 
 function safeEqual(a, b) {
-  const left = Buffer.from(String(a));
-  const right = Buffer.from(String(b));
-  if (left.length !== right.length) return false;
+  // CP-11: compare fixed-length digests so key length does not short-circuit.
+  const left = createHash("sha256").update(String(a)).digest();
+  const right = createHash("sha256").update(String(b)).digest();
   return timingSafeEqual(left, right);
 }
 
@@ -88,9 +96,26 @@ async function readJson(req, maxBodyBytes) {
  * Build the request handler. Exported separately from the server so a host can
  * mount it in its own HTTP stack or test it without a socket.
  */
-export function createControlPlaneHandler({ controlPlane, apiKey, maxBodyBytes = MAX_BODY_BYTES } = {}) {
+export function createControlPlaneHandler({ controlPlane, apiKey, apiKeys, maxBodyBytes = MAX_BODY_BYTES } = {}) {
   if (!controlPlane) throw new TypeError("CGCP/1: controlPlane is required");
-  if (typeof apiKey !== "string" || apiKey.length === 0) throw new TypeError("CGCP/1: apiKey is required");
+  const keys = Array.isArray(apiKeys) ? apiKeys.filter((k) => typeof k === "string" && k.length > 0) : [];
+  if (typeof apiKey === "string" && apiKey.length > 0) keys.unshift(apiKey);
+  const uniqKeys = [...new Set(keys)];
+  if (uniqKeys.length === 0) throw new TypeError("CGCP/1: apiKey or apiKeys is required");
+  const authFailures = new Map(); // ip -> { count, resetAt }
+  const AUTH_FAIL_WINDOW_MS = 60_000;
+  const AUTH_FAIL_LIMIT = 30;
+
+  function authThrottle(ip) {
+    const now = Date.now();
+    const rec = authFailures.get(ip);
+    if (!rec || now >= rec.resetAt) {
+      const fresh = { count: 0, resetAt: now + AUTH_FAIL_WINDOW_MS };
+      authFailures.set(ip, fresh);
+      return fresh;
+    }
+    return rec;
+  }
 
   return async function handler(req, res) {
     const url = new URL(req.url ?? "/", "http://control-plane.local");
@@ -98,20 +123,35 @@ export function createControlPlaneHandler({ controlPlane, apiKey, maxBodyBytes =
     const method = req.method ?? "GET";
 
     if (path === "/health" && method === "GET") {
-      const ledger = controlPlane.verifyLedger();
+      // CP-08: liveness only — no ledger read/verify, no store data.
       return json(res, 200, {
-        ok: ledger.ok,
+        ok: true,
         version: CONTROL_PLANE_VERSION,
         boundary: CONTROL_PLANE_BOUNDARY,
-        chain: { ok: ledger.chain.ok, length: ledger.chain.length },
+        service: "coreguard-control-plane",
       });
     }
 
+    const ip = req.socket?.remoteAddress || "unknown";
+    const authState = authThrottle(ip);
+    if (authState.count >= AUTH_FAIL_LIMIT) {
+      return apiError(res, 429, "RATE_LIMITED", "too many authentication failures");
+    }
     const auth = req.headers.authorization ?? "";
     const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
-    if (!safeEqual(token, apiKey)) return apiError(res, 401, "UNAUTHORIZED", "a valid bearer API key is required");
+    const authorized = uniqKeys.some((k) => safeEqual(token, k));
+    if (!authorized) {
+      authState.count += 1;
+      return apiError(res, 401, "UNAUTHORIZED", "a valid bearer API key is required");
+    }
 
+    const auditMeta = {
+      actor: typeof req.headers["x-actor"] === "string" ? req.headers["x-actor"].slice(0, 200) : null,
+      requestId: typeof req.headers["x-request-id"] === "string" ? req.headers["x-request-id"].slice(0, 200) : null,
+      source: ip,
+    };
     try {
+      return await controlPlane.withAuditMeta(auditMeta, async () => {
       let body = {};
       if (method === "POST" || method === "PUT" || method === "PATCH") body = await readJson(req, maxBodyBytes);
 
@@ -181,7 +221,7 @@ export function createControlPlaneHandler({ controlPlane, apiKey, maxBodyBytes =
       }
 
       if (path === "/v1/executions" && method === "GET") {
-        return json(res, 200, { executions: controlPlane.listExecutions({ limit: Number(url.searchParams.get("limit") ?? 100) }) });
+        return json(res, 200, { executions: controlPlane.listExecutions({ limit: parseLimit(url.searchParams.get("limit"), 100) }) });
       }
       if (path === "/v1/executions" && method === "POST") {
         const result = controlPlane.commitExecution(body);
@@ -204,21 +244,53 @@ export function createControlPlaneHandler({ controlPlane, apiKey, maxBodyBytes =
       }
 
       if (path === "/v1/audit" && method === "GET") {
-        return json(res, 200, { audit: controlPlane.auditReport({ limit: Number(url.searchParams.get("limit") ?? 200) }).recentAudit });
+        return json(res, 200, { audit: controlPlane.auditReport({ limit: parseLimit(url.searchParams.get("limit"), 200) }).recentAudit });
       }
       if (path === "/v1/audit/verify" && method === "GET") {
         return json(res, 200, controlPlane.verifyLedger());
       }
+      if (path === "/v1/audit/anchor" && method === "GET") {
+        return json(res, 200, controlPlane.auditAnchor());
+      }
+      if (path === "/v1/audit/anchor/verify" && method === "POST") {
+        return json(res, 200, controlPlane.verifyAnchor(body));
+      }
       if (path === "/v1/report" && method === "GET") {
-        return json(res, 200, controlPlane.auditReport({ limit: Number(url.searchParams.get("limit") ?? 200) }));
+        return json(res, 200, controlPlane.auditReport({ limit: parseLimit(url.searchParams.get("limit"), 200) }));
       }
 
       return apiError(res, 404, "NOT_FOUND", `${method} ${path} is not a control-plane route`);
+      });
     } catch (err) {
-      const status = err?.statusCode ?? (err instanceof TypeError ? 400 : 400);
-      if (status === 413) return apiError(res, 413, "BODY_TOO_LARGE", "request body exceeds the configured limit");
-      // Never leak a stack trace to a caller.
-      return apiError(res, status, err?.code ?? "INVALID_REQUEST", err?.message ?? "request failed");
+      // CP-10: stable public taxonomy; never leak internal paths/stack traces.
+      const code = err?.code;
+      const status = err?.statusCode;
+      if (status === 413 || code === "BODY_TOO_LARGE") {
+        return apiError(res, 413, "BODY_TOO_LARGE", "request body exceeds the configured limit");
+      }
+      if (code === "STORE_LOCKED") {
+        return apiError(res, 503, "STORE_UNAVAILABLE", "control plane store is temporarily unavailable");
+      }
+      if (code === "STORE_MISSING") {
+        return apiError(res, 503, "STORE_UNAVAILABLE", "control plane store is not initialized");
+      }
+      if (err instanceof TypeError) {
+        return apiError(res, 400, "INVALID_REQUEST", err.message || "invalid request");
+      }
+      if (status === 409 || code === "CONFLICT") {
+        return apiError(res, 409, "CONFLICT", "request conflicts with current state");
+      }
+      if (status === 400) {
+        const safeCode = typeof code === "string" && /^[A-Z0-9_]+$/.test(code) ? code : "INVALID_REQUEST";
+        const msg = typeof err?.message === "string" ? err.message : "invalid request";
+        return apiError(res, 400, safeCode, msg.startsWith("CGCP/1:") ? msg.replace(/^CGCP\/1:\s*/, "") : msg);
+      }
+      // Known CGCP operational errors: expose stable message without paths.
+      const msg = typeof err?.message === "string" ? err.message : "request failed";
+      if (msg.startsWith("CGCP/1:")) {
+        return apiError(res, 400, "INVALID_REQUEST", msg.replace(/^CGCP\/1:\s*/, ""));
+      }
+      return apiError(res, 500, "INTERNAL_ERROR", "internal control plane error");
     }
   };
 }
@@ -246,8 +318,9 @@ export async function startControlPlaneServer({
   host = "127.0.0.1",
   controlPlane = null,
   maxBodyBytes = MAX_BODY_BYTES,
+  create = true,
 } = {}) {
-  const plane = controlPlane ?? createControlPlane({ storePath });
+  const plane = controlPlane ?? createControlPlane({ storePath, create });
   const server = createControlPlaneServer({ controlPlane: plane, apiKey, maxBodyBytes });
   await new Promise((resolve, reject) => {
     server.once("error", reject);

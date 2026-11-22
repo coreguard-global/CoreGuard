@@ -229,8 +229,8 @@ test("CGCP/1 HTTP: malformed input, unknown routes and oversized bodies fail clo
 test("CGCP/1 HTTP: a second plane instance sees the same locked store", async () => {
   const dir = mkdtempSync(join(tmpdir(), "cgcp-two-planes-"));
   const storePath = join(dir, "cp.json");
-  const planeA = createControlPlane({ storePath });
-  const planeB = createControlPlane({ storePath });
+  const planeA = createControlPlane({ storePath, create: true });
+  const planeB = createControlPlane({ storePath, create: true });
   const started = await startControlPlaneServer({ controlPlane: planeB, apiKey: API_KEY, port: 0 });
   try {
     planeA.upsertAgent({ id: "a1" });
@@ -243,6 +243,29 @@ test("CGCP/1 HTTP: a second plane instance sees the same locked store", async ()
     assert.ok(planeA.getPolicy("p1"));
   } finally {
     await started.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+
+test("CGCP/1 HTTP: health is liveness-only (no chain/ledger data) and limit is bounded", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-http-"));
+  const storePath = join(dir, "cp.json");
+  const plane = createControlPlane({ storePath, create: true });
+  plane.upsertAgent({ id: "a1" });
+  plane.upsertPolicy({ id: "p1" });
+  const srv = await startControlPlaneServer({ controlPlane: plane, apiKey: "k", port: 0, host: "127.0.0.1" });
+  try {
+    const health = await call(srv.url, "/health", { auth: false });
+    assert.equal(health.status, 200);
+    assert.equal(health.json.ok, true);
+    assert.equal(health.json.chain, undefined); // CP-08: no ledger/chain exposure
+
+    const badLimit = await call(srv.url, "/v1/audit?limit=not-a-number", { apiKey: "k" });
+    assert.equal(badLimit.status, 200);
+    assert.ok(Array.isArray(badLimit.json.audit)); // CP-09: falls back safely
+  } finally {
+    await srv.close();
     rmSync(dir, { recursive: true, force: true });
   }
 });

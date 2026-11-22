@@ -49,7 +49,7 @@
       "recheck": "npm test",
       "external": false,
       "derived": {
-        "testsTotal": 1958
+        "testsTotal": 1962
       },
       "deriveError": null,
       "downgraded": null,
