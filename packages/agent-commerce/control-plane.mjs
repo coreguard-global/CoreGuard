@@ -65,11 +65,15 @@ export const CONTROL_PLANE_DECISION_REASONS = Object.freeze([
   "UNKNOWN_POLICY",
   "POLICY_INACTIVE",
   "POLICY_UNREADABLE",
+  "AMOUNT_REQUIRED",
   "MERCHANT_DENIED",
   "MERCHANT_NOT_ALLOWED",
+  "MERCHANT_MISSING",
   "ADDRESS_DENIED",
   "ADDRESS_NOT_ALLOWED",
+  "ADDRESS_MISSING",
   "CURRENCY_MISMATCH",
+  "CURRENCY_MISSING",
   "SPEND_LIMIT_EXCEEDED",
   "DAILY_LIMIT_EXCEEDED",
   "TOTAL_LIMIT_EXCEEDED",
@@ -77,6 +81,7 @@ export const CONTROL_PLANE_DECISION_REASONS = Object.freeze([
   "APPROVAL_NOT_APPROVED",
   "APPROVAL_MISMATCH",
   "APPROVAL_EXPIRED",
+  "APPROVAL_EXPIRES_AT_INVALID",
 ]);
 
 const ZERO_HASH = "sha256:" + "0".repeat(64);
@@ -251,7 +256,11 @@ function approvalProblem({ state, approvalId, agentId, policyId, merchant, addre
   const approval = state.approvals[approvalId];
   if (!approval) return "APPROVAL_REQUIRED";
   if (approval.status !== "approved") return "APPROVAL_NOT_APPROVED";
-  if (approval.expiresAt && Date.parse(approval.expiresAt) < nowMs) return "APPROVAL_EXPIRED";
+  if (approval.expiresAt) {
+    const exp = Date.parse(approval.expiresAt);
+    if (!Number.isFinite(exp)) return "APPROVAL_EXPIRES_AT_INVALID";
+    if (exp < nowMs) return "APPROVAL_EXPIRED";
+  }
   const same = (a, b) => (a == null ? b == null : String(a) === String(b));
   if (!same(approval.agentId, agentId)) return "APPROVAL_MISMATCH";
   if (approval.policyId != null && !same(approval.policyId, policyId)) return "APPROVAL_MISMATCH";
@@ -292,7 +301,15 @@ function evaluateRequest({ state, agentId, policyId, merchant, address, amountMi
 
   const spec = version?.spec ?? null;
   if (spec) {
-    checks.merchant = { ok: true, merchant: merchant ?? null, denied: false, notOnAllowlist: false };
+    const amount = amountMinor == null ? null : BigInt(amountMinor);
+    const monetaryPolicy = spec.spendLimitMinor != null || spec.dailyLimitMinor != null || spec.totalLimitMinor != null || spec.requireApprovalAboveMinor != null;
+
+    checks.merchant = { ok: true, merchant: merchant ?? null, denied: false, notOnAllowlist: false, missing: false };
+    if (merchant == null && (spec.denyMerchants.length > 0 || spec.allowMerchants.length > 0)) {
+      reasons.push("MERCHANT_MISSING");
+      checks.merchant.missing = true;
+      checks.merchant.ok = false;
+    }
     if (merchant != null && spec.denyMerchants.includes(merchant)) {
       reasons.push("MERCHANT_DENIED");
       checks.merchant.denied = true;
@@ -304,7 +321,12 @@ function evaluateRequest({ state, agentId, policyId, merchant, address, amountMi
       checks.merchant.ok = false;
     }
 
-    checks.address = { ok: true, address: address ?? null, denied: false, notOnAllowlist: false };
+    checks.address = { ok: true, address: address ?? null, denied: false, notOnAllowlist: false, missing: false };
+    if (address == null && (spec.denyAddresses.length > 0 || spec.allowAddresses.length > 0)) {
+      reasons.push("ADDRESS_MISSING");
+      checks.address.missing = true;
+      checks.address.ok = false;
+    }
     if (address != null && spec.denyAddresses.includes(address)) {
       reasons.push("ADDRESS_DENIED");
       checks.address.denied = true;
@@ -316,13 +338,17 @@ function evaluateRequest({ state, agentId, policyId, merchant, address, amountMi
       checks.address.ok = false;
     }
 
-    checks.currency = { ok: true, expected: spec.currency, observed: currency ?? null };
+    checks.currency = { ok: true, expected: spec.currency, observed: currency ?? null, missing: false };
+    if (spec.currency != null && currency == null) {
+      reasons.push("CURRENCY_MISSING");
+      checks.currency.missing = true;
+      checks.currency.ok = false;
+    }
     if (spec.currency != null && currency != null && String(spec.currency) !== String(currency)) {
       reasons.push("CURRENCY_MISMATCH");
       checks.currency.ok = false;
     }
 
-    const amount = amountMinor == null ? null : BigInt(amountMinor);
     const totals = spendTotals(state.executions, {
       agentId,
       policyId: resolvedPolicyId,
@@ -339,7 +365,13 @@ function evaluateRequest({ state, agentId, policyId, merchant, address, amountMi
       dailyLimitMinor: spec.dailyLimitMinor,
       projectedTotalMinor: projectedTotal.toString(),
       totalLimitMinor: spec.totalLimitMinor,
+      missing: false,
     };
+    if (amount == null && monetaryPolicy) {
+      reasons.push("AMOUNT_REQUIRED");
+      checks.amount.missing = true;
+      checks.amount.ok = false;
+    }
     if (amount != null && spec.spendLimitMinor != null && amount > BigInt(spec.spendLimitMinor)) {
       reasons.push("SPEND_LIMIT_EXCEEDED");
       checks.amount.ok = false;
@@ -600,7 +632,12 @@ export function createControlPlane({
         status: "pending",
         requestedAt: nowIso(),
         requestedBy: request.requestedBy ?? null,
-        expiresAt: request.expiresAt ?? new Date(nowMs() + 15 * 60 * 1000).toISOString(),
+        expiresAt: (() => {
+          const v = request.expiresAt ?? new Date(nowMs() + 15 * 60 * 1000).toISOString();
+          const t = Date.parse(v);
+          if (!Number.isFinite(t)) throw new TypeError("approval.expiresAt must be a valid ISO-8601 datetime");
+          return new Date(t).toISOString();
+        })(),
         decidedAt: null,
         decidedBy: null,
         reason: null,
@@ -698,13 +735,24 @@ export function createControlPlane({
           boundary: CONTROL_PLANE_BOUNDARY,
         };
       }
+      const amountMinor = optionalDecimal(execution.amountMinor, "execution.amountMinor");
+      if (amountMinor == null) {
+        appendAudit(state, "execution.refused", { executionId, reasons: ["AMOUNT_REQUIRED"], agentId: execution.agentId ?? null }, nowIso());
+        return {
+          committed: false,
+          duplicate: false,
+          reasons: ["AMOUNT_REQUIRED"],
+          executionId,
+          boundary: CONTROL_PLANE_BOUNDARY,
+        };
+      }
       const decision = evaluateRequest({
         state,
         agentId: execution.agentId ?? null,
         policyId: execution.policyId ?? null,
         merchant: execution.merchant ?? null,
         address: execution.address ?? null,
-        amountMinor: execution.amountMinor == null ? null : optionalDecimal(execution.amountMinor, "execution.amountMinor"),
+        amountMinor,
         currency: execution.currency ?? null,
         approvalId: execution.approvalId ?? null,
         nowMs: nowMs(),

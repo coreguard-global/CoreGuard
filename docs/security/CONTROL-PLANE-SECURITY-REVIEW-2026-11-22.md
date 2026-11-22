@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-22 · **Surface:** `packages/agent-commerce/control-plane.mjs` (923 lines) and `control-plane-http.mjs` (275 lines)
 **Commit reviewed:** `fdfbb05` (main) · **Review type:** static read + executable probes against a temporary store
-**Status of findings:** all OPEN — this document does not fix them. Nothing here is a claim that the plane is safe.
+**Status of findings:** CP-01/CP-02/CP-03 FIXED in follow-up (regression tests added). CP-04..CP-14 remain OPEN/Boundary — this document does not claim the plane is safe.
 
 **Scope of the surface:** a self-hosted, single-host, file-backed plane with one bearer API key, an `O_EXCL` lock file, an append-only hash-chained audit log, spend accounting over committed executions, and approval gating.
 
@@ -12,9 +12,9 @@
 
 | ID | Finding | Severity | Status |
 |---|---|---|---|
-| CP-01 | Omitting `amountMinor` commits an execution that bypasses every spend limit and the approval threshold | **High** | OPEN |
-| CP-02 | Omitting `merchant` / `address` / `currency` skips the allow/deny lists and the currency check | **High** | OPEN |
-| CP-03 | A malformed `expiresAt` never expires — the approval is accepted indefinitely | **High** | OPEN |
+| CP-01 | Omitting `amountMinor` commits an execution that bypasses every spend limit and the approval threshold | **High** | **FIXED** |
+| CP-02 | Omitting `merchant` / `address` / `currency` skips the allow/deny lists and the currency check | **High** | **FIXED** |
+| CP-03 | A malformed `expiresAt` never expires — the approval is accepted indefinitely | **High** | **FIXED** |
 | CP-04 | `releaseLock()` deletes the lock file without checking ownership | Medium | OPEN |
 | CP-05 | Stale-lock breaking can delete a *live* holder's lock (slow writer > 30 s) | Medium | OPEN |
 | CP-06 | A missing store is silently treated as an empty plane — spend history resets | Medium | OPEN |
@@ -57,6 +57,8 @@ if (amount != null && spec.spendLimitMinor != null && amount > BigInt(spec.spend
 
 **Fix:** require a non-negative `amountMinor` for `commitExecution` and `authorize` (reject with a named reason such as `AMOUNT_REQUIRED`), or evaluate the policy as `POLICY_UNREADABLE`/`AMOUNT_MISSING` when the field is absent. Keep `amountMinor: null` only for explicitly non-monetary records, in a separate method that cannot satisfy an agent policy.
 
+**Status:** FIXED. `commitExecution` requires `amountMinor`; evaluation refuses missing amount with `AMOUNT_REQUIRED` when monetary policy applies. Regression tests added in `test/integrations/agent-commerce-control-plane.test.mjs`.
+
 ### CP-02 — Missing `merchant` / `address` / `currency` skips the allowlists
 
 **Where:** `control-plane.mjs:299-311` (merchant and address), `:331-335` (currency).
@@ -70,6 +72,8 @@ With `allowMerchants: ["m-good"]` and `allowAddresses: ["0xgood"]`, committing `
 **Impact:** an allowlist is only enforced against fields the caller chooses to send. Omitting them converts a restrictive policy into an open one.
 
 **Fix:** when a policy declares a non-empty allowlist, treat a null value as `MERCHANT_MISSING` / `ADDRESS_MISSING` and refuse. Same for `currency` when the policy pins one. Add a regression test per field, because this pattern repeats.
+
+**Status:** FIXED. Missing merchant/address/currency are refused with `MERCHANT_MISSING`/`ADDRESS_MISSING`/`CURRENCY_MISSING` when the policy declares those constraints. Regression test added.
 
 ### CP-03 — A malformed `expiresAt` never expires
 
@@ -86,6 +90,8 @@ if (approval.expiresAt && Date.parse(approval.expiresAt) < nowMs) return "APPROV
 **Impact:** a permanent approval. A caller who controls the approval request can make a one-off approval valid forever, and the audit trail will look correct.
 
 **Fix:** validate `expiresAt` as an ISO-8601 instant at creation (throw `TypeError`), and at evaluation treat an unparseable value as `APPROVAL_EXPIRED` or `POLICY_UNREADABLE` — never as valid. Also require a bounded maximum TTL.
+
+**Status:** FIXED (core). `requestApproval` rejects unparseable `expiresAt`; evaluation treats unparseable persisted `expiresAt` as `APPROVAL_EXPIRES_AT_INVALID` (fail-closed). Regression test added. Max-TTL bound remains a hardening candidate.
 
 ---
 
