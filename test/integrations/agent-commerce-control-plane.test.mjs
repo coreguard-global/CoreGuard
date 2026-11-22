@@ -32,6 +32,7 @@ function planeIn(dir, extra = {}) {
     now: pinnedClock,
     lockTimeoutMs: 500,
     staleLockMs: 60000,
+    create: true,
     ...extra,
   });
 }
@@ -255,7 +256,7 @@ test("the audit trail is hash-chained, verifies clean, and names the first tampe
   const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
   try {
     const storePath = join(dir, "cp.json");
-    const cp = createControlPlane({ storePath, now: pinnedClock, lockTimeoutMs: 500 });
+    const cp = createControlPlane({ storePath, now: pinnedClock, lockTimeoutMs: 500, create: true });
     cp.upsertAgent({ id: "a1" });
     cp.upsertPolicy({ id: "p1", spendLimitMinor: "100" });
     cp.commitExecution({ id: "e1", agentId: "a1", policyId: "p1", merchant: "m1", amountMinor: "100" });
@@ -286,7 +287,7 @@ test("a stale lock from a dead process is broken instead of wedging the plane", 
   const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
   try {
     const storePath = join(dir, "cp.json");
-    const cp = createControlPlane({ storePath, now: pinnedClock, lockTimeoutMs: 200, staleLockMs: 50 });
+    const cp = createControlPlane({ storePath, now: pinnedClock, lockTimeoutMs: 200, staleLockMs: 50, create: true });
     const lockPath = storePath + ".lock";
     const fd = openSync(lockPath, "wx");
     writeSync(fd, "dead-holder");
@@ -416,6 +417,48 @@ test("CP-03: malformed approval expiresAt is rejected at creation and never trea
     const commit = cp.commitExecution({ id: "e1", agentId: "a1", policyId: "p1", merchant: "m1", amountMinor: "500", approvalId: "ap-legacy" });
     assert.equal(commit.committed, false);
     assert.ok(commit.reasons.includes("APPROVAL_EXPIRES_AT_INVALID"));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+
+test("CP-06: missing store refuses to open without create:true", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
+  try {
+    assert.throws(
+      () => createControlPlane({ storePath: join(dir, "missing.json"), now: pinnedClock }),
+      /STORE_MISSING|store missing/i,
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("CP-07: reserved/prototype ids are rejected", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
+  try {
+    const cp = planeIn(dir);
+    assert.throws(() => cp.upsertAgent({ id: "__proto__" }), /reserved key|must match/);
+    assert.throws(() => cp.upsertPolicy({ id: "constructor", spendLimitMinor: "1" }), /reserved key|must match/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("CP-12 boundary improvement: auditAnchor reports local head and verifyAnchor detects tail mismatch", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
+  try {
+    const cp = planeIn(dir);
+    cp.upsertAgent({ id: "a1" });
+    const anchor = cp.auditAnchor();
+    assert.equal(anchor.ok, true);
+    assert.match(anchor.headHash, /^sha256:/);
+    assert.equal(cp.verifyAnchor({ headHash: anchor.headHash, length: anchor.length }).ok, true);
+    cp.upsertPolicy({ id: "p1" });
+    const mismatch = cp.verifyAnchor({ headHash: anchor.headHash, length: anchor.length });
+    assert.equal(mismatch.ok, false);
+    assert.equal(mismatch.headOk, false);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

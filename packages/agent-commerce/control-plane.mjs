@@ -48,6 +48,8 @@ import {
   closeSync,
   statSync,
   unlinkSync,
+  fsyncSync,
+  existsSync,
 } from "node:fs";
 import { dirname } from "node:path";
 import { randomUUID, createHash } from "node:crypto";
@@ -114,9 +116,20 @@ function optionalDecimal(value, field) {
   return BigInt(s).toString();
 }
 
+const RESERVED_IDS = new Set(["__proto__", "prototype", "constructor"]);
+const SAFE_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
+
 function requiredString(value, field) {
   if (typeof value !== "string" || value.length === 0) throw new TypeError(`${field} must be a non-empty string`);
   return value;
+}
+
+function requiredId(value, field) {
+  const id = requiredString(value, field);
+  if (RESERVED_IDS.has(id) || !SAFE_ID.test(id)) {
+    throw new TypeError(`${field} must match ${SAFE_ID} and not be a reserved key`);
+  }
+  return id;
 }
 
 function stringArray(value, field) {
@@ -150,6 +163,14 @@ const sleep = (() => {
   return (ms) => Atomics.wait(cell, 0, 0, ms);
 })();
 
+function nullMap(obj) {
+  const out = Object.create(null);
+  if (obj && typeof obj === "object") {
+    for (const [k, v] of Object.entries(obj)) out[k] = v;
+  }
+  return out;
+}
+
 function defaultState() {
   return {
     version: CONTROL_PLANE_VERSION,
@@ -157,37 +178,69 @@ function defaultState() {
     boundary: CONTROL_PLANE_BOUNDARY,
     createdAt: null,
     updatedAt: null,
-    agents: {},
-    policies: {},
-    approvals: {},
+    agents: Object.create(null),
+    policies: Object.create(null),
+    approvals: Object.create(null),
     executions: [],
     verifications: [],
-    revocations: {},
+    revocations: Object.create(null),
     audit: [],
   };
+}
+
+function normalizeState(data) {
+  if (!data || typeof data !== "object") throw new Error("not a CGCP/1 control-plane store");
+  if (data.schema !== CONTROL_PLANE_SCHEMA) throw new Error("not a CGCP/1 control-plane store");
+  data.agents = nullMap(data.agents);
+  data.policies = nullMap(data.policies);
+  data.approvals = nullMap(data.approvals);
+  data.revocations = nullMap(data.revocations);
+  if (!Array.isArray(data.executions)) data.executions = [];
+  if (!Array.isArray(data.verifications)) data.verifications = [];
+  if (!Array.isArray(data.audit)) data.audit = [];
+  return data;
 }
 
 function loadState(path) {
   try {
     const data = JSON.parse(readFileSync(path, "utf8"));
-    if (!data || data.schema !== CONTROL_PLANE_SCHEMA) throw new Error("not a CGCP/1 control-plane store");
-    return data;
+    return normalizeState(data);
   } catch (err) {
     if (err && err.code === "ENOENT") return null;
     throw err;
   }
 }
 
-function saveState(path, state) {
+function saveState(path, state, { fsync = false } = {}) {
   mkdirSync(dirname(path), { recursive: true });
   const tmp = path + ".tmp-" + process.pid + "-" + Math.random().toString(16).slice(2);
-  writeFileSync(tmp, JSON.stringify(state, null, 2) + "\n", "utf8");
+  const fd = openSync(tmp, "w");
+  try {
+    writeFileSync(fd, JSON.stringify(state, null, 2) + "\n", "utf8");
+    if (fsync) fsyncSync(fd);
+  } finally {
+    closeSync(fd);
+  }
   renameSync(tmp, path);
+  if (fsync) {
+    try {
+      const dirFd = openSync(dirname(path), "r");
+      try { fsyncSync(dirFd); } finally { closeSync(dirFd); }
+    } catch {
+      // Best-effort directory fsync; not supported on all platforms/filesystems.
+    }
+  }
 }
 
-function appendAudit(state, type, detail, at) {
+function appendAudit(state, type, detail, at, meta = null) {
   const prevHash = state.audit.length ? state.audit[state.audit.length - 1].hash : ZERO_HASH;
   const body = { seq: state.audit.length + 1, type, at, detail, prevHash };
+  const m = meta && typeof meta === "object" ? meta : (state?._auditMeta && typeof state._auditMeta === "object" ? state._auditMeta : null);
+  if (m) {
+    if (m.actor != null) body.actor = String(m.actor);
+    if (m.requestId != null) body.requestId = String(m.requestId);
+    if (m.source != null) body.source = String(m.source);
+  }
   const entry = { ...body, hash: digestOf(body) };
   state.audit.push(entry);
   return entry;
@@ -213,7 +266,11 @@ export function verifyAuditChain(state) {
     if (entry.prevHash !== prev) {
       return { ok: false, length: audit.length, brokenAt: expectedSeq, reason: "previous hash does not chain", headHash: prev };
     }
-    const recomputed = digestOf({ seq: entry.seq, type: entry.type, at: entry.at, detail: entry.detail, prevHash: entry.prevHash });
+    const body = { seq: entry.seq, type: entry.type, at: entry.at, detail: entry.detail, prevHash: entry.prevHash };
+    if (entry.actor != null) body.actor = entry.actor;
+    if (entry.requestId != null) body.requestId = entry.requestId;
+    if (entry.source != null) body.source = entry.source;
+    const recomputed = digestOf(body);
     if (entry.hash !== recomputed) {
       return { ok: false, length: audit.length, brokenAt: expectedSeq, reason: "entry hash does not recompute", headHash: prev };
     }
@@ -433,60 +490,151 @@ export function createControlPlane({
   now = () => new Date(),
   lockTimeoutMs = 5000,
   staleLockMs = 30000,
+  create = false,
+  fsync = false,
 } = {}) {
   if (typeof storePath !== "string" || storePath.length === 0) throw new TypeError("CGCP/1: storePath is required");
   const lockPath = storePath + ".lock";
   const nowIso = () => now().toISOString();
   const nowMs = () => now().getTime();
+  let storeInitialized = existsSync(storePath);
+  if (!create && !storeInitialized) {
+    const missing = new Error("CGCP/1: store missing (pass create: true to initialize a new plane)");
+    missing.code = "STORE_MISSING";
+    missing.statusCode = 503;
+    throw missing;
+  }
+
+  function readLock() {
+    try {
+      const raw = JSON.parse(readFileSync(lockPath, "utf8"));
+      return raw && typeof raw === "object" ? raw : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function pidAlive(pid) {
+    if (!Number.isInteger(pid) || pid <= 0) return false;
+    try {
+      process.kill(pid, 0);
+      return true;
+    } catch (err) {
+      // EPERM means process exists but we lack permission to signal it.
+      return err?.code === "EPERM";
+    }
+  }
+
+  function tryBreakStaleLock() {
+    let lock;
+    let st;
+    try {
+      lock = readLock();
+      st = statSync(lockPath);
+    } catch {
+      return false; // released or unreadable; caller retries
+    }
+    const ageMs = Date.now() - (Number(lock?.at) || st.mtimeMs);
+    if (ageMs <= staleLockMs) return false;
+    // CP-05: never break by age alone when holder pid is still alive.
+    if (lock && pidAlive(lock.pid)) return false;
+    try {
+      // Best-effort ownership-safe break: only remove if same inode/file still looks like this lock.
+      const st2 = statSync(lockPath);
+      if (st2.ino !== st.ino || st2.mtimeMs !== st.mtimeMs) return false;
+      unlinkSync(lockPath);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   function acquireLock() {
     const deadline = Date.now() + lockTimeoutMs;
+    const ownerToken = randomUUID();
     for (;;) {
       try {
         const fd = openSync(lockPath, "wx");
-        writeFileSync(fd, JSON.stringify({ pid: process.pid, at: Date.now() }));
-        closeSync(fd);
-        return;
+        try {
+          writeFileSync(fd, JSON.stringify({ pid: process.pid, at: Date.now(), ownerToken }));
+        } finally {
+          closeSync(fd);
+        }
+        return ownerToken;
       } catch (err) {
         if (err.code !== "EEXIST") throw err;
-        try {
-          const st = statSync(lockPath);
-          if (Date.now() - st.mtimeMs > staleLockMs) unlinkSync(lockPath);
-        } catch {
-          // The holder released between EEXIST and stat — retry immediately.
-        }
+        tryBreakStaleLock();
         if (Date.now() > deadline) {
-          throw new Error(`CGCP/1: store is locked by another process (${lockPath})`);
+          const lockErr = new Error("CGCP/1: store is locked by another process");
+          lockErr.code = "STORE_LOCKED";
+          lockErr.statusCode = 503;
+          throw lockErr;
         }
         sleep(3 + Math.floor(Math.random() * 5));
       }
     }
   }
 
-  function releaseLock() {
+  function releaseLock(ownerToken) {
     try {
+      const lock = readLock();
+      // CP-04: only the owner may remove its lock.
+      if (lock && lock.ownerToken && lock.ownerToken !== ownerToken) return;
       unlinkSync(lockPath);
     } catch {
-      // Nothing to release.
+      // Nothing to release or already removed.
     }
   }
 
   function read() {
-    return loadState(storePath) ?? defaultState();
+    const state = loadState(storePath);
+    if (state) {
+      storeInitialized = true;
+      return state;
+    }
+    if (!create && !storeInitialized) {
+      const missing = new Error("CGCP/1: store missing (pass create: true to initialize a new plane)");
+      missing.code = "STORE_MISSING";
+      missing.statusCode = 503;
+      throw missing;
+    }
+    return defaultState();
+  }
+
+  let pendingAuditMeta = null;
+  function withAuditMeta(meta, fn) {
+    const prev = pendingAuditMeta;
+    pendingAuditMeta = meta && typeof meta === "object" ? meta : null;
+    let out;
+    try {
+      out = fn();
+    } catch (err) {
+      pendingAuditMeta = prev;
+      throw err;
+    }
+    if (out && typeof out.then === "function") {
+      return Promise.resolve(out).finally(() => { pendingAuditMeta = prev; });
+    }
+    pendingAuditMeta = prev;
+    return out;
   }
 
   /** Every mutation: exclusive lock → reload → mutate → atomic save → unlock. */
-  function mutate(fn) {
-    acquireLock();
+  function mutate(fn, meta = null) {
+    const ownerToken = acquireLock();
     try {
       const state = read();
       if (!state.createdAt) state.createdAt = nowIso();
+      const m = meta || pendingAuditMeta;
+      if (m && typeof m === "object") {
+        Object.defineProperty(state, "_auditMeta", { value: m, enumerable: false, configurable: true, writable: true });
+      }
       const result = fn(state);
       state.updatedAt = nowIso();
-      saveState(storePath, state);
+      saveState(storePath, state, { fsync });
       return result;
     } finally {
-      releaseLock();
+      releaseLock(ownerToken);
     }
   }
 
@@ -497,7 +645,7 @@ export function createControlPlane({
   // -- agents --------------------------------------------------------------
 
   function upsertAgent(agent = {}) {
-    const id = requiredString(agent.id, "agent.id");
+    const id = requiredId(agent.id, "agent.id");
     return mutate((state) => {
       const prev = state.agents[id] ?? null;
       const status = agent.status ?? prev?.status ?? "active";
@@ -557,7 +705,7 @@ export function createControlPlane({
   // -- policies (immutable versions; upsert appends) -----------------------
 
   function upsertPolicy(policy = {}) {
-    const id = requiredString(policy.id, "policy.id");
+    const id = requiredId(policy.id, "policy.id");
     return mutate((state) => {
       const prev = state.policies[id] ?? null;
       const spec = normalizePolicySpec(policy);
@@ -617,14 +765,14 @@ export function createControlPlane({
   // -- approvals -----------------------------------------------------------
 
   function requestApproval(request = {}) {
-    const approvalId = request.id ?? "ap_" + randomUUID();
-    const agentId = requiredString(request.agentId, "approval.agentId");
+    const approvalId = requiredId(request.id ?? "ap_" + randomUUID(), "approval.id");
+    const agentId = requiredId(request.agentId, "approval.agentId");
     return mutate((state) => {
       if (!state.agents[agentId]) throw new Error("CGCP/1: unknown agent");
       const record = {
         id: approvalId,
         agentId,
-        policyId: request.policyId ?? state.agents[agentId].policyId ?? null,
+        policyId: request.policyId == null ? (state.agents[agentId].policyId ?? null) : requiredId(request.policyId, "approval.policyId"),
         merchant: request.merchant ?? null,
         address: request.address ?? null,
         amountMinor: optionalDecimal(request.amountMinor, "approval.amountMinor"),
@@ -813,7 +961,7 @@ export function createControlPlane({
 
   /** Kept for the v0 contract: record a pre-computed execution without gating. */
   function recordExecution(execution = {}) {
-    const id = requiredString(execution.id, "execution.id");
+    const id = requiredId(execution.id, "execution.id");
     return mutate((state) => {
       const record = { ...execution, id, at: execution.at ?? nowIso() };
       record.hash = digestOf({ ...record, hash: null });
@@ -825,8 +973,8 @@ export function createControlPlane({
 
   /** Kept for the v0 contract: record a pre-computed approval. */
   function recordApproval(approval = {}) {
-    const id = requiredString(approval.id, "approval.id");
-    requiredString(approval.agentId, "approval.agentId");
+    const id = requiredId(approval.id, "approval.id");
+    requiredId(approval.agentId, "approval.agentId");
     return mutate((state) => {
       const record = { ...approval, id, at: approval.at ?? nowIso() };
       record.hash = digestOf({ ...record, hash: null });
@@ -911,6 +1059,40 @@ export function createControlPlane({
     });
   }
 
+  function auditAnchor() {
+    return view((state) => {
+      const chain = verifyAuditChain(state);
+      return {
+        ok: chain.ok,
+        headHash: chain.headHash,
+        length: chain.length,
+        at: nowIso(),
+        boundary: "Local audit head anchor. NOT_BUILT: external witness/anchoring service, HSM signatures, or on-chain anchoring.",
+      };
+    });
+  }
+
+  function verifyAnchor(expected = {}) {
+    return view((state) => {
+      const chain = verifyAuditChain(state);
+      const expectedHead = expected.headHash ?? null;
+      const expectedLength = expected.length ?? null;
+      const headOk = expectedHead == null ? true : chain.headHash === expectedHead;
+      const lengthOk = expectedLength == null ? true : chain.length === expectedLength;
+      return {
+        ok: chain.ok && headOk && lengthOk,
+        chainOk: chain.ok,
+        headOk,
+        lengthOk,
+        expectedHead,
+        expectedLength,
+        actualHead: chain.headHash,
+        actualLength: chain.length,
+        boundary: "Local anchor comparison only. NOT_BUILT: external witness/anchoring service.",
+      };
+    });
+  }
+
   function verifyLedger() {
     return view((state) => {
       const chain = verifyAuditChain(state);
@@ -929,6 +1111,11 @@ export function createControlPlane({
         executionHashesOk,
         approvals: Object.keys(state.approvals).length,
         approvalHashesOk,
+        anchor: {
+          headHash: chain.headHash,
+          length: chain.length,
+          boundary: "Local anchor only; external witness NOT_BUILT.",
+        },
         boundary: CONTROL_PLANE_BOUNDARY,
       };
     });
@@ -966,6 +1153,9 @@ export function createControlPlane({
     spend,
     auditReport,
     verifyLedger,
+    auditAnchor,
+    verifyAnchor,
     getState,
+    withAuditMeta,
   };
 }

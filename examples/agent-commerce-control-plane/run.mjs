@@ -138,7 +138,7 @@ try {
   // Restart on the same store: the evidence is durable and the chain still verifies.
   await started.close();
   started = null;
-  const reopened = createControlPlane({ storePath });
+  const reopened = createControlPlane({ storePath, create: true });
   const persisted = reopened.auditReport();
   check(
     "hash-chained audit verifies before and after a restart",

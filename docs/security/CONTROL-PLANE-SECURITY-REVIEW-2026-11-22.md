@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-22 · **Surface:** `packages/agent-commerce/control-plane.mjs` (923 lines) and `control-plane-http.mjs` (275 lines)
 **Commit reviewed:** `fdfbb05` (main) · **Review type:** static read + executable probes against a temporary store
-**Status of findings:** CP-01/CP-02/CP-03 FIXED in follow-up (regression tests added). CP-04..CP-14 remain OPEN/Boundary — this document does not claim the plane is safe.
+**Status of findings:** CP-01..CP-11 FIXED/hardened in follow-up (regression tests added where applicable). CP-12..CP-14 remain Boundary with bounded improvements — this document does not claim the plane is safe.
 
 **Scope of the surface:** a self-hosted, single-host, file-backed plane with one bearer API key, an `O_EXCL` lock file, an append-only hash-chained audit log, spend accounting over committed executions, and approval gating.
 
@@ -15,17 +15,17 @@
 | CP-01 | Omitting `amountMinor` commits an execution that bypasses every spend limit and the approval threshold | **High** | **FIXED** |
 | CP-02 | Omitting `merchant` / `address` / `currency` skips the allow/deny lists and the currency check | **High** | **FIXED** |
 | CP-03 | A malformed `expiresAt` never expires — the approval is accepted indefinitely | **High** | **FIXED** |
-| CP-04 | `releaseLock()` deletes the lock file without checking ownership | Medium | OPEN |
-| CP-05 | Stale-lock breaking can delete a *live* holder's lock (slow writer > 30 s) | Medium | OPEN |
+| CP-04 | `releaseLock()` deletes the lock file without checking ownership | Medium | **FIXED** |
+| CP-05 | Stale-lock breaking can delete a *live* holder's lock (slow writer > 30 s) | Medium | **FIXED** |
 | CP-06 | A missing store is silently treated as an empty plane — spend history resets | Medium | OPEN |
 | CP-07 | `id: "__proto__"` is accepted, reported as created, then lost on save | Medium | OPEN |
 | CP-08 | Unauthenticated `/health` runs a full ledger verification on every request | Low | OPEN |
 | CP-09 | `?limit=abc` (or `0`, or negative) returns the entire collection | Low | OPEN |
 | CP-10 | Error responses echo absolute store/lock paths; lock contention is returned as `400` | Low | OPEN |
-| CP-11 | API key can arrive as a CLI flag (visible in `ps`); no rotation, no rate limit on 401 | Low | OPEN |
-| CP-12 | The audit chain has no HMAC, signature or external anchor | Info | Boundary |
+| CP-11 | API key can arrive as a CLI flag (visible in `ps`); no rotation, no rate limit on 401 | Low | **HARDENED** |
+| CP-12 | The audit chain has no HMAC, signature or external anchor | Info | **Boundary (improved)** |
 | CP-13 | No `fsync` before `rename` — a crash can lose the last acknowledged mutation | Info | Boundary |
-| CP-14 | Audit entries carry no actor, source IP or request id | Info | Boundary |
+| CP-14 | Audit entries carry no actor, source IP or request id | Info | **Boundary (improved)** |
 
 **The three High findings share one root cause:** every policy check is written as `field != null && …`. A request that simply *omits* a field is therefore treated as "no constraint to apply", not as "evidence missing, refuse". That is the opposite of the fail-closed rule stated elsewhere in this repository.
 
@@ -109,6 +109,8 @@ There is no token check. The lock file contains `{ pid, at }` (`:414-417`) but t
 
 **Fix:** write a random `ownerToken` into the lock file and, on release, read it back and unlink only when it matches. Prefer `link()`/`rename()` based locking, or a real advisory lock (`flock`) through a small native dependency, and document that the token check is best-effort on filesystems without atomic compare-and-delete.
 
+**Status:** FIXED. Lock writes `{pid, at, ownerToken}`; release only unlinks when token matches. Regression covered by lock contention test behavior.
+
 ### CP-05 — Stale-lock breaking can evict a live writer
 
 **Where:** `control-plane.mjs:418-427`.
@@ -119,6 +121,8 @@ A lock older than `staleLockMs` (30 s default) is unlinked. A live process can e
 
 **Fix:** never break by age alone. Store the holder `pid` + process start time and break only when the pid is gone; or require an operator flag (`--break-lock`) with an audit entry. Reduce the blast radius by making mutations small and by fsyncing.
 
+**Status:** FIXED (best-effort). Stale break requires age threshold AND holder pid not alive (`process.kill(pid,0)` / EPERM treated as alive). Inode/mtime guard reduces race window.
+
 ### CP-06 — A missing store silently becomes an empty plane
 
 **Where:** `control-plane.mjs:167-176` (`loadState` returns `null` on `ENOENT`), `:440-442` (`read()` falls back to `defaultState()`).
@@ -128,6 +132,8 @@ If `storePath` points at a different path than the one holding history (typo, ch
 **Impact:** a configuration mistake disables every limit without any error. This is a fail-open on operator error.
 
 **Fix:** require an explicit `create: true` for the first write, or write a marker file; otherwise throw `STORE_MISSING`. For an existing plane, verify the chain on open and refuse to append to a state whose `schema`/`version`/boundary fields are absent. Consider pinning the expected head hash in the deployment config.
+
+**Status:** FIXED. `createControlPlane` throws `STORE_MISSING` unless `create: true` or store already exists. Regression test added.
 
 ### CP-07 — `__proto__` as an identifier is accepted and then lost
 
@@ -141,6 +147,8 @@ If `storePath` points at a different path than the one holding history (typo, ch
 
 **Fix:** reject reserved keys (`__proto__`, `prototype`, `constructor`) and apply a conservative id pattern (`^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$`). Use `Object.create(null)` maps, or `Map`, for the id-keyed collections and convert at the JSON boundary.
 
+**Status:** FIXED. Reserved ids rejected; id-keyed collections normalized to `Object.create(null)`. Regression test added.
+
 ---
 
 ## 4. Low findings
@@ -151,11 +159,15 @@ If `storePath` points at a different path than the one holding history (typo, ch
 
 **Fix:** make `/health` a constant-time liveness check that returns version and boundary only; move ledger verification behind auth (it already exists at `/v1/audit/verify`) and return `503` when the chain is broken.
 
+**Status:** FIXED. `/health` is liveness-only (no store read, no chain length). Ledger verification remains behind auth at `/v1/audit/verify`.
+
 ### CP-09 — `limit` is not validated
 
 `control-plane-http.mjs:184, 207, 213` pass `Number(url.searchParams.get("limit") ?? N)` straight into `slice(-limit)`. `Number("abc")` → `NaN`, and `slice(-NaN)` is `slice(0)` — the whole collection. `limit=0` does the same; negative values discard the newest records. Verified: `GET /v1/audit?limit=not-a-number` returned all 7 entries.
 
 **Fix:** parse with `Number.parseInt`, require `1 ≤ limit ≤ MAX`, and default on failure. Apply the same bound to `listExecutions`, `listVerifications` and `auditReport`.
+
+**Status:** FIXED. HTTP limits parsed with `parseLimit` (default on invalid, capped at MAX_LIMIT). Regression test added.
 
 ### CP-10 — Error details disclose internal paths; lock contention is a `400`
 
@@ -169,19 +181,23 @@ Verified over HTTP. This discloses filesystem layout to any authenticated caller
 
 **Fix:** map errors to a small public taxonomy (`INVALID_REQUEST`, `CONFLICT`, `STORE_UNAVAILABLE`, `INTERNAL`) with stable messages; log the internal detail server-side only; use `503` for lock contention and `409` for conflicts. No stack traces are currently leaked — keep it that way.
 
+**Status:** FIXED. HTTP catch maps to stable taxonomy; lock contention/missing store -> 503 STORE_UNAVAILABLE; no internal paths/stack traces.
+
 ### CP-11 — API key handling
 
 `control-plane-cli.mjs:227-228` accepts `--api-key`, which is visible in `ps` and shell history on a shared host; the environment variable path is the safer one. Additionally: a single static key with no expiry or rotation, no rate limiting or lockout on repeated `401`s, and `safeEqual` returns early on length mismatch (`control-plane-http.mjs:34-39`) so the key length is observable by timing (negligible, but it is the one place the comparison is not constant-time).
 
 **Fix:** drop `--api-key` (or read it from a file descriptor), require ≥32 bytes of entropy, add a token-rotation list (accept old+new during a window) and a small per-source 401 throttle. Compare fixed-length digests of both values so length does not short-circuit.
 
+**Status:** HARDENED (partial). `safeEqual` compares SHA-256 digests (no length short-circuit). HTTP supports `apiKeys` rotation list and per-IP 401 throttle. CLI supports `--api-key-file` / `COREGUARD_CONTROL_PLANE_API_KEY_FILE`; `--api-key` kept for compat (still visible in process args). Entropy enforcement and full key lifecycle remain operator responsibilities.
+
 ---
 
 ## 5. Boundaries (stated, not defects to be fixed here)
 
-- **CP-12 — audit tamper-evidence is local only.** The chain is `sha256` over `{seq, type, at, detail, prevHash}` (`:184-190`), with no HMAC, signature or external anchor. Anyone with write access to the store can rewrite history consistently, and **truncating the tail is undetectable** by design: there is no expected head hash to compare against. It detects accidental corruption and naive edits, not a malicious host. Anchoring the head hash externally is `NOT_BUILT`.
-- **CP-13 — durability.** `saveState` writes a temp file and `rename`s it (`:178-184`) but never `fsync`s the file or the directory. `rename` keeps readers from seeing a partial file; it does not keep the last acknowledged mutation through a power loss.
-- **CP-14 — attribution.** Audit `detail` records ids and amounts only; there is no actor, source IP, request id or user agent, and `authorize` decisions cannot be attributed to a caller. With one shared key, "who" is unknowable at this layer.
+- **CP-12 — audit tamper-evidence is local only.** The chain is `sha256` over `{seq, type, at, detail, prevHash, actor?, requestId?, source?}` (meta fields included when present), with no HMAC, signature or external anchor. Anyone with write access to the store can rewrite history consistently, and **truncating the tail is undetectable** by design without an external witness. **Improvement:** plane now exposes `auditAnchor()`/`verifyAnchor(expectedHead)` and report/verify include anchor head; this is a local/exportable witness, **NOT_BUILT** as external witness service, HSM signature, or on-chain anchoring.
+- **CP-13 — durability.** `saveState` writes a temp file and `rename`s it; by default it does not `fsync`. **Improvement:** `createControlPlane({ fsync: true })` enables best-effort file+directory fsync. This improves durability but is not a guarantee against all power-loss/filesystem behaviors; distributed durable HA remains **NOT_BUILT**.
+- **CP-14 — attribution.** **Improvement:** audit entries can include optional `actor`, `requestId`, `source` meta (HTTP passes `x-actor`, `x-request-id`, remote IP via `withAuditMeta`). Attribution is self-asserted and still bounded by single-key/no-identity model; RBAC/SSO/SCIM/immutable external identity remains **NOT_BUILT**.
 - **Not a multi-user system.** One bearer key is host-level authorization, not identity. No RBAC, SSO/SCIM, tenant isolation, KMS/HSM, HA/consensus, managed SLA or payment custody. These are `NOT_BUILT` and repeated in `CONTROL_PLANE_BOUNDARY`.
 - **Deployment.** No TLS in-process; the default bind is `127.0.0.1`, and `host: "0.0.0.0"` is accepted without a warning. TLS termination and an authenticating reverse proxy are deployment responsibilities.
 - **Process-local semantics.** Revocation and spend are enforced at commit time against the file store on one host; cross-host coordination is not implemented.
