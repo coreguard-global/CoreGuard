@@ -37,6 +37,16 @@ jobs:
       - name: Install (workspace)
         run: npm ci --ignore-scripts
 
+      - name: Credential diagnostics (no secret values)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm --version
+          echo "registry: $(npm config get registry)"
+          echo -n "authenticated as: "
+          npm whoami || echo "(whoami failed — token not accepted)"
+          npm config get //registry.npmjs.org/:_authToken | sed 's/./*/g' | wc -c
+
       - name: Gate — release-please (publish-check + plan + publish)
         env:
           # setup-node writes .npmrc with `//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}`;
