@@ -33,10 +33,11 @@ test("AER-1 interop: pins, id-binding agreement, and no false reject", () => {
 });
 
 test("AER-1 interop: the published table matches the code and the known defect count", () => {
-  // This is the number to lower when the missing checks land, never to raise.
-  // The corpus classifies 37 records as invalid; CG-AER1/1 refuses 6 of them
-  // outright and accepts the other 21 (plus 1 invalid-profile record).
-  assert.equal(report.totals.falseAccept, 22, "false accepts must not grow; fix the checks and lower this pin");
+  // This is the number to keep at zero. The corpus classifies 37 records as
+  // invalid and CG-AER1/1 now refuses every one of them; a regression adds a
+  // name here instead of passing quietly.
+  assert.equal(report.totals.falseAccept, 0, "false accepts must stay at zero");
+  assert.deepEqual(report.falseAccepts.map((f) => f.name), []);
 
   assert.equal(report.pairs.live.name, "receipt-03-live");
   assert.equal(report.pairs.live.verdict, "pass");

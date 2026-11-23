@@ -2,28 +2,28 @@
   "schema": "CG-NUMBERS/1",
   "generatedBy": "scripts/public-numbers.mjs",
   "generatedFrom": "docs/state-snapshot.json",
-  "measuredAtUtc": "2026-11-23T14:46:14Z",
+  "measuredAtUtc": "2026-11-23T18:32:04Z",
   "measuredOnCommit": "fdfbb05c944b73a84f39980da5480a6df4f2ad50",
   "metrics": [
     {
       "id": "tests",
       "label": "Tests (full suite, machine-pinned)",
-      "value": 1999,
+      "value": 2009,
       "unit": "tests",
       "source": "docs/state-snapshot.json#testsTotal",
       "note": "Pass count of the last green `npm test`; the suite asserts this number."
     },
     {
       "id": "boundary-files",
-      "label": "Boundary audit \u2014 files scanned",
-      "value": 1522,
+      "label": "Boundary audit — files scanned",
+      "value": 1529,
       "unit": "files",
       "source": "docs/state-snapshot.json#boundaryAudit.filesScanned",
       "note": "Tracked files from `git ls-files` (ignored trees such as var/ are not counted)."
     },
     {
       "id": "boundary-violations",
-      "label": "Boundary audit \u2014 violations",
+      "label": "Boundary audit — violations",
       "value": 0,
       "unit": "violations",
       "source": "docs/state-snapshot.json#boundaryAudit.violations",
@@ -31,7 +31,7 @@
     },
     {
       "id": "docs-executed",
-      "label": "Docs contract \u2014 commands executed",
+      "label": "Docs contract — commands executed",
       "value": 140,
       "unit": "commands",
       "source": "docs/state-snapshot.json#docsNode.executed",
@@ -39,7 +39,7 @@
     },
     {
       "id": "docs-skip-listed",
-      "label": "Docs contract \u2014 skip-listed",
+      "label": "Docs contract — skip-listed",
       "value": 89,
       "unit": "commands",
       "source": "docs/state-snapshot.json#docsNode.skipListed",
@@ -47,7 +47,7 @@
     },
     {
       "id": "docs-covered",
-      "label": "Docs contract \u2014 docs covered",
+      "label": "Docs contract — docs covered",
       "value": 33,
       "unit": "docs",
       "source": "docs/state-snapshot.json#docsNode.docsCovered",
@@ -71,7 +71,7 @@
     }
   ],
   "nonClaims": [
-    "These are measurements of this repository at the commit above \u2014 not customers, revenue, adoption, or unique users.",
+    "These are measurements of this repository at the commit above — not customers, revenue, adoption, or unique users.",
     "A green test count proves the tests pass; it is not a security audit, certification, or production-readiness claim.",
     "Boundary counts cover tracked files only; generated and ignored trees are excluded by design.",
     "No third-party registry or download figures are included here, because this script performs no network calls."

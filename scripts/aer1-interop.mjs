@@ -39,8 +39,8 @@ const EXPECTED = (path) => {
   return null; // anchored / families with mixed outcomes are not classified by path
 };
 
-function classifyRecord(record) {
-  const parsed = parseAer1Record(record);
+function classifyRecord(record, rawText) {
+  const parsed = parseAer1Record(record, { rawText });
   if (!parsed.supportedVersion) return { observed: "not_checked", reason: `schema ${parsed.version ?? "(absent)"} not implemented`, parsed };
   return { observed: parsed.verdict === "pass" ? "verified" : "invalid", parsed };
 }
@@ -86,8 +86,10 @@ function runCorpus() {
       continue;
     }
     let data;
+    let text;
     try {
-      data = JSON.parse(readFileSync(join(CORPUS, f.path), "utf8"));
+      text = readFileSync(join(CORPUS, f.path), "utf8");
+      data = JSON.parse(text);
     } catch {
       same.notChecked += Number(f.vectors) || 0;
       families.set(f.path, same);
@@ -100,7 +102,7 @@ function runCorpus() {
       families.set(f.path, same);
       continue;
     }
-    const { observed, reason } = classifyRecord(data);
+    const { observed, reason } = classifyRecord(data, text);
     const expected = same.expected;
     if (expected === null) {
       // anchored / mixed families: this build does not judge them yet
@@ -148,8 +150,9 @@ function runCorpus() {
 
 /** The two pairs Brennan asked for: a live receipt, and an id-binding swap. */
 function interopPairs() {
-  const live = JSON.parse(readFileSync(join(CORPUS, "base/test-vectors/valid/receipt-03-live.json"), "utf8"));
-  const liveParsed = parseAer1Record(live, { expectedId: live.id });
+  const liveText = readFileSync(join(CORPUS, "base/test-vectors/valid/receipt-03-live.json"), "utf8");
+  const live = JSON.parse(liveText);
+  const liveParsed = parseAer1Record(live, { expectedId: live.id, rawText: liveText });
   const bindings = JSON.parse(readFileSync(join(CORPUS, "base/id-binding-vectors.json"), "utf8")).vectors ?? [];
   const swap = bindings.find((v) => v.expected_id_verdict === "mismatched") ?? bindings[0];
   const swapParsed = parseAer1Record(swap.receipt, { expectedId: swap.expected_id });
@@ -237,8 +240,11 @@ function render(report) {
   out.push("");
   out.push("## Boundary");
   out.push("");
-  out.push("- No conformance claim: 30 false accepts and unimplemented timeline families are listed above.");
-  out.push("- The id-binding family is the only one this build judges end to end, and it agrees 6/6.");
+  out.push(
+    `- No conformance claim: ${r.totals.falseAccept} false accepts and ${r.totals.notChecked} not-checked vectors are listed above.`,
+  );
+  out.push("- The id-binding family is judged end to end and agrees 6/6.");
+  out.push("- The single-record invalid set is now refused by: duplicate member names, unknown provenance class, an execution payload without inputs, a claimed status other than verified, and the canonical base64 and calendar checks.");
   out.push("- `not_checked` is a resource outcome, not a pass.");
   out.push("");
   return out.join("\n");
