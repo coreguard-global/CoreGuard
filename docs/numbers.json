@@ -2,13 +2,13 @@
   "schema": "CG-NUMBERS/1",
   "generatedBy": "scripts/public-numbers.mjs",
   "generatedFrom": "docs/state-snapshot.json",
-  "measuredAtUtc": "2026-11-23T18:32:04Z",
-  "measuredOnCommit": "fdfbb05c944b73a84f39980da5480a6df4f2ad50",
+  "measuredAtUtc": "2026-11-23T23:08:41Z",
+  "measuredOnCommit": "93bafac5f702aa43a4383f30f60d5dacb4b7d541",
   "metrics": [
     {
       "id": "tests",
       "label": "Tests (full suite, machine-pinned)",
-      "value": 2042,
+      "value": 2044,
       "unit": "tests",
       "source": "docs/state-snapshot.json#testsTotal",
       "note": "Pass count of the last green `npm test`; the suite asserts this number."

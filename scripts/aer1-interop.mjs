@@ -30,6 +30,7 @@ import {
   verifyAer1WorkflowMerkle,
   verifyAer1MerkleVector,
   verifyAer1UnicodeVector,
+  reportAer1Anchor,
 } from "../packages/agent-commerce/aer1.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -74,10 +75,26 @@ const RECORD_FAMILIES = new Set(["valid", "invalid", "invalid-profile", "anchore
 const index = JSON.parse(readFileSync(join(CORPUS, "corpus-index.json"), "utf8"));
 const files = index.files ?? [];
 
+/**
+ * Per-file outcomes for the anchored family, read from the pinned reference
+ * column's `outcome:` notes. The expectation is external to this build; every
+ * verdict below is computed from the fixture's own bytes and anchor members.
+ * No file is excluded: a mismatch is published as a false accept or reject.
+ */
+const ANCHORED_EXPECTED = Object.freeze({
+  "anchored-valid.json": "verified",
+  "anchored-unresolvable-anchor.json": "rejected: unresolvable record",
+  "anchored-bad-leaf-hash.json": "verification failed",
+  "anchored-bad-timestamp.json": "verification failed",
+  "anchored-missing-proof.json": "verification failed",
+  "anchored-bad-id-version.json": "verification failed",
+});
+
 const EXPECTED = (path) => {
   if (path.includes("/valid/")) return "verified";
   if (path.includes("/invalid/") || path.includes("invalid-profile")) return "invalid";
-  return null; // anchored / families with mixed outcomes are not classified by path
+  if (path.includes("/anchored/")) return ANCHORED_EXPECTED[path.split("/").pop()] ?? null;
+  return null; // mixed families with no pinned per-file expectation
 };
 
 const sha256OfFile = (path) => `sha256:${createHash("sha256").update(readFileSync(path)).digest("hex")}`;
@@ -110,7 +127,7 @@ export function parseKitColumn(text) {
  */
 const kitOutcome = (check) => {
   if (check.note === null) return null;
-  return /rejected|verification failed|outcome: invalid/.test(check.note) ? "invalid" : "verified";
+  return /rejected|verification failed|outcome: invalid|outcome=absent|outcome=not checked/.test(check.note) ? "invalid" : "verified";
 };
 
 function loadKitColumn() {
@@ -125,8 +142,17 @@ function loadKitColumn() {
 
 function classifyRecord(record, rawText) {
   const parsed = parseAer1Record(record, { rawText });
-  if (!parsed.supportedVersion) return { observed: "not_checked", reason: `schema ${parsed.version ?? "(absent)"} not implemented`, parsed };
-  return { observed: parsed.verdict === "pass" ? "verified" : "invalid", parsed };
+  const anchor = reportAer1Anchor(record);
+  if (!parsed.supportedVersion) {
+    return { observed: "not_checked", reason: `schema ${parsed.version ?? "(absent)"} not implemented`, parsed, anchor };
+  }
+  const structural = parsed.verdict === "pass" ? "verified" : "invalid";
+  if (anchor.present) {
+    const observed = anchor.outcome !== "verified" ? anchor.outcome : structural === "verified" ? "verified" : "verification failed";
+    const failed = parsed.structure.filter((c) => !c.ok).map((c) => c.name);
+    return { observed, reason: [anchor.reason, ...failed].filter(Boolean).join("; ") || null, parsed, anchor };
+  }
+  return { observed: structural, parsed, anchor };
 }
 
 function runIdBinding() {
@@ -187,6 +213,16 @@ function buildKitJoin(kit, observedByName, idRows) {
   return { rows, orphans };
 }
 
+const isRefusalOutcome = (outcome) =>
+  outcome === "invalid" || outcome === "verification failed" || outcome === "rejected: unresolvable record" || outcome === "absent";
+
+/** A claim of verified where the pinned expectation is anything else is ours. */
+function mismatchKind(expected, observed) {
+  if (observed === expected) return "agree";
+  if (observed === "verified" && (isRefusalOutcome(expected) || expected === "not checked")) return "falseAccept";
+  return "falseReject";
+}
+
 function runCorpus() {
   const families = new Map();
   const observedByName = new Map();
@@ -227,10 +263,10 @@ function runCorpus() {
         continue;
       }
       for (const verdict of verdicts) {
-        observedByName.set(verdict.name, verdict.observed);
-        if (verdict.observed === verdict.expected) {
-          same.agree += 1;
-        } else if (verdict.observed === "verified" && verdict.expected === "invalid") {
+        observedByName.set(verdict.name, verdict.joinObserved ?? (verdict.observed === "verified" ? "verified" : "invalid"));
+        const kind = mismatchKind(verdict.expected, verdict.observed);
+        if (kind === "agree") same.agree += 1;
+        else if (kind === "falseAccept") {
           same.falseAccept += 1;
           falseAccepts.push({ path: f.path, name: verdict.name, reason: verdict.reason });
         } else {
@@ -241,28 +277,28 @@ function runCorpus() {
       families.set(f.path, same);
       continue;
     }
+    const name = f.path.split("/").pop();
     const { observed, reason } = classifyRecord(data, text);
-    // Only families this build actually judges are comparable. An anchored
-    // record whose anchor layer is not evaluated is not_checked, even when its
-    // structural verdict happens to be "pass".
-    observedByName.set(f.path.split("/").pop(), same.expected === null ? "not_checked" : observed);
     const expected = same.expected;
+    observedByName.set(name, expected === null ? "not_checked" : observed === "verified" ? "verified" : "invalid");
     if (expected === null) {
-      // anchored / mixed families: this build does not judge them yet
+      // Mixed families with no pinned per-file expectation stay not checked.
       same.unclassified += 1;
       same.notChecked += 1;
-      notChecked.push({ path: f.path, name: f.path.split("/").pop(), family: "record", reason: "anchor family not implemented" });
-    } else if (expected === "invalid" && observed === "verified") {
-      same.falseAccept += 1;
-      falseAccepts.push({ path: f.path, name: f.path.split("/").pop(), reason: data.rejected_by ?? data.reason ?? null });
-    } else if (expected === "verified" && observed === "invalid") {
-      same.falseReject += 1;
-      falseRejects.push({ path: f.path, name: f.path.split("/").pop() });
+      notChecked.push({ path: f.path, name, family: "record", reason: "no pinned per-file expectation" });
     } else if (observed === "not_checked") {
       same.notChecked += 1;
-      notChecked.push({ path: f.path, name: f.path.split("/").pop(), family: "record", reason });
+      notChecked.push({ path: f.path, name, family: "record", reason });
     } else {
-      same.agree += 1;
+      const kind = mismatchKind(expected, observed);
+      if (kind === "agree") same.agree += 1;
+      else if (kind === "falseAccept") {
+        same.falseAccept += 1;
+        falseAccepts.push({ path: f.path, name, reason: reason ?? data.rejected_by ?? data.reason ?? null });
+      } else {
+        same.falseReject += 1;
+        falseRejects.push({ path: f.path, name, reason });
+      }
     }
     families.set(f.path, same);
   }
@@ -365,6 +401,21 @@ function classifyTimeline(path, vectors, text) {
   if (path.endsWith("unicode-vectors.json")) {
     return vectors.map((v) => verdict(v, verifyAer1UnicodeVector(v), v.expected === "match" ? "verified" : "invalid"));
   }
+  if (path.endsWith("anchor-vectors.json")) {
+    return vectors.map((v) => {
+      const receipt = v.file ? JSON.parse(readFileSync(join(CORPUS, "base", v.file), "utf8")) : v.receipt;
+      const report = reportAer1Anchor(receipt, { evaluate: v.evaluate });
+      const matches = report.outcome === v.expected_anchor_outcome && report.present === v.expected_present && report.evaluated === v.expected_evaluated;
+      return {
+        name: v.name,
+        expected: v.expected_anchor_outcome,
+        observed: report.outcome,
+        // The kit collapses every non-verified anchor outcome to "invalid".
+        joinObserved: report.outcome === "verified" ? "verified" : "invalid",
+        reason: matches ? null : `present=${report.present} evaluated=${report.evaluated} ${report.reason ?? ""}`.trim(),
+      };
+    });
+  }
   return null;
 }
 
@@ -403,7 +454,7 @@ function render(report) {
   out.push("");
   out.push("| Outcome | Vectors |");
   out.push("|---|---|");
-  out.push(`| agree with the corpus | ${r.totals.agree} |`);
+  out.push(`| agree with the pinned expectation (corpus classification or pinned reference outcome for the anchored family) | ${r.totals.agree} |`);
   out.push(`| **false accept (ours — must be zero)** | **${r.totals.falseAccept}** |`);
   out.push(`| false reject (ours) | ${r.totals.falseReject} |`);
   out.push(`| not checked (unimplemented family, schema or anchor) | ${r.totals.notChecked} |`);
@@ -432,7 +483,7 @@ function render(report) {
     ]
       .filter(Boolean)
       .join(" · ");
-    const kit = k === undefined ? "—" : `${k.checks} ${k.checks === 1 ? "check" : "checks"}, all as expected${k.invalid ? ` · ${k.invalid} refused` : ""}`;
+    const kit = k === undefined ? "—" : `${k.checks} ${k.checks === 1 ? "check" : "checks"}, all as expected${k.invalid ? ` · ${k.invalid} non-verified` : ""}`;
     const divergence =
       k === undefined || k.oursJudged === 0
         ? "— (not judged by CG-AER1/1)"
@@ -494,24 +545,23 @@ function render(report) {
   out.push("");
   out.push("## Not checked");
   out.push("");
-  const byFamily = new Map();
-  for (const n of r.notChecked) {
-    const key = n.family === "timeline" ? "the anchor timeline family (8 vectors)" : "anchored records (6)";
-    byFamily.set(key, (byFamily.get(key) ?? 0) + 1);
+  if (r.notChecked.length === 0) {
+    out.push("None. Every vector in the pinned set has a computed verdict on this side.");
+  } else {
+    for (const n of r.notChecked) out.push(`- \`${n.name}\` — ${n.family}: ${n.reason ?? "no reason recorded"}`);
   }
-  for (const [k, n] of byFamily) out.push(`- ${n} — ${k}`);
-  out.push("");
-  out.push("Both remaining families need an anchor resolution fact we cannot compute offline. They stay not checked rather than borrowing a structural pass from another layer.");
   out.push("");
   out.push("## Boundary");
   out.push("");
   out.push(
-    `- No conformance claim: ${r.totals.falseAccept} false accepts and ${r.totals.notChecked} not-checked vectors are listed above.`,
+    `- No conformance claim: ${r.totals.falseAccept} false accepts and ${r.totals.notChecked} not-checked vectors are listed above. Zero on both is a measured result on this pinned set, not certification.`,
   );
   out.push("- The id-binding family is judged end to end and agrees 6/6.");
   out.push("- The merkle family (9 vectors / 12 kit checks) is judged on the Section 8.1 construction: SHA-256 over the UTF-8 receipt id per leaf, raw 32-byte pairs, last-duplicate on odd levels, SHA-256(empty) for an empty workflow. A duplicate receipt id and the legacy `seq:receipt_hash` construction are refused even when a root happens to match.");
   out.push("- The unicode family (5) hashes the exact decoded bytes. No NFC/NFD rewriting: visually identical spellings of café and of a hyphen are different payloads, and both mismatch vectors are refused.");
   out.push("- Schema 0.4 records (21: 12 valid, 9 invalid) are judged on the versioned strict timestamp and nil-UUID rules, canonical-JSON input_hash, both sides of the issuer_claims provenance binding, the committed version match, and the structural checks. `metadata_hash` is format-checked only: the vendored corpus publishes no preimage rule, so this build does not invent a recomputation nobody can reproduce.");
+  out.push("- The anchor family (8) and the anchored records (6) are judged on the Section 3.3 profile and the five-value outcome dictionary. A missing profile is `absent` (a Nostr-shaped `anchor` member is a different record, not a failed anchor); `evaluate: false` is honoured before any content is read and reports `not checked`; an RFC 2606 `.invalid` log is `rejected: unresolvable record` and that resource outcome takes precedence over a wrong leaf.");
+  out.push("- In replay, the resolution fact is the receipt's own committed bytes recomputed into a leaf carrying the receipt id and its digest. The checks require that leaf to name the anchored id and equal the committed `leaf_hash`, that `leaf_hash` equal the digest of `canonical_bytes` and `output_hash`, that the id be a lowercase UUID v4, that `anchored_at` be calendar-valid, and that `proof` be present. This is the corpus's offline convention — no network call is made, and a production caller must inject a real resolver with recorded evidence. A verified anchor verdict here means the pinned resolution fact was computed and matched; it is not proof a log accepted anything.");
   out.push("- The single-record invalid set is now refused by: duplicate member names, unknown provenance class, an execution payload without inputs, a claimed status other than verified, and the canonical base64 and calendar checks.");
   out.push("- `not_checked` is a resource outcome, not a pass.");
   out.push("");

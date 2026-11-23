@@ -69,11 +69,13 @@ index, vendored with them.
 
 What that buys, and what it does not: integrity is now a whole-corpus property
 rather than a six-file property, and every vector file the corpus publishes is
-present and named. Semantics now covers 41 vectors: id-binding (6), merkle (9), unicode (5) and
-every schema 0.4 record (21, 12 valid and 9 invalid). `scripts/aer1-corpus.mjs`
-prints the other 102 vectors as `NOT_CHECKED` with the family named — the anchor
-family (8) and anchored records (6). A verifier that half-implements a family
-and reports it green is the failure mode the corpus exists to catch.
+present and named. Semantics now covers 55 vectors: id-binding (6), merkle (9),
+unicode (5), the anchor family (8), anchored records (6) and every schema 0.4
+record (21, 12 valid and 9 invalid). `scripts/aer1-corpus.mjs` prints the other
+84 vectors as `NOT_CHECKED` with the family named — chain, commitment, workflow
+Merkle and the single-record sets that this replay does not judge. A verifier
+that half-implements a family and reports it green is the failure mode the
+corpus exists to catch.
 
 `corpus-metadata.json` remains the metadata subset it says it is; the full file
 list now lives in `corpus-index.json`.

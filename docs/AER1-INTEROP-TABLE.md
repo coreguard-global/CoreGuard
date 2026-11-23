@@ -10,10 +10,10 @@ A `verified` outcome here means the saved bytes were not changed after they were
 
 | Outcome | Vectors |
 |---|---|
-| agree with the corpus | 129 |
+| agree with the pinned expectation (corpus classification or pinned reference outcome for the anchored family) | 143 |
 | **false accept (ours — must be zero)** | **0** |
 | false reject (ours) | 0 |
-| not checked (unimplemented family, schema or anchor) | 14 |
+| not checked (unimplemented family, schema or anchor) | 0 |
 
 ## Families and the joined verdicts
 
@@ -21,17 +21,17 @@ Two columns from two runners against the same pinned set, joined on vector name.
 
 | Family | Vectors | CG-AER1/1 | Reference kit | Divergence |
 |---|---|---|---|---|
-| `invalid` | 36 | 36 agree | 36 checks, all as expected · 36 refused | 0 of 36 |
+| `invalid` | 36 | 36 agree | 36 checks, all as expected · 36 non-verified | 0 of 36 |
 | `chain` | 35 | 35 agree | 35 checks, all as expected | — (kit line carries no per-vector verdict) |
 | `valid` | 21 | 21 agree | 21 checks, all as expected | 0 of 9 |
 | `merkle` | 9 | 9 agree | 12 checks, all as expected | — (kit line carries no per-vector verdict) |
-| `anchor` | 8 | 0 agree · 8 not checked | 8 checks, all as expected · 4 refused | — (not judged by CG-AER1/1) |
+| `anchor` | 8 | 8 agree | 8 checks, all as expected · 7 non-verified | 0 of 8 |
 | `commitment` | 8 | 8 agree | 8 checks, all as expected | — (kit line carries no per-vector verdict) |
 | `workflow-merkle-seq-output-v1` | 8 | 8 agree | 8 checks, all as expected | — (kit line carries no per-vector verdict) |
 | `id-binding` | 6 | 6 agree | 6 checks, all as expected | 0 of 6 |
-| `anchored` | 6 | 0 agree · 6 not checked | 6 checks, all as expected · 5 refused | — (not judged by CG-AER1/1) |
+| `anchored` | 6 | 6 agree | 6 checks, all as expected · 5 non-verified | 0 of 6 |
 | `unicode` | 5 | 5 agree | 5 checks, all as expected | — (kit line carries no per-vector verdict) |
-| `invalid-profile` | 1 | 1 agree | 1 check, all as expected · 1 refused | 0 of 1 |
+| `invalid-profile` | 1 | 1 agree | 1 check, all as expected · 1 non-verified | 0 of 1 |
 
 ## The two interop pairs
 
@@ -51,7 +51,7 @@ Drift named by CG-AER1/1:
 |---|---|
 | Corpus | kit 1.5.7 · `sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2` · 143 vectors |
 | Reference kit run | commit `e04e4c91d4630a2e0ceb4e12c48accacac10155e` · column sha256 `sha256:eb6cec8cf8d927c6af0460913fbf82ae1e2ae021b2cdde295b4d7c3aa4b29cd9` · 146 checks |
-| CG-AER1/1 | parser sha256:d0915ba057acebe584605d8cbcb08774bc1f5e5102ca13d09bb899f3d9c58d1d · generator sha256:ba927f85a91ba42bbc190a353f4758679aa784c91c9903504855a90ceb16406c |
+| CG-AER1/1 | parser sha256:b939d615de4d6b99bdd322547929171f37d1b1ddf1999b58245dfb350ecbea45 · generator sha256:c23748d398c5cf8d409f43f5e748d746e887b80445e614c89e5fc77316f68fd6 |
 
 The kit's closing line is `CONFORMANCE OK: 143 vectors, 146 checks, sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2`; the join key is the vector name, and the extra checks are the merkle family's workflow checks (9 vectors carry 12 checks). The kit column was published at https://github.com/zambodotdev/aer1-kit/blob/main/interop/kit-column-2026-11-23.txt and is vendored here so this page regenerates offline; its sha256 is checked before the column is read.
 
@@ -65,17 +65,16 @@ None.
 
 ## Not checked
 
-- 8 — the anchor timeline family (8 vectors)
-- 6 — anchored records (6)
-
-Both remaining families need an anchor resolution fact we cannot compute offline. They stay not checked rather than borrowing a structural pass from another layer.
+None. Every vector in the pinned set has a computed verdict on this side.
 
 ## Boundary
 
-- No conformance claim: 0 false accepts and 14 not-checked vectors are listed above.
+- No conformance claim: 0 false accepts and 0 not-checked vectors are listed above. Zero on both is a measured result on this pinned set, not certification.
 - The id-binding family is judged end to end and agrees 6/6.
 - The merkle family (9 vectors / 12 kit checks) is judged on the Section 8.1 construction: SHA-256 over the UTF-8 receipt id per leaf, raw 32-byte pairs, last-duplicate on odd levels, SHA-256(empty) for an empty workflow. A duplicate receipt id and the legacy `seq:receipt_hash` construction are refused even when a root happens to match.
 - The unicode family (5) hashes the exact decoded bytes. No NFC/NFD rewriting: visually identical spellings of café and of a hyphen are different payloads, and both mismatch vectors are refused.
 - Schema 0.4 records (21: 12 valid, 9 invalid) are judged on the versioned strict timestamp and nil-UUID rules, canonical-JSON input_hash, both sides of the issuer_claims provenance binding, the committed version match, and the structural checks. `metadata_hash` is format-checked only: the vendored corpus publishes no preimage rule, so this build does not invent a recomputation nobody can reproduce.
+- The anchor family (8) and the anchored records (6) are judged on the Section 3.3 profile and the five-value outcome dictionary. A missing profile is `absent` (a Nostr-shaped `anchor` member is a different record, not a failed anchor); `evaluate: false` is honoured before any content is read and reports `not checked`; an RFC 2606 `.invalid` log is `rejected: unresolvable record` and that resource outcome takes precedence over a wrong leaf.
+- In replay, the resolution fact is the receipt's own committed bytes recomputed into a leaf carrying the receipt id and its digest. The checks require that leaf to name the anchored id and equal the committed `leaf_hash`, that `leaf_hash` equal the digest of `canonical_bytes` and `output_hash`, that the id be a lowercase UUID v4, that `anchored_at` be calendar-valid, and that `proof` be present. This is the corpus's offline convention — no network call is made, and a production caller must inject a real resolver with recorded evidence. A verified anchor verdict here means the pinned resolution fact was computed and matched; it is not proof a log accepted anything.
 - The single-record invalid set is now refused by: duplicate member names, unknown provenance class, an execution payload without inputs, a claimed status other than verified, and the canonical base64 and calendar checks.
 - `not_checked` is a resource outcome, not a pass.

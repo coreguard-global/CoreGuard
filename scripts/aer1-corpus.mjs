@@ -33,6 +33,7 @@ import {
   parseAer1Record,
   verifyAer1MerkleVector,
   verifyAer1UnicodeVector,
+  reportAer1Anchor,
   AER1_PARSER_VERSION,
 } from "../packages/agent-commerce/aer1.mjs";
 
@@ -47,6 +48,7 @@ export const EVALUATED_FAMILIES = Object.freeze([
   "base/id-binding-vectors.json",
   "base/merkle-vectors.json",
   "base/unicode-vectors.json",
+  "base/anchor-vectors.json",
 ]);
 
 /** Human family name for a corpus path. */
@@ -190,12 +192,56 @@ function runSchema04Records(dir) {
   return { family: "schema-0.4", rows, problems, ok: rows.length === 21 && problems.length === 0 };
 }
 
+const ANCHORED_EXPECTED = Object.freeze({
+  "anchored-valid.json": "verified",
+  "anchored-unresolvable-anchor.json": "rejected: unresolvable record",
+  "anchored-bad-leaf-hash.json": "verification failed",
+  "anchored-bad-timestamp.json": "verification failed",
+  "anchored-missing-proof.json": "verification failed",
+  "anchored-bad-id-version.json": "verification failed",
+});
+
+function runAnchorFamily(dir) {
+  const file = join(dir, "base", "anchor-vectors.json");
+  if (!existsSync(file)) return { family: "anchor", rows: [], problems: ["base/anchor-vectors.json is missing"], ok: false };
+  const vectors = JSON.parse(readFileSync(file, "utf8")).vectors ?? [];
+  const rows = [];
+  const problems = [];
+  for (const v of vectors) {
+    const receipt = v.file ? JSON.parse(readFileSync(join(dir, "base", v.file), "utf8")) : v.receipt;
+    const got = reportAer1Anchor(receipt, { evaluate: v.evaluate });
+    const ok = got.outcome === v.expected_anchor_outcome && got.present === v.expected_present && got.evaluated === v.expected_evaluated;
+    rows.push({ name: v.name, expected: v.expected_anchor_outcome, observed: got.outcome, ok, reason: got.reason });
+    if (!ok) problems.push(`${v.name}: expected ${v.expected_anchor_outcome} got ${got.outcome}`);
+  }
+  return { family: "anchor", rows, problems, ok: problems.length === 0 };
+}
+
+function runAnchoredRecords(dir) {
+  const base = join(dir, "base", "test-vectors", "anchored");
+  const rows = [];
+  const problems = [];
+  for (const [name, expected] of Object.entries(ANCHORED_EXPECTED)) {
+    const file = join(base, name);
+    if (!existsSync(file)) {
+      problems.push(`${name} is missing`);
+      continue;
+    }
+    const got = reportAer1Anchor(JSON.parse(readFileSync(file, "utf8")));
+    const ok = got.outcome === expected;
+    rows.push({ name, expected, observed: got.outcome, ok, reason: got.reason });
+    if (!ok) problems.push(`${name}: expected ${expected} got ${got.outcome}`);
+  }
+  return { family: "anchored", rows, problems, ok: rows.length === 6 && problems.length === 0 };
+}
+
 function isJudgedRecord(dir, relPath) {
   if (!relPath.startsWith("base/test-vectors/")) return false;
   const file = join(dir, relPath);
   if (!existsSync(file)) return false;
   try {
-    return JSON.parse(readFileSync(file, "utf8")).receipt_schema_version === "0.4";
+    const record = JSON.parse(readFileSync(file, "utf8"));
+    return record.receipt_schema_version === "0.4" || record.anchor !== undefined;
   } catch {
     return false;
   }
@@ -215,6 +261,8 @@ export function runCorpus(dir = DEFAULT_CORPUS) {
           (v) => (v.expected_workflow_verdict === "invalid" || v.leaves !== undefined ? "invalid" : "verified"),
         ),
         runVectorFamily(dir, "base/unicode-vectors.json", "unicode", verifyAer1UnicodeVector, (v) => (v.expected === "match" ? "verified" : "invalid")),
+        runAnchorFamily(dir),
+        runAnchoredRecords(dir),
         runSchema04Records(dir),
       ]
     : [];
