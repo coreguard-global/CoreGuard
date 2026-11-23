@@ -38,7 +38,7 @@ test("AER-1 interop: the published table matches the code and the known defect c
   // name here instead of passing quietly.
   assert.equal(report.totals.falseAccept, 0, "false accepts must stay at zero");
   assert.equal(report.totals.falseReject, 0, "a timeline family must not be refused as a whole");
-  assert.equal(report.totals.notChecked, 49, "only the unimplemented families may remain not checked");
+  assert.equal(report.totals.notChecked, 14, "only the anchor families may remain not checked");
 
   // The three timeline families are judged now; the corpus expectation is met
   // for every vector, which is what moved these rows out of not-checked.
@@ -51,6 +51,18 @@ test("AER-1 interop: the published table matches the code and the known defect c
       workflow: [byPath["workflow-merkle-seq-output-v1.json"].agree, byPath["workflow-merkle-seq-output-v1.json"].vectors],
     },
     { chainV1: [7, 7], chainV07: [28, 28], commitment: [8, 8], workflow: [8, 8] },
+  );
+  // Merkle (9 vectors / 12 kit checks) and unicode (5) are judged now. The 21
+  // schema 0.4 records move too — 12 valid and 9 invalid, pinned rule-by-rule
+  // in aer1-record-checks.test.mjs — leaving only the anchor layer unchecked.
+  assert.deepEqual(
+    {
+      merkle: [byPath["base/merkle-vectors.json"].agree, byPath["base/merkle-vectors.json"].vectors],
+      unicode: [byPath["base/unicode-vectors.json"].agree, byPath["base/unicode-vectors.json"].vectors],
+      agree: report.totals.agree,
+      falseAccept: report.totals.falseAccept,
+    },
+    { merkle: [9, 9], unicode: [5, 5], agree: 129, falseAccept: 0 },
   );
   assert.deepEqual(report.falseAccepts.map((f) => f.name), []);
 

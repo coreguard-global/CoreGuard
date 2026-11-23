@@ -292,7 +292,7 @@ Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · 
 | Independent Verifier | SHIPPED | JS / Rust-WASM / Python verifiers. Trust never depends on us running a hosted check. | مُحققات JS و Rust-WASM و Python. الثقة مش معتمدة إننا نشغّل فحص عندنا. |
 | Badge Shield | SHIPPED | Embeddable verification badges rendered only from anchored manifests. | شارات تحقق تتحط في أي موقع، بتطلع بس من بيانات متثبّتة على السلسلة. |
 | ★ PSAR/1 Pre-Sign Authorization Receipts | SHIPPED | A Stellar transaction carries its own authorization proof before any signature — PASS / BLOCK, bound to the exact XDR bytes. 37 tests; v1 does not semantically decode XDR. | معاملة Stellar بتشيل إثبات التصريح بتاعها قبل أي توقيع — PASS أو BLOCK، مربوطة بنفس بايتات المعاملة بالظبط. 37 اختبار؛ والإصدار الأول مش بيفك محتوى XDR دلاليًا. |
-| ★ Agent Commerce Security — AC-FW/1 · CGCR/1 · AGR/1 | SHIPPED | Agent authorization firewall, verifiable consent receipts and risk engine — SDK, MCP server and REST API. 2034/2034 tests, offline and fail-closed. | جدار تفويض للوكلاء، وإيصالات موافقة قابلة للتحقق، ومحرك مخاطر — SDK وخادم MCP وREST API. ‏2034/2034 اختبار، دون اتصال ورفض آمن. |
+| ★ Agent Commerce Security — AC-FW/1 · CGCR/1 · AGR/1 | SHIPPED | Agent authorization firewall, verifiable consent receipts and risk engine — SDK, MCP server and REST API. 2042/2042 tests, offline and fail-closed. | جدار تفويض للوكلاء، وإيصالات موافقة قابلة للتحقق، ومحرك مخاطر — SDK وخادم MCP وREST API. ‏2042/2042 اختبار، دون اتصال ورفض آمن. |
 | CGXA/1 + CGXA-SOROBAN/1 — Execution Attestation | DRY_RUN | Offline attestation of the approval↔execution arc with Soroban consent-binding preparation. No broadcast; on-chain action is owner-gated. | شهادة دون اتصال لمسار الموافقة↔التنفيذ مع تجهيز ربط الموافقة على Soroban. بدون بث؛ التنفيذ على السلسلة بقرار المالك. |
 | Trust Gate · Labs · Verify Bot | RESEARCH | Investor portal (TRUST.md) live; CoreGuard Labs evidence lab DRAFT; Telegram/Discord verify bot PLAN_ONLY. | بوابة المستثمر (TRUST.md) شغالة؛ معمل الأدلة CoreGuard Labs مسودة؛ بوت التحقق لسه خطة. |
 | @coreguard/sdk + CLI | GATED | Two-line SDK integration and `npx coreguard demo`. 13-package npm closure, release-gated. | دمج في سطرين و`npx coreguard demo`. 13 حزمة npm بانتظار بوابة الإصدار. |
@@ -349,7 +349,7 @@ Run the offline arc: `npm run stellar:presign` — no signing, no wallet, no net
 
 ### Recent developments — Nov 10–14 2026 (by network, measured & evidenced)
 
-> Canonical measured state for this cycle: **2034 / 2034 tests**, **1420 files scanned / 0 violations**, **docs-node 133 executed · 82 skip-listed · 30 covered**, **Foundry 43/43 pass** — [docs/state-snapshot.json](docs/state-snapshot.json) · [docs/STATUS.md](docs/STATUS.md). Every item below is labeled by its committed evidence; nothing implies revenue, customers, partnerships, external adoption, or a third-party audit.
+> Canonical measured state for this cycle: **2042 / 2042 tests**, **1420 files scanned / 0 violations**, **docs-node 133 executed · 82 skip-listed · 30 covered**, **Foundry 43/43 pass** — [docs/state-snapshot.json](docs/state-snapshot.json) · [docs/STATUS.md](docs/STATUS.md). Every item below is labeled by its committed evidence; nothing implies revenue, customers, partnerships, external adoption, or a third-party audit.
 
 #### Stellar — pre-sign receipts, agent-gate envelope path, Freighter evaluation, DEX integration
 
@@ -726,7 +726,7 @@ CoreGuard answers one question with evidence: **did this execution conform to wh
 npm install
 
 # 2. Test + benchmark
-npm test              # 2034 tests (machine-pinned) — canonicalization, policy, tamper, anchor, verifier, P1/P2, provenance, pricing, encoding, attack-lab, DDE delivery/dispute suites (incl. doc-curl contract), pages-settle guard, verification-platform suite, executed-evidence contract (agent gate · real-book DEX gate · universal shield · first funded signed mainnet swap), the PSAR/1 pre-sign receipt suite (offline PASS/BLOCK demo), owner-authorized deploy battery
+npm test              # 2042 tests (machine-pinned) — canonicalization, policy, tamper, anchor, verifier, P1/P2, provenance, pricing, encoding, attack-lab, DDE delivery/dispute suites (incl. doc-curl contract), pages-settle guard, verification-platform suite, executed-evidence contract (agent gate · real-book DEX gate · universal shield · first funded signed mainnet swap), the PSAR/1 pre-sign receipt suite (offline PASS/BLOCK demo), owner-authorized deploy battery
 git config core.hooksPath .githooks   # install the Pages settle pre-push guard — every main push waits for the Pages build
 npm run corpus        # deterministic 73-scenario adversarial corpus
 npm run benchmark     # 73/73 pass

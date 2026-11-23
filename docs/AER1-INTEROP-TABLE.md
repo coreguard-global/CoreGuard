@@ -10,10 +10,10 @@ A `verified` outcome here means the saved bytes were not changed after they were
 
 | Outcome | Vectors |
 |---|---|
-| agree with the corpus | 94 |
+| agree with the corpus | 129 |
 | **false accept (ours — must be zero)** | **0** |
 | false reject (ours) | 0 |
-| not checked (unimplemented family, schema or anchor) | 49 |
+| not checked (unimplemented family, schema or anchor) | 14 |
 
 ## Families and the joined verdicts
 
@@ -21,16 +21,16 @@ Two columns from two runners against the same pinned set, joined on vector name.
 
 | Family | Vectors | CG-AER1/1 | Reference kit | Divergence |
 |---|---|---|---|---|
-| `invalid` | 36 | 27 agree · 9 not checked | 36 checks, all as expected · 36 refused | 0 of 27 |
+| `invalid` | 36 | 36 agree | 36 checks, all as expected · 36 refused | 0 of 36 |
 | `chain` | 35 | 35 agree | 35 checks, all as expected | — (kit line carries no per-vector verdict) |
-| `valid` | 21 | 9 agree · 12 not checked | 21 checks, all as expected | 0 of 9 |
-| `merkle` | 9 | 0 agree · 9 not checked | 12 checks, all as expected | — (not judged by CG-AER1/1) |
+| `valid` | 21 | 21 agree | 21 checks, all as expected | 0 of 9 |
+| `merkle` | 9 | 9 agree | 12 checks, all as expected | — (kit line carries no per-vector verdict) |
 | `anchor` | 8 | 0 agree · 8 not checked | 8 checks, all as expected · 4 refused | — (not judged by CG-AER1/1) |
 | `commitment` | 8 | 8 agree | 8 checks, all as expected | — (kit line carries no per-vector verdict) |
 | `workflow-merkle-seq-output-v1` | 8 | 8 agree | 8 checks, all as expected | — (kit line carries no per-vector verdict) |
 | `id-binding` | 6 | 6 agree | 6 checks, all as expected | 0 of 6 |
 | `anchored` | 6 | 0 agree · 6 not checked | 6 checks, all as expected · 5 refused | — (not judged by CG-AER1/1) |
-| `unicode` | 5 | 0 agree · 5 not checked | 5 checks, all as expected | — (not judged by CG-AER1/1) |
+| `unicode` | 5 | 5 agree | 5 checks, all as expected | — (kit line carries no per-vector verdict) |
 | `invalid-profile` | 1 | 1 agree | 1 check, all as expected · 1 refused | 0 of 1 |
 
 ## The two interop pairs
@@ -51,7 +51,7 @@ Drift named by CG-AER1/1:
 |---|---|
 | Corpus | kit 1.5.7 · `sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2` · 143 vectors |
 | Reference kit run | commit `e04e4c91d4630a2e0ceb4e12c48accacac10155e` · column sha256 `sha256:eb6cec8cf8d927c6af0460913fbf82ae1e2ae021b2cdde295b4d7c3aa4b29cd9` · 146 checks |
-| CG-AER1/1 | parser sha256:39527a89971a6f128bfc8139b726c7fe12cceba9163589b9bf586e110c7e877c · generator sha256:420e12c887ddce8fd18e01addd6a704b3dd6cc02efd6c35824d741ace0b35de0 |
+| CG-AER1/1 | parser sha256:d0915ba057acebe584605d8cbcb08774bc1f5e5102ca13d09bb899f3d9c58d1d · generator sha256:ba927f85a91ba42bbc190a353f4758679aa784c91c9903504855a90ceb16406c |
 
 The kit's closing line is `CONFORMANCE OK: 143 vectors, 146 checks, sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2`; the join key is the vector name, and the extra checks are the merkle family's workflow checks (9 vectors carry 12 checks). The kit column was published at https://github.com/zambodotdev/aer1-kit/blob/main/interop/kit-column-2026-11-23.txt and is vendored here so this page regenerates offline; its sha256 is checked before the column is read.
 
@@ -65,12 +65,17 @@ None.
 
 ## Not checked
 
-- 22 — timeline families (chain / commitment / merkle / anchor)
-- 27 — records (unsupported schema)
+- 8 — the anchor timeline family (8 vectors)
+- 6 — anchored records (6)
+
+Both remaining families need an anchor resolution fact we cannot compute offline. They stay not checked rather than borrowing a structural pass from another layer.
 
 ## Boundary
 
-- No conformance claim: 0 false accepts and 49 not-checked vectors are listed above.
+- No conformance claim: 0 false accepts and 14 not-checked vectors are listed above.
 - The id-binding family is judged end to end and agrees 6/6.
+- The merkle family (9 vectors / 12 kit checks) is judged on the Section 8.1 construction: SHA-256 over the UTF-8 receipt id per leaf, raw 32-byte pairs, last-duplicate on odd levels, SHA-256(empty) for an empty workflow. A duplicate receipt id and the legacy `seq:receipt_hash` construction are refused even when a root happens to match.
+- The unicode family (5) hashes the exact decoded bytes. No NFC/NFD rewriting: visually identical spellings of café and of a hyphen are different payloads, and both mismatch vectors are refused.
+- Schema 0.4 records (21: 12 valid, 9 invalid) are judged on the versioned strict timestamp and nil-UUID rules, canonical-JSON input_hash, both sides of the issuer_claims provenance binding, the committed version match, and the structural checks. `metadata_hash` is format-checked only: the vendored corpus publishes no preimage rule, so this build does not invent a recomputation nobody can reproduce.
 - The single-record invalid set is now refused by: duplicate member names, unknown provenance class, an execution payload without inputs, a claimed status other than verified, and the canonical base64 and calendar checks.
 - `not_checked` is a resource outcome, not a pass.

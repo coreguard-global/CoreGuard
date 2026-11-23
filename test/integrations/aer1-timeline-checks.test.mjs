@@ -14,6 +14,8 @@ import {
   verifyAer1Chain,
   verifyAer1Commitment,
   verifyAer1WorkflowMerkle,
+  verifyAer1MerkleVector,
+  verifyAer1UnicodeVector,
 } from "../../packages/agent-commerce/aer1.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -106,4 +108,73 @@ test("workflow Merkle: both constructions, one tree rule", () => {
   const legacy = verifyAer1WorkflowMerkle({ steps: single.steps, merkleRoot: single.merkle_root, merkleVersion: "receipt-id-v0" });
   assert.equal(legacy.ok, false);
   assert.equal(verifyAer1WorkflowMerkle({ steps: single.steps, merkleRoot: single.merkle_root, merkleVersion: "future-v9" }).ok, false);
+});
+
+test("merkle family: the Section 8.1 construction over receipt ids, 9/9", () => {
+  const { vectors } = family("base/merkle-vectors.json");
+  assert.equal(vectors.length, 9);
+  for (const v of vectors) {
+    const expected = v.expected_workflow_verdict === "invalid" || v.leaves !== undefined ? "invalid" : "verified";
+    const result = verifyAer1MerkleVector(v);
+    assert.equal(result.ok, expected === "verified", `${v.name}: ${JSON.stringify(result.checks.filter((c) => !c.ok))}`);
+  }
+
+  const five = vectors.find((v) => v.name === "canonical-5-step");
+  const good = verifyAer1MerkleVector(five);
+  assert.equal(good.computed, five.expected_root);
+  assert.equal(good.ok, true);
+
+  // A leaf is the receipt id, not a label: changing one id must move the root.
+  const tampered = { ...five, receipt_ids: [...five.receipt_ids] };
+  tampered.receipt_ids[2] = "00000000-0000-0000-0000-000000000000";
+  const tamperedResult = verifyAer1MerkleVector(tampered);
+  assert.equal(tamperedResult.ok, false);
+  assert.notEqual(tamperedResult.computed, five.expected_root);
+
+  // The duplicate vector recomputes the canonical root exactly; only the
+  // Section 8.2 duplicate rule can refuse it. A root-only check would pass.
+  const duplicate = vectors.find((v) => v.name === "duplicate-receipt-id-collision");
+  const duplicateResult = verifyAer1MerkleVector(duplicate);
+  assert.equal(duplicateResult.computed, duplicate.expected_root);
+  assert.equal(duplicateResult.ok, false);
+  assert.ok(duplicateResult.checks.some((c) => c.name === "no receipt_id appears twice" && !c.ok));
+
+  // The legacy seq:receipt_hash tree has its own root; rejecting that
+  // construction is a rule, not an accidental digest mismatch.
+  const legacy = vectors.find((v) => v.name === "legacy-construction-rejected");
+  assert.ok(verifyAer1MerkleVector(legacy).checks.some((c) => c.name.includes("legacy preimage form") && !c.ok));
+
+  // must_not_equal is a real check: make it name the computed root and the
+  // same vector must fail by name.
+  assert.equal(verifyAer1MerkleVector({ ...five, must_not_equal: five.expected_root }).ok, false);
+
+  // Odd duplication and the empty tree are constructions, not prose.
+  assert.equal(verifyAer1MerkleVector(vectors.find((v) => v.name === "odd-duplication-3")).ok, true);
+  assert.equal(verifyAer1MerkleVector(vectors.find((v) => v.name === "empty")).computed, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+});
+
+test("unicode family: raw bytes only, no NFC/NFD rewriting, 5/5", () => {
+  const { vectors } = family("base/unicode-vectors.json");
+  assert.equal(vectors.length, 5);
+  for (const v of vectors) {
+    const result = verifyAer1UnicodeVector(v);
+    assert.equal(result.ok, v.expected === "match", `${v.name}: ${JSON.stringify(result.checks.filter((c) => !c.ok))}`);
+  }
+
+  const nfc = vectors.find((v) => v.name === "unicode-nfc-form");
+  const nfd = vectors.find((v) => v.name === "unicode-nfd-form");
+  assert.notEqual(nfc.sha256, nfd.sha256, "the two spellings must hash differently");
+
+  // The mismatch vectors are the applied-and-bites control: a verifier that
+  // normalized either side would report a match.
+  for (const name of ["unicode-nfd-against-nfc-commitment", "unicode-nonbreaking-hyphen-against-ascii"]) {
+    const v = vectors.find((x) => x.name === name);
+    const result = verifyAer1UnicodeVector(v);
+    assert.equal(result.ok, false, name);
+    assert.ok(result.checks.some((c) => c.name.includes("without normalization") && !c.ok), name);
+  }
+
+  // A decoy hex field cannot launder a bad payload: the bytes are the claim.
+  assert.equal(verifyAer1UnicodeVector({ ...nfc, payload_utf8_hex: nfd.payload_utf8_hex }).ok, false);
+  assert.equal(verifyAer1UnicodeVector({ ...nfc, payload_base64: nfc.payload_base64.replace(/=$/, "") }).ok, false);
 });
