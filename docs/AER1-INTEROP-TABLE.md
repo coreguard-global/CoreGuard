@@ -10,10 +10,10 @@ A `verified` outcome here means the saved bytes were not changed after they were
 
 | Outcome | Vectors |
 |---|---|
-| agree with the corpus | 43 |
+| agree with the corpus | 94 |
 | **false accept (ours — must be zero)** | **0** |
 | false reject (ours) | 0 |
-| not checked (unimplemented family, schema or anchor) | 100 |
+| not checked (unimplemented family, schema or anchor) | 49 |
 
 ## Families and the joined verdicts
 
@@ -22,12 +22,12 @@ Two columns from two runners against the same pinned set, joined on vector name.
 | Family | Vectors | CG-AER1/1 | Reference kit | Divergence |
 |---|---|---|---|---|
 | `invalid` | 36 | 27 agree · 9 not checked | 36 checks, all as expected · 36 refused | 0 of 27 |
-| `chain` | 35 | 0 agree · 35 not checked | 35 checks, all as expected | — (not judged by CG-AER1/1) |
+| `chain` | 35 | 35 agree | 35 checks, all as expected | — (kit line carries no per-vector verdict) |
 | `valid` | 21 | 9 agree · 12 not checked | 21 checks, all as expected | 0 of 9 |
 | `merkle` | 9 | 0 agree · 9 not checked | 12 checks, all as expected | — (not judged by CG-AER1/1) |
 | `anchor` | 8 | 0 agree · 8 not checked | 8 checks, all as expected · 4 refused | — (not judged by CG-AER1/1) |
-| `commitment` | 8 | 0 agree · 8 not checked | 8 checks, all as expected | — (not judged by CG-AER1/1) |
-| `workflow-merkle-seq-output-v1` | 8 | 0 agree · 8 not checked | 8 checks, all as expected | — (not judged by CG-AER1/1) |
+| `commitment` | 8 | 8 agree | 8 checks, all as expected | — (kit line carries no per-vector verdict) |
+| `workflow-merkle-seq-output-v1` | 8 | 8 agree | 8 checks, all as expected | — (kit line carries no per-vector verdict) |
 | `id-binding` | 6 | 6 agree | 6 checks, all as expected | 0 of 6 |
 | `anchored` | 6 | 0 agree · 6 not checked | 6 checks, all as expected · 5 refused | — (not judged by CG-AER1/1) |
 | `unicode` | 5 | 0 agree · 5 not checked | 5 checks, all as expected | — (not judged by CG-AER1/1) |
@@ -51,7 +51,7 @@ Drift named by CG-AER1/1:
 |---|---|
 | Corpus | kit 1.5.7 · `sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2` · 143 vectors |
 | Reference kit run | commit `e04e4c91d4630a2e0ceb4e12c48accacac10155e` · column sha256 `sha256:eb6cec8cf8d927c6af0460913fbf82ae1e2ae021b2cdde295b4d7c3aa4b29cd9` · 146 checks |
-| CG-AER1/1 | parser sha256:5d74ff8126fab46509875e86c1faa3c8a53389f18d695e2f34681f55123b6bb1 · generator sha256:66b2f0e383f8b331f456db269359155e5c2756c05a9eef89c13b3585916d5edc |
+| CG-AER1/1 | parser sha256:39527a89971a6f128bfc8139b726c7fe12cceba9163589b9bf586e110c7e877c · generator sha256:420e12c887ddce8fd18e01addd6a704b3dd6cc02efd6c35824d741ace0b35de0 |
 
 The kit's closing line is `CONFORMANCE OK: 143 vectors, 146 checks, sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2`; the join key is the vector name, and the extra checks are the merkle family's workflow checks (9 vectors carry 12 checks). The kit column was published at https://github.com/zambodotdev/aer1-kit/blob/main/interop/kit-column-2026-11-23.txt and is vendored here so this page regenerates offline; its sha256 is checked before the column is read.
 
@@ -65,12 +65,12 @@ None.
 
 ## Not checked
 
-- 73 — timeline families (chain / commitment / merkle / anchor)
+- 22 — timeline families (chain / commitment / merkle / anchor)
 - 27 — records (unsupported schema)
 
 ## Boundary
 
-- No conformance claim: 0 false accepts and 100 not-checked vectors are listed above.
+- No conformance claim: 0 false accepts and 49 not-checked vectors are listed above.
 - The id-binding family is judged end to end and agrees 6/6.
 - The single-record invalid set is now refused by: duplicate member names, unknown provenance class, an execution payload without inputs, a claimed status other than verified, and the canonical base64 and calendar checks.
 - `not_checked` is a resource outcome, not a pass.

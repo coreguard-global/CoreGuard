@@ -1,7 +1,7 @@
 # CoreGuard Global — Twitter/X Content
 
 ## Account: @CoreGuardGlobal
-## Bio: "Verifiable Execution Truth Layer for Bitcoin DeFi. 2009 tests. 0 false accepts. Core DAO + Stellar + Pi Network."
+## Bio: "Verifiable Execution Truth Layer for Bitcoin DeFi. 2013 tests. 0 false accepts. Core DAO + Stellar + Pi Network."
 
 ---
 
@@ -11,7 +11,7 @@
 We don't tell you if a transaction looks safe.
 We produce independently verifiable evidence of whether execution conformed to what was authorized.
 
-2009 tests. 0 false accepts. 0 false rejects.
+2013 tests. 0 false accepts. 0 false rejects.
 https://github.com/coreguard-global/CoreGuard
 
 #CoreDAO #DeFi #Security
@@ -99,8 +99,8 @@ https://github.com/coreguard-global/CoreGuard
 ## Tweet 7: Open Source
 CoreGuard is open source. Every claim is machine-verified.
 
-2009 tests passing.
-1530 files scanned.
+2013 tests passing.
+1531 files scanned.
 0 boundary violations.
 18/18 release gate legs.
 
