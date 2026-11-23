@@ -7,6 +7,7 @@
  * provided evidence; physical-world truth is NOT proven. VERIFIED != SAFE.
  */
 import crypto from "node:crypto";
+import { createPublicKey, verify as cryptoVerify } from "node:crypto";
 
 export const MACHINE_ECONOMY_VERSION = "CG-ME/1";
 export const MACHINE_ECONOMY_BOUNDARY =
@@ -196,9 +197,46 @@ export function createMachineTask(input = {}) {
   };
 }
 
+function canonicalJson(value) {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return "[" + value.map(canonicalJson).join(",") + "]";
+  const keys = Object.keys(value).sort();
+  return "{" + keys.map((k) => JSON.stringify(k) + ":" + canonicalJson(value[k])).join(",") + "}";
+}
+
+function resolvePublicKey(trust, keyId, publicKeyPem) {
+  if (typeof publicKeyPem === "string" && publicKeyPem.includes("PUBLIC KEY")) return publicKeyPem;
+  if (!trust || typeof trust !== "object") return null;
+  if (typeof trust.publicKeyPem === "string" && trust.publicKeyPem.includes("PUBLIC KEY")) return trust.publicKeyPem;
+  const keys = trust.publicKeys;
+  if (Array.isArray(keys)) {
+    const found = keys.find((k) => k && typeof k === "object" && (k.keyId === keyId || (!keyId && keys.length === 1)) && typeof k.publicKeyPem === "string");
+    if (found) return found.publicKeyPem;
+  } else if (keys && typeof keys === "object") {
+    if (keyId && typeof keys[keyId] === "string") return keys[keyId];
+    const vals = Object.values(keys);
+    if (!keyId && vals.length === 1 && typeof vals[0] === "string") return vals[0];
+  }
+  if (trust.keyring && Array.isArray(trust.keyring.pinned)) {
+    const found = trust.keyring.pinned.find((k) => k && k.keyId === keyId);
+    if (found?.publicKeyPem) return found.publicKeyPem;
+  }
+  return null;
+}
+
+function verifyEd25519Signature({ payload, signature, publicKeyPem }) {
+  try {
+    const ok = cryptoVerify(null, Buffer.from(canonicalJson(payload), "utf8"), createPublicKey(publicKeyPem), Buffer.from(signature, "base64"));
+    return { ok: ok === true, error: null };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
 export function verifyTelemetry(input = {}) {
   const taskId = req(input, "taskId");
   const telemetry = req(input, "telemetry", "object");
+  const trust = isObj(input.trust) ? input.trust : null;
   const issues = [];
   const machineId = optStr(telemetry, "machineId");
   const timestamp = telemetry.timestamp;
@@ -208,16 +246,45 @@ export function verifyTelemetry(input = {}) {
   if (!readings) issues.push("MISSING_READINGS_ARRAY");
   const signature = optStr(telemetry, "signature");
   const contentDigest = optStr(telemetry, "contentDigest");
+  const keyId = optStr(telemetry, "keyId") ?? optStr(telemetry, "signerKeyId") ?? null;
+  const signedPayload = isObj(telemetry.signedPayload) ? telemetry.signedPayload : { ...telemetry, signature: undefined };
+  const signedPayloadDigest = digest(signedPayload);
+  const observedPayload = { machineId, timestamp, readings };
+  const observedDigest = digest(observedPayload);
+  if (isObj(telemetry.signedPayload) && signedPayloadDigest !== observedDigest) issues.push("SIGNED_PAYLOAD_DOES_NOT_MATCH_OBSERVED_FIELDS");
   const computedDigest = digest({ ...telemetry, signature: undefined });
   if (contentDigest && contentDigest !== computedDigest) issues.push("CONTENT_DIGEST_MISMATCH");
   if (!signature) issues.push("MISSING_SIGNATURE_EVIDENCE");
-  // Signature is not cryptographically verified here without a trust root; fail-closed to UNVERIFIED.
-  const verdict = issues.length === 0 ? "EVIDENCE_PRESENT_UNVERIFIED_TRUST" : "INVALID";
+
+  let signatureVerified = false;
+  let trustStatus = "NO_TRUST_ROOT";
+  const publicKeyPem = resolvePublicKey(trust, keyId, optStr(telemetry, "publicKeyPem"));
+  if (signature && publicKeyPem) {
+    const v = verifyEd25519Signature({ payload: signedPayload, signature, publicKeyPem });
+    signatureVerified = v.ok;
+    trustStatus = v.ok ? "SIGNATURE_VERIFIED_WITH_SUPPLIED_KEY" : "SIGNATURE_INVALID";
+    if (!v.ok) issues.push("SIGNATURE_VERIFICATION_FAILED");
+  } else if (signature && !publicKeyPem) {
+    trustStatus = "SIGNATURE_UNVERIFIED_NO_TRUST_ROOT";
+  }
+
+  let verdict;
+  if (issues.includes("MISSING_MACHINE_ID") || issues.includes("MISSING_TIMESTAMP") || issues.includes("MISSING_READINGS_ARRAY") || issues.includes("CONTENT_DIGEST_MISMATCH") || issues.includes("SIGNED_PAYLOAD_DOES_NOT_MATCH_OBSERVED_FIELDS")) {
+    verdict = "INVALID";
+  } else if (!signature) {
+    verdict = "INVALID";
+  } else if (signatureVerified) {
+    verdict = "SIGNATURE_VERIFIED";
+  } else {
+    verdict = "EVIDENCE_PRESENT_UNVERIFIED_TRUST";
+  }
+
   return {
     spec: MACHINE_ECONOMY_VERSION, type: "telemetry_verification",
     verdict, issues, taskId, machineId: machineId ?? null,
+    keyId, signatureVerified, trustStatus,
     telemetryDigest: digest(telemetry), computedDigest,
-    boundary: MACHINE_ECONOMY_BOUNDARY + " Telemetry authenticity requires trusted device keys/attestation; not proven here. Physical-world truth NOT proven.",
+    boundary: MACHINE_ECONOMY_BOUNDARY + " Cryptographic signature verification is performed only when a trust root/public key is supplied; supplied-key verification does NOT prove device identity, key custody, or physical-world truth.",
   };
 }
 
@@ -245,6 +312,7 @@ export function verifyTaskCompletion(input = {}) {
 
 export function verifyDelegationChain(input = {}) {
   const chain = req(input, "chain", "array");
+  const trust = isObj(input.trust) ? input.trust : null;
   const issues = [];
   if (chain.length === 0) issues.push("EMPTY_CHAIN");
   const normalized = chain.map((d, i) => {
@@ -253,23 +321,38 @@ export function verifyDelegationChain(input = {}) {
     const delegate = optStr(d, "delegate");
     const scope = Array.isArray(d.scope) ? d.scope.filter(x=>typeof x==="string") : [];
     const expiresAt = d.expiresAt;
+    const keyId = optStr(d, "keyId") ?? optStr(d, "delegatorKeyId") ?? null;
+    const sig = optStr(d, "signature") ?? null;
+    const signedPayload = isObj(d.signedPayload) ? d.signedPayload : { delegator, delegate, scope, expiresAt: expiresAt ?? null, ...(optStr(d,"intentId")?{intentId:optStr(d,"intentId")}:{}), ...(optStr(d,"taskId")?{taskId:optStr(d,"taskId")}:{}) };
     if (!delegator) issues.push(`DELEGATION_${i}_MISSING_DELEGATOR`);
     if (!delegate) issues.push(`DELEGATION_${i}_MISSING_DELEGATE`);
     if (scope.length === 0) issues.push(`DELEGATION_${i}_MISSING_SCOPE`);
-    return { delegator, delegate, scope, expiresAt: expiresAt ?? null, sig: optStr(d, "signature") ?? null };
+    return { delegator, delegate, scope, expiresAt: expiresAt ?? null, keyId, sig, signedPayload, publicKeyPem: optStr(d, "publicKeyPem") ?? null };
   }).filter(Boolean);
   for (let i=1; i<normalized.length; i++) {
     if (normalized[i].delegator && normalized[i-1].delegate && normalized[i].delegator !== normalized[i-1].delegate) {
       issues.push(`CHAIN_BREAK_AT_${i}`);
     }
   }
-  for (const [i,d] of normalized.entries()) if (!d.sig) issues.push(`DELEGATION_${i}_MISSING_SIGNATURE`);
-  const verdict = issues.length === 0 ? "CHAIN_STRUCTURALLY_VALID_UNVERIFIED_SIGNATURES" : "INVALID";
+  let allSigsVerified = normalized.length > 0;
+  for (const [i,d] of normalized.entries()) {
+    if (!d.sig) { issues.push(`DELEGATION_${i}_MISSING_SIGNATURE`); allSigsVerified = false; continue; }
+    const publicKeyPem = resolvePublicKey(trust, d.keyId, d.publicKeyPem);
+    if (!publicKeyPem) { allSigsVerified = false; continue; }
+    const v = verifyEd25519Signature({ payload: d.signedPayload, signature: d.sig, publicKeyPem });
+    if (!v.ok) { issues.push(`DELEGATION_${i}_SIGNATURE_INVALID`); allSigsVerified = false; }
+  }
+  const hasTrust = !!trust;
+  let verdict;
+  if (issues.length > 0) verdict = "INVALID";
+  else if (allSigsVerified && hasTrust) verdict = "VERIFIED";
+  else verdict = "CHAIN_STRUCTURALLY_VALID_UNVERIFIED_SIGNATURES";
   return {
     spec: MACHINE_ECONOMY_VERSION, type: "delegation_chain_verification",
     verdict, issues, depth: normalized.length,
+    signaturesVerified: allSigsVerified && hasTrust,
     chainDigest: digest(chain),
-    boundary: MACHINE_ECONOMY_BOUNDARY + " Structural check only; signatures not cryptographically verified without trust roots.",
+    boundary: MACHINE_ECONOMY_BOUNDARY + " Cryptographic signature verification is performed only when trust roots/public keys are supplied; verification proves signature over the supplied payload, not delegator identity beyond the supplied key material.",
   };
 }
 

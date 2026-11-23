@@ -49,7 +49,7 @@ No revenue is claimed. Pricing stays LOCKED and unpublished until an owner decis
 
 - [ ] `npm publish` `@coreguard/agent-commerce@0.1.3` from the version-bump commit.
 - [ ] Verify `npx -y @coreguard/agent-commerce@0.1.3`: `initialize` reports `0.1.3`,
-      `tools/list` returns 20 tools with schemas.
+      `tools/list` returns 26 tools with schemas.
 - [ ] Update MCPRush: version, package id, 10-tool description, links to security model,
       release notes, compatibility run log, control-plane docs, 60s demo.
 - [ ] Request runtime scan on the live MCP server; keep the result as evidence, not a badge

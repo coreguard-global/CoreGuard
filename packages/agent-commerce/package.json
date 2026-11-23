@@ -33,7 +33,8 @@
     "./prod/rbac.mjs": "./prod/rbac.mjs",
     "./prod/observability.mjs": "./prod/observability.mjs",
     "./prod/kms-anchor.mjs": "./prod/kms-anchor.mjs",
-    "./machine-economy.mjs": "./machine-economy.mjs"
+    "./machine-economy.mjs": "./machine-economy.mjs",
+    "./cgcp-mcp-tools.mjs": "./cgcp-mcp-tools.mjs"
   },
   "bin": {
     "coreguard-agent-commerce-mcp": "./bin/mcp.mjs"
@@ -44,6 +45,7 @@
     "anchor.mjs",
     "attest.mjs",
     "bin/mcp.mjs",
+    "cgcp-mcp-tools.mjs",
     "client.mjs",
     "composition.mjs",
     "consumption-store.mjs",

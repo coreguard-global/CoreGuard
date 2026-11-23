@@ -7,7 +7,7 @@
  * (one JSON object per line, both directions) — the same shape MCP clients
  * speak for stdio servers.
  *
- * Tools (all offline, all deterministic, zero keys): 10 core consent/verification tools + 10 Wave 1 Machine Economy tools (x402 parse/authorize/verify/reconcile/meter, machine register/task/telemetry/completion, delegation chain). No custody, no broadcast, no network calls; external settlement/physical truth/signature trust roots NOT proven.
+ * Tools (all offline/self-hosted, deterministic, zero network keys): 10 core consent/verification tools + 10 Wave 1 Machine Economy tools + 6 Wave 2 CGCP/1 mapping tools (intent/receipt/limits/revoke/audit) = 26 total. Optional trust roots enable Ed25519 signature verification for telemetry/delegation; no custody, no broadcast, no network calls; external settlement/physical truth/device identity beyond supplied key material NOT proven.
  *
  * BOUNDARIES (standing): synthetic demo data is the caller's; nothing here
  * contacts any platform or payment network (no contact/integration/endorsement
@@ -56,6 +56,7 @@ import {
   MACHINE_ECONOMY_VERSION,
   MACHINE_ECONOMY_BOUNDARY,
 } from "./machine-economy.mjs";
+import { createIntent, issueReceipt, verifyReceipt as verifyCgcpReceipt, checkLimits, revokeConsent, auditTransaction, CGCP_MCP_BOUNDARY } from "./cgcp-mcp-tools.mjs";
 
 const PROTOCOL_VERSION = "2025-06-18";
 
@@ -97,6 +98,12 @@ const TOOL_NAMES = Object.freeze([
   "coreguard_verify_telemetry",
   "coreguard_verify_task_completion",
   "coreguard_verify_delegation_chain",
+  "coreguard_create_intent",
+  "coreguard_issue_receipt",
+  "coreguard_verify_receipt",
+  "coreguard_check_limits",
+  "coreguard_revoke_consent",
+  "coreguard_audit_transaction",
 ]);
 
 /**
@@ -271,8 +278,15 @@ const VALIDATORS = Object.freeze({
   coreguard_verify_delegation_chain(args) {
     if (args.chain === undefined) return { code: ERROR_CODES.MISSING_ARGUMENT, detail: "chain is required" };
     if (!Array.isArray(args.chain)) return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "chain must be an array" };
+    if (args.trust !== undefined && (typeof args.trust !== "object" || args.trust === null || Array.isArray(args.trust))) return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "trust must be an object when supplied" };
     return optionalObject(args, "callerContext");
   },
+  coreguard_create_intent(args) { const r=requireString(args,"storePath"); if(r) return r; const a=requireString(args,"agentId"); if(a) return a; return optionalObject(args,"callerContext"); },
+  coreguard_issue_receipt(args) { const r=requireString(args,"storePath"); if(r) return r; const a=requireString(args,"agentId"); if(a) return a; return optionalObject(args,"callerContext"); },
+  coreguard_verify_receipt(args) { const r=requireString(args,"storePath"); if(r) return r; return optionalObject(args,"callerContext"); },
+  coreguard_check_limits(args) { const r=requireString(args,"storePath"); if(r) return r; const a=requireString(args,"agentId"); if(a) return a; return optionalObject(args,"callerContext"); },
+  coreguard_revoke_consent(args) { const r=requireString(args,"storePath"); if(r) return r; const t=requireString(args,"targetType"); if(t) return t; const i=requireString(args,"targetId"); if(i) return i; return optionalObject(args,"callerContext"); },
+  coreguard_audit_transaction(args) { const r=requireString(args,"storePath"); if(r) return r; return optionalObject(args,"callerContext"); },
 });
 
 function integerStringSchema(description) {
@@ -594,8 +608,8 @@ const TOOLS = Object.freeze([
   },
   {
     name: "coreguard_verify_telemetry",
-    description: "Verify caller-supplied telemetry evidence structure/digest presence. Signature authenticity and physical-world truth are NOT proven without trusted device keys/attestation.",
-    inputSchema: { type: "object", properties: { taskId: { type: "string" }, telemetry: { type: "object" }, ...CALLER_CONTEXT_PROPERTY }, required: ["taskId", "telemetry"] },
+    description: "Verify caller-supplied telemetry evidence structure/digest and optionally verify Ed25519 signature when trust roots/public keys are supplied. Signature trust/physical-world truth not proven beyond supplied key material.",
+    inputSchema: { type: "object", properties: { taskId: { type: "string" }, telemetry: { type: "object" }, trust: { type: "object", description: "Optional trust roots: { publicKeyPem } or { publicKeys: [{keyId,publicKeyPem}]|{keyId:pem} } or { keyring }" }, ...CALLER_CONTEXT_PROPERTY }, required: ["taskId", "telemetry"] },
     outputSchema: { type: "object", description: "Telemetry evidence verification result; signature trust/physical truth not proven.", properties: { verdict: { type: "string" }, issues: { type: "array" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
   },
   {
@@ -606,9 +620,45 @@ const TOOLS = Object.freeze([
   },
   {
     name: "coreguard_verify_delegation_chain",
-    description: "Verify delegation chain structure and continuity. Cryptographic signature verification requires trusted roots; not performed here.",
-    inputSchema: { type: "object", properties: { chain: { type: "array", items: { type: "object" } }, ...CALLER_CONTEXT_PROPERTY }, required: ["chain"] },
+    description: "Verify delegation chain structure/continuity and optionally verify Ed25519 signatures when trust roots/public keys are supplied. Verification proves signatures over supplied payloads, not delegator identity beyond supplied key material.",
+    inputSchema: { type: "object", properties: { chain: { type: "array", items: { type: "object" } }, trust: { type: "object", description: "Optional trust roots: { publicKeyPem } or { publicKeys: [{keyId,publicKeyPem}]|{keyId:pem} } or { keyring }" }, ...CALLER_CONTEXT_PROPERTY }, required: ["chain"] },
     outputSchema: { type: "object", description: "Delegation chain structural verification result; signatures require trusted roots.", properties: { verdict: { type: "string" }, issues: { type: "array" }, depth: { type: "integer" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_create_intent",
+    description: "CGCP/1 mapping: create an intent/approval request in a self-hosted file-backed control plane. Not a blockchain receipt and not payment execution.",
+    inputSchema: { type: "object", properties: { storePath: { type: "string" }, intentId: { type: "string" }, agentId: { type: "string" }, policyId: { type: "string" }, merchant: { type: "string" }, address: { type: "string" }, amountMinor: { type: "string" }, currency: { type: "string" }, requestedBy: { type: "string" }, expiresAt: { type: "string" }, ...CALLER_CONTEXT_PROPERTY }, required: ["storePath", "agentId"] },
+    outputSchema: { type: "object", description: "CGCP/1 intent/approval request record with mapping and boundary.", properties: { type: { type: "string" }, spec: { type: "string" }, intent: { type: "object" }, mapping: { type: "string" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_issue_receipt",
+    description: "CGCP/1 mapping: record an execution receipt in a self-hosted file-backed control plane. This is a local execution record, not an on-chain proof or external payment receipt.",
+    inputSchema: { type: "object", properties: { storePath: { type: "string" }, receiptId: { type: "string" }, agentId: { type: "string" }, policyId: { type: "string" }, approvalId: { type: "string" }, merchant: { type: "string" }, address: { type: "string" }, amountMinor: { type: "string" }, currency: { type: "string" }, status: { type: "string" }, txRef: { type: "string" }, metadata: { type: "object" }, ...CALLER_CONTEXT_PROPERTY }, required: ["storePath", "agentId"] },
+    outputSchema: { type: "object", description: "CGCP/1 execution receipt record with mapping and boundary.", properties: { type: { type: "string" }, spec: { type: "string" }, receipt: { type: "object" }, mapping: { type: "string" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_verify_receipt",
+    description: "CGCP/1 mapping: verify a receipt record and the audit chain in a file-backed control plane. No external anchor/witness/on-chain verification is performed.",
+    inputSchema: { type: "object", properties: { storePath: { type: "string" }, receiptId: { type: "string" }, ...CALLER_CONTEXT_PROPERTY }, required: ["storePath"] },
+    outputSchema: { type: "object", description: "CGCP/1 receipt verification verdict, receipt lookup, and audit chain status.", properties: { verdict: { type: "string" }, issues: { type: "array" }, receiptFound: { type: "boolean" }, auditChain: { type: "object" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_check_limits",
+    description: "CGCP/1 mapping: evaluate policy/limit decision for an agent request in a file-backed control plane. No funds moved and no external IdP/KMS involved.",
+    inputSchema: { type: "object", properties: { storePath: { type: "string" }, agentId: { type: "string" }, policyId: { type: "string" }, merchant: { type: "string" }, address: { type: "string" }, amountMinor: { type: "string" }, currency: { type: "string" }, approvalId: { type: "string" }, ...CALLER_CONTEXT_PROPERTY }, required: ["storePath", "agentId"] },
+    outputSchema: { type: "object", description: "CGCP/1 policy evaluation decision with mapping and boundary.", properties: { type: { type: "string" }, spec: { type: "string" }, decision: { type: "object" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_revoke_consent",
+    description: "CGCP/1 mapping: revoke an approval, agent, or policy in a file-backed control plane. Local single-host revocation; no distributed propagation, no external IdP lifecycle.",
+    inputSchema: { type: "object", properties: { storePath: { type: "string" }, targetType: { type: "string", enum: ["approval", "agent", "policy"] }, targetId: { type: "string" }, reason: { type: "string" }, decidedBy: { type: "string" }, ...CALLER_CONTEXT_PROPERTY }, required: ["storePath", "targetType", "targetId"] },
+    outputSchema: { type: "object", description: "CGCP/1 revocation record with mapping and boundary.", properties: { type: { type: "string" }, spec: { type: "string" }, targetType: { type: "string" }, result: { type: "object" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_audit_transaction",
+    description: "CGCP/1 mapping: read and optionally filter the append-only hash-chained audit report from a file-backed control plane. No external audit/audit anchoring.",
+    inputSchema: { type: "object", properties: { storePath: { type: "string" }, txRef: { type: "string" }, approvalId: { type: "string" }, agentId: { type: "string" }, limit: { type: "integer", minimum: 1 }, ...CALLER_CONTEXT_PROPERTY }, required: ["storePath"] },
+    outputSchema: { type: "object", description: "CGCP/1 audit report with chain status and optional filters.", properties: { type: { type: "string" }, spec: { type: "string" }, report: { type: "object" }, mapping: { type: "string" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
   },
 ]);
 
@@ -691,6 +741,12 @@ async function callTool(name, args, { consumedSet } = {}) {
     if (name === "coreguard_verify_telemetry") return success(withCallerContext(verifyTelemetry(a), a));
     if (name === "coreguard_verify_task_completion") return success(withCallerContext(verifyTaskCompletion(a), a));
     if (name === "coreguard_verify_delegation_chain") return success(withCallerContext(verifyDelegationChain(a), a));
+    if (name === "coreguard_create_intent") return success(withCallerContext(createIntent(a), a));
+    if (name === "coreguard_issue_receipt") return success(withCallerContext(issueReceipt(a), a));
+    if (name === "coreguard_verify_receipt") return success(withCallerContext(verifyCgcpReceipt(a), a));
+    if (name === "coreguard_check_limits") return success(withCallerContext(checkLimits(a), a));
+    if (name === "coreguard_revoke_consent") return success(withCallerContext(revokeConsent(a), a));
+    if (name === "coreguard_audit_transaction") return success(withCallerContext(auditTransaction(a), a));
     return failure(ERROR_CODES.UNKNOWN_TOOL, `unknown tool: ${String(name)}`);
   } catch (err) {
     return failure(ERROR_CODES.TOOL_ERROR, err?.message ?? String(err));
@@ -755,7 +811,7 @@ export function createMcpHandler({ write } = {}) {
 
 export function selfCheck() {
   return [
-    ["tools exposed", TOOL_NAMES.length === 20 && TOOL_NAMES[0] === "coreguard_authorize" && TOOL_NAMES[9] === "coreguard_consumption_status" && TOOL_NAMES[19] === "coreguard_verify_delegation_chain"],
+    ["tools exposed", TOOL_NAMES.length === 26 && TOOL_NAMES[0] === "coreguard_authorize" && TOOL_NAMES[9] === "coreguard_consumption_status" && TOOL_NAMES[19] === "coreguard_verify_delegation_chain" && TOOL_NAMES[25] === "coreguard_audit_transaction"],
     ["protocol version pinned", PROTOCOL_VERSION === "2025-06-18"],
     ["spec surfaced", CONSENT_SPEC === "CGCR/1" && AGENT_COMMERCE_VERSION === "AC-SDK/1"],
     ["boundary travels", SERVER_BOUNDARY.includes("VERIFIED ≠ SAFE") && SERVER_BOUNDARY.includes("NOT_BUILT")],

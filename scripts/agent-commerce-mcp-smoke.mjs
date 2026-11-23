@@ -4,7 +4,7 @@
  *
  * Proves, with a live JSON-RPC 2.0 stdio process:
  *   - initialize responds with the expected protocol/version identity
- *   - tools/list exposes the 20 tools with inputSchema + outputSchema
+ *   - tools/list exposes the 26 tools with inputSchema + outputSchema
  *   - coreguard_authorize returns a CGCR/1 receipt (structuredContent)
  *   - coreguard_verify_execution returns VERIFIED on exact execution
  *   - coreguard_verify_execution returns INVALID with named drift on escalation
@@ -104,16 +104,18 @@ async function main() {
     });
 
     let listed;
-    await run('tools/list exposes 20 tools with inputSchema+outputSchema', async () => {
+    await run('tools/list exposes 26 tools with inputSchema+outputSchema', async () => {
       listed = await request('tools/list', {});
       const tools = listed.result?.tools || [];
       const names = tools.map(t => t.name).sort();
       const expected = [
-        'coreguard_assess_risk','coreguard_authorize','coreguard_authorize_x402_payment','coreguard_build_attestation',
-        'coreguard_consumption_status','coreguard_create_machine_task','coreguard_decide_outcome','coreguard_inspect_identity',
+        'coreguard_assess_risk','coreguard_audit_transaction','coreguard_authorize','coreguard_authorize_x402_payment',
+        'coreguard_build_attestation','coreguard_check_limits','coreguard_consumption_status','coreguard_create_intent',
+        'coreguard_create_machine_task','coreguard_decide_outcome','coreguard_inspect_identity','coreguard_issue_receipt',
         'coreguard_meter_agent_usage','coreguard_parse_x402_challenge','coreguard_profile_reference','coreguard_reconcile_payment',
-        'coreguard_register_machine','coreguard_verify_attestation','coreguard_verify_consent','coreguard_verify_delegation_chain',
-        'coreguard_verify_execution','coreguard_verify_task_completion','coreguard_verify_telemetry','coreguard_verify_x402_settlement'
+        'coreguard_register_machine','coreguard_revoke_consent','coreguard_verify_attestation','coreguard_verify_consent',
+        'coreguard_verify_delegation_chain','coreguard_verify_execution','coreguard_verify_receipt','coreguard_verify_task_completion',
+        'coreguard_verify_telemetry','coreguard_verify_x402_settlement'
       ];
       assert(JSON.stringify(names) === JSON.stringify(expected), `unexpected tool names: ${names.join(',')}`);
       for (const t of tools) {
