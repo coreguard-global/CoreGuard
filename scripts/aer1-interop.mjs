@@ -28,6 +28,8 @@ import {
   verifyAer1Chain,
   verifyAer1Commitment,
   verifyAer1WorkflowMerkle,
+  verifyAer1MerkleVector,
+  verifyAer1UnicodeVector,
 } from "../packages/agent-commerce/aer1.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -321,9 +323,9 @@ const entryCountLexeme = (text, name) =>
  * so "not implemented" stays visible instead of being counted as agreement.
  */
 function classifyTimeline(path, vectors, text) {
-  const verdict = (v, result) => ({
+  const verdict = (v, result, expectedOverride) => ({
     name: v.name,
-    expected: v.expected_verdict === "valid" ? "verified" : "invalid",
+    expected: expectedOverride ?? (v.expected_verdict === "valid" ? "verified" : "invalid"),
     observed: result.ok ? "verified" : "invalid",
     reason: result.checks.filter((c) => !c.ok).map((c) => c.name).join("; ") || null,
   });
@@ -351,6 +353,17 @@ function classifyTimeline(path, vectors, text) {
         }),
       ),
     );
+  }
+  if (path.endsWith("merkle-vectors.json")) {
+    // A vector with no declared invalid verdict is a valid construction: the
+    // corpus asserts its exact root. The legacy preimage tree and the
+    // duplicate-receipt-id collision are the two named refusals.
+    return vectors.map((v) =>
+      verdict(v, verifyAer1MerkleVector(v), v.expected_workflow_verdict === "invalid" || v.leaves !== undefined ? "invalid" : "verified"),
+    );
+  }
+  if (path.endsWith("unicode-vectors.json")) {
+    return vectors.map((v) => verdict(v, verifyAer1UnicodeVector(v), v.expected === "match" ? "verified" : "invalid"));
   }
   return null;
 }
@@ -483,10 +496,12 @@ function render(report) {
   out.push("");
   const byFamily = new Map();
   for (const n of r.notChecked) {
-    const key = n.family === "timeline" ? "timeline families (chain / commitment / merkle / anchor)" : "records (unsupported schema)";
+    const key = n.family === "timeline" ? "the anchor timeline family (8 vectors)" : "anchored records (6)";
     byFamily.set(key, (byFamily.get(key) ?? 0) + 1);
   }
   for (const [k, n] of byFamily) out.push(`- ${n} — ${k}`);
+  out.push("");
+  out.push("Both remaining families need an anchor resolution fact we cannot compute offline. They stay not checked rather than borrowing a structural pass from another layer.");
   out.push("");
   out.push("## Boundary");
   out.push("");
@@ -494,6 +509,9 @@ function render(report) {
     `- No conformance claim: ${r.totals.falseAccept} false accepts and ${r.totals.notChecked} not-checked vectors are listed above.`,
   );
   out.push("- The id-binding family is judged end to end and agrees 6/6.");
+  out.push("- The merkle family (9 vectors / 12 kit checks) is judged on the Section 8.1 construction: SHA-256 over the UTF-8 receipt id per leaf, raw 32-byte pairs, last-duplicate on odd levels, SHA-256(empty) for an empty workflow. A duplicate receipt id and the legacy `seq:receipt_hash` construction are refused even when a root happens to match.");
+  out.push("- The unicode family (5) hashes the exact decoded bytes. No NFC/NFD rewriting: visually identical spellings of café and of a hyphen are different payloads, and both mismatch vectors are refused.");
+  out.push("- Schema 0.4 records (21: 12 valid, 9 invalid) are judged on the versioned strict timestamp and nil-UUID rules, canonical-JSON input_hash, both sides of the issuer_claims provenance binding, the committed version match, and the structural checks. `metadata_hash` is format-checked only: the vendored corpus publishes no preimage rule, so this build does not invent a recomputation nobody can reproduce.");
   out.push("- The single-record invalid set is now refused by: duplicate member names, unknown provenance class, an execution payload without inputs, a claimed status other than verified, and the canonical base64 and calendar checks.");
   out.push("- `not_checked` is a resource outcome, not a pass.");
   out.push("");

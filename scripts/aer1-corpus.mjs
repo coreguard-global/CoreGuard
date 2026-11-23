@@ -10,12 +10,12 @@
  *              reproduces the published `evaluated_set_digest`. 72 files, 143
  *              vectors, one digest — offline, no network.
  *
- *   SEMANTICS  one family is actually judged: `base/id-binding-vectors.json`,
- *              replayed through CG-AER1/1 and compared to each vector's pinned
- *              expectation. Every other family is enumerated, counted, and
- *              reported NOT_CHECKED with the reason. A verifier that
- *              half-implements a family and reports it green is the failure
- *              mode the corpus exists to catch.
+ *   SEMANTICS  the families CG-AER1/1 actually judges are replayed and compared
+ *              to each vector's pinned expectation: id-binding, the merkle and
+ *              unicode families, and every record carrying schema 0.4. Every
+ *              other family is enumerated, counted, and reported NOT_CHECKED
+ *              with the reason. A verifier that half-implements a family and
+ *              reports it green is the failure mode the corpus exists to catch.
  *
  * Usage:
  *   node scripts/aer1-corpus.mjs [--dir <corpus dir>] [--json] [--quiet]
@@ -29,7 +29,12 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { parseAer1Record, AER1_PARSER_VERSION } from "../packages/agent-commerce/aer1.mjs";
+import {
+  parseAer1Record,
+  verifyAer1MerkleVector,
+  verifyAer1UnicodeVector,
+  AER1_PARSER_VERSION,
+} from "../packages/agent-commerce/aer1.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO = resolve(HERE, "..");
@@ -37,8 +42,12 @@ export const DEFAULT_CORPUS = join(REPO, "test", "fixtures", "aer1-corpus-v1.5.7
 
 const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
 
-/** The one family this build judges end-to-end. */
-export const EVALUATED_FAMILIES = Object.freeze(["base/id-binding-vectors.json"]);
+/** Vector-file families this build judges end-to-end. */
+export const EVALUATED_FAMILIES = Object.freeze([
+  "base/id-binding-vectors.json",
+  "base/merkle-vectors.json",
+  "base/unicode-vectors.json",
+]);
 
 /** Human family name for a corpus path. */
 export function familyOf(relPath) {
@@ -141,18 +150,85 @@ export function runIdBindingFamily(dir = DEFAULT_CORPUS) {
   return { ok: problems.length === 0, rows, problems };
 }
 
-/** The full picture: integrity, the evaluated family, and the families not run. */
+/** Replay one vector family through a named verifier. */
+function runVectorFamily(dir, relPath, family, verify, expectedOf) {
+  const file = join(dir, relPath);
+  if (!existsSync(file)) return { family, rows: [], problems: [`${relPath} is missing`], ok: false };
+  const payload = JSON.parse(readFileSync(file, "utf8"));
+  const rows = [];
+  const problems = [];
+  for (const v of payload.vectors ?? []) {
+    const result = verify(v);
+    const expected = expectedOf(v);
+    const observed = result.ok ? "verified" : "invalid";
+    const ok = expected === observed;
+    rows.push({ name: v.name, expected, observed, ok, reason: result.checks.filter((c) => !c.ok).map((c) => c.name) });
+    if (!ok) problems.push(`${v.name}: expected ${expected} got ${observed}`);
+  }
+  return { family, rows, problems, ok: problems.length === 0 };
+}
+
+/** Every schema 0.4 record, valid and invalid, against the parser. */
+function runSchema04Records(dir) {
+  const index = JSON.parse(readFileSync(join(dir, "corpus-index.json"), "utf8"));
+  const rows = [];
+  const problems = [];
+  for (const entry of index.files ?? []) {
+    if (!entry.path.startsWith("base/test-vectors/")) continue;
+    const file = join(dir, entry.path);
+    if (!existsSync(file)) continue;
+    const text = readFileSync(file, "utf8");
+    const record = JSON.parse(text);
+    if (record.receipt_schema_version !== "0.4") continue;
+    const expected = entry.path.includes("/invalid/") ? "invalid" : "verified";
+    const parsed = parseAer1Record(record, { rawText: text });
+    const observed = parsed.supportedVersion ? (parsed.verdict === "pass" ? "verified" : "invalid") : "not_checked";
+    const ok = expected === observed;
+    rows.push({ name: entry.path.split("/").pop(), expected, observed, ok, reason: parsed.structure.filter((c) => !c.ok).map((c) => c.name) });
+    if (!ok) problems.push(`${entry.path}: expected ${expected} got ${observed}`);
+  }
+  return { family: "schema-0.4", rows, problems, ok: rows.length === 21 && problems.length === 0 };
+}
+
+function isJudgedRecord(dir, relPath) {
+  if (!relPath.startsWith("base/test-vectors/")) return false;
+  const file = join(dir, relPath);
+  if (!existsSync(file)) return false;
+  try {
+    return JSON.parse(readFileSync(file, "utf8")).receipt_schema_version === "0.4";
+  } catch {
+    return false;
+  }
+}
+
+/** The full picture: integrity, the judged families, and the families not run. */
 export function runCorpus(dir = DEFAULT_CORPUS) {
   const integrity = verifyCorpus(dir);
   const idBinding = runIdBindingFamily(dir);
-  const skipped = (integrity.ok ? readFamilies(dir) : []).filter((f) => !EVALUATED_FAMILIES.includes(f.path));
+  const alsoEvaluated = integrity.ok
+    ? [
+        runVectorFamily(
+          dir,
+          "base/merkle-vectors.json",
+          "merkle",
+          verifyAer1MerkleVector,
+          (v) => (v.expected_workflow_verdict === "invalid" || v.leaves !== undefined ? "invalid" : "verified"),
+        ),
+        runVectorFamily(dir, "base/unicode-vectors.json", "unicode", verifyAer1UnicodeVector, (v) => (v.expected === "match" ? "verified" : "invalid")),
+        runSchema04Records(dir),
+      ]
+    : [];
+  const skipped = (integrity.ok ? readFamilies(dir) : []).filter(
+    (f) => !EVALUATED_FAMILIES.includes(f.path) && !isJudgedRecord(dir, f.path),
+  );
   return {
     parserVersion: AER1_PARSER_VERSION,
     integrity,
     evaluated: { family: "id-binding", ...idBinding },
+    alsoEvaluated,
     notEvaluated: skipped,
     notEvaluatedVectors: skipped.reduce((n, f) => n + f.vectors, 0),
-    ok: integrity.ok && idBinding.ok,
+    ok: integrity.ok && idBinding.ok && alsoEvaluated.every((f) => f.ok),
   };
 }
 
@@ -201,6 +277,11 @@ function main(argv) {
       row.vectors += f.vectors;
       byFamily.set(f.family, row);
     }
+    for (const f of report.alsoEvaluated) {
+      console.log(
+        `${f.family.padEnd(30)} ${String(f.rows.length).padStart(7)}  EVALUATED ${f.rows.filter((r) => r.ok).length}/${f.rows.length} match`,
+      );
+    }
     for (const [family, row] of [...byFamily.entries()].sort((a, b) => b[1].vectors - a[1].vectors)) {
       console.log(`${family.padEnd(30)} ${String(row.vectors).padStart(7)}  NOT_CHECKED (family not implemented by ${report.parserVersion})`);
     }
@@ -212,8 +293,11 @@ function main(argv) {
     for (const p of report.evaluated.problems) console.log(`  ! ${p}`);
   }
 
+  const judged = [report.evaluated, ...report.alsoEvaluated];
+  const matched = judged.reduce((n, f) => n + f.rows.filter((r) => r.ok).length, 0);
+  const total = judged.reduce((n, f) => n + f.rows.length, 0);
   console.log(
-    `AER1-CORPUS: ${report.ok ? "OK" : "FAIL"} — integrity ${report.integrity.ok ? "pass" : "fail"}, id-binding ${report.evaluated.rows.filter((r) => r.ok).length}/${report.evaluated.rows.length}, ${report.notEvaluatedVectors} vectors named not-checked`,
+    `AER1-CORPUS: ${report.ok ? "OK" : "FAIL"} — integrity ${report.integrity.ok ? "pass" : "fail"}, judged ${matched}/${total}, ${report.notEvaluatedVectors} vectors named not-checked`,
   );
   process.exit(report.ok ? 0 : 1);
 }

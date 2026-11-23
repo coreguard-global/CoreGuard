@@ -51,12 +51,26 @@ test("the id-binding family matches every published pin", () => {
 test("the families this build does not judge are counted, not claimed", () => {
   const report = runCorpus(DEFAULT_CORPUS);
   assert.ok(report.notEvaluatedVectors > 0);
-  assert.equal(report.notEvaluatedVectors, 137);
+  assert.equal(report.notEvaluatedVectors, 102);
   assert.ok(report.notEvaluated.every((f) => !EVALUATED_FAMILIES.includes(f.path)));
   const families = new Set(report.notEvaluated.map((f) => f.family));
-  for (const expected of ["invalid", "valid", "chain-vectors-v07", "merkle-vectors", "anchor-vectors"]) {
+  for (const expected of ["invalid", "valid", "chain-vectors-v07", "anchor-vectors"]) {
     assert.ok(families.has(expected), `missing family ${expected}`);
   }
+  assert.ok(!families.has("merkle-vectors"), "the merkle family is judged now, not not-checked");
+});
+
+test("the newly judged families are replayed, not merely listed", () => {
+  const report = runCorpus(DEFAULT_CORPUS);
+  assert.equal(report.ok, true);
+  assert.deepEqual(
+    report.alsoEvaluated.map((f) => [f.family, f.rows.length, f.rows.filter((r) => r.ok).length]),
+    [
+      ["merkle", 9, 9],
+      ["unicode", 5, 5],
+      ["schema-0.4", 21, 21],
+    ],
+  );
 });
 
 test("integrity has teeth: one flipped byte fails by path", () => {

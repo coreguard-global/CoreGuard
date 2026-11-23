@@ -183,3 +183,75 @@ test("the refusal checks do not convict valid canonical or legacy records", () =
     assert.equal(parsed.id.state, "verified-expected");
   }
 });
+
+const SCHEMA04_VALID = [
+  "bound-04.json", "deep-nesting.json", "edge-numbers.json", "empty-members.json",
+  "input-hash-multikey-20.json", "large-payload.json", "maximum-offset-timestamp.json",
+  "metadata-hash-non-ascii-tool.json", "optional-members-18.json", "real-04.json",
+  "typographic-unicode.json", "uuid-v1-core.json",
+];
+const SCHEMA04_INVALID = [
+  "input-hash-key-order-20.json", "input-hash-mismatch.json", "lowercase-timestamp.json",
+  "nil-uuid.json", "payload-is-array.json", "payload-omits-issuer-claims.json",
+  "provenance-control-char.json", "tampered-provenance.json", "timestamp-no-timezone.json",
+];
+
+test("schema 0.4: all 12 valid records verify, all 9 invalid records refuse by name", () => {
+  for (const name of SCHEMA04_VALID) {
+    const { text, record } = load(`valid/${name}`);
+    const parsed = parseAer1Record(record, { expectedId: record.id, rawText: text });
+    assert.equal(parsed.supportedVersion, true, name);
+    assert.equal(parsed.verdict, "pass", `${name}: ${JSON.stringify(parsed.structure.filter((c) => !c.ok))}`);
+  }
+  for (const name of SCHEMA04_INVALID) {
+    const { text, record } = load(`invalid/${name}`);
+    const parsed = parseAer1Record(record, { expectedId: record.id, rawText: text });
+    assert.equal(parsed.verdict, "fail", `${name}: a corpus-invalid 0.4 record was accepted`);
+    assert.ok(parsed.structure.some((c) => !c.ok), name);
+  }
+});
+
+test("schema 0.4: input_hash binds the canonical spelling, not the parsed object", () => {
+  const good = load("valid/input-hash-multikey-20.json");
+  assert.equal(parseAer1Record(good.record, { rawText: good.text }).verdict, "pass");
+  for (const name of ["input-hash-key-order-20.json", "input-hash-mismatch.json"]) {
+    const { text, record } = load(`invalid/${name}`);
+    const parsed = parseAer1Record(record, { rawText: text });
+    assert.ok(refusedBy(parsed, "input_hash binds the canonical JSON of the recorded inputs"), name);
+  }
+  // An input_hash that disagrees with the recorded inputs must bite even on a
+  // record whose bytes and id are otherwise intact.
+  const tampered = { ...good.record, input_hash: `sha256:${"0".repeat(64)}` };
+  assert.ok(refusedBy(parseAer1Record(tampered, { rawText: good.text }), "input_hash binds the canonical JSON of the recorded inputs"));
+});
+
+test("schema 0.4: provenance is bound on both sides of the commitment", () => {
+  for (const name of ["tampered-provenance.json", "payload-omits-issuer-claims.json"]) {
+    const { text, record } = load(`invalid/${name}`);
+    const parsed = parseAer1Record(record, { rawText: text });
+    assert.ok(refusedBy(parsed, "provenance_class matches the committed issuer_claims"), name);
+  }
+  const good = load("valid/bound-04.json");
+  assert.equal(parseAer1Record(good.record, { rawText: good.text }).verdict, "pass");
+});
+
+test("schema 0.4: nil uuid and lowercase timestamps are refused, older drafts still pass", () => {
+  const nil = load("invalid/nil-uuid.json");
+  assert.ok(refusedBy(parseAer1Record(nil.record, { rawText: nil.text }), "id is not the nil UUID"));
+  for (const name of ["lowercase-timestamp.json", "timestamp-no-timezone.json"]) {
+    const { text, record } = load(`invalid/${name}`);
+    assert.ok(refusedBy(parseAer1Record(record, { rawText: text }), "created_at is RFC 3339 (when present)"));
+  }
+  // The strict spelling rule is versioned: corpus-valid older records with a
+  // lowercase z must not become false rejects.
+  const lenient = load("valid/receipt-01.json");
+  assert.equal(parseAer1Record(lenient.record, { rawText: lenient.text }).verdict, "pass");
+});
+
+test("schema 0.4: metadata_hash shape is checked but its preimage is not invented", () => {
+  const good = load("valid/real-04.json");
+  const parsed = parseAer1Record(good.record, { rawText: good.text });
+  assert.ok(parsed.structure.some((c) => c.name === "metadata_hash is sha256:<64 hex>" && c.ok));
+  const bad = parseAer1Record({ ...good.record, metadata_hash: "not-a-digest" }, { rawText: good.text });
+  assert.ok(refusedBy(bad, "metadata_hash is sha256:<64 hex>"));
+});

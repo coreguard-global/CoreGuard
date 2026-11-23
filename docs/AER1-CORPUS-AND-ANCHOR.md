@@ -13,8 +13,8 @@ check:
 | Claim | What is actually asserted |
 |---|---|
 | Integrity | 72 vendored files reproduce the published per-file SHA-256, and the whole set reproduces the published `evaluated_set_digest` (`sha256:60bf73f3…db0d2`) — recomputed from the bytes on disk, offline |
-| Semantics | `base/id-binding-vectors.json` (6 vectors, 6 checks) is replayed through `CG-AER1/1` and compared to each vector's pinned `expected_digest`, `expected_id_state`, `expected_id_verdict` and `expected_verdict` |
-| Not claimed | the other 137 vectors are enumerated per family and printed `NOT_CHECKED (family not implemented by CG-AER1/1)` — never green |
+| Semantics | 41 vectors are replayed through `CG-AER1/1` and compared to their pinned expectations: id-binding (6), merkle (9), unicode (5), and all 21 schema 0.4 records, whose outer and committed claims are checked field by field |
+| Not claimed | the other 102 vectors — the anchor family (8) and anchored records (6) — are enumerated per family and printed `NOT_CHECKED (family not implemented by CG-AER1/1)` — never green |
 
 The negative control matters as much as the pass: flipping one byte in one
 vendored file fails integrity **by path**, and also breaks the set digest,
