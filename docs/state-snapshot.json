@@ -4,7 +4,7 @@
   "commitsAheadOfV060": 555,
   "testsTotal": 1991,
   "boundaryAudit": {
-    "filesScanned": 1575,
+    "filesScanned": 1525,
     "violations": 0,
     "check": "PASS"
   },
