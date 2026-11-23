@@ -265,7 +265,7 @@ Then: **[Developer quickstart](docs/DEVELOPER-QUICKSTART.md)** (three calls) · 
 
 > Updated automatically after an authorized CoreGuard administrator saves website content. Only this managed block and the judges-language summary are changed by the website sync. Funding remains requested, not awarded; VERIFIED ≠ SAFE.
 
-**Last synced:** 2026-11-21T14:17:22.710Z · [Open the official website](https://coreguard-trust-and-defense.lovable.app/) · [Investor brief](https://coreguard-trust-and-defense.lovable.app/investors) · [Research blog](https://coreguard-trust-and-defense.lovable.app/blog) · [Judges — English](https://coreguard-trust-and-defense.lovable.app/stellar#stellar-review) · [الحكّام — العربية](https://coreguard-trust-and-defense.lovable.app/ar/stellar#stellar-review)
+**Last synced:** 2026-11-23T09:00:29.135Z · [Open the official website](https://coreguard-trust-and-defense.lovable.app/) · [Investor brief](https://coreguard-trust-and-defense.lovable.app/investors) · [Research blog](https://coreguard-trust-and-defense.lovable.app/blog) · [Judges — English](https://coreguard-trust-and-defense.lovable.app/stellar#stellar-review) · [الحكّام — العربية](https://coreguard-trust-and-defense.lovable.app/ar/stellar#stellar-review)
 
 **Brand settings:** orange #FF8A00 · glow #FFB547 · background #0B0F14 · logo Official CoreGuard shield
 
