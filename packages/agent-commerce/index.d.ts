@@ -1184,3 +1184,12 @@ export declare function startControlPlaneServer(input: {
   port: number;
   close(): Promise<void>;
 }>;
+
+// CGCP/1 MCP Wave 2 mapping tools
+export declare const CGCP_MCP_BOUNDARY: string;
+export declare function createIntent(input?: any): any;
+export declare function issueReceipt(input?: any): any;
+export declare function verifyCgcpReceipt(input?: any): any;
+export declare function checkLimits(input?: any): any;
+export declare function revokeConsent(input?: any): any;
+export declare function auditTransaction(input?: any): any;

@@ -442,3 +442,14 @@ export {
   verifyDelegationChain,
   machineEconomySelfCheck,
 } from "./machine-economy.mjs";
+
+// CGCP/1 MCP Wave 2 mapping tools (file-backed single-host control plane).
+export {
+  CGCP_MCP_BOUNDARY,
+  createIntent,
+  issueReceipt,
+  verifyReceipt as verifyCgcpReceipt,
+  checkLimits,
+  revokeConsent,
+  auditTransaction,
+} from "./cgcp-mcp-tools.mjs";

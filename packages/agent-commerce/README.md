@@ -12,7 +12,7 @@ bytes approved, and for verifying any executed trace against that receipt.
 - **Fail-closed execution verification** — a consent plus an executed trace
   yields a verdict with named drift classes (AGR/1 taxonomy); incomplete or
   ambiguous evidence is never treated as a pass.
-- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing twenty tools,
+- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing twenty-six tools,
   all offline, all deterministic, zero keys.
 
 MIT. Node ≥ 18. No network calls, no stored credentials, no wall clock.
@@ -203,6 +203,19 @@ These 10 tools extend CoreGuard into x402/machine/delegation evidence flows. **B
 | `coreguard_verify_telemetry` | Verify telemetry structure/digest/signature presence; trust/physical truth not proven. |
 | `coreguard_verify_task_completion` | Verify completion evidence against task; evidence acceptance != physical proof. |
 | `coreguard_verify_delegation_chain` | Verify delegation chain structure/continuity; signatures not cryptographically verified without trust roots. |
+
+### Wave 2 — CGCP/1 Mapping + Trusted Signatures
+
+6 MCP tools map the missing/partial proposed contracts to the self-hosted CGCP/1 control plane (file-backed, single host, hash-chained audit). Additionally, `coreguard_verify_telemetry` and `coreguard_verify_delegation_chain` now perform real Ed25519 signature verification when an optional `trust` object with public keys/keyring is supplied. Verification covers signature validity over the supplied payload; it does not prove device identity, key custody, or physical-world truth.
+
+| Tool | CGCP/1 mapping |
+|---|---|
+| `coreguard_create_intent` | `requestApproval` (intent/approval request) |
+| `coreguard_issue_receipt` | `recordExecution` (execution receipt record) |
+| `coreguard_verify_receipt` | audit-chain verification + receipt lookup |
+| `coreguard_check_limits` | `evaluate` (policy/limit decision) |
+| `coreguard_revoke_consent` | `decideApproval` / `revokeAgent` / `revokePolicy` |
+| `coreguard_audit_transaction` | `auditReport` with optional filters |
 
 ## Errors
 
