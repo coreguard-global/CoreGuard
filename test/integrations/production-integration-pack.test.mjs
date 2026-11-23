@@ -60,6 +60,26 @@ test("generate-readiness-report accepts complete real-looking EXECUTED evidence 
   assert.match(md, /does \*\*NOT\*\* declare production ready, SLA compliance/);
 });
 
+test("generate-readiness-report includes live probe statuses but never upgrades the verdict", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-probe-report-"));
+  writeFileSync(join(dir, "integration-probes.json"), JSON.stringify({
+    spec: "CG-INT/1-PROBE", at: "2026-11-23T00:00:00Z", environment: "target-staging", operator: "ops@example",
+    verdict: "NOT_PROVISIONED",
+    probes: [{ integration: "oidc", status: "NOT_PROVISIONED" }, { integration: "otel", status: "PROBE_SKIPPED" }],
+    boundary: "Live probe outcomes only.",
+  }));
+  const out = join(dir, "readiness-report.md");
+  const r = run(["ops/production/drills/generate-readiness-report.mjs", dir, out]);
+  assert.equal(r.status, 2);
+  const j = JSON.parse(r.stdout);
+  assert.equal(j.verdict, "NOT_READY");
+  const md = readFileSync(out, "utf8");
+  assert.match(md, /## Live integration probes \(CG-INT\/1\)/);
+  assert.match(md, /oidc: NOT_PROVISIONED/);
+  assert.match(md, /otel: PROBE_SKIPPED/);
+  assert.doesNotMatch(md, /Status:\*\* (PRODUCTION_READY|EVIDENCE_COMPLETE)/);
+});
+
 test("local-backup-restore-sim produces LOCAL_SIMULATION_NOT_PRODUCTION_EVIDENCE", () => {
   const dir = mkdtempSync(join(tmpdir(), "cgcp-sim-"));
   const out = join(dir, "evidence.json");

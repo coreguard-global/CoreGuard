@@ -47,6 +47,25 @@ lines.push(`## External integration evidence (must be supplied separately)`);
 for (const item of ["Managed Postgres HA/replication/failover","OIDC/SAML/SCIM real IdP integration","KMS/HSM and managed secrets lifecycle","External witness/transparency log/on-chain anchoring","OTEL/alerts/SLO/on-call operational controls"]) {
   lines.push(`- [ ] ${item}`);
 }
+lines.push(``);
+lines.push(`## Live integration probes (CG-INT/1)`);
+let probeReport = null;
+try {
+  const probeFile = join(dir, "integration-probes.json");
+  const parsed = JSON.parse(readFileSync(probeFile, "utf8"));
+  if (parsed && parsed.spec === "CG-INT/1-PROBE" && Array.isArray(parsed.probes)) probeReport = parsed;
+} catch {}
+if (!probeReport) {
+  lines.push(`- No valid integration-probes.json found. Run \`node ops/production/integrations/probe.mjs --out ops/production/evidence/integration-probes.json\` on a real target environment.`);
+} else {
+  lines.push(`- Probe run: ${probeReport.at} | environment: ${probeReport.environment ?? "UNSPECIFIED"} | operator: ${probeReport.operator ?? "UNSPECIFIED"} | outcome: ${probeReport.verdict}`);
+  for (const p of probeReport.probes) {
+    const mark = p.status === "PROBE_PASSED" ? "x" : " ";
+    lines.push(`- [${mark}] ${p.integration}: ${p.status}${p.responseDigest ? ` (response digest ${String(p.responseDigest).slice(0, 12)}…)` : ""}`);
+  }
+  lines.push(`- Probe evidence is a live reachability/functional signal only. It never substitutes for drill evidence, operational controls, or independent review.`);
+}
+lines.push(``);
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, lines.join("\n") + "\n");
 process.stdout.write(JSON.stringify({ verdict, out, missing, failed }) + "\n");
