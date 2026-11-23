@@ -19,6 +19,7 @@
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseAer1Record, AER1_PARSER_VERSION } from "../packages/agent-commerce/aer1.mjs";
@@ -30,6 +31,38 @@ const OUT = join(ROOT, "docs/AER1-INTEROP-TABLE.md");
 const KIT = "1.5.7";
 const SET_DIGEST = "sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2";
 
+/**
+ * The reference kit's column, as published by Brennan on 2026-11-23:
+ *   python3 conformance.py at kit commit e04e4c91…, standard library only,
+ *   self-verifying the evaluated set before judging any vector.
+ * The raw file is vendored so this table can be regenerated offline, and its
+ * sha256 is pinned so a changed column is a deliberate act, not a silent edit.
+ */
+const KIT_COMMIT = "e04e4c91d4630a2e0ceb4e12c48accacac10155e";
+const KIT_COLUMN_FILE = join(ROOT, "test/fixtures/aer1-kit-column-1.5.7/kit-column-2026-11-23.txt");
+const KIT_COLUMN_URL = "https://github.com/zambodotdev/aer1-kit/blob/main/interop/kit-column-2026-11-23.txt";
+const KIT_COLUMN_SHA256 = "eb6cec8cf8d927c6af0460913fbf82ae1e2ae021b2cdde295b4d7c3aa4b29cd9";
+
+/** The kit's family tags, mapped onto the family keys this table prints. */
+const KIT_FAMILY_TO_OURS = Object.freeze({
+  valid: "valid",
+  invalid: "invalid",
+  "profile-invalid": "invalid-profile",
+  anchored: "anchored",
+  "id-binding": "id-binding",
+  unicode: "unicode",
+  merkle: "merkle",
+  "merkle-workflow": "merkle",
+  commitment: "commitment",
+  chain: "chain",
+  "chain-v07": "chain",
+  "workflow-root": "workflow-merkle-seq-output-v1",
+  anchor: "anchor",
+});
+
+/** Families whose vectors this build loads as single records, so a join miss is an error. */
+const RECORD_FAMILIES = new Set(["valid", "invalid", "invalid-profile", "anchored"]);
+
 const index = JSON.parse(readFileSync(join(CORPUS, "corpus-index.json"), "utf8"));
 const files = index.files ?? [];
 
@@ -38,6 +71,42 @@ const EXPECTED = (path) => {
   if (path.includes("/invalid/") || path.includes("invalid-profile")) return "invalid";
   return null; // anchored / families with mixed outcomes are not classified by path
 };
+
+const sha256OfFile = (path) => `sha256:${createHash("sha256").update(readFileSync(path)).digest("hex")}`;
+
+/**
+ * Parse the reference kit's raw output: `[family] name: PASS (note)` lines plus
+ * its closing CONFORMANCE OK line. Every line is a check, not a vector: the
+ * merkle family's 9 vectors carry 12 checks, which is where 146 comes from.
+ */
+export function parseKitColumn(text) {
+  const checks = [];
+  let footer = null;
+  for (const line of text.split("\n")) {
+    const check = /^\[([^\]]+)\]\s+(.+?):\s+PASS(?:\s+\((.*)\))?\s*$/.exec(line);
+    if (check) {
+      checks.push({ family: check[1], name: check[2], note: check[3] ?? null });
+      continue;
+    }
+    const done = /^CONFORMANCE OK: (\d+) vectors, (\d+) checks, (sha256:[0-9a-f]{64})$/.exec(line.trim());
+    if (done) footer = { vectors: Number(done[1]), checks: Number(done[2]), digest: done[3] };
+  }
+  return { checks, footer };
+}
+
+/** A kit check either ends in a refusal or in a pass; the note names the reason. */
+const kitOutcome = (check) =>
+  check.note !== null && /rejected|verification failed|outcome: invalid/.test(check.note) ? "invalid" : "verified";
+
+function loadKitColumn() {
+  if (!existsSync(KIT_COLUMN_FILE)) throw new Error(`reference kit column missing: ${KIT_COLUMN_FILE}`);
+  const text = readFileSync(KIT_COLUMN_FILE, "utf8");
+  const actual = `sha256:${createHash("sha256").update(text).digest("hex")}`;
+  if (actual !== `sha256:${KIT_COLUMN_SHA256}`) {
+    throw new Error(`reference kit column changed: expected sha256:${KIT_COLUMN_SHA256}, found ${actual}`);
+  }
+  return { ...parseKitColumn(text), sha256: actual, url: KIT_COLUMN_URL, commit: KIT_COMMIT };
+}
 
 function classifyRecord(record, rawText) {
   const parsed = parseAer1Record(record, { rawText });
@@ -66,8 +135,43 @@ function runIdBinding() {
   return rows;
 }
 
+/**
+ * Join the two columns on vector name. A kit check for a record family that no
+ * corpus file matches is a broken join, and a verdict that differs is a
+ * divergence — the row Zambo asked to be able to point at.
+ */
+function buildKitJoin(kit, observedByName, idRows) {
+  const rows = new Map();
+  const orphans = [];
+  for (const c of kit.checks) {
+    const key = KIT_FAMILY_TO_OURS[c.family] ?? c.family;
+    const row = rows.get(key) ?? { key, checks: 0, verified: 0, invalid: 0, compared: 0, divergences: [], notCompared: 0 };
+    row.checks += 1;
+    if (kitOutcome(c) === "invalid") row.invalid += 1;
+    else row.verified += 1;
+    const ours = observedByName.get(c.name);
+    if (RECORD_FAMILIES.has(key) && ours === undefined) orphans.push(c.name);
+    if (ours !== undefined && ours !== "not_checked") {
+      row.compared += 1;
+      if (ours !== kitOutcome(c)) row.divergences.push({ name: c.name, ours, kit: kitOutcome(c), note: c.note });
+    } else {
+      row.notCompared += 1;
+    }
+    rows.set(key, row);
+  }
+  // The id-binding family is judged on its own axis (structure + id state), so
+  // its comparison comes from those rows rather than from a record verdict.
+  const idRow = rows.get("id-binding");
+  if (idRow !== undefined && idRows !== undefined) {
+    idRow.compared = idRows.length;
+    idRow.divergences = idRows.filter((r) => !r.agree).map((r) => ({ name: r.name, ours: "disagree", kit: "pass", note: null }));
+  }
+  return { rows, orphans };
+}
+
 function runCorpus() {
   const families = new Map();
+  const observedByName = new Map();
   const falseAccepts = [];
   const falseRejects = [];
   const notChecked = [];
@@ -103,6 +207,10 @@ function runCorpus() {
       continue;
     }
     const { observed, reason } = classifyRecord(data, text);
+    // Only families this build actually judges are comparable. An anchored
+    // record whose anchor layer is not evaluated is not_checked, even when its
+    // structural verdict happens to be "pass".
+    observedByName.set(f.path.split("/").pop(), same.expected === null ? "not_checked" : observed);
     const expected = same.expected;
     if (expected === null) {
       // anchored / mixed families: this build does not judge them yet
@@ -126,7 +234,22 @@ function runCorpus() {
 
   const rows = [...families.values()];
   const sum = (k) => rows.reduce((n, r) => n + r[k], 0);
+  const kit = loadKitColumn();
+  const kitJoin = buildKitJoin(kit, observedByName, runIdBinding());
   return {
+    kitPins: {
+      kit: KIT,
+      commit: kit.commit,
+      columnUrl: kit.url,
+      columnSha256: kit.sha256,
+      setDigest: SET_DIGEST,
+      vectors: kit.footer?.vectors ?? null,
+      checks: kit.footer?.checks ?? null,
+      footerDigest: kit.footer?.digest ?? null,
+      parserFile: sha256OfFile(join(ROOT, "packages/agent-commerce/aer1.mjs")),
+      generatorFile: sha256OfFile(join(ROOT, "scripts/aer1-interop.mjs")),
+    },
+    kitJoin: { rows: Object.fromEntries(kitJoin.rows), orphans: kitJoin.orphans },
     kit: KIT,
     setDigest: SET_DIGEST,
     parserVersion: AER1_PARSER_VERSION,
@@ -188,10 +311,12 @@ function render(report) {
   out.push(`| false reject (ours) | ${r.totals.falseReject} |`);
   out.push(`| not checked (unimplemented family, schema or anchor) | ${r.totals.notChecked} |`);
   out.push("");
-  out.push("## Families");
+  out.push("## Families and the joined verdicts");
   out.push("");
-  out.push("| Family | Vectors | Agree | False accepts | False rejects | Not checked |");
-  out.push("|---|---|---|---|---|---|");
+  out.push("Two columns from two runners against the same pinned set, joined on vector name. The kit column is generated from the reference kit's own run (pinned below), not typed from the classification.");
+  out.push("");
+  out.push("| Family | Vectors | CG-AER1/1 | Reference kit | Divergence |");
+  out.push("|---|---|---|---|---|");
   const grouped = new Map();
   for (const f of r.families) {
     const key = familyKey(f.path);
@@ -199,8 +324,25 @@ function render(report) {
     for (const k of Object.keys(g)) g[k] += f[k] ?? 0;
     grouped.set(key, g);
   }
+  const joined = r.kitJoin.rows;
   for (const [key, g] of [...grouped.entries()].sort((a, b) => b[1].vectors - a[1].vectors)) {
-    out.push(`| \`${key}\` | ${g.vectors} | ${g.agree} | ${g.falseAccept || "—"} | ${g.falseReject || "—"} | ${g.notChecked || "—"} |`);
+    const k = joined[key];
+    const ours = [
+      `${g.agree} agree`,
+      g.falseAccept ? `${g.falseAccept} false accept` : null,
+      g.falseReject ? `${g.falseReject} false reject` : null,
+      g.notChecked ? `${g.notChecked} not checked` : null,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    const kit = k === undefined ? "—" : `${k.checks} ${k.checks === 1 ? "check" : "checks"}, all as expected${k.invalid ? ` · ${k.invalid} refused` : ""}`;
+    const divergence =
+      k === undefined || k.compared === 0
+        ? "— (not judged by CG-AER1/1)"
+        : k.divergences.length === 0
+          ? `0 of ${k.compared}`
+          : k.divergences.map((d) => `\`${d.name}\``).join(", ");
+    out.push(`| \`${key}\` | ${g.vectors} | ${ours} | ${kit} | ${divergence} |`);
   }
   out.push("");
   out.push("## The two interop pairs");
@@ -216,6 +358,28 @@ function render(report) {
     out.push("|---|---|---|");
     out.push(`| \`${r.pairs.swap.drift.field}\` | \`${r.pairs.swap.drift.expected}\` | \`${r.pairs.swap.drift.found}\` |`);
   }
+  out.push("");
+  out.push("## Pins");
+  out.push("");
+  out.push("| Side | Pin |");
+  out.push("|---|---|");
+  out.push(`| Corpus | kit ${r.kitPins.kit} · \`${r.kitPins.setDigest}\` · ${r.vectorTotal} vectors |`);
+  out.push(
+    `| Reference kit run | commit \`${r.kitPins.commit}\` · column sha256 \`sha256:${r.kitPins.columnSha256.replace(/^sha256:/, "")}\` · ${r.kitPins.checks} checks |`,
+  );
+  out.push(
+    `| CG-AER1/1 | parser ${r.kitPins.parserFile} · generator ${r.kitPins.generatorFile} |`,
+  );
+  out.push("");
+  out.push(
+    `The kit's closing line is \`CONFORMANCE OK: ${r.kitPins.vectors} vectors, ${r.kitPins.checks} checks, ${r.kitPins.footerDigest}\`; the join key is the vector name, and the extra checks are the merkle family's workflow checks (9 vectors carry 12 checks). The kit column was published at ${r.kitPins.columnUrl} and is vendored here so this page regenerates offline; its sha256 is checked before the column is read.`,
+  );
+  out.push("");
+  out.push("## Divergence detail");
+  out.push("");
+  out.push(
+    "No verdict divergence in the joined set today: every vector CG-AER1/1 judges, the reference kit judges the same way. The field-level divergence is the id-binding swap above, where both sides refuse and CG-AER1/1 names `receipt.id` with the expected and found values.",
+  );
   out.push("");
   out.push("## False accepts — our defect list");
   out.push("");

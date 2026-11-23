@@ -15,21 +15,23 @@ A `verified` outcome here means the saved bytes were not changed after they were
 | false reject (ours) | 0 |
 | not checked (unimplemented family, schema or anchor) | 100 |
 
-## Families
+## Families and the joined verdicts
 
-| Family | Vectors | Agree | False accepts | False rejects | Not checked |
-|---|---|---|---|---|---|
-| `invalid` | 36 | 27 | — | — | 9 |
-| `chain` | 35 | 0 | — | — | 35 |
-| `valid` | 21 | 9 | — | — | 12 |
-| `merkle` | 9 | 0 | — | — | 9 |
-| `anchor` | 8 | 0 | — | — | 8 |
-| `commitment` | 8 | 0 | — | — | 8 |
-| `workflow-merkle-seq-output-v1` | 8 | 0 | — | — | 8 |
-| `id-binding` | 6 | 6 | — | — | — |
-| `anchored` | 6 | 0 | — | — | 6 |
-| `unicode` | 5 | 0 | — | — | 5 |
-| `invalid-profile` | 1 | 1 | — | — | — |
+Two columns from two runners against the same pinned set, joined on vector name. The kit column is generated from the reference kit's own run (pinned below), not typed from the classification.
+
+| Family | Vectors | CG-AER1/1 | Reference kit | Divergence |
+|---|---|---|---|---|
+| `invalid` | 36 | 27 agree · 9 not checked | 36 checks, all as expected · 36 refused | 0 of 27 |
+| `chain` | 35 | 0 agree · 35 not checked | 35 checks, all as expected | — (not judged by CG-AER1/1) |
+| `valid` | 21 | 9 agree · 12 not checked | 21 checks, all as expected | 0 of 9 |
+| `merkle` | 9 | 0 agree · 9 not checked | 12 checks, all as expected | — (not judged by CG-AER1/1) |
+| `anchor` | 8 | 0 agree · 8 not checked | 8 checks, all as expected · 4 refused | — (not judged by CG-AER1/1) |
+| `commitment` | 8 | 0 agree · 8 not checked | 8 checks, all as expected | — (not judged by CG-AER1/1) |
+| `workflow-merkle-seq-output-v1` | 8 | 0 agree · 8 not checked | 8 checks, all as expected | — (not judged by CG-AER1/1) |
+| `id-binding` | 6 | 6 agree | 6 checks, all as expected | 0 of 6 |
+| `anchored` | 6 | 0 agree · 6 not checked | 6 checks, all as expected · 5 refused | — (not judged by CG-AER1/1) |
+| `unicode` | 5 | 0 agree · 5 not checked | 5 checks, all as expected | — (not judged by CG-AER1/1) |
+| `invalid-profile` | 1 | 1 agree | 1 check, all as expected · 1 refused | 0 of 1 |
 
 ## The two interop pairs
 
@@ -42,6 +44,20 @@ Drift named by CG-AER1/1:
 | Field | Expected | Found |
 |---|---|---|
 | `receipt.id` | `130da435-e157-498e-af90-605866a86a27` | `42fc3298-b1e7-4087-bb1c-f80ef9f12c7c` |
+
+## Pins
+
+| Side | Pin |
+|---|---|
+| Corpus | kit 1.5.7 · `sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2` · 143 vectors |
+| Reference kit run | commit `e04e4c91d4630a2e0ceb4e12c48accacac10155e` · column sha256 `sha256:eb6cec8cf8d927c6af0460913fbf82ae1e2ae021b2cdde295b4d7c3aa4b29cd9` · 146 checks |
+| CG-AER1/1 | parser sha256:5d74ff8126fab46509875e86c1faa3c8a53389f18d695e2f34681f55123b6bb1 · generator sha256:66b2f0e383f8b331f456db269359155e5c2756c05a9eef89c13b3585916d5edc |
+
+The kit's closing line is `CONFORMANCE OK: 143 vectors, 146 checks, sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2`; the join key is the vector name, and the extra checks are the merkle family's workflow checks (9 vectors carry 12 checks). The kit column was published at https://github.com/zambodotdev/aer1-kit/blob/main/interop/kit-column-2026-11-23.txt and is vendored here so this page regenerates offline; its sha256 is checked before the column is read.
+
+## Divergence detail
+
+No verdict divergence in the joined set today: every vector CG-AER1/1 judges, the reference kit judges the same way. The field-level divergence is the id-binding swap above, where both sides refuse and CG-AER1/1 names `receipt.id` with the expected and found values.
 
 ## False accepts — our defect list
 

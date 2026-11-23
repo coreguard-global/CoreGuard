@@ -46,6 +46,19 @@ test("AER-1 interop: the published table matches the code and the known defect c
   assert.equal(report.pairs.swap.id.verdict, "mismatched");
   assert.equal(report.pairs.swap.drift?.field, "receipt.id");
 
+  // The joined column comes from the reference kit's own run, vendored and
+  // pinned: 143 vectors, 146 checks, the same evaluated-set digest, and no
+  // vector name from a judged family that the corpus does not carry.
+  assert.equal(report.kitPins.vectors, 143);
+  assert.equal(report.kitPins.checks, 146);
+  assert.equal(report.kitPins.footerDigest, SET_DIGEST);
+  assert.equal(report.kitPins.commit, "e04e4c91d4630a2e0ceb4e12c48accacac10155e");
+  assert.deepEqual(report.kitJoin.orphans, []);
+  const divergences = Object.values(report.kitJoin.rows).flatMap((row) => row.divergences);
+  assert.deepEqual(divergences.map((d) => d.name), [], "a verdict divergence must be named on the page, not swallowed");
+
   const page = readFileSync(PAGE, "utf8");
+  assert.match(page, /commit `e04e4c91d4630a2e0ceb4e12c48accacac10155e`/);
+  assert.match(page, /sha256:eb6cec8cf8d927c6af0460913fbf82ae1e2ae021b2cdde295b4d7c3aa4b29cd9/);
   assert.equal(page, render(report), "docs/AER1-INTEROP-TABLE.md is stale — run: node scripts/aer1-interop.mjs --write");
 });
