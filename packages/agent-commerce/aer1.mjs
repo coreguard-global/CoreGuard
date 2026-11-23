@@ -41,6 +41,14 @@ const BASE64_RE = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=
 const UUID_LOWER_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 /**
+ * Provenance classes AER-1 defines. A value outside this set is not a weaker
+ * claim, it is an unknown one, and an unknown provenance may not pass as an
+ * executed record. Exact match only: a trailing newline or a control character
+ * makes the value a different string.
+ */
+export const KNOWN_PROVENANCE_CLASSES = Object.freeze(["EXECUTED BY ZAMBO", "LOGGED BY AGENT"]);
+
+/**
  * Canonical base64 is the only accepted encoding: padded, four-character
  * groups, no whitespace, and re-encoding the decoded bytes must reproduce the
  * text exactly. Unpadded and pad-bit variants decode "fine" in most runtimes,
@@ -96,6 +104,107 @@ const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
 const check = (name, ok, detail) => (detail === undefined ? { name, ok } : { name, ok, detail });
 
 /**
+ * findDuplicateMembers(jsonText) -> [{ path, key }]
+ *
+ * JSON.parse silently keeps the last of two same-named members, so two parsers
+ * can read two different commitments from identical bytes. The only place the
+ * duplicate is still visible is the text, which is why a caller that has the
+ * bytes should pass them in. This is a small scanner, not a validator: it
+ * walks the same grammar JSON.parse accepts and reports keys seen twice per
+ * object. Malformed text simply stops the walk; JSON.parse is the authority on
+ * whether the document is well formed.
+ */
+export function findDuplicateMembers(jsonText) {
+  const duplicates = [];
+  const n = jsonText.length;
+  let i = 0;
+  const skipWs = () => {
+    while (i < n && (jsonText[i] === " " || jsonText[i] === "\t" || jsonText[i] === "\n" || jsonText[i] === "\r")) i += 1;
+  };
+  const readString = () => {
+    i += 1; // opening quote
+    while (i < n) {
+      if (jsonText[i] === "\\") {
+        i += 2;
+        continue;
+      }
+      if (jsonText[i] === '"') {
+        i += 1;
+        return;
+      }
+      i += 1;
+    }
+  };
+  const readValue = (path) => {
+    skipWs();
+    const c = jsonText[i];
+    if (c === "{") {
+      i += 1;
+      skipWs();
+      if (jsonText[i] === "}") {
+        i += 1;
+        return;
+      }
+      const seen = new Set();
+      for (;;) {
+        skipWs();
+        const start = i;
+        readString();
+        let key;
+        try {
+          key = JSON.parse(jsonText.slice(start, i));
+        } catch {
+          return;
+        }
+        if (seen.has(key)) duplicates.push({ path: path || "$", key });
+        seen.add(key);
+        skipWs();
+        if (jsonText[i] === ":") i += 1;
+        readValue(path ? `${path}.${key}` : key);
+        skipWs();
+        if (jsonText[i] === ",") {
+          i += 1;
+          continue;
+        }
+        if (jsonText[i] === "}") i += 1;
+        return;
+      }
+    }
+    if (c === "[") {
+      i += 1;
+      skipWs();
+      if (jsonText[i] === "]") {
+        i += 1;
+        return;
+      }
+      let index = 0;
+      for (;;) {
+        readValue(`${path}[${index}]`);
+        index += 1;
+        skipWs();
+        if (jsonText[i] === ",") {
+          i += 1;
+          continue;
+        }
+        if (jsonText[i] === "]") i += 1;
+        return;
+      }
+    }
+    if (c === '"') {
+      readString();
+      return;
+    }
+    while (i < n && !" \t\n\r,]}:".includes(jsonText[i])) i += 1;
+  };
+  try {
+    readValue("");
+  } catch {
+    // malformed text: nothing to report here, JSON.parse decides validity
+  }
+  return duplicates;
+}
+
+/**
  * parseAer1Record(record, { expectedId, resolvedRecord })
  *
  *   record          the AER-1 artifact as published (outer envelope)
@@ -105,7 +214,7 @@ const check = (name, ok, detail) => (detail === undefined ? { name, ok } : { nam
  * Returns frozen facts plus one verdict. Nothing here throws on a malformed
  * artifact: a caller handing us garbage is evidence, not a program defect.
  */
-export function parseAer1Record(record, { expectedId, resolvedRecord } = {}) {
+export function parseAer1Record(record, { expectedId, resolvedRecord, rawText } = {}) {
   if (!isObject(record)) {
     const structure = [check("artifact is an object", false)];
     return freeze({
@@ -129,6 +238,15 @@ export function parseAer1Record(record, { expectedId, resolvedRecord } = {}) {
   const claimed = typeof record.output_hash === "string" ? record.output_hash : null;
   const encoded = typeof record.canonical_bytes === "string" ? record.canonical_bytes : null;
 
+  // Duplicate member names must be refused before any value is trusted: the
+  // parsed object no longer shows them, so only the original text can.
+  if (typeof rawText === "string") {
+    const duplicates = findDuplicateMembers(rawText);
+    structure.push(
+      check("record text has no duplicate member names", duplicates.length === 0, duplicates.length === 0 ? undefined : duplicates),
+    );
+  }
+
   structure.push(check("id is present (outer envelope)", idPresent));
   structure.push(check("id is a lowercase UUID", idPresent && UUID_LOWER_RE.test(record.id)));
   structure.push(check("created_at is RFC 3339 (when present)", isRfc3339(record.created_at)));
@@ -136,6 +254,13 @@ export function parseAer1Record(record, { expectedId, resolvedRecord } = {}) {
     check(
       "tool names a real descriptor when the record claims verification",
       isToolDescriptor(record.tool, record.verification_status),
+    ),
+  );
+  structure.push(
+    check(
+      "provenance_class is a known class (when present)",
+      record.provenance_class === undefined ||
+        (typeof record.provenance_class === "string" && KNOWN_PROVENANCE_CLASSES.includes(record.provenance_class)),
     ),
   );
   structure.push(check("output_hash is sha256:<64 hex>", claimed !== null && DIGEST_RE.test(claimed)));
@@ -159,6 +284,32 @@ export function parseAer1Record(record, { expectedId, resolvedRecord } = {}) {
     }
     structure.push(check("canonical_bytes decode to a byte string", byteLength > 0));
     structure.push(check("canonical_bytes parse to a JSON object", payloadParses));
+    if (payloadParses) {
+      const payloadDuplicates = findDuplicateMembers(bytes.toString("utf8"));
+      structure.push(
+        check(
+          "committed payload has no duplicate member names",
+          payloadDuplicates.length === 0,
+          payloadDuplicates.length === 0 ? undefined : payloadDuplicates,
+        ),
+      );
+      // A canonical execution record commits both sides of the work. Legacy
+      // artifacts commit neither, and the corpus calls those valid, so the
+      // strict rules apply only where the payload carries an execution result.
+      const canonicalExecution = payload.inputs !== undefined || payload.outputs !== undefined;
+      if (canonicalExecution) {
+        structure.push(check("committed payload carries an inputs object", isObject(payload.inputs)));
+        if (record.verification_status !== undefined) {
+          structure.push(
+            check(
+              "verification_status is verified when the record claims it",
+              record.verification_status === "verified",
+              record.verification_status === "verified" ? undefined : { found: record.verification_status },
+            ),
+          );
+        }
+      }
+    }
   }
 
   const byteLengthClaimed =
@@ -315,6 +466,7 @@ export function selfCheck() {
     { name: "the same id binds as matched", pass: matched.id.verdict === "matched" },
     { name: "a swapped id is mismatched", pass: swapped.id.verdict === "mismatched" },
     { name: "an unimplemented version is not checked", pass: future.supportedVersion === false },
+    { name: "a duplicate member name is refused", pass: findDuplicateMembers('{"a":1,"a":2}').length === 1 },
   ];
   return Object.freeze({ ok: checks.every((c) => c.pass), checks });
 }

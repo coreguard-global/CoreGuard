@@ -10,8 +10,8 @@ A `verified` outcome here means the saved bytes were not changed after they were
 
 | Outcome | Vectors |
 |---|---|
-| agree with the corpus | 38 |
-| **false accept (ours — must be zero)** | **5** |
+| agree with the corpus | 43 |
+| **false accept (ours — must be zero)** | **0** |
 | false reject (ours) | 0 |
 | not checked (unimplemented family, schema or anchor) | 100 |
 
@@ -19,7 +19,7 @@ A `verified` outcome here means the saved bytes were not changed after they were
 
 | Family | Vectors | Agree | False accepts | False rejects | Not checked |
 |---|---|---|---|---|---|
-| `invalid` | 36 | 23 | 4 | — | 9 |
+| `invalid` | 36 | 27 | — | — | 9 |
 | `chain` | 35 | 0 | — | — | 35 |
 | `valid` | 21 | 9 | — | — | 12 |
 | `merkle` | 9 | 0 | — | — | 9 |
@@ -29,7 +29,7 @@ A `verified` outcome here means the saved bytes were not changed after they were
 | `id-binding` | 6 | 6 | — | — | — |
 | `anchored` | 6 | 0 | — | — | 6 |
 | `unicode` | 5 | 0 | — | — | 5 |
-| `invalid-profile` | 1 | 0 | 1 | — | — |
+| `invalid-profile` | 1 | 1 | — | — | — |
 
 ## The two interop pairs
 
@@ -45,15 +45,7 @@ Drift named by CG-AER1/1:
 
 ## False accepts — our defect list
 
-These are vectors the corpus marks invalid that CG-AER1/1 accepts. They are the checks this build does not perform yet, named by the vector that exposes them. Until they are zero, no conformance claim is possible.
-
-| Vector | Corpus reason |
-|---|---|
-| `missing-inputs.json` | — |
-| `bad-provenance.json` | provenance_class is not a known class |
-| `bad-verification-status.json` | verification_status is not verified |
-| `duplicate-member-name.json` | duplicate member name: output_hash |
-| `provenance-trailing-newline.json` | provenance_class is not a known class |
+None.
 
 ## Not checked
 
@@ -62,6 +54,7 @@ These are vectors the corpus marks invalid that CG-AER1/1 accepts. They are the 
 
 ## Boundary
 
-- No conformance claim: 30 false accepts and unimplemented timeline families are listed above.
-- The id-binding family is the only one this build judges end to end, and it agrees 6/6.
+- No conformance claim: 0 false accepts and 100 not-checked vectors are listed above.
+- The id-binding family is judged end to end and agrees 6/6.
+- The single-record invalid set is now refused by: duplicate member names, unknown provenance class, an execution payload without inputs, a claimed status other than verified, and the canonical base64 and calendar checks.
 - `not_checked` is a resource outcome, not a pass.
