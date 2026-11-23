@@ -13,8 +13,8 @@ check:
 | Claim | What is actually asserted |
 |---|---|
 | Integrity | 72 vendored files reproduce the published per-file SHA-256, and the whole set reproduces the published `evaluated_set_digest` (`sha256:60bf73f3…db0d2`) — recomputed from the bytes on disk, offline |
-| Semantics | 41 vectors are replayed through `CG-AER1/1` and compared to their pinned expectations: id-binding (6), merkle (9), unicode (5), and all 21 schema 0.4 records, whose outer and committed claims are checked field by field |
-| Not claimed | the other 102 vectors — the anchor family (8) and anchored records (6) — are enumerated per family and printed `NOT_CHECKED (family not implemented by CG-AER1/1)` — never green |
+| Semantics | 55 vectors are replayed through `CG-AER1/1` and compared to their pinned expectations: id-binding (6), merkle (9), unicode (5), the anchor family (8), anchored records (6), and all 21 schema 0.4 records, whose outer and committed claims are checked field by field |
+| Not claimed | the other 84 vectors are enumerated per family and printed `NOT_CHECKED (family not replayed by this runner)` — never green. The joined interop page judges all 143 separately; the two numbers measure different runners and are not interchangeable |
 
 The negative control matters as much as the pass: flipping one byte in one
 vendored file fails integrity **by path**, and also breaks the set digest,
@@ -27,6 +27,20 @@ something external — an expected id, or a resolved record whose own committed
 digest must agree. With neither, the id is `unverified`: not matched, and not
 refuted. A schema version this build does not implement becomes `NOT_CHECKED`
 with the version named, never `VERIFICATION_FAILED`.
+
+`reportAer1Anchor` now keeps all five anchor outcomes distinct: `absent`,
+`not checked`, `verified`, `verification failed` and `rejected: unresolvable
+record`. It honours `evaluate: false` before reading any anchor content, and a
+missing Section 3.3 profile (including the Nostr-shaped production record under
+the same member name) is `absent`, not a failed anchor. In the pinned replay the
+resolution fact is computed from the receipt's own bytes: the leaf must name the
+anchored id and carry the digest of `canonical_bytes`, which must also equal the
+committed `leaf_hash` and `output_hash`; the id, timestamp and proof are checked
+separately. An RFC 2606 `.invalid` host is unresolvable by construction and that
+resource outcome takes precedence over a wrong leaf. No network call is made.
+A real caller injects its own resolver with recorded evidence; a `verified`
+anchor verdict here means the pinned resolution fact was computed and matched,
+not that a log accepted anything.
 
 ## 2. Anchoring we run ourselves
 

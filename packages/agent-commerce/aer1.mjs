@@ -813,6 +813,121 @@ export function verifyAer1UnicodeVector(vector) {
   return { ok, computed, checks, code: ok ? null : "UNICODE_VECTOR_INVALID" };
 }
 
+/** The four members that make an anchor a Section 3.3 profile at all. */
+export const AER1_ANCHOR_MEMBERS = Object.freeze(["log", "leaf_hash", "anchored_at", "proof"]);
+const UUID_V4_LOWER = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+/**
+ * The corpus decides resolvability offline: a `.invalid` host (RFC 2606) is
+ * unresolvable by construction, and an `example` host is the pinned resolvable
+ * convention. This is a REPLAY rule, not a network lookup and not evidence that
+ * a real log accepted anything. A production caller must inject a resolver
+ * that performs real resolution and records its evidence; this default is only
+ * honest inside the pinned fixture set.
+ */
+function corpusAnchorResolver({ host, receipt }) {
+  if (host === null) return { resolvable: false, source: "offline-corpus-convention", reason: "anchor.log has no parseable host" };
+  if (host.endsWith(".invalid")) return { resolvable: false, source: "offline-corpus-convention", reason: "RFC 2606 .invalid host is unresolvable by construction" };
+  const bytes = typeof receipt?.canonical_bytes === "string" && isCanonicalBase64(receipt.canonical_bytes) ? Buffer.from(receipt.canonical_bytes, "base64") : null;
+  return {
+    resolvable: true,
+    source: "offline-corpus-convention",
+    reason: "pinned replay convention; no network call made",
+    leaf: { id: receipt?.id ?? null, digest: bytes === null ? null : `sha256:${sha256Hex(bytes)}` },
+  };
+}
+
+/**
+ * reportAer1Anchor(receipt, { evaluate, resolveLog })
+ *
+ * Produces the five-value AER-1 anchor report the corpus pins:
+ *   absent | not checked | verified | verification failed |
+ *   rejected: unresolvable record
+ *
+ * Two separations are load-bearing:
+ *   - `evaluate: false` is honoured BEFORE content is read. A record that was
+ *     never checked cannot be convicted by a bad leaf it happens to carry.
+ *   - an unresolvable log is a RESOURCE outcome and wins over content checks.
+ *     The corpus pins a vector with both a .invalid host and a wrong leaf; its
+ *     outcome is unresolvable, not verification failed.
+ *
+ * A `verified` outcome means the pinned resolution fact was supplied and the
+ * receipt's own anchor claims agree with its committed bytes. It does not mean
+ * this module contacted a log, and it is not physical-world truth.
+ */
+export function reportAer1Anchor(receipt, { evaluate = true, resolveLog = corpusAnchorResolver } = {}) {
+  const anchor = isObject(receipt) && isObject(receipt.anchor) ? receipt.anchor : null;
+  const present = anchor !== null && Object.keys(anchor).some((key) => AER1_ANCHOR_MEMBERS.includes(key));
+  if (!evaluate) {
+    return {
+      present,
+      evaluated: false,
+      outcome: "not checked",
+      checks: [{ name: "evaluation was not requested", ok: true }],
+      reason: "evaluate=false; no anchor content was read",
+    };
+  }
+  if (!present) {
+    return {
+      present: false,
+      evaluated: false,
+      outcome: "absent",
+      checks: [{ name: "no Section 3.3 anchor member is present", ok: true }],
+      reason: "no log / leaf_hash / anchored_at / proof member on the record",
+    };
+  }
+
+  const checks = [];
+  const add = (name, ok, detail) => checks.push(detail === undefined ? { name, ok } : { name, ok, ...detail });
+  add(
+    "anchor carries exactly the Section 3.3 profile",
+    AER1_ANCHOR_MEMBERS.every((key) => Object.prototype.hasOwnProperty.call(anchor, key)),
+    { presentMembers: Object.keys(anchor).filter((key) => AER1_ANCHOR_MEMBERS.includes(key)) },
+  );
+
+  let host = null;
+  if (typeof anchor.log === "string") {
+    try {
+      host = new URL(anchor.log).hostname.toLowerCase();
+    } catch {
+      host = null;
+    }
+  }
+  let resolution = null;
+  try {
+    resolution = resolveLog({ log: anchor.log ?? null, host, receipt });
+  } catch (error) {
+    resolution = { resolvable: false, source: "resolver-error", reason: error instanceof Error ? error.message : String(error) };
+  }
+  const resolvable = isObject(resolution) && resolution.resolvable === true;
+  // No log member is a profile-shape failure, not a resource outcome. A
+  // missing URL cannot be "unresolvable" — there is nothing to resolve, and
+  // the corpus pins that case as verification failed.
+  if (typeof anchor.log === "string") {
+    add("anchor log resolution is available", resolvable, { host, source: resolution?.source ?? null, reason: resolution?.reason ?? null });
+    const leaf = isObject(resolution) && isObject(resolution.leaf) ? resolution.leaf : null;
+    add("the resolved leaf names the anchored receipt id", leaf !== null && leaf.id === receipt?.id, { expected: receipt?.id ?? null, found: leaf?.id ?? null });
+    add("the resolved leaf digest equals the committed leaf_hash", leaf !== null && leaf.digest === anchor.leaf_hash, { expected: anchor.leaf_hash ?? null, found: leaf?.digest ?? null });
+  }
+
+  add("anchored receipt id is a lowercase UUID v4", typeof receipt?.id === "string" && UUID_V4_LOWER.test(receipt.id));
+  let recomputed = null;
+  if (typeof receipt?.canonical_bytes === "string" && isCanonicalBase64(receipt.canonical_bytes)) {
+    recomputed = `sha256:${sha256Hex(Buffer.from(receipt.canonical_bytes, "base64"))}`;
+  }
+  add("leaf_hash equals the digest of canonical_bytes", recomputed !== null && anchor.leaf_hash === recomputed, { computed: recomputed, found: anchor.leaf_hash ?? null });
+  add("leaf_hash equals the receipt output_hash", typeof anchor.leaf_hash === "string" && anchor.leaf_hash === receipt?.output_hash, { claimed: receipt?.output_hash ?? null, found: anchor.leaf_hash ?? null });
+  add("anchored_at is a calendar-valid RFC 3339 instant", typeof anchor.anchored_at === "string" && isRfc3339(anchor.anchored_at, { strict: true }));
+  add("proof is present and non-empty", isObject(anchor.proof) && Object.keys(anchor.proof).length > 0);
+
+  const failed = checks.filter((c) => !c.ok).map((c) => c.name);
+  if (typeof anchor.log === "string" && !resolvable) {
+    return { present: true, evaluated: true, outcome: "rejected: unresolvable record", checks, reason: "anchor log could not be resolved; resource outcome takes precedence over content" };
+  }
+  if (failed.length > 0) return { present: true, evaluated: true, outcome: "verification failed", checks, reason: failed.join("; ") };
+  return { present: true, evaluated: true, outcome: "verified", checks, reason: null };
+}
+
 /** Self-check: the parser's own invariants, for callers that cannot run tests. */
 export function selfCheck() {
   const bytes = Buffer.from(JSON.stringify({ receipt_schema_version: "0.3", output: { text: "ok" } }), "utf8");

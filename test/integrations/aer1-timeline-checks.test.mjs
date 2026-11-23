@@ -16,6 +16,7 @@ import {
   verifyAer1WorkflowMerkle,
   verifyAer1MerkleVector,
   verifyAer1UnicodeVector,
+  reportAer1Anchor,
 } from "../../packages/agent-commerce/aer1.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -177,4 +178,73 @@ test("unicode family: raw bytes only, no NFC/NFD rewriting, 5/5", () => {
   // A decoy hex field cannot launder a bad payload: the bytes are the claim.
   assert.equal(verifyAer1UnicodeVector({ ...nfc, payload_utf8_hex: nfd.payload_utf8_hex }).ok, false);
   assert.equal(verifyAer1UnicodeVector({ ...nfc, payload_base64: nfc.payload_base64.replace(/=$/, "") }).ok, false);
+});
+
+test("anchor family: eight vectors and six anchored records, five outcomes distinct", () => {
+  const vectors = family("base/anchor-vectors.json").vectors;
+  assert.equal(vectors.length, 8);
+  for (const v of vectors) {
+    const receipt = v.file ? JSON.parse(readFileSync(join(CORPUS, "base", v.file), "utf8")) : v.receipt;
+    const got = reportAer1Anchor(receipt, { evaluate: v.evaluate });
+    assert.equal(got.outcome, v.expected_anchor_outcome, `${v.name}: ${JSON.stringify(got)}`);
+    assert.equal(got.present, v.expected_present, v.name);
+    assert.equal(got.evaluated, v.expected_evaluated, v.name);
+  }
+  const outcomes = new Set(vectors.map((v) => v.expected_anchor_outcome));
+  assert.deepEqual([...outcomes].sort(), ["absent", "not checked", "rejected: unresolvable record", "verification failed", "verified"]);
+
+  const anchored = {
+    "anchored-valid.json": "verified",
+    "anchored-unresolvable-anchor.json": "rejected: unresolvable record",
+    "anchored-bad-leaf-hash.json": "verification failed",
+    "anchored-bad-timestamp.json": "verification failed",
+    "anchored-missing-proof.json": "verification failed",
+    "anchored-bad-id-version.json": "verification failed",
+  };
+  for (const [name, expected] of Object.entries(anchored)) {
+    const receipt = JSON.parse(readFileSync(join(CORPUS, "base/test-vectors/anchored", name), "utf8"));
+    const got = reportAer1Anchor(receipt);
+    assert.equal(got.outcome, expected, `${name}: ${JSON.stringify(got)}`);
+    assert.equal(got.evaluated, true, name);
+  }
+});
+
+test("anchor checks bite: tamper, injected resolver, and outcome precedence", () => {
+  const valid = JSON.parse(readFileSync(join(CORPUS, "base/test-vectors/anchored/anchored-valid.json"), "utf8"));
+  assert.equal(reportAer1Anchor(valid).outcome, "verified");
+
+  // Each tamper is a negative control aimed at one check, not a general
+  // "something failed" assertion. A verifier that skipped the named check
+  // would still pass here only if the fixture were wrong.
+  const badLeaf = { ...valid, anchor: { ...valid.anchor, leaf_hash: `sha256:${"9".repeat(64)}` } };
+  assert.equal(reportAer1Anchor(badLeaf).outcome, "verification failed");
+  assert.ok(reportAer1Anchor(badLeaf).checks.some((c) => c.name.includes("digest of canonical_bytes") && !c.ok));
+
+  const badTime = { ...valid, anchor: { ...valid.anchor, anchored_at: "2026-02-30T12:00:00Z" } };
+  assert.ok(reportAer1Anchor(badTime).checks.some((c) => c.name.includes("calendar-valid") && !c.ok));
+
+  const noProof = { ...valid, anchor: { ...valid.anchor, proof: {} } };
+  assert.ok(reportAer1Anchor(noProof).checks.some((c) => c.name.includes("proof is present") && !c.ok));
+
+  // A real caller injects its own resolver. A resolver that returns a leaf
+  // for a different id or a different digest must be convicted by name.
+  const renamed = { ...valid, id: "11111111-1111-4111-8111-111111111111" };
+  const wrongId = reportAer1Anchor(renamed, {
+    resolveLog: () => ({ resolvable: true, source: "injected-test-resolver", leaf: { id: valid.id, digest: valid.output_hash } }),
+  });
+  assert.equal(wrongId.outcome, "verification failed");
+  assert.ok(wrongId.checks.some((c) => c.name.includes("names the anchored receipt id") && !c.ok));
+
+  const wrongDigest = reportAer1Anchor(valid, {
+    resolveLog: () => ({ resolvable: true, source: "injected-test-resolver", leaf: { id: valid.id, digest: `sha256:${"a".repeat(64)}` } }),
+  });
+  assert.equal(wrongDigest.outcome, "verification failed");
+  assert.ok(wrongDigest.checks.some((c) => c.name.includes("equals the committed leaf_hash") && !c.ok));
+
+  // Precedence: a .invalid host is a resource outcome even when the leaf is
+  // also wrong; evaluate=false is honoured before any content is read.
+  const unresolvable = JSON.parse(readFileSync(join(CORPUS, "base/anchor-vectors.json"), "utf8")).vectors.find((v) => v.name === "anchor-unresolvable-bad-leaf").receipt;
+  assert.equal(reportAer1Anchor(unresolvable).outcome, "rejected: unresolvable record");
+  assert.equal(reportAer1Anchor(badLeaf, { evaluate: false }).outcome, "not checked");
+  assert.equal(reportAer1Anchor({ tool: "x" }).outcome, "absent");
 });

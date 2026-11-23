@@ -6,9 +6,9 @@
  *
  *   INTEGRITY  72 vendored files reproduce the published per-file sha256 and the
  *              published `evaluated_set_digest` — offline, no network.
- *   SEMANTICS  the id-binding family is replayed through CG-AER1/1 and compared
- *              to each vector's pin; the other 137 vectors are enumerated and
- *              reported NOT_CHECKED with a reason, never green.
+ *   SEMANTICS  the judged families are replayed through CG-AER1/1 and compared
+ *              to each vector's pin; the remaining 84 vectors are enumerated
+ *              and reported NOT_CHECKED with a reason, never green.
  *
  * A negative control is included: flipping one byte in one vendored file must
  * fail integrity and name the file. Without it, "integrity PASS" is a sentence
@@ -51,13 +51,15 @@ test("the id-binding family matches every published pin", () => {
 test("the families this build does not judge are counted, not claimed", () => {
   const report = runCorpus(DEFAULT_CORPUS);
   assert.ok(report.notEvaluatedVectors > 0);
-  assert.equal(report.notEvaluatedVectors, 102);
+  assert.equal(report.notEvaluatedVectors, 84);
   assert.ok(report.notEvaluated.every((f) => !EVALUATED_FAMILIES.includes(f.path)));
   const families = new Set(report.notEvaluated.map((f) => f.family));
-  for (const expected of ["invalid", "valid", "chain-vectors-v07", "anchor-vectors"]) {
+  for (const expected of ["invalid", "valid", "chain-vectors-v07", "commitment-vectors"]) {
     assert.ok(families.has(expected), `missing family ${expected}`);
   }
-  assert.ok(!families.has("merkle-vectors"), "the merkle family is judged now, not not-checked");
+  for (const judged of ["merkle-vectors", "unicode-vectors", "anchor-vectors"]) {
+    assert.ok(!families.has(judged), `the ${judged} family is judged now, not not-checked`);
+  }
 });
 
 test("the newly judged families are replayed, not merely listed", () => {
@@ -68,6 +70,8 @@ test("the newly judged families are replayed, not merely listed", () => {
     [
       ["merkle", 9, 9],
       ["unicode", 5, 5],
+      ["anchor", 8, 8],
+      ["anchored", 6, 6],
       ["schema-0.4", 21, 21],
     ],
   );
