@@ -22,7 +22,13 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { parseAer1Record, AER1_PARSER_VERSION } from "../packages/agent-commerce/aer1.mjs";
+import {
+  parseAer1Record,
+  AER1_PARSER_VERSION,
+  verifyAer1Chain,
+  verifyAer1Commitment,
+  verifyAer1WorkflowMerkle,
+} from "../packages/agent-commerce/aer1.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(here, "..");
@@ -94,9 +100,16 @@ export function parseKitColumn(text) {
   return { checks, footer };
 }
 
-/** A kit check either ends in a refusal or in a pass; the note names the reason. */
-const kitOutcome = (check) =>
-  check.note !== null && /rejected|verification failed|outcome: invalid/.test(check.note) ? "invalid" : "verified";
+/**
+ * A kit line only carries a per-vector verdict when its note names one. A bare
+ * PASS means "this check behaved as expected", not "the record verified" — the
+ * kit's own column says so, and inventing the stronger reading would turn every
+ * expected-invalid vector into a fake divergence.
+ */
+const kitOutcome = (check) => {
+  if (check.note === null) return null;
+  return /rejected|verification failed|outcome: invalid/.test(check.note) ? "invalid" : "verified";
+};
 
 function loadKitColumn() {
   if (!existsSync(KIT_COLUMN_FILE)) throw new Error(`reference kit column missing: ${KIT_COLUMN_FILE}`);
@@ -145,15 +158,17 @@ function buildKitJoin(kit, observedByName, idRows) {
   const orphans = [];
   for (const c of kit.checks) {
     const key = KIT_FAMILY_TO_OURS[c.family] ?? c.family;
-    const row = rows.get(key) ?? { key, checks: 0, verified: 0, invalid: 0, compared: 0, divergences: [], notCompared: 0 };
+    const row = rows.get(key) ?? { key, checks: 0, verified: 0, invalid: 0, compared: 0, oursJudged: 0, divergences: [], notCompared: 0 };
     row.checks += 1;
-    if (kitOutcome(c) === "invalid") row.invalid += 1;
-    else row.verified += 1;
+    const kitVerdict = kitOutcome(c);
+    if (kitVerdict === "invalid") row.invalid += 1;
+    else if (kitVerdict === "verified") row.verified += 1;
     const ours = observedByName.get(c.name);
     if (RECORD_FAMILIES.has(key) && ours === undefined) orphans.push(c.name);
-    if (ours !== undefined && ours !== "not_checked") {
+    if (ours !== undefined && ours !== "not_checked") row.oursJudged += 1;
+    if (ours !== undefined && ours !== "not_checked" && kitVerdict !== null) {
       row.compared += 1;
-      if (ours !== kitOutcome(c)) row.divergences.push({ name: c.name, ours, kit: kitOutcome(c), note: c.note });
+      if (ours !== kitVerdict) row.divergences.push({ name: c.name, ours, kit: kitVerdict, note: c.note });
     } else {
       row.notCompared += 1;
     }
@@ -164,6 +179,7 @@ function buildKitJoin(kit, observedByName, idRows) {
   const idRow = rows.get("id-binding");
   if (idRow !== undefined && idRows !== undefined) {
     idRow.compared = idRows.length;
+    idRow.oursJudged = idRows.length;
     idRow.divergences = idRows.filter((r) => !r.agree).map((r) => ({ name: r.name, ours: "disagree", kit: "pass", note: null }));
   }
   return { rows, orphans };
@@ -200,9 +216,26 @@ function runCorpus() {
       continue;
     }
     if (Array.isArray(data.vectors)) {
-      // timeline / commitment / anchor families: not implemented in this build
-      same.notChecked += Number(f.vectors) || 0;
-      for (const v of data.vectors) notChecked.push({ path: f.path, name: v.name, family: "timeline" });
+      const verdicts = classifyTimeline(f.path, data.vectors, text);
+      if (verdicts === null) {
+        // anchor family: still not implemented in this build
+        same.notChecked += Number(f.vectors) || 0;
+        for (const v of data.vectors) notChecked.push({ path: f.path, name: v.name, family: "timeline" });
+        families.set(f.path, same);
+        continue;
+      }
+      for (const verdict of verdicts) {
+        observedByName.set(verdict.name, verdict.observed);
+        if (verdict.observed === verdict.expected) {
+          same.agree += 1;
+        } else if (verdict.observed === "verified" && verdict.expected === "invalid") {
+          same.falseAccept += 1;
+          falseAccepts.push({ path: f.path, name: verdict.name, reason: verdict.reason });
+        } else {
+          same.falseReject += 1;
+          falseRejects.push({ path: f.path, name: verdict.name, reason: verdict.reason });
+        }
+      }
       families.set(f.path, same);
       continue;
     }
@@ -271,6 +304,57 @@ function runCorpus() {
   };
 }
 
+/** The raw JSON text of one vector, for facts a parsed object has already lost. */
+function rawVectorSlice(text, name) {
+  const key = `"name": ${JSON.stringify(name)}`;
+  const start = text.indexOf(key);
+  if (start === -1) return "";
+  const next = text.indexOf('"name":', start + key.length);
+  return text.slice(start, next === -1 ? text.length : next);
+}
+
+const entryCountLexeme = (text, name) =>
+  /"entry_count"\s*:\s*(-?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)/.exec(rawVectorSlice(text, name))?.[1] ?? null;
+
+/**
+ * Timeline families this build judges. Returns null for a family it does not,
+ * so "not implemented" stays visible instead of being counted as agreement.
+ */
+function classifyTimeline(path, vectors, text) {
+  const verdict = (v, result) => ({
+    name: v.name,
+    expected: v.expected_verdict === "valid" ? "verified" : "invalid",
+    observed: result.ok ? "verified" : "invalid",
+    reason: result.checks.filter((c) => !c.ok).map((c) => c.name).join("; ") || null,
+  });
+
+  if (path.endsWith("chain-vectors-v07.json")) {
+    return vectors.map((v) => verdict(v, verifyAer1Chain(v.timeline, { version: "v07" })));
+  }
+  if (path.endsWith("chain-vectors.json")) {
+    return vectors.map((v) => verdict(v, verifyAer1Chain(v.timeline, { version: "v1" })));
+  }
+  if (path.endsWith("commitment-vectors.json")) {
+    return vectors.map((v) =>
+      verdict(v, verifyAer1Commitment(v.timeline, v.commitment, { entryCountLexeme: entryCountLexeme(text, v.name) })),
+    );
+  }
+  if (path.endsWith("workflow-merkle-seq-output-v1.json")) {
+    return vectors.map((v) =>
+      verdict(
+        v,
+        verifyAer1WorkflowMerkle({
+          steps: v.steps,
+          merkleRoot: v.merkle_root,
+          merkleVersion: v.merkle_version,
+          merkleVersionPresent: v.merkle_version !== undefined,
+        }),
+      ),
+    );
+  }
+  return null;
+}
+
 /** The two pairs Brennan asked for: a live receipt, and an id-binding swap. */
 function interopPairs() {
   const liveText = readFileSync(join(CORPUS, "base/test-vectors/valid/receipt-03-live.json"), "utf8");
@@ -337,11 +421,13 @@ function render(report) {
       .join(" · ");
     const kit = k === undefined ? "—" : `${k.checks} ${k.checks === 1 ? "check" : "checks"}, all as expected${k.invalid ? ` · ${k.invalid} refused` : ""}`;
     const divergence =
-      k === undefined || k.compared === 0
+      k === undefined || k.oursJudged === 0
         ? "— (not judged by CG-AER1/1)"
-        : k.divergences.length === 0
-          ? `0 of ${k.compared}`
-          : k.divergences.map((d) => `\`${d.name}\``).join(", ");
+        : k.compared === 0
+          ? "— (kit line carries no per-vector verdict)"
+          : k.divergences.length === 0
+            ? `0 of ${k.compared}`
+            : k.divergences.map((d) => `\`${d.name}\``).join(", ");
     out.push(`| \`${key}\` | ${g.vectors} | ${ours} | ${kit} | ${divergence} |`);
   }
   out.push("");

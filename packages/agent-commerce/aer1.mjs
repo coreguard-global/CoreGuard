@@ -446,6 +446,236 @@ function freeze(value) {
   return Object.freeze(value);
 }
 
+/**
+ * AER-1 timelines — the part of the record that lives across receipts.
+ *
+ * Three constructions are implemented here, each pinned by the corpus:
+ *   v1    draft Section 7 before -07: entry digest over the decoded bytes
+ *   v07   entry digest binds prev_digest, seq, job_id, close, id, tool,
+ *         provenance_class and the output commitment, serialized as canonical
+ *         JSON with member names sorted by code point and strings escaped per
+ *         RFC 8259, non-ASCII as \uXXXX
+ *   workflow  a binary Merkle tree over step leaves: receipt_id (receipt-id-v0)
+ *         or "seq:output_hash" (seq-output-v1), last-duplicate on odd levels
+ *
+ * Boundary, standing: no clock, no network, no anchoring. A chain that verifies
+ * proves its own order and metadata; it does not prove the work happened.
+ */
+export const AER1_CHAIN_VERSIONS = Object.freeze(["v1", "v07"]);
+export const AER1_MERKLE_VERSIONS = Object.freeze(["receipt-id-v0", "seq-output-v1"]);
+
+const ZERO_DIGEST = "0".repeat(64);
+const LOWER_HEX_64 = /^[0-9a-f]{64}$/;
+const isLowerHex64 = (value) => typeof value === "string" && LOWER_HEX_64.test(value);
+const isNonEmptyString = (value) => typeof value === "string" && value.length > 0;
+
+/** RFC 8259 string escaping with every non-ASCII code point written as \uXXXX. */
+function aer1Escape(value) {
+  let out = "";
+  for (const char of value) {
+    const cp = char.codePointAt(0);
+    if (char === '"') out += '\\"';
+    else if (char === "\\") out += "\\\\";
+    else if (cp === 0x08) out += "\\b";
+    else if (cp === 0x09) out += "\\t";
+    else if (cp === 0x0a) out += "\\n";
+    else if (cp === 0x0c) out += "\\f";
+    else if (cp === 0x0d) out += "\\r";
+    else if (cp < 0x20) out += `\\u${cp.toString(16).padStart(4, "0")}`;
+    else if (cp > 0x7e) {
+      if (cp > 0xffff) {
+        const offset = cp - 0x10000;
+        out += "\\u" + (0xd800 + (offset >> 10)).toString(16) + "\\u" + (0xdc00 + (offset & 0x3ff)).toString(16);
+      } else out += `\\u${cp.toString(16).padStart(4, "0")}`;
+    } else out += char;
+  }
+  return out;
+}
+const aer1Quoted = (value) => `"${aer1Escape(String(value))}"`;
+
+const sha256Hex = (buffer) => createHash("sha256").update(buffer).digest("hex");
+
+/** The v1 entry digest: SHA-256 over the base64-decoded canonical bytes. */
+function entryDigestV1(entry) {
+  if (!isNonEmptyString(entry?.canonical_bytes)) return null;
+  return sha256Hex(Buffer.from(entry.canonical_bytes, "base64"));
+}
+
+/**
+ * The v07 entry digest: canonical JSON with exactly the eight members named in
+ * Section 7.1, sorted by code point, no whitespace outside strings.
+ */
+function entryDigestV07(entry) {
+  if (!isNonEmptyString(entry?.canonical_bytes)) return null;
+  const output = sha256Hex(Buffer.from(entry.canonical_bytes, "base64"));
+  const members = [
+    ["close", entry.close === undefined ? false : entry.close],
+    ["id", entry.id],
+    ["job_id", entry.job_id],
+    ["output_hash", output],
+    ["prev_digest", entry.prev_digest],
+    ["provenance_class", entry.provenance_class],
+    ["seq", entry.seq],
+    ["tool", entry.tool],
+  ];
+  const body = members
+    .map(([key, value]) => {
+      const encoded =
+        typeof value === "number" && Number.isInteger(value)
+          ? String(value)
+          : typeof value === "boolean"
+            ? String(value)
+            : aer1Quoted(value ?? "");
+      return `${aer1Quoted(key)}:${encoded}`;
+    })
+    .join(",");
+  return sha256Hex(Buffer.from(`{${body}}`, "utf8"));
+}
+
+/**
+ * verifyAer1Chain(timeline, { version })
+ *
+ * Returns { version, ok, checks, code } and never throws on hostile input. The
+ * checks are named so a caller can report which rule refused a timeline.
+ */
+export function verifyAer1Chain(timeline, { version = "v07" } = {}) {
+  const checks = [];
+  const add = (name, ok) => checks.push({ name, ok });
+  const done = (code) => ({ version, ok: checks.every((c) => c.ok), checks, code: checks.every((c) => c.ok) ? null : code });
+
+  if (!AER1_CHAIN_VERSIONS.includes(version)) return { version, ok: false, checks: [], code: "CHAIN_VERSION_UNSUPPORTED" };
+  add("timeline is a non-empty array", Array.isArray(timeline) && timeline.length > 0);
+  if (!Array.isArray(timeline) || timeline.length === 0) return done("CHAIN_EMPTY");
+
+  const first = timeline[0];
+  add("first entry carries the zero genesis digest", first?.prev_digest === ZERO_DIGEST);
+
+  let linksOk = true;
+  let metadataOk = true;
+  let closeOk = true;
+  for (let i = 0; i < timeline.length; i += 1) {
+    const entry = timeline[i] ?? {};
+    if (i > 0) {
+      const previous = timeline[i - 1];
+      const expected = version === "v07" ? entryDigestV07(previous) : entryDigestV1(previous);
+      if (expected === null || entry.prev_digest !== expected) linksOk = false;
+    }
+    if (entry.close !== undefined && typeof entry.close !== "boolean") closeOk = false;
+    if (i < timeline.length - 1 && entry.close === true) closeOk = false;
+    if (version === "v07") {
+      if (!Number.isInteger(entry.seq) || entry.seq !== i + 1) metadataOk = false;
+      if (!isNonEmptyString(entry.job_id) || entry.job_id !== first.job_id) metadataOk = false;
+      if (!isNonEmptyString(entry.id)) metadataOk = false;
+      if (!isNonEmptyString(entry.tool)) metadataOk = false;
+      if (!isNonEmptyString(entry.provenance_class)) metadataOk = false;
+    }
+  }
+
+  add("every link recomputes from the previous entry", linksOk);
+  if (version === "v07"){
+    add("seq is contiguous from 1 and the job id is constant", metadataOk);
+    add("each entry names an id, tool and provenance class", metadataOk);
+  }
+  add("close is boolean and true only on the last entry", closeOk);
+  add("the timeline ends with a closing entry", timeline[timeline.length - 1]?.close === true);
+
+  return done(!linksOk ? "CHAIN_LINK_MISMATCH" : !metadataOk ? "CHAIN_METADATA_INVALID" : "CHAIN_NOT_CLOSED");
+}
+
+/**
+ * verifyAer1Commitment(timeline, commitment, { entryCountLexeme })
+ *
+ * The external commitment binds a chain's job, length, final entry digest and
+ * publication time. `entryCountLexeme` is the raw JSON text of entry_count when
+ * the caller has it: `5.0` is the same number as `5` but a different claim, and
+ * the corpus rejects the fractional spelling.
+ */
+export function verifyAer1Commitment(timeline, commitment, { entryCountLexeme } = {}) {
+  const checks = [];
+  const add = (name, ok) => checks.push({ name, ok });
+  const chain = verifyAer1Chain(timeline, { version: "v07" });
+  add("the timeline verifies under the v07 chain rules", chain.ok);
+  const isObjectCommitment = isObject(commitment);
+  add("commitment is an object", isObjectCommitment);
+
+  if (isObjectCommitment) {
+    add(
+      "commitment carries job_id, final_entry_digest, entry_count and published_at",
+      ["job_id", "final_entry_digest", "entry_count", "published_at"].every((key) => commitment[key] !== undefined),
+    );
+    const jobOk = isNonEmptyString(commitment.job_id) && Array.isArray(timeline) && timeline[0]?.job_id === commitment.job_id;
+    add("commitment job_id matches the timeline's job", jobOk);
+
+    const finalDigest = Array.isArray(timeline) && timeline.length > 0 ? entryDigestV07(timeline[timeline.length - 1]) : null;
+    add(
+      "final_entry_digest is lowercase hex and matches the last entry",
+      isLowerHex64(commitment.final_entry_digest) && finalDigest !== null && commitment.final_entry_digest === finalDigest,
+    );
+
+    const countOk =
+      Number.isInteger(commitment.entry_count) && Array.isArray(timeline) && commitment.entry_count === timeline.length;
+    const lexemeOk = entryCountLexeme === undefined || entryCountLexeme === null || !/[.eE]/.test(entryCountLexeme);
+    add("entry_count is an integer equal to the number of entries", countOk && lexemeOk);
+
+    add("published_at is an RFC 3339 timestamp", isRfc3339(commitment.published_at) && typeof commitment.published_at === "string");
+  }
+
+  return { ok: checks.every((c) => c.ok), checks, code: checks.every((c) => c.ok) ? null : "COMMITMENT_INVALID" };
+}
+
+/**
+ * verifyAer1WorkflowMerkle({ steps, merkleRoot, merkleVersion, merkleVersionPresent })
+ *
+ * Leaf construction follows the declared merkle_version; an absent member means
+ * receipt-id-v0. An unknown version is a refusal, never a guess: the two
+ * constructions give different roots for the same workflow.
+ */
+export function verifyAer1WorkflowMerkle({ steps, merkleRoot, merkleVersion, merkleVersionPresent = true } = {}) {
+  const checks = [];
+  const add = (name, ok) => checks.push({ name, ok });
+  const declared = merkleVersionPresent === false || merkleVersion === undefined ? "receipt-id-v0" : merkleVersion;
+  add("merkle_version is one this build implements", AER1_MERKLE_VERSIONS.includes(declared));
+
+  const stepsOk =
+    Array.isArray(steps) &&
+    steps.length > 0 &&
+    steps.every((step, index) => isObject(step) && step.seq === index + 1 && isNonEmptyString(step.receipt_id));
+  add("steps are a non-empty ordered array with seq from 1", stepsOk);
+
+  if (stepsOk) {
+    const ids = steps.map((step) => step.receipt_id);
+    add("no receipt id appears twice", new Set(ids).size === ids.length);
+    if (declared === "seq-output-v1") {
+      add("every step carries an output_hash", steps.every((step) => isLowerHex64(String(step.output_hash ?? "").replace(/^sha256:/, ""))));
+    }
+  }
+
+  let computed = null;
+  if (stepsOk && AER1_MERKLE_VERSIONS.includes(declared)) {
+    const leaf = (step) =>
+      declared === "seq-output-v1"
+        ? sha256Hex(Buffer.from(`${step.seq}:${String(step.output_hash).replace(/^sha256:/, "")}`, "utf8"))
+        : sha256Hex(Buffer.from(step.receipt_id, "utf8"));
+    let level = steps.map((step) => Buffer.from(leaf(step), "hex"));
+    while (level.length > 1) {
+      if (level.length % 2 === 1) level = [...level, level[level.length - 1]];
+      const next = [];
+      for (let i = 0; i < level.length; i += 2) {
+        next.push(Buffer.from(sha256Hex(Buffer.concat([level[i], level[i + 1]])), "hex"));
+      }
+      level = next;
+    }
+    computed = level[0].toString("hex");
+  }
+
+  add(
+    "merkle_root is lowercase hex and matches the recomputed root",
+    computed !== null && isLowerHex64(merkleRoot) && computed === merkleRoot,
+  );
+
+  return { ok: checks.every((c) => c.ok), computed, declared, checks, code: checks.every((c) => c.ok) ? null : "WORKFLOW_MERKLE_INVALID" };
+}
+
 /** Self-check: the parser's own invariants, for callers that cannot run tests. */
 export function selfCheck() {
   const bytes = Buffer.from(JSON.stringify({ receipt_schema_version: "0.3", output: { text: "ok" } }), "utf8");
