@@ -17,6 +17,7 @@
 - `drills/` - drill scripts/templates, validators, readiness report generator.
 - `runbooks/` - operator runbooks.
 - `evidence/` - evidence schema, required drills, templates.
+- `integrations/` - real CG-INT/1 adapters for x402, IdP (OIDC/SAML/SCIM), KMS/HSM, witness/anchor, OTEL/SLO/on-call; see `integrations/README.md`.
 
 ## Readiness tooling
 - `node ops/production/drills/validate-env-template.mjs`
