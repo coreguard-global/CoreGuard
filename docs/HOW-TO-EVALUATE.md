@@ -29,7 +29,7 @@ npm test
 ```
 
 **Expected / المتوقع:**  
-`ℹ tests 1972` · `ℹ pass 1955` · `ℹ fail 0`
+`ℹ tests 1986` · `ℹ pass 1986` · `ℹ fail 0`
 
 This enforces the total against [`docs/state-snapshot.json`](state-snapshot.json). Any drift makes it fail.  
 هذا المجموع مُقيد آليًا ضد لقطة الحالة المقاسة، وأي انحراف يفشل الاختبار.
