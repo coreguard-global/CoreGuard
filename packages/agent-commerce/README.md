@@ -12,7 +12,7 @@ bytes approved, and for verifying any executed trace against that receipt.
 - **Fail-closed execution verification** — a consent plus an executed trace
   yields a verdict with named drift classes (AGR/1 taxonomy); incomplete or
   ambiguous evidence is never treated as a pass.
-- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing ten tools,
+- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing twenty tools,
   all offline, all deterministic, zero keys.
 
 MIT. Node ≥ 18. No network calls, no stored credentials, no wall clock.
@@ -186,6 +186,23 @@ Checks/consumes/releases a receiptId in a consumption ledger.
 Output: `{ receiptId, action, consumed, ledger, boundary }`.
 
 **Boundary:** the default ledger is **process-local** to this MCP server process. With `storePath` (or `COREGUARD_CONSUMPTION_STORE`), the AC-CS/1 store is used: lock-guarded and atomic across processes **on one host**. Cross-host reconciliation is CG-SPEND/1 log merge (`spend.mjs`), not this file. **NOT_BUILT:** a distributed/global register, consensus, HA replication, on-chain anchoring.
+
+### Wave 1 — Machine Economy (CG-ME/1, deterministic offline)
+
+These 10 tools extend CoreGuard into x402/machine/delegation evidence flows. **Boundaries:** no payment custody, no broadcast, no network calls; x402 settlement/telemetry/physical completion verified only from caller-supplied evidence; signature trust roots/device attestation/physical-world truth NOT proven here. `VERIFIED != SAFE`.
+
+| Tool | Purpose |
+|---|---|
+| `coreguard_parse_x402_challenge` | Parse/normalize x402 402 accepts; fail-closed on missing fields. |
+| `coreguard_authorize_x402_payment` | Evaluate challenge against policy (maxAmount, allowedNetworks/Assets/PayTo); decision only, no payment. |
+| `coreguard_verify_x402_settlement` | Verify caller-supplied settlement evidence against challenge; no network confirmation. |
+| `coreguard_reconcile_payment` | Reconcile authorization, settlement evidence, and receipt. |
+| `coreguard_meter_agent_usage` | Deterministic usage/cost metering from event amounts. |
+| `coreguard_register_machine` | Create local machine registration record from manifest; no external attestation. |
+| `coreguard_create_machine_task` | Create deterministic task record with terms/price/SLA. |
+| `coreguard_verify_telemetry` | Verify telemetry structure/digest/signature presence; trust/physical truth not proven. |
+| `coreguard_verify_task_completion` | Verify completion evidence against task; evidence acceptance != physical proof. |
+| `coreguard_verify_delegation_chain` | Verify delegation chain structure/continuity; signatures not cryptographically verified without trust roots. |
 
 ## Errors
 

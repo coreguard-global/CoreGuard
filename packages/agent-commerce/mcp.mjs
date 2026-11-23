@@ -7,13 +7,7 @@
  * (one JSON object per line, both directions) — the same shape MCP clients
  * speak for stdio servers.
  *
- * Tools (all offline, all deterministic, zero keys):
- *   coreguard_authorize         intent + policy + declaredTrace + nowSeconds
- *                               -> CGCR/1 consent record (pinned receipt)
- *   coreguard_verify_consent    consent record -> integrity verdict
- *   coreguard_verify_execution  consent + executed trace -> fail-closed
- *                               verdict + AGR/1 taxonomy + named drift
- *   coreguard_assess_risk       intent + policy + trace -> AGR/1 report
+ * Tools (all offline, all deterministic, zero keys): 10 core consent/verification tools + 10 Wave 1 Machine Economy tools (x402 parse/authorize/verify/reconcile/meter, machine register/task/telemetry/completion, delegation chain). No custody, no broadcast, no network calls; external settlement/physical truth/signature trust roots NOT proven.
  *
  * BOUNDARIES (standing): synthetic demo data is the caller's; nothing here
  * contacts any platform or payment network (no contact/integration/endorsement
@@ -48,6 +42,20 @@ import {
   SOROBAN_CONSENT_BINDING_VERSION,
   buildSorobanConsentBinding,
 } from "./index.mjs";
+import {
+  parseX402Challenge,
+  authorizeX402Payment,
+  verifyX402Settlement,
+  reconcilePayment,
+  meterAgentUsage,
+  registerMachine,
+  createMachineTask,
+  verifyTelemetry,
+  verifyTaskCompletion,
+  verifyDelegationChain,
+  MACHINE_ECONOMY_VERSION,
+  MACHINE_ECONOMY_BOUNDARY,
+} from "./machine-economy.mjs";
 
 const PROTOCOL_VERSION = "2025-06-18";
 
@@ -79,6 +87,16 @@ const TOOL_NAMES = Object.freeze([
   "coreguard_decide_outcome",
   "coreguard_profile_reference",
   "coreguard_consumption_status",
+  "coreguard_parse_x402_challenge",
+  "coreguard_authorize_x402_payment",
+  "coreguard_verify_x402_settlement",
+  "coreguard_reconcile_payment",
+  "coreguard_meter_agent_usage",
+  "coreguard_register_machine",
+  "coreguard_create_machine_task",
+  "coreguard_verify_telemetry",
+  "coreguard_verify_task_completion",
+  "coreguard_verify_delegation_chain",
 ]);
 
 /**
@@ -224,6 +242,35 @@ const VALIDATORS = Object.freeze({
     if (args.storePath !== undefined && (typeof args.storePath !== "string" || args.storePath.length === 0)) {
       return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "storePath must be a non-empty string when supplied" };
     }
+    return optionalObject(args, "callerContext");
+  },
+  coreguard_parse_x402_challenge(args) { return requireObjects(args, ["challenge"]) || optionalObject(args, "callerContext"); },
+  coreguard_authorize_x402_payment(args) { return requireObjects(args, ["challenge", "policy"]) || optionalObject(args, "callerContext"); },
+  coreguard_verify_x402_settlement(args) { return requireObjects(args, ["challenge", "settlement"]) || optionalObject(args, "callerContext"); },
+  coreguard_reconcile_payment(args) { return requireObjects(args, ["authorization"]) || optionalObject(args, "callerContext"); },
+  coreguard_meter_agent_usage(args) {
+    const r = requireString(args, "agentId"); if (r) return r;
+    if (args.events === undefined) return { code: ERROR_CODES.MISSING_ARGUMENT, detail: "events is required" };
+    if (!Array.isArray(args.events)) return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "events must be an array" };
+    return optionalObject(args, "callerContext");
+  },
+  coreguard_register_machine(args) {
+    const r = requireString(args, "machineId"); if (r) return r;
+    return requireObjects(args, ["manifest"]) || optionalObject(args, "callerContext");
+  },
+  coreguard_create_machine_task(args) {
+    const r = requireString(args, "taskId"); if (r) return r;
+    const r2 = requireString(args, "machineId"); if (r2) return r2;
+    return requireObjects(args, ["terms"]) || optionalObject(args, "callerContext");
+  },
+  coreguard_verify_telemetry(args) {
+    const r = requireString(args, "taskId"); if (r) return r;
+    return requireObjects(args, ["telemetry"]) || optionalObject(args, "callerContext");
+  },
+  coreguard_verify_task_completion(args) { return requireObjects(args, ["task", "completion"]) || optionalObject(args, "callerContext"); },
+  coreguard_verify_delegation_chain(args) {
+    if (args.chain === undefined) return { code: ERROR_CODES.MISSING_ARGUMENT, detail: "chain is required" };
+    if (!Array.isArray(args.chain)) return { code: ERROR_CODES.INVALID_ARGUMENT, detail: "chain must be an array" };
     return optionalObject(args, "callerContext");
   },
 });
@@ -503,6 +550,66 @@ const TOOLS = Object.freeze([
       additionalProperties: true,
     },
   },
+  {
+    name: "coreguard_parse_x402_challenge",
+    description: "Parse and normalize an x402 payment challenge (HTTP 402 accepts). Offline deterministic validation only; no network contact, no payment execution.",
+    inputSchema: { type: "object", properties: { challenge: { type: "object", description: "x402 challenge/402 body with accepts[]" }, ...CALLER_CONTEXT_PROPERTY }, required: ["challenge"] },
+    outputSchema: { type: "object", properties: { verdict: { type: "string" }, issues: { type: "array" }, accepts: { type: "array" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_authorize_x402_payment",
+    description: "Evaluate an x402 challenge against a local policy and produce an authorization decision. No custody, no broadcast, no payment execution.",
+    inputSchema: { type: "object", properties: { challenge: { type: "object" }, policy: { type: "object", description: "policy: maxAmount, allowedNetworks, allowedAssets, allowedPayTo" }, selectedIndex: { type: "integer", minimum: 0 }, ...CALLER_CONTEXT_PROPERTY }, required: ["challenge", "policy"] },
+    outputSchema: { type: "object", properties: { verdict: { type: "string" }, authorizationId: { type: "string" }, issues: { type: "array" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_verify_x402_settlement",
+    description: "Verify caller-supplied x402 settlement evidence against a challenge. No network confirmation performed; evidence-only, fail-closed.",
+    inputSchema: { type: "object", properties: { challenge: { type: "object" }, settlement: { type: "object", description: "caller-supplied settlement evidence (network, asset, amount, payTo, txRef, status)" }, ...CALLER_CONTEXT_PROPERTY }, required: ["challenge", "settlement"] },
+    outputSchema: { type: "object", properties: { verdict: { type: "string" }, issues: { type: "array" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_reconcile_payment",
+    description: "Reconcile authorization, settlement evidence, and receipt. Deterministic evidence check only; no external ledger/custody.",
+    inputSchema: { type: "object", properties: { authorization: { type: "object" }, challenge: { type: "object" }, settlement: { type: "object" }, receipt: { type: "object" }, ...CALLER_CONTEXT_PROPERTY }, required: ["authorization"] },
+    outputSchema: { type: "object", properties: { verdict: { type: "string" }, issues: { type: "array" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_meter_agent_usage",
+    description: "Deterministically meter agent usage/cost events into an auditable total. No billing custody or external payment.",
+    inputSchema: { type: "object", properties: { agentId: { type: "string" }, events: { type: "array", items: { type: "object" } }, currency: { type: "string" }, ...CALLER_CONTEXT_PROPERTY }, required: ["agentId", "events"] },
+    outputSchema: { type: "object", properties: { totalAmount: { type: "string" }, eventCount: { type: "integer" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_register_machine",
+    description: "Create a local machine registration record from a manifest. No external device attestation/TPM trust root verification performed.",
+    inputSchema: { type: "object", properties: { machineId: { type: "string" }, manifest: { type: "object" }, owner: { type: "string" }, ...CALLER_CONTEXT_PROPERTY }, required: ["machineId", "manifest"] },
+    outputSchema: { type: "object", properties: { verdict: { type: "string" }, registrationId: { type: "string" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_create_machine_task",
+    description: "Create a deterministic machine task record with terms/price/SLA conditions. No payment custody or physical execution guarantee.",
+    inputSchema: { type: "object", properties: { taskId: { type: "string" }, machineId: { type: "string" }, terms: { type: "object" }, ...CALLER_CONTEXT_PROPERTY }, required: ["taskId", "machineId", "terms"] },
+    outputSchema: { type: "object", properties: { verdict: { type: "string" }, taskDigest: { type: "string" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_verify_telemetry",
+    description: "Verify caller-supplied telemetry evidence structure/digest presence. Signature authenticity and physical-world truth are NOT proven without trusted device keys/attestation.",
+    inputSchema: { type: "object", properties: { taskId: { type: "string" }, telemetry: { type: "object" }, ...CALLER_CONTEXT_PROPERTY }, required: ["taskId", "telemetry"] },
+    outputSchema: { type: "object", properties: { verdict: { type: "string" }, issues: { type: "array" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_verify_task_completion",
+    description: "Verify task completion evidence against task record. Evidence acceptance is not physical-world proof; independent verification required for high-stakes actions.",
+    inputSchema: { type: "object", properties: { task: { type: "object" }, completion: { type: "object" }, telemetryVerification: { type: "object" }, ...CALLER_CONTEXT_PROPERTY }, required: ["task", "completion"] },
+    outputSchema: { type: "object", properties: { verdict: { type: "string" }, issues: { type: "array" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
+  {
+    name: "coreguard_verify_delegation_chain",
+    description: "Verify delegation chain structure and continuity. Cryptographic signature verification requires trusted roots; not performed here.",
+    inputSchema: { type: "object", properties: { chain: { type: "array", items: { type: "object" } }, ...CALLER_CONTEXT_PROPERTY }, required: ["chain"] },
+    outputSchema: { type: "object", properties: { verdict: { type: "string" }, issues: { type: "array" }, depth: { type: "integer" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
+  },
 ]);
 
 function withCallerContext(value, args) {
@@ -574,6 +681,16 @@ async function callTool(name, args, { consumedSet } = {}) {
         boundary: "process-local only; set storePath or COREGUARD_CONSUMPTION_STORE for the AC-CS/1 file ledger (cross-process on this host); cross-host sync is CG-SPEND/1 merge; on-chain anchoring NOT_BUILT",
       }, a));
     }
+    if (name === "coreguard_parse_x402_challenge") return success(withCallerContext(parseX402Challenge(a), a));
+    if (name === "coreguard_authorize_x402_payment") return success(withCallerContext(authorizeX402Payment(a), a));
+    if (name === "coreguard_verify_x402_settlement") return success(withCallerContext(verifyX402Settlement(a), a));
+    if (name === "coreguard_reconcile_payment") return success(withCallerContext(reconcilePayment(a), a));
+    if (name === "coreguard_meter_agent_usage") return success(withCallerContext(meterAgentUsage(a), a));
+    if (name === "coreguard_register_machine") return success(withCallerContext(registerMachine(a), a));
+    if (name === "coreguard_create_machine_task") return success(withCallerContext(createMachineTask(a), a));
+    if (name === "coreguard_verify_telemetry") return success(withCallerContext(verifyTelemetry(a), a));
+    if (name === "coreguard_verify_task_completion") return success(withCallerContext(verifyTaskCompletion(a), a));
+    if (name === "coreguard_verify_delegation_chain") return success(withCallerContext(verifyDelegationChain(a), a));
     return failure(ERROR_CODES.UNKNOWN_TOOL, `unknown tool: ${String(name)}`);
   } catch (err) {
     return failure(ERROR_CODES.TOOL_ERROR, err?.message ?? String(err));
@@ -638,7 +755,7 @@ export function createMcpHandler({ write } = {}) {
 
 export function selfCheck() {
   return [
-    ["tools exposed", TOOL_NAMES.length === 10 && TOOL_NAMES[0] === "coreguard_authorize" && TOOL_NAMES[9] === "coreguard_consumption_status"],
+    ["tools exposed", TOOL_NAMES.length === 20 && TOOL_NAMES[0] === "coreguard_authorize" && TOOL_NAMES[9] === "coreguard_consumption_status" && TOOL_NAMES[19] === "coreguard_verify_delegation_chain"],
     ["protocol version pinned", PROTOCOL_VERSION === "2025-06-18"],
     ["spec surfaced", CONSENT_SPEC === "CGCR/1" && AGENT_COMMERCE_VERSION === "AC-SDK/1"],
     ["boundary travels", SERVER_BOUNDARY.includes("VERIFIED ≠ SAFE") && SERVER_BOUNDARY.includes("NOT_BUILT")],
@@ -647,6 +764,7 @@ export function selfCheck() {
     ["every tool declares required inputs", TOOLS.every((t) => Array.isArray(t.inputSchema?.required) && t.inputSchema.required.length > 0)],
     ["error contract is exported", ERROR_CODES.MISSING_ARGUMENT === "MISSING_ARGUMENT"],
     ["caller context supported", TOOLS.every((t) => t.inputSchema?.properties?.callerContext?.type === "object")],
+    ["machine economy boundary", MACHINE_ECONOMY_BOUNDARY.includes("VERIFIED != SAFE")],
   ];
 }
 
