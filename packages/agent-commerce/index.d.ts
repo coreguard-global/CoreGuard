@@ -1103,6 +1103,21 @@ export interface ControlPlaneLedgerVerification {
   boundary: string;
 }
 
+// CG-ME/1 - Machine Economy Wave 1 (deterministic offline, no custody/broadcast/network)
+export declare const MACHINE_ECONOMY_VERSION: string;
+export declare const MACHINE_ECONOMY_BOUNDARY: string;
+export declare function parseX402Challenge(input?: any): any;
+export declare function authorizeX402Payment(input?: any): any;
+export declare function verifyX402Settlement(input?: any): any;
+export declare function reconcilePayment(input?: any): any;
+export declare function meterAgentUsage(input?: any): any;
+export declare function registerMachine(input?: any): any;
+export declare function createMachineTask(input?: any): any;
+export declare function verifyTelemetry(input?: any): any;
+export declare function verifyTaskCompletion(input?: any): any;
+export declare function verifyDelegationChain(input?: any): any;
+export declare function machineEconomySelfCheck(): Array<[string, boolean]>;
+
 export interface ControlPlane {
   version: string;
   schema: string;

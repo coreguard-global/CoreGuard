@@ -423,3 +423,22 @@ export {
   createControlPlaneServer,
   startControlPlaneServer,
 } from "./control-plane-http.mjs";
+
+// CG-ME/1 - Machine Economy Wave 1: deterministic offline x402/machine/delegation
+// verification and evidence records. No custody, no broadcast, no network calls;
+// physical-world truth/signature trust roots NOT proven here. VERIFIED != SAFE.
+export {
+  MACHINE_ECONOMY_VERSION,
+  MACHINE_ECONOMY_BOUNDARY,
+  parseX402Challenge,
+  authorizeX402Payment,
+  verifyX402Settlement,
+  reconcilePayment,
+  meterAgentUsage,
+  registerMachine,
+  createMachineTask,
+  verifyTelemetry,
+  verifyTaskCompletion,
+  verifyDelegationChain,
+  machineEconomySelfCheck,
+} from "./machine-economy.mjs";

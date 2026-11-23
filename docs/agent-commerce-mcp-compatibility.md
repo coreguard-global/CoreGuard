@@ -46,11 +46,11 @@ Add an entry only after an actual run. Include evidence (command output snippet,
 | 2026-11-22 | agent session | Clean `npm i @coreguard/agent-commerce@0.1.3` + raw stdio | npm `@coreguard/agent-commerce@0.1.3` | **CI-SMOKE PASS** | install + initialize transcript | Published artifact (not the workspace): `serverInfo.version` `0.1.3`, 10 tools listed, `control-plane*.mjs` present. |
 | 2026-11-22 | agent session | Claude Code CLI 2.1.329 | `@coreguard/agent-commerce` (user scope) | **CONFIG-REGISTERED** | `claude mcp add --scope user …` then `claude mcp list` → `✔ Connected` | The client connected to the stdio server over its own transport; no model turn or tool call ran (no signed-in session), so this is **not** a RUN-BY-HAND. |
 | 2026-11-22 | agent session | Claude Code CLI 2.1.329 | n/a | **BLOCKED** | `claude -p` → “Not logged in · Please run /login” | CLI is installed in this environment but has no account session; no client run is claimed. |
-| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.1.3` (published) | PENDING |  | Needs a signed-in session to exercise the ten tools; connection alone is already recorded above. |
+| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.1.3` (published) | PENDING |  | Needs a signed-in session to exercise the twenty tools; connection alone is already recorded above. |
 
 ## Minimum acceptance for a "RUN-BY-HAND" entry
 
-- [ ] Client discovers 10 tools (`coreguard_authorize`, `coreguard_verify_consent`, `coreguard_verify_execution`, `coreguard_assess_risk`, `coreguard_inspect_identity`, `coreguard_build_attestation`, `coreguard_verify_attestation`, `coreguard_decide_outcome`, `coreguard_profile_reference`, `coreguard_consumption_status`).
+- [ ] Client discovers 20 tools (10 core + 10 machine-economy Wave 1: `coreguard_parse_x402_challenge`, `coreguard_authorize_x402_payment`, `coreguard_verify_x402_settlement`, `coreguard_reconcile_payment`, `coreguard_meter_agent_usage`, `coreguard_register_machine`, `coreguard_create_machine_task`, `coreguard_verify_telemetry`, `coreguard_verify_task_completion`, `coreguard_verify_delegation_chain`).
 - [ ] Tool schemas/parameters visible in client UI (or inspectable).
 - [ ] `coreguard_authorize` returns CGCR/1 record with `structuredContent`.
 - [ ] `coreguard_verify_execution` exact trace returns `VERIFIED`.
