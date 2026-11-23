@@ -478,3 +478,65 @@ test("CP-12 bounded improvement: optional local HMAC anchor verifies with same k
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+// CP-02 asked for one regression per field: the combined test above proves the
+// three refusals together, these pin each field alone so a change that reopens
+// one of them cannot hide behind the other two.
+
+test("CP-02 (merchant alone): a policy that lists merchants refuses a missing merchant", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
+  try {
+    const cp = planeIn(dir);
+    cp.upsertAgent({ id: "a1" });
+    cp.upsertPolicy({ id: "p1", allowMerchants: ["m-good"] });
+
+    const missing = cp.evaluate({ agentId: "a1", policyId: "p1", amountMinor: "400" });
+    assert.equal(missing.allowed, false);
+    assert.ok(missing.reasons.includes("MERCHANT_MISSING"), JSON.stringify(missing.reasons));
+
+    const committed = cp.commitExecution({ id: "e1", agentId: "a1", policyId: "p1", merchant: "m-good", amountMinor: "400" });
+    assert.equal(committed.committed, true, JSON.stringify(committed.reasons));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("CP-02 (address alone): a policy that lists addresses refuses a missing address", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
+  try {
+    const cp = planeIn(dir);
+    cp.upsertAgent({ id: "a1" });
+    cp.upsertPolicy({ id: "p1", allowAddresses: ["0xgood"] });
+
+    const missing = cp.evaluate({ agentId: "a1", policyId: "p1", amountMinor: "400" });
+    assert.equal(missing.allowed, false);
+    assert.ok(missing.reasons.includes("ADDRESS_MISSING"), JSON.stringify(missing.reasons));
+
+    const committed = cp.commitExecution({ id: "e1", agentId: "a1", policyId: "p1", address: "0xgood", amountMinor: "400" });
+    assert.equal(committed.committed, true, JSON.stringify(committed.reasons));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("CP-02 (currency alone): a policy that pins a currency refuses a missing one", () => {
+  const dir = mkdtempSync(join(tmpdir(), "cgcp-"));
+  try {
+    const cp = planeIn(dir);
+    cp.upsertAgent({ id: "a1" });
+    cp.upsertPolicy({ id: "p1", currency: "USD" });
+
+    const missing = cp.evaluate({ agentId: "a1", policyId: "p1", amountMinor: "400" });
+    assert.equal(missing.allowed, false);
+    assert.ok(missing.reasons.includes("CURRENCY_MISSING"), JSON.stringify(missing.reasons));
+
+    const mismatch = cp.commitExecution({ id: "e1", agentId: "a1", policyId: "p1", amountMinor: "400", currency: "EUR" });
+    assert.equal(mismatch.committed, false);
+    assert.ok(mismatch.reasons.includes("CURRENCY_MISMATCH"));
+
+    const committed = cp.commitExecution({ id: "e2", agentId: "a1", policyId: "p1", amountMinor: "400", currency: "USD" });
+    assert.equal(committed.committed, true, JSON.stringify(committed.reasons));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
