@@ -10,8 +10,8 @@ A `verified` outcome here means the saved bytes were not changed after they were
 
 | Outcome | Vectors |
 |---|---|
-| agree with the corpus | 21 |
-| **false accept (ours — must be zero)** | **22** |
+| agree with the corpus | 38 |
+| **false accept (ours — must be zero)** | **5** |
 | false reject (ours) | 0 |
 | not checked (unimplemented family, schema or anchor) | 100 |
 
@@ -19,7 +19,7 @@ A `verified` outcome here means the saved bytes were not changed after they were
 
 | Family | Vectors | Agree | False accepts | False rejects | Not checked |
 |---|---|---|---|---|---|
-| `invalid` | 36 | 6 | 21 | — | 9 |
+| `invalid` | 36 | 23 | 4 | — | 9 |
 | `chain` | 35 | 0 | — | — | 35 |
 | `valid` | 21 | 9 | — | — | 12 |
 | `merkle` | 9 | 0 | — | — | 9 |
@@ -50,27 +50,10 @@ These are vectors the corpus marks invalid that CG-AER1/1 accepts. They are the 
 | Vector | Corpus reason |
 |---|---|
 | `missing-inputs.json` | — |
-| `ax-base64-unpadded.json` | canonical_bytes is not valid base64 |
-| `ax-feb29-1900.json` | created_at is not a valid calendar date/time |
-| `ax-feb29-non-leap.json` | created_at is not a valid calendar date/time |
-| `ax-tool-empty-scope.json` | tool is not an object with name/version/scope strings |
-| `bad-created-at.json` | created_at is not RFC 3339 |
-| `bad-id.json` | id is not a lowercase UUID |
-| `bad-offset-range.json` | created_at is not a valid calendar date/time |
 | `bad-provenance.json` | provenance_class is not a known class |
 | `bad-verification-status.json` | verification_status is not verified |
-| `base64-pad-bit.json` | — |
-| `base64-unpadded.json` | canonical_bytes is not valid base64 |
 | `duplicate-member-name.json` | duplicate member name: output_hash |
-| `feb29-1900.json` | created_at is not a valid calendar date/time |
-| `feb29-non-leap.json` | created_at is not a valid calendar date/time |
-| `id-trailing-newline.json` | id is not a lowercase UUID |
-| `impossible-date.json` | created_at is not a valid calendar date/time |
-| `leap-second-created-at.json` | created_at is not a valid calendar date/time |
 | `provenance-trailing-newline.json` | provenance_class is not a known class |
-| `tool-empty-name.json` | tool is not an object with name/version/scope strings |
-| `tool-not-object.json` | tool is not an object with name/version/scope strings |
-| `uppercase-id.json` | id is not a lowercase UUID |
 
 ## Not checked
 

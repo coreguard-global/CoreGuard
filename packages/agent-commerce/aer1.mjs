@@ -37,6 +37,59 @@ export const AER1_PARSER_VERSION = "CG-AER1/1";
 export const SUPPORTED_RECEIPT_SCHEMAS = Object.freeze(["0.1", "0.2", "0.3"]);
 
 const DIGEST_RE = /^sha256:[0-9a-f]{64}$/;
+const BASE64_RE = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+const UUID_LOWER_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+/**
+ * Canonical base64 is the only accepted encoding: padded, four-character
+ * groups, no whitespace, and re-encoding the decoded bytes must reproduce the
+ * text exactly. Unpadded and pad-bit variants decode "fine" in most runtimes,
+ * which is precisely why a verifier has to reject them here: the bytes it
+ * hashes would not be the bytes another implementation hashes.
+ */
+const RFC3339_RE = /^(\d{4})-(\d{2})-(\d{2})[Tt](\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(?:[Zz]|[+-](\d{2}):(\d{2}))$/;
+
+/**
+ * RFC 3339 with an honest calendar: the regex alone accepts 1900-02-29 and
+ * 2023-02-29, and a leap second is not a value this build can verify. Absent
+ * is allowed here because bare records in the corpus are valid without it,
+ * and the field is a claim rather than ordering (see the module boundary).
+ */
+function isRfc3339(value) {
+  if (value === undefined) return true;
+  if (typeof value !== "string") return false;
+  const m = RFC3339_RE.exec(value);
+  if (!m) return false;
+  const [year, month, day, hour, minute, second] = m.slice(1, 7).map(Number);
+  const offsetHour = m[7] === undefined ? 0 : Number(m[7]);
+  const offsetMinute = m[8] === undefined ? 0 : Number(m[8]);
+  if (month < 1 || month > 12) return false;
+  if (hour > 23 || minute > 59 || second > 59) return false;
+  if (offsetHour > 23 || offsetMinute > 59) return false;
+  const leap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+  return day >= 1 && day <= days;
+}
+
+const nonEmptyString = (v) => typeof v === "string" && v.length > 0;
+
+/**
+ * A record that claims `verification_status: "verified"` attests a specific
+ * tool, so the descriptor there must be an object with three non-empty
+ * strings. A bare legacy record (no verification claim) may carry the older
+ * string form or none at all — the corpus has valid records of both shapes,
+ * and a rule that refused the string form would be a false reject.
+ */
+const isToolDescriptor = (tool, verificationStatus) => {
+  const structured = isObject(tool) && nonEmptyString(tool.name) && nonEmptyString(tool.version) && nonEmptyString(tool.scope);
+  if (verificationStatus === "verified") return structured;
+  if (tool === undefined) return true;
+  if (typeof tool === "string") return tool.length > 0;
+  return structured;
+};
+
+const isCanonicalBase64 = (s) =>
+  typeof s === "string" && s.length > 0 && BASE64_RE.test(s) && Buffer.from(s, "base64").toString("base64") === s;
 const isObject = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
 
@@ -77,8 +130,17 @@ export function parseAer1Record(record, { expectedId, resolvedRecord } = {}) {
   const encoded = typeof record.canonical_bytes === "string" ? record.canonical_bytes : null;
 
   structure.push(check("id is present (outer envelope)", idPresent));
+  structure.push(check("id is a lowercase UUID", idPresent && UUID_LOWER_RE.test(record.id)));
+  structure.push(check("created_at is RFC 3339 (when present)", isRfc3339(record.created_at)));
+  structure.push(
+    check(
+      "tool names a real descriptor when the record claims verification",
+      isToolDescriptor(record.tool, record.verification_status),
+    ),
+  );
   structure.push(check("output_hash is sha256:<64 hex>", claimed !== null && DIGEST_RE.test(claimed)));
   structure.push(check("canonical_bytes is base64 text", encoded !== null && encoded.length > 0));
+  structure.push(check("canonical_bytes is canonical base64", isCanonicalBase64(encoded)));
 
   let computed = null;
   let byteLength = null;

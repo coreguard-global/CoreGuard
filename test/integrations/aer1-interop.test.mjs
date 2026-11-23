@@ -36,7 +36,7 @@ test("AER-1 interop: the published table matches the code and the known defect c
   // This is the number to lower when the missing checks land, never to raise.
   // The corpus classifies 37 records as invalid; CG-AER1/1 refuses 6 of them
   // outright and accepts the other 21 (plus 1 invalid-profile record).
-  assert.equal(report.totals.falseAccept, 22, "false accepts must not grow; fix the checks and lower this pin");
+  assert.equal(report.totals.falseAccept, 5, "false accepts must not grow; fix the checks and lower this pin");
 
   assert.equal(report.pairs.live.name, "receipt-03-live");
   assert.equal(report.pairs.live.verdict, "pass");
