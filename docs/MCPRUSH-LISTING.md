@@ -1,8 +1,8 @@
-# MCPRush listing — copy-paste sheet (0.1.5)
+# MCPRush listing — copy-paste sheet (0.2.0)
 
 Everything below is written to be pasted into the studio at `mcprush.com/studio#manage`. Where a value is factual it is measured in this repository; where it is a choice, the choice is named. Nothing here claims installs, revenue, users, partnership or an audit.
 
-**Why 0.1.5:** `0.1.4` published the 26-tool server and corrected the manifest. `0.1.5` makes the published npm tarball carry `server.json` (the MCP registry manifest) and wires MCP registry publishing into the gated release workflow after npm publish (GitHub OIDC preferred; `MCP_REGISTRY_GITHUB_TOKEN` fallback when the configured namespace is not publishable via repo OIDC). No tool behaviour changed.
+**Why 0.2.0:** the server grew from 26 to **46 tools** and now ships **10 agent skills**. Wave 3 (CG-W3/1) adds policy reasoning with counterfactuals, MCP supply-chain auditing (manifest risk cards, tool-poisoning scans, rug-pull diffs, lookalike checks), evidence tooling (redaction, Merkle batch attestation, bundle verification), and operations (freeze, runway, anomaly scan, incident timeline). Everything stays offline, deterministic, zero-key. `server.json` ships in the tarball and the description stays inside the registry's 100-character limit.
 
 ---
 
@@ -26,13 +26,13 @@ Fail-closed consent receipts and execution verification for agentic purchases.
 Optional longer variant, still under 200 characters, if you want the offline guarantee on the card:
 
 ```
-Fail-closed consent receipts and execution verification for agentic purchases. 26 offline tools, zero keys, no network.
+Fail-closed consent receipts and execution verification for agentic purchases. 46 offline tools, zero keys, no network.
 ```
 
 **What it does** (the section that opens the listing page):
 
 ```
-Bind a buyer's approval to the exact order bytes, then verify any executed trace against that receipt — offline, deterministic, fail-closed. 26 MCP tools: consent receipts (CGCR/1), execution verification with named drift classes (AGR/1), x402 payment authorization and settlement-evidence checks, machine task and telemetry evidence, delegation chains, and a file-backed CGCP/1 control plane for policies, approvals, spend caps, revocation and a hash-chained audit.
+Bind a buyer's approval to the exact order bytes, then verify any executed trace against that receipt — offline, deterministic, fail-closed. 46 MCP tools: consent receipts (CGCR/1), execution verification with named drift classes (AGR/1), x402 payment authorization and settlement-evidence checks, machine task and telemetry evidence, delegation chains, a file-backed CGCP/1 control plane for policies, approvals, spend caps, revocation and a hash-chained audit — plus Wave 3 reasoning: policy compilation and counterfactuals, MCP server manifest risk cards, tool-poisoning and lookalike scans, rug-pull diffs, redaction, Merkle batch attestation, agent freeze, budget runway and incident timelines.
 
 VERIFIED means the executed bytes matched the approved bytes. It is not a safety, fraud or settlement guarantee, and the server contacts no payment network, chain or provider. No sign-in, no keys, no wall clock: every call is reproducible from its inputs.
 ```
@@ -58,13 +58,15 @@ That is accurate and worth keeping: the server reads no environment variable at 
 
 ## 5. Tool surface
 
-After `0.1.5` is published, the listing should read **26 tools**. `0.1.5` is published on npm and the MCP Registry listing reports `0.1.5` active/latest for `io.github.EslaM-X/coreguard-agent-commerce`. The set, as `tools/list` returns it:
+The listing should read **46 tools**. `0.2.0` is published on npm and the MCP Registry reports `0.2.0` active/latest for `io.github.EslaM-X/coreguard-agent-commerce`. The set, as `tools/list` returns it:
 
 | Group | Tools |
 |---|---|
 | Consent + execution (10) | `coreguard_authorize`, `coreguard_verify_consent`, `coreguard_verify_execution`, `coreguard_assess_risk`, `coreguard_inspect_identity`, `coreguard_build_attestation`, `coreguard_verify_attestation`, `coreguard_decide_outcome`, `coreguard_profile_reference`, `coreguard_consumption_status` |
 | x402 + machine economy (10) | `coreguard_parse_x402_challenge`, `coreguard_authorize_x402_payment`, `coreguard_verify_x402_settlement`, `coreguard_reconcile_payment`, `coreguard_meter_agent_usage`, `coreguard_register_machine`, `coreguard_create_machine_task`, `coreguard_verify_telemetry`, `coreguard_verify_task_completion`, `coreguard_verify_delegation_chain` |
 | CGCP/1 control plane (6) | `coreguard_create_intent`, `coreguard_issue_receipt`, `coreguard_verify_receipt`, `coreguard_check_limits`, `coreguard_revoke_consent`, `coreguard_audit_transaction` |
+| Wave 3 reasoning + supply chain (10) | `coreguard_compile_policy`, `coreguard_explain_decision`, `coreguard_simulate_spend`, `coreguard_diff_policies`, `coreguard_generate_boundary_cases`, `coreguard_audit_server_manifest`, `coreguard_scan_tool_descriptions`, `coreguard_check_lookalike`, `coreguard_diff_tool_surface`, `coreguard_verify_evidence_bundle` |
+| Wave 3 evidence + operations + interop (10) | `coreguard_redact_receipt`, `coreguard_attest_batch`, `coreguard_verify_batch_proof`, `coreguard_freeze_agent`, `coreguard_budget_runway`, `coreguard_detect_spend_anomaly`, `coreguard_incident_timeline`, `coreguard_translate_receipt`, `coreguard_emit_test_vectors`, `coreguard_describe_surface` |
 
 Paste-ready per-tool reference, with every example executed against the shipped server: [`docs/mcprush/tool-reference.md`](./mcprush/tool-reference.md).
 
@@ -77,7 +79,7 @@ Paste-ready per-tool reference, with every example executed against the shipped 
 
 ## 7. Releases
 
-0.1.5 is published (`@coreguard/agent-commerce@0.1.5`, npm tarball includes `server.json`, MCP Registry `0.1.5` active/latest). After the MCPRush studio refresh, the listing's release row should read `stable 0.1.5`. Re-scan the grade only if the scan is older than the new tarball; the badge on the page is the last scan on record, not a review.
+0.2.0 is published (`@coreguard/agent-commerce@0.2.0`, npm tarball includes `server.json` and `wave3.mjs`, MCP Registry `0.2.0` active/latest). After the MCPRush studio refresh, the listing's release row should read `stable 0.2.0` and the tool surface **46**. Re-scan the grade only if the scan is older than the new tarball; the badge on the page is the last scan on record, not a review.
 
 ## 8. README badge
 
@@ -104,7 +106,9 @@ Use the numbers as they are printed by those commands, and do not add a percenta
 ## 10. Owner-only clicks (this repository cannot perform them)
 
 - [x] Publish `0.1.5` through the gated release workflow. npm publish succeeded and the MCP Registry was updated to `0.1.5` active/latest.
-- [ ] Confirm `npx -y @coreguard/agent-commerce@0.1.5` reports `0.1.5` and `tools/list` returns 26 tools (owner/clean environment).
+- [ ] Publish `0.2.0` through the gated release workflow and confirm the MCP Registry reports `0.2.0` active/latest.
+- [ ] Confirm `npx -y @coreguard/agent-commerce@0.2.0` reports `0.2.0` and `tools/list` returns 46 tools (owner/clean environment).
+- [ ] Tell the agent-skills pack (`skills/`) to the integration story: 10 skills, each a folder with `SKILL.md`.
 - [ ] In the studio: save the listing copy from §2, confirm sign-in/keys from §3, cut the release so the tool surface re-reads.
 - [ ] If the grade is stale relative to the new tarball, request the once-a-day rescan; the grade is deterministic and re-runnable, so a rescan is a measurement, not an appeal.
 - [ ] Deprecate nothing, unpublish nothing. The listing is the distribution; the funnel is the repository.

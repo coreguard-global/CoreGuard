@@ -142,7 +142,7 @@ test("MCP initialize answers the pinned protocol version and server info", async
   });
 });
 
-test("tools/list exposes the 26 provider-independent tools with schemas", async () => {
+test("tools/list exposes the 46 provider-independent tools with schemas", async () => {
   await withServer(async ({ request }) => {
     await request("initialize", {});
     const res = await request("tools/list", {});
@@ -175,6 +175,26 @@ test("tools/list exposes the 26 provider-independent tools with schemas", async 
         "coreguard_check_limits",
         "coreguard_revoke_consent",
         "coreguard_audit_transaction",
+        "coreguard_compile_policy",
+        "coreguard_explain_decision",
+        "coreguard_simulate_spend",
+        "coreguard_diff_policies",
+        "coreguard_generate_boundary_cases",
+        "coreguard_audit_server_manifest",
+        "coreguard_scan_tool_descriptions",
+        "coreguard_check_lookalike",
+        "coreguard_diff_tool_surface",
+        "coreguard_verify_evidence_bundle",
+        "coreguard_redact_receipt",
+        "coreguard_attest_batch",
+        "coreguard_verify_batch_proof",
+        "coreguard_freeze_agent",
+        "coreguard_budget_runway",
+        "coreguard_detect_spend_anomaly",
+        "coreguard_incident_timeline",
+        "coreguard_translate_receipt",
+        "coreguard_emit_test_vectors",
+        "coreguard_describe_surface",
       ]
     );
     for (const t of res.result.tools) {
