@@ -41,7 +41,6 @@
     "coreguard-agent-commerce-mcp": "./bin/mcp.mjs"
   },
   "files": [
-    "README.md",
     "aer1.mjs",
     "anchor.mjs",
     "attest.mjs",
@@ -72,9 +71,11 @@
     "prod/schema.mjs",
     "prod/sqlite-storage.mjs",
     "profile-ref.mjs",
+    "README.md",
     "reference.mjs",
     "risk-cli.mjs",
     "risk.mjs",
+    "server.json",
     "spend.mjs",
     "trust.mjs"
   ],
