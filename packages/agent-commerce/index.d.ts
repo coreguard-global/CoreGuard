@@ -562,6 +562,125 @@ export declare function aer1SelfCheck(): Readonly<{
 }>;
 
 // ---------------------------------------------------------------------------
+// CG-OBS/1 — the observation ledger. A verification is an event, not a property
+// of the run: one immutable record per (observer, read), with the bytes that
+// observer recomputed, the read time that observer held, and a named reason
+// wherever a check did not happen.
+// ---------------------------------------------------------------------------
+
+export const OBSERVATION_VERSION: "CG-OBS/1";
+export type CheckOutcome =
+  | "verified"
+  | "verification_failed"
+  | "not_checked"
+  | "absent"
+  | "unresolvable_record";
+export const CHECK_OUTCOMES: readonly CheckOutcome[];
+export const NOT_CHECKED_REASONS: readonly string[];
+export const OBSERVATION_CODES: Readonly<Record<string, string>>;
+
+export interface ObservationInput {
+  observer: string;
+  scope?: string | null;
+  action_id: string;
+  record_id?: string | null;
+  subject_digest: string;
+  observed_digest?: string | null;
+  outcome: CheckOutcome;
+  code?: string | null;
+  reason?: string | null;
+  checked_at: string;
+  action_at?: string | null;
+  evidence?: Record<string, unknown> | null;
+}
+
+export interface ObservationEvent {
+  observation_version: "CG-OBS/1";
+  observation_id: string;
+  observer: string;
+  scope: string | null;
+  action_id: string;
+  record_id: string | null;
+  subject_digest: string;
+  observed_digest: string | null;
+  outcome: CheckOutcome;
+  code: string | null;
+  reason: string | null;
+  checked_at: string;
+  action_at: string | null;
+  evidence: Readonly<Record<string, unknown>> | null;
+}
+
+export interface ObservationRecording {
+  ok: boolean;
+  code: string | null;
+  detail?: string | null;
+  event: ObservationEvent | null;
+}
+
+export interface ObservationLedger {
+  observation_version: "CG-OBS/1";
+  events: readonly ObservationEvent[];
+}
+
+export interface ObservationAppend {
+  ok: boolean;
+  code: string | null;
+  detail: string | null;
+  ledger: ObservationLedger;
+  event: ObservationEvent | null;
+  duplicate?: boolean;
+}
+
+export interface ObservedAccrual {
+  observation_version: "CG-OBS/1";
+  action_id: string | null;
+  events: number;
+  observers: ReadonlyArray<{
+    observer: string;
+    latest_outcome: CheckOutcome;
+    latest_code: string | null;
+    latest_reason: string | null;
+    latest_checked_at: string;
+    scopes: readonly string[];
+    reads: number;
+    observation_ids: readonly string[];
+  }>;
+  verified_by: readonly string[];
+  not_checked_by: ReadonlyArray<{ observer: string; reason: string | null; at: string }>;
+  failed_by?: readonly string[];
+  absent_by?: readonly string[];
+  first_read_at: string | null;
+  first_verified_at?: string | null;
+  last_read_at: string | null;
+  composite: CheckOutcome;
+  contested: boolean;
+  executions: 1;
+  detail: string | null;
+}
+
+export declare function parseInstant(value: unknown): { ms: number; lexeme: string } | null;
+export declare function observationId(event: ObservationEvent): string;
+export declare function recordObservation(input: ObservationInput): ObservationRecording;
+export declare function createLedger(): ObservationLedger;
+export declare function appendObservation(ledger: ObservationLedger, input: ObservationInput): ObservationAppend;
+export declare function buildLedger(
+  inputs?: ObservationInput[],
+): Readonly<{ ok: boolean; code: string | null; detail: string | null; ledger: ObservationLedger }>;
+export declare function accrueObservations(
+  ledger: ObservationLedger,
+  options?: { action_id?: string; subject_digest?: string },
+): ObservedAccrual;
+export declare function describeAccrual(accrual: ObservedAccrual): string;
+export declare function observationsSelfCheck(): Readonly<{
+  ok: boolean;
+  observationVersion: string;
+  outcomes: readonly CheckOutcome[];
+  reasons: readonly string[];
+  checks: ReadonlyArray<{ name: string; pass: boolean }>;
+}>;
+
+// ---------------------------------------------------------------------------
 // CG-ANCHOR/1 — the anchor service we run: offline-verifiable attestations, an
 // append-only hash-chained log, one Merkle root, and a prepare-only chain
 // adapter that refuses mainnet. No broadcast path is declared because none

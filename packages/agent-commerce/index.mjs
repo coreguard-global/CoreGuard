@@ -305,6 +305,27 @@ export {
   selfCheck as aer1SelfCheck,
 } from "./aer1.mjs";
 
+// CG-OBS/1 — the observation ledger: a verification is an event, not a property
+// of the run. One immutable record per (observer, read), carrying who looked,
+// what access they held, which bytes they recomputed, when they read, and why a
+// check did not happen. A later read adds evidence; it never rewrites the
+// earlier one, and it never replays the action.
+export {
+  OBSERVATION_VERSION,
+  CHECK_OUTCOMES,
+  NOT_CHECKED_REASONS,
+  OBSERVATION_CODES,
+  parseInstant,
+  observationId,
+  recordObservation,
+  createLedger,
+  appendObservation,
+  buildLedger,
+  accrue as accrueObservations,
+  describeAccrual,
+  selfCheck as observationsSelfCheck,
+} from "./observations.mjs";
+
 // CG-ANCHOR/1 — the anchor service we run ourselves: Ed25519 attestations that
 // verify offline, an append-only hash-chained log, one Merkle root over it, and
 // a chain adapter that prepares a 32-byte memo and refuses mainnet by name.

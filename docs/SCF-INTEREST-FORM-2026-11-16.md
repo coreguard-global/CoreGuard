@@ -31,7 +31,7 @@ than to hit a date that has passed.
 | First signed, funded DEX execution | `pathPaymentStrictSend` CONFIRMED, tx `ac2a7990b3387aab96b197c0c921d57756bd25d65ad0e75b93561ded640b9097`, ledger 65,338,112, `4.0598146 XLM → 0.6306239 USDC` | `docs/evidence/stellar-dex-swap-executed.json` |
 | Pre-sign authorization receipts (PSAR/1) | 11 frozen reject codes, byte-exact XDR binding, Ed25519, PASS/BLOCK offline demo | `packages/stellar/presign.mjs`, `npm run trust:demo` |
 | Verification ladder L0–L4 | L1 chain-confirmed receipts with a separately reported identity-binding axis; L2 deterministic replay; L3 SHA-256 merkle proofs; L4 frozen boundary, `RESEARCH`, no ZK claim | `scripts/ladder/verification-levels.mjs`, `npm run verify:levels` |
-| Suite | 2044 tests, machine-pinned: `scripts/run-tests.mjs` fails the run if the total drifts from `docs/state-snapshot.json` | `npm test` |
+| Suite | 2059 tests, machine-pinned: `scripts/run-tests.mjs` fails the run if the total drifts from `docs/state-snapshot.json` | `npm test` |
 | Package | `@coreguard/stellar` is **publishable, not published** (exports, types, `files` allowlist, offline pack-and-import test from outside the repo) | `test/integrations/stellar-package-import.test.mjs` |
 | External conformance | AER-1 id-binding vectors (kit v1.5.7) vendored verbatim with both digests pinned and replayed in CI | `test/fixtures/aer1-corpus-v1.5.7/`, `test/integrations/aer1-id-binding-fixtures.test.mjs` |
 
