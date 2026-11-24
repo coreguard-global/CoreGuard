@@ -37,7 +37,9 @@ CoreGuard Agent Commerce appears in the [MCPRush directory](https://mcprush.com/
 This is a publicly indexed marketplace listing, checked on 21 November 2026; it is **not** a partnership, endorsement, funding award or independent security audit.
 The observed listing is unclaimed and free, runs locally from its publisher's package, and is not hosted or billed by the marketplace.
 
-[**Explore the package**](https://www.npmjs.com/package/@coreguard/agent-commerce) · [**Documentation**](https://coreguard-global.github.io/CoreGuard/DOCS.html) · [**Announcement & film**](https://coreguard-trust-and-defense.lovable.app/developments#mcprush) · [**Discuss a pilot**](https://coreguard-trust-and-defense.lovable.app/partners)
+[**Explore the package**](https://www.npmjs.com/package/@coreguard/agent-commerce) · [**Documentation**](https://coreguard-global.github.io/CoreGuard/DOCS.html) · [**Agent skills**](https://coreguard-global.github.io/CoreGuard/SKILLS.html) · [**Announcement & film**](https://coreguard-trust-and-defense.lovable.app/developments#mcprush)
+
+<p><a href="https://coreguard-global.github.io/CoreGuard/SKILLS.html"><img src="https://coreguard-global.github.io/CoreGuard/assets/badges/mcp-tools.svg" alt="MCP tool count, generated from tools/list"></a></p> · [**Discuss a pilot**](https://coreguard-trust-and-defense.lovable.app/partners)
 
 **VERIFY • PROTECT • EMPOWER.** Directory discovery is not adoption evidence. `VERIFIED ≠ SAFE`.
 <!-- COREGUARD:MCPRUSH:END -->

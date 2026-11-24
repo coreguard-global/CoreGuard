@@ -92,8 +92,10 @@
     "demo:agentbadge-seam": "node examples/agentbadge-receipt-seam/run.mjs",
     "report:aer1-corpus": "node scripts/aer1-corpus-report.mjs",
     "agent-commerce:mcp:smoke": "node scripts/agent-commerce-mcp-smoke.mjs",
-    "docs:mcprush": "node scripts/mcprush-tool-reference.mjs",
-    "docs:mcprush:check": "node scripts/mcprush-tool-reference.mjs --check"
+    "docs:mcprush": "node scripts/mcprush-tool-reference.mjs && node scripts/mcp-surface.mjs",
+    "docs:mcprush:check": "node scripts/mcprush-tool-reference.mjs --check && node scripts/mcp-surface.mjs --check",
+    "docs:surface": "node scripts/mcp-surface.mjs",
+    "docs:surface:check": "node scripts/mcp-surface.mjs --check"
   },
   "engines": {
     "node": ">=18"

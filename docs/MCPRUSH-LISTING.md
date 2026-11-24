@@ -25,9 +25,13 @@ Fail-closed consent receipts and execution verification for agentic purchases.
 
 Optional longer variant, still under 200 characters, if you want the offline guarantee on the card:
 
+<!-- generated: listing-short — run `npm run docs:surface`, do not edit -->
 ```
-Fail-closed consent receipts and execution verification for agentic purchases. 46 offline tools, zero keys, no network.
+Fail-closed consent receipts and execution verification for agentic purchases. 46 offline MCP tools, zero keys, no network.
 ```
+
+<sub>123/200 characters · tool count read from `tools/list` at generation time.</sub>
+<!-- /generated: listing-short -->
 
 **What it does** (the section that opens the listing page):
 
@@ -58,15 +62,23 @@ That is accurate and worth keeping: the server reads no environment variable at 
 
 ## 5. Tool surface
 
-The listing should read **46 tools**. `0.2.0` is published on npm and the MCP Registry reports `0.2.0` active/latest for `io.github.EslaM-X/coreguard-agent-commerce`. The set, as `tools/list` returns it:
+<!-- generated: mcp-surface — run `npm run docs:surface`, do not edit -->
+**Generated from `tools/list`** — server `coreguard-agent-commerce@0.2.0`, protocol `2025-06-18`, **46 tools**, tools digest `sha256:d785db585c6ad5b9e59f53894c21f32739b01d4334fa218de697d89010bf7112`.
 
 | Group | Tools |
 |---|---|
 | Consent + execution (10) | `coreguard_authorize`, `coreguard_verify_consent`, `coreguard_verify_execution`, `coreguard_assess_risk`, `coreguard_inspect_identity`, `coreguard_build_attestation`, `coreguard_verify_attestation`, `coreguard_decide_outcome`, `coreguard_profile_reference`, `coreguard_consumption_status` |
 | x402 + machine economy (10) | `coreguard_parse_x402_challenge`, `coreguard_authorize_x402_payment`, `coreguard_verify_x402_settlement`, `coreguard_reconcile_payment`, `coreguard_meter_agent_usage`, `coreguard_register_machine`, `coreguard_create_machine_task`, `coreguard_verify_telemetry`, `coreguard_verify_task_completion`, `coreguard_verify_delegation_chain` |
 | CGCP/1 control plane (6) | `coreguard_create_intent`, `coreguard_issue_receipt`, `coreguard_verify_receipt`, `coreguard_check_limits`, `coreguard_revoke_consent`, `coreguard_audit_transaction` |
-| Wave 3 reasoning + supply chain (10) | `coreguard_compile_policy`, `coreguard_explain_decision`, `coreguard_simulate_spend`, `coreguard_diff_policies`, `coreguard_generate_boundary_cases`, `coreguard_audit_server_manifest`, `coreguard_scan_tool_descriptions`, `coreguard_check_lookalike`, `coreguard_diff_tool_surface`, `coreguard_verify_evidence_bundle` |
-| Wave 3 evidence + operations + interop (10) | `coreguard_redact_receipt`, `coreguard_attest_batch`, `coreguard_verify_batch_proof`, `coreguard_freeze_agent`, `coreguard_budget_runway`, `coreguard_detect_spend_anomaly`, `coreguard_incident_timeline`, `coreguard_translate_receipt`, `coreguard_emit_test_vectors`, `coreguard_describe_surface` |
+| Wave 3 · policy reasoning + MCP supply chain (10) | `coreguard_compile_policy`, `coreguard_explain_decision`, `coreguard_simulate_spend`, `coreguard_diff_policies`, `coreguard_generate_boundary_cases`, `coreguard_audit_server_manifest`, `coreguard_scan_tool_descriptions`, `coreguard_check_lookalike`, `coreguard_diff_tool_surface`, `coreguard_verify_evidence_bundle` |
+| Wave 3 · evidence + operations + interop (10) | `coreguard_redact_receipt`, `coreguard_attest_batch`, `coreguard_verify_batch_proof`, `coreguard_freeze_agent`, `coreguard_budget_runway`, `coreguard_detect_spend_anomaly`, `coreguard_incident_timeline`, `coreguard_translate_receipt`, `coreguard_emit_test_vectors`, `coreguard_describe_surface` |
+
+**Quoted capability card** (from `coreguard_describe_surface`; full JSON in [`docs/mcprush/CAPABILITY-CARD.md`](./mcprush/CAPABILITY-CARD.md)):
+
+> coreguard-agent-commerce 0.2.0 — 46 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
+
+**Badge:** ![MCP tools: 46](./assets/badges/mcp-tools.svg)
+<!-- /generated: mcp-surface -->
 
 Paste-ready per-tool reference, with every example executed against the shipped server: [`docs/mcprush/tool-reference.md`](./mcprush/tool-reference.md).
 
