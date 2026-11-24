@@ -1,7 +1,7 @@
 {
   "name": "@coreguard/agent-commerce",
-  "version": "0.1.5",
-  "description": "CoreGuard Agent Commerce: consent receipts (CGCR/1) and fail-closed execution verification (AGR/1) for agentic purchases — SDK, REST surface, and a stdio MCP server (26 tools, JSON-RPC 2.0, offline, zero keys)",
+  "version": "0.2.0",
+  "description": "CoreGuard Agent Commerce: consent receipts (CGCR/1) and fail-closed execution verification (AGR/1) for agentic purchases — SDK, REST surface, and a stdio MCP server (46 tools, JSON-RPC 2.0, offline, zero keys)",
   "type": "module",
   "main": "./index.mjs",
   "exports": {
@@ -77,7 +77,8 @@
     "risk.mjs",
     "server.json",
     "spend.mjs",
-    "trust.mjs"
+    "trust.mjs",
+    "wave3.mjs"
   ],
   "engines": {
     "node": ">=18"

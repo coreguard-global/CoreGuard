@@ -4,7 +4,7 @@
  *
  * Proves, with a live JSON-RPC 2.0 stdio process:
  *   - initialize responds with the expected protocol/version identity
- *   - tools/list exposes the 26 tools with inputSchema + outputSchema
+ *   - tools/list exposes the 46 tools with inputSchema + outputSchema
  *   - coreguard_authorize returns a CGCR/1 receipt (structuredContent)
  *   - coreguard_verify_execution returns VERIFIED on exact execution
  *   - coreguard_verify_execution returns INVALID with named drift on escalation
@@ -104,7 +104,7 @@ async function main() {
     });
 
     let listed;
-    await run('tools/list exposes 26 tools with inputSchema+outputSchema', async () => {
+    await run('tools/list exposes 46 tools with inputSchema+outputSchema', async () => {
       listed = await request('tools/list', {});
       const tools = listed.result?.tools || [];
       const names = tools.map(t => t.name).sort();
