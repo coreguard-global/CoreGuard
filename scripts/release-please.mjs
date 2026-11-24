@@ -117,9 +117,15 @@ for (const dir of PACKAGES) {
   }
   // A zero exit code is not proof: confirm the registry actually serves the
   // version before claiming success (a silent no-op publish must fail loudly).
+  // npm answers an accepted publish with "being processed and may take a few
+  // minutes" — so a 25-second window reports a successful publish as a failed
+  // one (run 45450058617: @coreguard/agent-commerce@0.1.4 was live and `latest`
+  // while this gate still said the registry did not serve it). Poll for four
+  // minutes, and say what is happening while it propagates.
   let confirmed = false;
-  for (let attempt = 0; attempt < 6 && !confirmed; attempt++) {
-    if (attempt > 0) await new Promise((r) => setTimeout(r, 5000));
+  for (let attempt = 0; attempt < 24 && !confirmed; attempt++) {
+    if (attempt > 0) await new Promise((r) => setTimeout(r, 10_000));
+    if (attempt > 0 && attempt % 6 === 0) console.log(`  ${spec}: registry still propagating (~${attempt * 10}s since publish)`);
     const check = spawnSync(NPM, ["view", spec, "version"], {
       cwd: REPO,
       encoding: "utf8",
@@ -134,7 +140,7 @@ for (const dir of PACKAGES) {
       dir,
       spec,
       code: "unconfirmed",
-      tail: `npm publish exited 0 but the registry does not serve ${spec}\n${output.split("\n").slice(-12).join("\n")}`,
+      tail: `npm publish exited 0 but the registry still does not serve ${spec} after ~240s\n${output.split("\n").slice(-12).join("\n")}`,
     };
     break;
   }
