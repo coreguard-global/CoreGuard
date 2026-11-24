@@ -14,7 +14,9 @@ jobs:
     environment: npm-release
     permissions:
       contents: read
-      id-token: write   # npm provenance — the published artifacts link back to this repo/workflow
+      id-token: write   # npm provenance + MCP registry GitHub OIDC (no MCP registry secret needed)
+    env:
+      MCP_PUBLISHER_VERSION: v1.8.1
     steps:
       - uses: actions/checkout@v7
 
@@ -55,3 +57,39 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: node scripts/release-please.mjs
+
+      - name: Publish MCP registry (GitHub OIDC - no MCP registry secret required)
+        env:
+          # Exact secret name required for MCP registry publishing: NONE.
+          # This workflow uses GitHub OIDC (id-token: write) for MCP registry auth.
+          # The only repository/environment secret required by this workflow is NPM_TOKEN.
+          MCP_PUBLISHER_VERSION: ${{ env.MCP_PUBLISHER_VERSION }}
+        run: |
+          set -euo pipefail
+          PKG_VERSION=$(node -p "require('./packages/agent-commerce/package.json').version")
+          SERVER_VERSION=$(node -p "require('./packages/agent-commerce/server.json').version")
+          PKG0_VERSION=$(node -p "require('./packages/agent-commerce/server.json').packages[0].version")
+          if [ "$PKG_VERSION" != "$SERVER_VERSION" ] || [ "$PKG_VERSION" != "$PKG0_VERSION" ]; then
+            echo "refusing: agent-commerce version mismatch package=$PKG_VERSION server=$SERVER_VERSION package0=$PKG0_VERSION"
+            exit 1
+          fi
+          echo "verifying @coreguard/agent-commerce@$PKG_VERSION is available on npm"
+          npm view "@coreguard/agent-commerce@$PKG_VERSION" version
+          curl -LfsS "https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_amd64.tar.gz" -o /tmp/mcp-publisher.tar.gz
+          curl -LfsS "https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_amd64.tar.gz.sigstore.json" -o /tmp/mcp-publisher.tar.gz.sigstore.json
+          if ! command -v cosign >/dev/null 2>&1; then
+            COSIGN_VERSION="v2.5.3"
+            curl -LfsS "https://github.com/sigstore/cosign/releases/download/${COSIGN_VERSION}/cosign-linux-amd64" -o /tmp/cosign
+            sudo install -m 0755 /tmp/cosign /usr/local/bin/cosign
+          fi
+          cosign verify-blob \
+            --bundle /tmp/mcp-publisher.tar.gz.sigstore.json \
+            --certificate-identity-regexp "https://github.com/modelcontextprotocol/registry/.*" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            /tmp/mcp-publisher.tar.gz
+          tar -xzf /tmp/mcp-publisher.tar.gz -C /tmp mcp-publisher
+          chmod +x /tmp/mcp-publisher
+          cd packages/agent-commerce
+          /tmp/mcp-publisher login github-oidc
+          /tmp/mcp-publisher publish
+          echo "MCP registry publish completed for @coreguard/agent-commerce@$PKG_VERSION"

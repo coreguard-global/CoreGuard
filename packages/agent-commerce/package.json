@@ -1,6 +1,6 @@
 {
   "name": "@coreguard/agent-commerce",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "CoreGuard Agent Commerce: consent receipts (CGCR/1) and fail-closed execution verification (AGR/1) for agentic purchases — SDK, REST surface, and a stdio MCP server (26 tools, JSON-RPC 2.0, offline, zero keys)",
   "type": "module",
   "main": "./index.mjs",

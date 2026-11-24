@@ -180,10 +180,16 @@ function runIdBinding() {
  * Join the two columns on vector name. A kit check for a record family that no
  * corpus file matches is a broken join, and a verdict that differs is a
  * divergence — the row Zambo asked to be able to point at.
+ *
+ * perVector captures the reference kit's per-vector verdict where the kit line
+ * names one (kitVerdict !== null). Only rows with a per-vector verdict AND a
+ * judged CG-AER1/1 outcome are "compared" — those are the 66 rows the fourth
+ * observer column is scoped to. Family-level-only kit lines stay unclaimed.
  */
 function buildKitJoin(kit, observedByName, idRows) {
   const rows = new Map();
   const orphans = [];
+  const perVector = new Map();
   for (const c of kit.checks) {
     const key = KIT_FAMILY_TO_OURS[c.family] ?? c.family;
     const row = rows.get(key) ?? { key, checks: 0, verified: 0, invalid: 0, compared: 0, oursJudged: 0, divergences: [], notCompared: 0 };
@@ -194,7 +200,19 @@ function buildKitJoin(kit, observedByName, idRows) {
     const ours = observedByName.get(c.name);
     if (RECORD_FAMILIES.has(key) && ours === undefined) orphans.push(c.name);
     if (ours !== undefined && ours !== "not_checked") row.oursJudged += 1;
-    if (ours !== undefined && ours !== "not_checked" && kitVerdict !== null) {
+    const compared = ours !== undefined && ours !== "not_checked" && kitVerdict !== null;
+    if (kitVerdict !== null) {
+      perVector.set(c.name, {
+        name: c.name,
+        family: key,
+        observer: "aer1-kit:per-vector",
+        scope: "record:bytes",
+        outcome: kitVerdict,
+        note: c.note,
+        compared,
+      });
+    }
+    if (compared) {
       row.compared += 1;
       if (ours !== kitVerdict) row.divergences.push({ name: c.name, ours, kit: kitVerdict, note: c.note });
     } else {
@@ -209,8 +227,19 @@ function buildKitJoin(kit, observedByName, idRows) {
     idRow.compared = idRows.length;
     idRow.oursJudged = idRows.length;
     idRow.divergences = idRows.filter((r) => !r.agree).map((r) => ({ name: r.name, ours: "disagree", kit: "pass", note: null }));
+    for (const r of idRows) {
+      perVector.set(r.name, {
+        name: r.name,
+        family: "id-binding",
+        observer: "aer1-kit:per-vector",
+        scope: "id-binding:check",
+        outcome: r.agree ? "verified" : "invalid",
+        note: r.agree ? "all as expected" : "disagree",
+        compared: true,
+      });
+    }
   }
-  return { rows, orphans };
+  return { rows, orphans, perVector };
 }
 
 /**
@@ -350,6 +379,14 @@ function runCorpus() {
   const sum = (k) => rows.reduce((n, r) => n + r[k], 0);
   const kit = loadKitColumn();
   const kitJoin = buildKitJoin(kit, observedByName, runIdBinding());
+  const kitPerVector = [...kitJoin.perVector.values()];
+  const kitCompared = kitPerVector.filter((r) => r.compared);
+  for (const o of observations) {
+    const k = kitJoin.perVector.get(o.name);
+    o.kitObserver = k?.compared
+      ? { observer: k.observer, scope: k.scope, outcome: k.outcome, note: k.note }
+      : null;
+  }
   const observationTotals = observations.reduce(
     (acc, o) => {
       acc.events += 1;
@@ -374,7 +411,16 @@ function runCorpus() {
       parserFile: sha256OfFile(join(ROOT, "packages/agent-commerce/aer1.mjs")),
       generatorFile: sha256OfFile(join(ROOT, "scripts/aer1-interop.mjs")),
     },
-    kitJoin: { rows: Object.fromEntries(kitJoin.rows), orphans: kitJoin.orphans },
+    kitJoin: {
+      rows: Object.fromEntries(kitJoin.rows),
+      orphans: kitJoin.orphans,
+      perVector: Object.fromEntries([...kitJoin.perVector.entries()]),
+      compared: kitCompared.length,
+      comparedDivergences: kitCompared.filter((r) => {
+        const ours = observedByName.get(r.name);
+        return ours !== undefined && ours !== "not_checked" && ours !== r.outcome;
+      }).length,
+    },
     kit: KIT,
     setDigest: SET_DIGEST,
     parserVersion: AER1_PARSER_VERSION,

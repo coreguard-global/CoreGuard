@@ -72,6 +72,33 @@ test("observation join: adding reads does not move the joined verdict", () => {
   assert.ok(compared > 0, "the kit join must actually compare vectors, not print an empty column");
 });
 
+test("observation join: fourth observer is scoped to 66 compared rows with zero divergences", () => {
+  const rows = JSON.parse(readFileSync(ROWS, "utf8"));
+  assert.equal(rows.kitObserver.observer, "aer1-kit:per-vector");
+  assert.equal(rows.kitObserver.comparedRows, 66);
+  assert.equal(rows.kitObserver.comparedDivergences, 0);
+  const compared = rows.rows.filter((r) => r.kitObserver);
+  assert.equal(compared.length, 66);
+  const byFamily = {};
+  for (const r of compared) byFamily[r.family] = (byFamily[r.family] ?? 0) + 1;
+  assert.deepEqual(byFamily, {
+    anchor: 8,
+    anchored: 6,
+    "id-binding": 6,
+    invalid: 36,
+    "invalid-profile": 1,
+    valid: 9,
+  });
+  for (const r of compared) {
+    assert.equal(r.kitObserver.observer, "aer1-kit:per-vector");
+    assert.ok(["verified", "invalid", "verification_failed"].includes(r.kitObserver.outcome));
+  }
+  const page = readFileSync(OUT, "utf8");
+  assert.match(page, /aer1-kit:per-vector.*compared only/);
+  assert.match(page, /66 compared rows/);
+  assert.match(page, /divergence count is \*\*0\*\*/);
+});
+
 test("observation join: the published page and rows are byte-current", () => {
   assert.equal(readFileSync(OUT, "utf8"), render(report), "docs/AER1-OBSERVATION-JOIN.md is stale — run: node scripts/aer1-observation-join.mjs --write");
   const rows = JSON.parse(readFileSync(ROWS, "utf8"));
