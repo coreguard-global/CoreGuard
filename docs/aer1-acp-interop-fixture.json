@@ -19,14 +19,25 @@
       "absent",
       "unresolvable_record"
     ],
-    "notCheckedReasons": [
-      "access_refused",
-      "unsupported_family",
-      "schema_not_implemented",
-      "outside_scope",
-      "provenance_not_present",
-      "not_yet_materialized"
-    ],
+    "notCheckedReasons": {
+      "cgObs1Reference": [
+        "not_attempted",
+        "access_refused",
+        "access_revoked",
+        "outside_scope",
+        "unsupported_family",
+        "schema_not_implemented"
+      ],
+      "appendixAProfileText": [
+        "access_refused",
+        "unsupported_family",
+        "schema_not_implemented",
+        "outside_scope",
+        "provenance_not_present",
+        "not_yet_materialized"
+      ],
+      "reconciliation": "Open before ACP submission/meeting: unify into one normative set or split into named fields with no silent remapping. Overlap: access_refused,outside_scope,unsupported_family,schema_not_implemented."
+    },
     "runLevelOutcomesUntouched": true
   },
   "observers": [
@@ -58,7 +69,12 @@
     "noExecutionLanguageForFixtureReads": true,
     "scopeMustBePrinted": true,
     "wideningRule": "When a per-vector kit emit lands for remaining families, the column widens on evidence and the divergence count stays honest wherever it lands.",
-    "comparisonRule": "An observer column may only claim per-vector comparison where that per-vector verdict is actually measured; family-level-only lines remain unclaimed."
+    "comparisonRule": "An observer column may only claim per-vector comparison where that per-vector verdict is actually measured; family-level-only lines remain unclaimed.",
+    "threeChecksSeparated": [
+      "receipt_or_record_verification",
+      "bytes_or_integrity_verification",
+      "reader_or_principal_authorization"
+    ]
   },
   "artifacts": {
     "rowsJson": "docs/aer1-observation-rows.json",
