@@ -1,6 +1,6 @@
 # CoreGuard Agent Commerce — MCP tool reference
 
-Paste-ready reference for the MCP directory listing. Package `@coreguard/agent-commerce@0.1.4`, server `io.github.EslaM-X/coreguard-agent-commerce`, transport **stdio**, protocol `2025-06-18`.
+Paste-ready reference for the MCP directory listing. Package `@coreguard/agent-commerce@0.1.5`, server `io.github.EslaM-X/coreguard-agent-commerce`, transport **stdio**, protocol `2025-06-18`.
 
 Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.mjs`. Every example arguments block below was executed against that server when this page was built; the shown result is the real response (long consent payloads abridged where marked).
 

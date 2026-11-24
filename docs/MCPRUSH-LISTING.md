@@ -1,8 +1,8 @@
-# MCPRush listing — copy-paste sheet (0.1.4)
+# MCPRush listing — copy-paste sheet (0.1.5)
 
 Everything below is written to be pasted into the studio at `mcprush.com/studio#manage`. Where a value is factual it is measured in this repository; where it is a choice, the choice is named. Nothing here claims installs, revenue, users, partnership or an audit.
 
-**Why a new release at all:** the published `0.1.3` tarball lists **10** tools. The server in this repository exposes **26** — the extra 16 are the Wave 1 machine-economy tools and the Wave 2 CGCP/1 mappings, and they have been covered by the MCP contract tests since they landed. A directory that scans the published package therefore sees a tenth of the surface. `0.1.4` publishes the same server with the manifest and description corrected; no tool behaviour changed.
+**Why 0.1.5:** `0.1.4` published the 26-tool server and corrected the manifest. `0.1.5` makes the published npm tarball carry `server.json` (the MCP registry manifest) and wires MCP registry publishing into the gated release workflow after npm publish (GitHub OIDC preferred; `MCP_REGISTRY_GITHUB_TOKEN` fallback when the configured namespace is not publishable via repo OIDC). No tool behaviour changed.
 
 ---
 
@@ -58,7 +58,7 @@ That is accurate and worth keeping: the server reads no environment variable at 
 
 ## 5. Tool surface
 
-After `0.1.4` is published, the listing should read **26 tools**. The set, as `tools/list` returns it:
+After `0.1.5` is published, the listing should read **26 tools**. `0.1.5` is published on npm and the MCP Registry listing reports `0.1.5` active/latest for `io.github.EslaM-X/coreguard-agent-commerce`. The set, as `tools/list` returns it:
 
 | Group | Tools |
 |---|---|
@@ -77,7 +77,7 @@ Paste-ready per-tool reference, with every example executed against the shipped 
 
 ## 7. Releases
 
-Cut `0.1.4` (see §8). After it lands, the listing's release row reads `stable 0.1.4`. Re-scan the grade only if the scan is older than the new tarball; the badge on the page is the last scan on record, not a review.
+0.1.5 is published (`@coreguard/agent-commerce@0.1.5`, npm tarball includes `server.json`, MCP Registry `0.1.5` active/latest). After the MCPRush studio refresh, the listing's release row should read `stable 0.1.5`. Re-scan the grade only if the scan is older than the new tarball; the badge on the page is the last scan on record, not a review.
 
 ## 8. README badge
 
@@ -103,8 +103,8 @@ Use the numbers as they are printed by those commands, and do not add a percenta
 
 ## 10. Owner-only clicks (this repository cannot perform them)
 
-- [ ] Publish `0.1.4` through the gated release workflow (or `npm publish` from the version-bump commit).
-- [ ] Confirm `npx -y @coreguard/agent-commerce@0.1.4` reports `0.1.4` and `tools/list` returns 26 tools.
+- [x] Publish `0.1.5` through the gated release workflow. npm publish succeeded and the MCP Registry was updated to `0.1.5` active/latest.
+- [ ] Confirm `npx -y @coreguard/agent-commerce@0.1.5` reports `0.1.5` and `tools/list` returns 26 tools (owner/clean environment).
 - [ ] In the studio: save the listing copy from §2, confirm sign-in/keys from §3, cut the release so the tool surface re-reads.
 - [ ] If the grade is stale relative to the new tarball, request the once-a-day rescan; the grade is deterministic and re-runnable, so a rescan is a measurement, not an appeal.
 - [ ] Deprecate nothing, unpublish nothing. The listing is the distribution; the funnel is the repository.

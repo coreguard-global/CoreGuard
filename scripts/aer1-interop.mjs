@@ -186,7 +186,7 @@ function runIdBinding() {
  * judged CG-AER1/1 outcome are "compared" — those are the 66 rows the fourth
  * observer column is scoped to. Family-level-only kit lines stay unclaimed.
  */
-function buildKitJoin(kit, observedByName, idRows) {
+export function buildKitJoin(kit, observedByName, idRows) {
   const rows = new Map();
   const orphans = [];
   const perVector = new Map();

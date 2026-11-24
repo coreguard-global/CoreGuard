@@ -1,0 +1,69 @@
+{
+  "schema": "coreguard.aer1-acp-interop-fixture/v1",
+  "status": "draft-fixture",
+  "title": "AER-1 ACP interop fixture — observation rows joined by name",
+  "description": "Machine-readable observation rows for the pinned AER-1 corpus. Any implementation can run the same set, publish its own observer column joined on vector name, and state its compared scope honestly. The fixture carries its scope on its face; it does not claim conformance, certification, or that any described work happened.",
+  "corpus": {
+    "kit": "1.5.7",
+    "evaluatedSetDigest": "sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2",
+    "vectorTotal": 143,
+    "joinKey": "name"
+  },
+  "observationLayer": {
+    "version": "CG-OBS/1",
+    "parser": "CG-AER1/1",
+    "outcomes": [
+      "verified",
+      "verification_failed",
+      "not_checked",
+      "absent",
+      "unresolvable_record"
+    ],
+    "notCheckedReasons": [
+      "access_refused",
+      "unsupported_family",
+      "schema_not_implemented",
+      "outside_scope",
+      "provenance_not_present",
+      "not_yet_materialized"
+    ],
+    "runLevelOutcomesUntouched": true
+  },
+  "observers": [
+    {
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes or vector:bytes",
+      "kind": "per-vector",
+      "side": "coreguard"
+    },
+    {
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "kind": "per-file",
+      "side": "coreguard"
+    },
+    {
+      "observer": "aer1-kit:per-vector",
+      "scope": "compared rows only where pinned kit line carries per-vector verdict",
+      "kind": "per-vector",
+      "side": "reference-kit",
+      "comparedRows": 66,
+      "comparedDivergences": 0,
+      "unclaimed": "family-level-only kit lines"
+    }
+  ],
+  "contract": {
+    "joinKey": "name",
+    "noInventedTimestamps": true,
+    "noExecutionLanguageForFixtureReads": true,
+    "scopeMustBePrinted": true,
+    "wideningRule": "When a per-vector kit emit lands for remaining families, the column widens on evidence and the divergence count stays honest wherever it lands.",
+    "comparisonRule": "An observer column may only claim per-vector comparison where that per-vector verdict is actually measured; family-level-only lines remain unclaimed."
+  },
+  "artifacts": {
+    "rowsJson": "docs/aer1-observation-rows.json",
+    "joinPage": "docs/AER1-OBSERVATION-JOIN.md",
+    "interopTable": "docs/AER1-INTEROP-TABLE.md",
+    "fixtureSpec": "docs/AER1-ACP-INTEROP-FIXTURE.md"
+  }
+}

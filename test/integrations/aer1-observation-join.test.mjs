@@ -16,6 +16,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { build, render, validateRows, OUT, ROWS } from "../../scripts/aer1-observation-join.mjs";
+import { buildKitJoin, parseKitColumn } from "../../scripts/aer1-interop.mjs";
 import { CHECK_OUTCOMES, NOT_CHECKED_REASONS, OBSERVATION_VERSION } from "../../packages/agent-commerce/observations.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -116,4 +117,36 @@ test("observation join: the guard refuses an invented outcome, an invented reaso
   assert.throws(() => validateRows([{ ...ok(), outcome: "not_checked", reason: "felt_like_it" }]), /without a frozen reason/);
   assert.throws(() => validateRows([{ ...ok(), reason: "access_refused" }]), /a reason on a finding/);
   assert.throws(() => validateRows([ok(), ok()]), /duplicate observation row/);
+});
+
+test("observation join: widening is ready by construction when per-vector kit verdicts land", () => {
+  // Simulate a future kit column where a previously family-level family gets per-vector verdicts.
+  const kitText = [
+    "[chain] chain-001: PASS (rejected: broken link)",
+    "[chain] chain-002: PASS",
+    "CONFORMANCE OK: 2 vectors, 2 checks, sha256:" + "0".repeat(64),
+  ].join("\n");
+  const kit = parseKitColumn(kitText);
+  const observedByName = new Map([["chain-001", "invalid"], ["chain-002", "verified"]]);
+  const joined = buildKitJoin({ checks: kit.checks }, observedByName, []);
+  const row = joined.rows.get("chain");
+  assert.equal(row.compared, 1, "only the row with a per-vector kit verdict becomes compared");
+  assert.equal(row.divergences.length, 0);
+  assert.equal(joined.perVector.get("chain-001").compared, true);
+  assert.equal(joined.perVector.get("chain-001").outcome, "invalid");
+  assert.equal(joined.perVector.has("chain-002"), false, "family-level PASS line with no per-vector verdict stays unclaimed");
+});
+
+test("ACP interop fixture manifest is present and scoped honestly", () => {
+  const manifest = JSON.parse(readFileSync(join(ROOT, "docs/aer1-acp-interop-fixture.json"), "utf8"));
+  assert.equal(manifest.schema, "coreguard.aer1-acp-interop-fixture/v1");
+  assert.equal(manifest.corpus.joinKey, "name");
+  assert.equal(manifest.corpus.vectorTotal, 143);
+  assert.deepEqual(manifest.observationLayer.outcomes, ["verified","verification_failed","not_checked","absent","unresolvable_record"]);
+  assert.equal(manifest.observers.find((o) => o.observer === "aer1-kit:per-vector").comparedRows, 66);
+  assert.equal(manifest.observers.find((o) => o.observer === "aer1-kit:per-vector").comparedDivergences, 0);
+  assert.match(manifest.contract.wideningRule, /widens on evidence/);
+  const spec = readFileSync(join(ROOT, "docs/AER1-ACP-INTEROP-FIXTURE.md"), "utf8");
+  assert.match(spec, /[Ff]amily-level-only (kit )?lines remain unclaimed/);
+  assert.match(spec, /No invented timestamps/);
 });
