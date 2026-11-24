@@ -58,17 +58,21 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: node scripts/release-please.mjs
 
-      - name: Publish MCP registry (GitHub OIDC - no MCP registry secret required)
+      - name: Publish MCP registry (OIDC preferred; fallback secret MCP_REGISTRY_GITHUB_TOKEN)
         env:
-          # Exact secret name required for MCP registry publishing: NONE.
-          # This workflow uses GitHub OIDC (id-token: write) for MCP registry auth.
-          # The only repository/environment secret required by this workflow is NPM_TOKEN.
+          # Exact secret name for MCP registry publishing:
+          # - Preferred: NONE when GitHub OIDC can publish the namespace in server.json.
+          # - Fallback: MCP_REGISTRY_GITHUB_TOKEN (GitHub PAT with permission to publish
+          #   the server namespace) when OIDC cannot publish that namespace.
+          # The only always-required repository/environment secret in this workflow is NPM_TOKEN.
           MCP_PUBLISHER_VERSION: ${{ env.MCP_PUBLISHER_VERSION }}
+          MCP_REGISTRY_GITHUB_TOKEN: ${{ secrets.MCP_REGISTRY_GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           PKG_VERSION=$(node -p "require('./packages/agent-commerce/package.json').version")
           SERVER_VERSION=$(node -p "require('./packages/agent-commerce/server.json').version")
           PKG0_VERSION=$(node -p "require('./packages/agent-commerce/server.json').packages[0].version")
+          SERVER_NAME=$(node -p "require('./packages/agent-commerce/server.json').name")
           if [ "$PKG_VERSION" != "$SERVER_VERSION" ] || [ "$PKG_VERSION" != "$PKG0_VERSION" ]; then
             echo "refusing: agent-commerce version mismatch package=$PKG_VERSION server=$SERVER_VERSION package0=$PKG0_VERSION"
             exit 1
@@ -90,6 +94,12 @@ jobs:
           tar -xzf /tmp/mcp-publisher.tar.gz -C /tmp mcp-publisher
           chmod +x /tmp/mcp-publisher
           cd packages/agent-commerce
-          /tmp/mcp-publisher login github-oidc
+          if [ -n "${MCP_REGISTRY_GITHUB_TOKEN:-}" ]; then
+            echo "MCP registry auth: using MCP_REGISTRY_GITHUB_TOKEN for namespace $SERVER_NAME"
+            /tmp/mcp-publisher login github --token "$MCP_REGISTRY_GITHUB_TOKEN"
+          else
+            echo "MCP registry auth: using GitHub OIDC (no MCP registry secret). If this namespace is not covered by repo OIDC, configure secret MCP_REGISTRY_GITHUB_TOKEN."
+            /tmp/mcp-publisher login github-oidc
+          fi
           /tmp/mcp-publisher publish
-          echo "MCP registry publish completed for @coreguard/agent-commerce@$PKG_VERSION"
+          echo "MCP registry publish completed for @coreguard/agent-commerce@$PKG_VERSION ($SERVER_NAME)"
