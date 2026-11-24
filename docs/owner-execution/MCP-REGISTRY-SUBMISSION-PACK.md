@@ -52,6 +52,8 @@ node packages/agent-commerce/mcp.mjs
 
 **Rule.** Authenticate to the registry with the **GitHub device flow** (`mcp-publisher login github`) or, in CI, with **GitHub OIDC**. If a token is genuinely unavoidable, use a **fine-grained PAT** scoped to this single task — profile read only, no repository or organization permissions, shortest practical expiry — and treat it as disposable.
 
+**Release workflow automation (exact secret name).** `.github/workflows/release.yml` now publishes the MCP registry entry after a successful npm publish. It uses **GitHub OIDC** (`permissions: id-token: write`) and verifies the `mcp-publisher` Sigstore bundle before publishing. **Exact secret name required for MCP registry publishing: none.** The only repository/environment secret required by that workflow is **`NPM_TOKEN`** (npm publish). Do not add an MCP registry PAT unless you intentionally switch away from OIDC; if that ever happens, use a dedicated least-privilege secret name such as `MCP_REGISTRY_GITHUB_TOKEN` and keep it separate from `NPM_TOKEN`.
+
 **Why this note exists.** The 0.1.3 republication on 2026-11-22 exchanged a **classic** personal access token through `POST /v0/auth/github-at`. That token carried broad scopes, including `admin:org`, `delete_repo`, `repo` and `workflow`. It was transmitted only over HTTPS to `registry.modelcontextprotocol.io` and was never written into the repository, a log file, or this document — but a credential with that blast radius should not authorize a directory write. A classic token is also the wrong shape for the registry: it cannot be limited to "publish this one server".
 
 **Rotation steps (no secret values anywhere in this list).**

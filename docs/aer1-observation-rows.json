@@ -6,6 +6,13 @@
   "observationLayer": "CG-OBS/1",
   "parser": "CG-AER1/1",
   "joinKey": "name",
+  "kitObserver": {
+    "observer": "aer1-kit:per-vector",
+    "source": "pinned reference kit column, joined by name, not re-run",
+    "comparedRows": 66,
+    "comparedDivergences": 0,
+    "scope": "compared rows only where the pinned kit line carries a per-vector verdict; family-level-only kit lines remain unclaimed"
+  },
   "rows": [
     {
       "name": "anchor-resolves",
@@ -15,7 +22,13 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "present=true, evaluated=true, outcome=verified"
+      }
     },
     {
       "name": "anchor-unresolvable",
@@ -25,7 +38,13 @@
       "scope": "vector:bytes",
       "outcome": "unresolvable_record",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "present=true, evaluated=true, outcome=rejected: unresolvable record"
+      }
     },
     {
       "name": "anchor-not-checked",
@@ -35,7 +54,13 @@
       "scope": "vector:bytes",
       "outcome": "not_checked",
       "reason": "outside_scope",
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "present=true, evaluated=false, outcome=not checked"
+      }
     },
     {
       "name": "anchor-verification-failed",
@@ -45,7 +70,13 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "present=true, evaluated=true, outcome=verification failed"
+      }
     },
     {
       "name": "anchor-absent",
@@ -55,7 +86,13 @@
       "scope": "vector:bytes",
       "outcome": "absent",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "present=false, evaluated=false, outcome=absent"
+      }
     },
     {
       "name": "anchor-other-profile",
@@ -65,7 +102,13 @@
       "scope": "vector:bytes",
       "outcome": "absent",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "present=false, evaluated=false, outcome=absent"
+      }
     },
     {
       "name": "anchor-unresolvable-bad-leaf",
@@ -75,7 +118,13 @@
       "scope": "vector:bytes",
       "outcome": "unresolvable_record",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "present=true, evaluated=true, outcome=rejected: unresolvable record"
+      }
     },
     {
       "name": "anchor-partial-profile",
@@ -85,7 +134,13 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "present=true, evaluated=true, outcome=verification failed"
+      }
     },
     {
       "name": "v07-valid-5",
@@ -95,7 +150,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "v07-valid-single",
@@ -105,7 +161,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "v07-truncation-limit-prefix",
@@ -115,7 +172,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "v07-relabel-provenance",
@@ -125,7 +183,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry"
+      "detail": "every link recomputes from the previous entry",
+      "kitObserver": null
     },
     {
       "name": "v07-relabel-tool-id",
@@ -135,7 +194,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry"
+      "detail": "every link recomputes from the previous entry",
+      "kitObserver": null
     },
     {
       "name": "v07-close-middle",
@@ -145,7 +205,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry; close is boolean and true only on the last entry"
+      "detail": "every link recomputes from the previous entry; close is boolean and true only on the last entry",
+      "kitObserver": null
     },
     {
       "name": "v07-close-wrong-type",
@@ -155,7 +216,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "close is boolean and true only on the last entry; the timeline ends with a closing entry"
+      "detail": "close is boolean and true only on the last entry; the timeline ends with a closing entry",
+      "kitObserver": null
     },
     {
       "name": "v07-delete-identical-pair",
@@ -165,7 +227,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-insert-duplicate",
@@ -175,7 +238,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-splice-cross-job",
@@ -185,7 +249,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-bad-genesis",
@@ -195,7 +260,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "first entry carries the zero genesis digest; every link recomputes from the previous entry"
+      "detail": "first entry carries the zero genesis digest; every link recomputes from the previous entry",
+      "kitObserver": null
     },
     {
       "name": "v07-seq-gap",
@@ -205,7 +271,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-mixed-job-id",
@@ -215,7 +282,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-bad-base64",
@@ -225,7 +293,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry"
+      "detail": "every link recomputes from the previous entry",
+      "kitObserver": null
     },
     {
       "name": "v07-v06-chain-rejected",
@@ -235,7 +304,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-seq-float-valid",
@@ -245,7 +315,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "v07-seq-bool-invalid",
@@ -255,7 +326,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-seq-fraction-invalid",
@@ -265,7 +337,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-seq-negative-invalid",
@@ -275,7 +348,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-seq-string-invalid",
@@ -285,7 +359,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-seq-null-invalid",
@@ -295,7 +370,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "v07-seq-missing-invalid",
@@ -305,7 +381,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class",
+      "kitObserver": null
     },
     {
       "name": "x-genesis-single",
@@ -315,7 +392,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "first entry carries the zero genesis digest"
+      "detail": "first entry carries the zero genesis digest",
+      "kitObserver": null
     },
     {
       "name": "x-encoding-reference",
@@ -325,7 +403,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "x-encoding-draft-literal",
@@ -335,7 +414,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry"
+      "detail": "every link recomputes from the previous entry",
+      "kitObserver": null
     },
     {
       "name": "ax-genesis-single",
@@ -345,7 +425,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "first entry carries the zero genesis digest"
+      "detail": "first entry carries the zero genesis digest",
+      "kitObserver": null
     },
     {
       "name": "ax-esc-hex-upper",
@@ -355,7 +436,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry"
+      "detail": "every link recomputes from the previous entry",
+      "kitObserver": null
     },
     {
       "name": "ax-esc-long-escape",
@@ -365,7 +447,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry"
+      "detail": "every link recomputes from the previous entry",
+      "kitObserver": null
     },
     {
       "name": "chain-valid-3",
@@ -375,7 +458,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "chain-single-entry-valid",
@@ -385,7 +469,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "chain-tampered-middle",
@@ -395,7 +480,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry"
+      "detail": "every link recomputes from the previous entry",
+      "kitObserver": null
     },
     {
       "name": "chain-truncated-no-close",
@@ -405,7 +491,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "the timeline ends with a closing entry"
+      "detail": "the timeline ends with a closing entry",
+      "kitObserver": null
     },
     {
       "name": "chain-reordered",
@@ -415,7 +502,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "every link recomputes from the previous entry; close is boolean and true only on the last entry; the timeline ends with a closing entry"
+      "detail": "every link recomputes from the previous entry; close is boolean and true only on the last entry; the timeline ends with a closing entry",
+      "kitObserver": null
     },
     {
       "name": "chain-bad-genesis",
@@ -425,7 +513,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "first entry carries the zero genesis digest"
+      "detail": "first entry carries the zero genesis digest",
+      "kitObserver": null
     },
     {
       "name": "chain-close-wrong-type",
@@ -435,7 +524,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "close is boolean and true only on the last entry; the timeline ends with a closing entry"
+      "detail": "close is boolean and true only on the last entry; the timeline ends with a closing entry",
+      "kitObserver": null
     },
     {
       "name": "commit-valid-1",
@@ -445,7 +535,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "commit-digest-mismatch",
@@ -455,7 +546,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "final_entry_digest is lowercase hex and matches the last entry"
+      "detail": "final_entry_digest is lowercase hex and matches the last entry",
+      "kitObserver": null
     },
     {
       "name": "commit-count-mismatch",
@@ -465,7 +557,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "entry_count is an integer equal to the number of entries"
+      "detail": "entry_count is an integer equal to the number of entries",
+      "kitObserver": null
     },
     {
       "name": "commit-job-mismatch",
@@ -475,7 +568,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "commitment job_id matches the timeline's job"
+      "detail": "commitment job_id matches the timeline's job",
+      "kitObserver": null
     },
     {
       "name": "commit-malformed-missing",
@@ -485,7 +579,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "commitment carries job_id, final_entry_digest, entry_count and published_at; final_entry_digest is lowercase hex and matches the last entry"
+      "detail": "commitment carries job_id, final_entry_digest, entry_count and published_at; final_entry_digest is lowercase hex and matches the last entry",
+      "kitObserver": null
     },
     {
       "name": "commit-malformed-types",
@@ -495,7 +590,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "final_entry_digest is lowercase hex and matches the last entry; entry_count is an integer equal to the number of entries; published_at is an RFC 3339 timestamp"
+      "detail": "final_entry_digest is lowercase hex and matches the last entry; entry_count is an integer equal to the number of entries; published_at is an RFC 3339 timestamp",
+      "kitObserver": null
     },
     {
       "name": "commit-not-an-object",
@@ -505,7 +601,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "commitment is an object"
+      "detail": "commitment is an object",
+      "kitObserver": null
     },
     {
       "name": "x-entry-count-float",
@@ -515,7 +612,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "entry_count is an integer equal to the number of entries"
+      "detail": "entry_count is an integer equal to the number of entries",
+      "kitObserver": null
     },
     {
       "name": "id-alone-unverified",
@@ -525,7 +623,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "the committed digest disagrees with the id it was presented under"
+      "detail": "the committed digest disagrees with the id it was presented under",
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "id-binding:check",
+        "outcome": "verified",
+        "note": "all as expected"
+      }
     },
     {
       "name": "id-expected-match",
@@ -535,7 +639,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "id-binding:check",
+        "outcome": "verified",
+        "note": "all as expected"
+      }
     },
     {
       "name": "id-expected-mismatch",
@@ -545,7 +655,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "the committed digest disagrees with the id it was presented under"
+      "detail": "the committed digest disagrees with the id it was presented under",
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "id-binding:check",
+        "outcome": "verified",
+        "note": "all as expected"
+      }
     },
     {
       "name": "id-resolution-agreement",
@@ -555,7 +671,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "the committed digest disagrees with the id it was presented under"
+      "detail": "the committed digest disagrees with the id it was presented under",
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "id-binding:check",
+        "outcome": "verified",
+        "note": "all as expected"
+      }
     },
     {
       "name": "id-resolution-disagreement",
@@ -565,7 +687,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "the committed digest disagrees with the id it was presented under"
+      "detail": "the committed digest disagrees with the id it was presented under",
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "id-binding:check",
+        "outcome": "verified",
+        "note": "all as expected"
+      }
     },
     {
       "name": "id-absent",
@@ -575,7 +703,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "the committed digest disagrees with the id it was presented under"
+      "detail": "the committed digest disagrees with the id it was presented under",
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "id-binding:check",
+        "outcome": "verified",
+        "note": "all as expected"
+      }
     },
     {
       "name": "canonical-5-step",
@@ -585,7 +719,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "legacy-construction-rejected",
@@ -595,7 +730,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "vector carries receipt_ids, not the legacy preimage form; every receipt_id is a non-empty string; merkle root recomputes from the receipt ids in file order; the root is not the rejected construction's root"
+      "detail": "vector carries receipt_ids, not the legacy preimage form; every receipt_id is a non-empty string; merkle root recomputes from the receipt ids in file order; the root is not the rejected construction's root",
+      "kitObserver": null
     },
     {
       "name": "odd-duplication-3",
@@ -605,7 +741,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "ordering-matters",
@@ -615,7 +752,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "single-leaf",
@@ -625,7 +763,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "empty",
@@ -635,7 +774,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "worked-example-byte-exact",
@@ -645,7 +785,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "duplicate-receipt-id-collision",
@@ -655,7 +796,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "no receipt_id appears twice"
+      "detail": "no receipt_id appears twice",
+      "kitObserver": null
     },
     {
       "name": "one-step-single-receipt",
@@ -665,7 +807,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "anchored-bad-id-version.json",
@@ -675,7 +818,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "anchored receipt id is a lowercase UUID v4"
+      "detail": "anchored receipt id is a lowercase UUID v4",
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "outcome: verification failed) (tier: id is not a UUID v4 (strict profile)"
+      }
     },
     {
       "name": "anchored-bad-leaf-hash.json",
@@ -685,7 +834,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "the resolved leaf digest equals the committed leaf_hash; leaf_hash equals the digest of canonical_bytes; leaf_hash equals the receipt output_hash"
+      "detail": "the resolved leaf digest equals the committed leaf_hash; leaf_hash equals the digest of canonical_bytes; leaf_hash equals the receipt output_hash",
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "outcome: verification failed) (tier: anchor.leaf_hash does not match canonical_bytes"
+      }
     },
     {
       "name": "anchored-bad-timestamp.json",
@@ -695,7 +850,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "anchored_at is a calendar-valid RFC 3339 instant"
+      "detail": "anchored_at is a calendar-valid RFC 3339 instant",
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "outcome: verification failed) (tier: anchor.anchored_at is not a valid calendar date/time"
+      }
     },
     {
       "name": "anchored-missing-proof.json",
@@ -705,7 +866,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "anchor carries exactly the Section 3.3 profile; proof is present and non-empty"
+      "detail": "anchor carries exactly the Section 3.3 profile; proof is present and non-empty",
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "outcome: verification failed) (tier: anchor has members other than log/leaf_hash/anchored_at/proof"
+      }
     },
     {
       "name": "anchored-unresolvable-anchor.json",
@@ -715,7 +882,13 @@
       "scope": "record:bytes",
       "outcome": "unresolvable_record",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "outcome: rejected: unresolvable record"
+      }
     },
     {
       "name": "anchored-valid.json",
@@ -725,7 +898,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "outcome: verified"
+      }
     },
     {
       "name": "missing-inputs.json",
@@ -735,7 +914,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "core accepted, profile rejected: reference-producer payload omits the 'inputs' member"
+      }
     },
     {
       "name": "ax-base64-unpadded.json",
@@ -745,7 +930,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: canonical_bytes is not valid base64"
+      }
     },
     {
       "name": "ax-feb29-1900.json",
@@ -755,7 +946,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: created_at is not a valid calendar date/time"
+      }
     },
     {
       "name": "ax-feb29-non-leap.json",
@@ -765,7 +962,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: created_at is not a valid calendar date/time"
+      }
     },
     {
       "name": "ax-tool-empty-scope.json",
@@ -775,7 +978,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: tool is not an object with name/version/scope strings"
+      }
     },
     {
       "name": "bad-created-at.json",
@@ -785,7 +994,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: created_at is not RFC 3339"
+      }
     },
     {
       "name": "bad-id.json",
@@ -795,7 +1010,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: id is not a lowercase UUID"
+      }
     },
     {
       "name": "bad-offset-range.json",
@@ -805,7 +1026,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: created_at is not a valid calendar date/time"
+      }
     },
     {
       "name": "bad-provenance.json",
@@ -815,7 +1042,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: provenance_class is not a known class"
+      }
     },
     {
       "name": "bad-verification-status.json",
@@ -825,7 +1058,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: verification_status is not verified"
+      }
     },
     {
       "name": "base64-pad-bit.json",
@@ -835,7 +1074,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: canonical_bytes is not the canonical base64 spelling"
+      }
     },
     {
       "name": "base64-unpadded.json",
@@ -845,7 +1090,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: canonical_bytes is not valid base64"
+      }
     },
     {
       "name": "bytes-not-base64.json",
@@ -855,7 +1106,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: canonical_bytes is not valid base64"
+      }
     },
     {
       "name": "duplicate-member-name.json",
@@ -865,7 +1122,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: duplicate member name: output_hash"
+      }
     },
     {
       "name": "feb29-1900.json",
@@ -875,7 +1138,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: created_at is not a valid calendar date/time"
+      }
     },
     {
       "name": "feb29-non-leap.json",
@@ -885,7 +1154,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: created_at is not a valid calendar date/time"
+      }
     },
     {
       "name": "hash-bad-format.json",
@@ -895,7 +1170,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: output_hash is not sha256: + lowercase hex digest"
+      }
     },
     {
       "name": "hash-mismatch.json",
@@ -905,7 +1186,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: output_hash does not match sha256(canonical_bytes)"
+      }
     },
     {
       "name": "id-trailing-newline.json",
@@ -915,7 +1202,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: id is not a lowercase UUID"
+      }
     },
     {
       "name": "impossible-date.json",
@@ -925,7 +1218,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: created_at is not a valid calendar date/time"
+      }
     },
     {
       "name": "input-hash-key-order-20.json",
@@ -935,7 +1234,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: input_hash does not match sha256(canonical JSON of the recorded inputs)"
+      }
     },
     {
       "name": "input-hash-mismatch.json",
@@ -945,7 +1250,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: input_hash does not match sha256(canonical JSON of the recorded inputs)"
+      }
     },
     {
       "name": "leap-second-created-at.json",
@@ -955,7 +1266,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: created_at is not a valid calendar date/time"
+      }
     },
     {
       "name": "lowercase-timestamp.json",
@@ -965,7 +1282,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: created_at is not RFC 3339"
+      }
     },
     {
       "name": "missing-output-hash.json",
@@ -975,7 +1298,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: missing required member: output_hash"
+      }
     },
     {
       "name": "nil-uuid.json",
@@ -985,7 +1314,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: id is the nil UUID"
+      }
     },
     {
       "name": "non-utf8-bytes.json",
@@ -995,7 +1330,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: canonical_bytes is not valid UTF-8"
+      }
     },
     {
       "name": "payload-is-array.json",
@@ -1005,7 +1346,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: receipt_schema_version: one side missing (outer=\"0.4\" committed=null)"
+      }
     },
     {
       "name": "payload-omits-issuer-claims.json",
@@ -1015,7 +1362,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: provenance binding: one side missing (outer=\"EXECUTED BY ZAMBO\" committed=null)"
+      }
     },
     {
       "name": "provenance-control-char.json",
@@ -1025,7 +1378,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: provenance_class is not a known class"
+      }
     },
     {
       "name": "provenance-trailing-newline.json",
@@ -1035,7 +1394,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: provenance_class is not a known class"
+      }
     },
     {
       "name": "tampered-provenance.json",
@@ -1045,7 +1410,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: provenance binding: outer \"LOGGED BY AGENT\" does not match committed \"EXECUTED BY ZAMBO\""
+      }
     },
     {
       "name": "timestamp-no-timezone.json",
@@ -1055,7 +1426,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: created_at is not RFC 3339"
+      }
     },
     {
       "name": "tool-empty-name.json",
@@ -1065,7 +1442,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: tool is not an object with name/version/scope strings"
+      }
     },
     {
       "name": "tool-not-object.json",
@@ -1075,7 +1458,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: tool is not an object with name/version/scope strings"
+      }
     },
     {
       "name": "uppercase-id.json",
@@ -1085,7 +1474,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: id is not a lowercase UUID"
+      }
     },
     {
       "name": "version-downgrade.json",
@@ -1095,7 +1490,13 @@
       "scope": "record:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "invalid",
+        "note": "rejected: receipt_schema_version: outer \"0.3\" does not match committed \"0.4\""
+      }
     },
     {
       "name": "bound-04.json",
@@ -1105,7 +1506,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "deep-nesting.json",
@@ -1115,7 +1517,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "edge-numbers.json",
@@ -1125,7 +1528,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "empty-members.json",
@@ -1135,7 +1539,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "feb29-leap.json",
@@ -1145,7 +1550,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "legacy notice"
+      }
     },
     {
       "name": "fraction-one-digit.json",
@@ -1155,7 +1566,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "legacy notice"
+      }
     },
     {
       "name": "input-hash-multikey-20.json",
@@ -1165,7 +1582,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "large-payload.json",
@@ -1175,7 +1593,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "legacy-02.json",
@@ -1185,7 +1604,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "legacy notice"
+      }
     },
     {
       "name": "legacy-03.json",
@@ -1195,7 +1620,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "legacy notice"
+      }
     },
     {
       "name": "legacy-real-2.json",
@@ -1205,7 +1636,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "legacy notice"
+      }
     },
     {
       "name": "maximum-offset-timestamp.json",
@@ -1215,7 +1652,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "metadata-hash-non-ascii-tool.json",
@@ -1225,7 +1663,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "optional-members-18.json",
@@ -1235,7 +1674,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "real-04.json",
@@ -1245,7 +1685,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "real-1-bare.json",
@@ -1255,7 +1696,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "legacy notice"
+      }
     },
     {
       "name": "receipt-01.json",
@@ -1265,7 +1712,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "legacy notice"
+      }
     },
     {
       "name": "receipt-02.json",
@@ -1275,7 +1728,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "legacy notice"
+      }
     },
     {
       "name": "receipt-03-live.json",
@@ -1285,7 +1744,13 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": {
+        "observer": "aer1-kit:per-vector",
+        "scope": "record:bytes",
+        "outcome": "verified",
+        "note": "legacy notice"
+      }
     },
     {
       "name": "typographic-unicode.json",
@@ -1295,7 +1760,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "uuid-v1-core.json",
@@ -1305,7 +1771,8 @@
       "scope": "record:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "unicode-nfc-form",
@@ -1315,7 +1782,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "unicode-nfd-form",
@@ -1325,7 +1793,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "unicode-nfd-against-nfc-commitment",
@@ -1335,7 +1804,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "the digest recomputes from the raw bytes without normalization"
+      "detail": "the digest recomputes from the raw bytes without normalization",
+      "kitObserver": null
     },
     {
       "name": "unicode-narrow-nbsp-curly-quote",
@@ -1345,7 +1815,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "unicode-nonbreaking-hyphen-against-ascii",
@@ -1355,7 +1826,8 @@
       "scope": "vector:bytes",
       "outcome": "verification_failed",
       "reason": null,
-      "detail": "the digest recomputes from the raw bytes without normalization"
+      "detail": "the digest recomputes from the raw bytes without normalization",
+      "kitObserver": null
     },
     {
       "name": "legacy-receipt-id-v0-mixed-version",
@@ -1365,7 +1837,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "seq-output-v1-single-step",
@@ -1375,7 +1848,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "seq-output-v1-multi-step",
@@ -1385,7 +1859,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "seq-output-v1-odd-level-duplicates-last",
@@ -1395,7 +1870,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "seq-output-v1-multi-step-odd-levels",
@@ -1405,7 +1881,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "xversion-seq-output-v1-evaluated-as-receipt-id-v0",
@@ -1415,7 +1892,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "xversion-receipt-id-v0-evaluated-as-seq-output-v1",
@@ -1425,7 +1903,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     },
     {
       "name": "seq-output-v1-thirteen-step",
@@ -1435,7 +1914,8 @@
       "scope": "vector:bytes",
       "outcome": "verified",
       "reason": null,
-      "detail": null
+      "detail": null,
+      "kitObserver": null
     }
   ],
   "fileReads": [

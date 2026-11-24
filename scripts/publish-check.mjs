@@ -193,6 +193,34 @@ function checkDependencyTruth(dir, pkg, shipped) {
   }
 }
 
+function checkAgentCommerceManifest(dir, pkg, shipped) {
+  if (dir !== "agent-commerce") return;
+  if (!shipped.includes("server.json")) {
+    note(dir, "mcp-manifest", "server.json is missing from the packed tarball");
+    return;
+  }
+  let server;
+  try {
+    server = JSON.parse(readFileSync(join(REPO, "packages", dir, "server.json"), "utf8"));
+  } catch (e) {
+    note(dir, "mcp-manifest", `server.json is not valid JSON: ${e.message}`);
+    return;
+  }
+  const expectedName = "io.github.EslaM-X/coreguard-agent-commerce";
+  if (server.name !== expectedName) note(dir, "mcp-manifest", `server.json name is ${server.name}, expected ${expectedName}`);
+  if (pkg.mcpName && pkg.mcpName !== server.name) note(dir, "mcp-manifest", `package.json mcpName ${pkg.mcpName} does not match server.json name ${server.name}`);
+  if (server.version !== pkg.version) note(dir, "mcp-manifest", `server.json version ${server.version} does not match package.json version ${pkg.version}`);
+  const p0 = Array.isArray(server.packages) ? server.packages[0] : null;
+  if (!p0) {
+    note(dir, "mcp-manifest", "server.json packages[0] is missing");
+    return;
+  }
+  if (p0.identifier !== pkg.name) note(dir, "mcp-manifest", `server.json packages[0].identifier ${p0.identifier} does not match ${pkg.name}`);
+  if (p0.version !== pkg.version) note(dir, "mcp-manifest", `server.json packages[0].version ${p0.version} does not match package.json version ${pkg.version}`);
+  if (p0.registryType !== "npm") note(dir, "mcp-manifest", `server.json packages[0].registryType is ${p0.registryType}, expected npm`);
+  if (p0.transport?.type !== "stdio") note(dir, "mcp-manifest", `server.json packages[0].transport.type is ${p0.transport?.type}, expected stdio`);
+}
+
 // ---------- install parity (the end-to-end proof) --------------------------
 
 function checkInstallParity(dir, pkg, scratch) {
@@ -282,6 +310,7 @@ try {
     checkFilesCoverage(dir, pkg, shipped);
     checkEscapes(dir, pkg, shipped);
     checkDependencyTruth(dir, pkg, shipped);
+    checkAgentCommerceManifest(dir, pkg, shipped);
     checkInstallParity(dir, pkg, scratch);
     console.log(`checked @coreguard/${dir}: ${shipped.length} files, probes ${findings.some((f) => f.pkg === dir && f.check === "install-parity") ? "FAILED" : "ok"}`);
   }

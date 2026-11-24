@@ -120,6 +120,11 @@ function build() {
     entry.parser.events += 1;
     entry.parser[observation.outcome] += 1;
     if (observation.reason) entry.parser.reasons.add(observation.reason);
+    if (observation.kitObserver?.outcome) {
+      entry.kitObserver ??= { compared: 0, verified: 0, verification_failed: 0, not_per_vector: 0 };
+      entry.kitObserver.compared += 1;
+      entry.kitObserver[observation.kitObserver.outcome] = (entry.kitObserver[observation.kitObserver.outcome] ?? 0) + 1;
+    }
     families.set(entry.key, entry);
   }
   for (const observation of bytes) {
@@ -162,6 +167,7 @@ function build() {
       outcome: o.outcome,
       reason: o.reason,
       detail: o.detail ?? null,
+      kitObserver: o.kitObserver ?? null,
     })),
   };
 }
@@ -189,7 +195,7 @@ function render(report) {
     "The per-vector rows this page is computed from are committed as [aer1-observation-rows.json](./aer1-observation-rows.json), stable and sorted, so the rows can be run and joined from the other side instead of being re-read out of a screenshot.",
   );
   out.push("");
-  out.push("## The two readers, and what each one claims");
+  out.push("## The readers, and what each one claims");
   out.push("");
   out.push("| Observer | Scope | One row per | It can say | It cannot say |");
   out.push("|---|---|---|---|---|");
@@ -199,15 +205,25 @@ function render(report) {
   out.push(
     "| `cg-aer1:bytes` | `file:sha256` | corpus file | whether the bytes on disk are the bytes the set pinned | anything about content, validity or outcomes |",
   );
-  out.push("");
   out.push(
-    "Both readers are this side's. The reference kit's column is the third reader and it is pinned, not re-run here. None of the three is a claim that the work a record describes happened.",
+    "| `aer1-kit:per-vector` | compared row | vector, only where the pinned kit line names a per-vector verdict | the reference kit's pinned per-vector outcome for that compared row | anything on family-level-only kit lines, and anything not published as a per-vector verdict |",
+  );
+  out.push("");
+  const kitCompared = report.observations.filter((o) => o.kitObserver).length;
+  const comparedDivergences = report.observations.filter((o) => {
+    if (!o.kitObserver) return false;
+    const ours = o.outcome === "verified" ? "verified" : "invalid";
+    if (o.family === "id-binding") return o.kitObserver.outcome !== "verified";
+    return o.kitObserver.outcome !== ours;
+  }).length;
+  out.push(
+    `\`cg-aer1:parser\` and \`cg-aer1:bytes\` are this side's reads. \`aer1-kit:per-vector\` is the reference kit's pinned column joined by vector name, not re-run here. It is scoped to **${kitCompared} compared rows** where the kit line carries a per-vector verdict and CG-AER1/1 judges the row; on the remaining families the kit line is family-level only and this page leaves it unclaimed. On those ${kitCompared} compared rows the divergence count is **${comparedDivergences}**. None of these observers is a claim that the work a record describes happened.`,
   );
   out.push("");
   out.push("## Families, joined");
   out.push("");
-  out.push("| Family | Vectors | `cg-aer1:parser` | `cg-aer1:bytes` | Reference kit | Divergence |");
-  out.push("|---|---|---|---|---|---|");
+  out.push("| Family | Vectors | `cg-aer1:parser` | `cg-aer1:bytes` | `aer1-kit:per-vector` (compared only) | Reference kit | Divergence |");
+  out.push("|---|---|---|---|---|---|---|");
   for (const row of rows) {
     const parser = cell(row.parser, [
       ["verified", "verified"],
@@ -218,9 +234,12 @@ function render(report) {
     ]);
     const reasons = row.parser.not_checked && row.parser.reasons.size ? ` (${[...row.parser.reasons].join(", ")})` : "";
     const bytes = row.bytes.files === 0 ? "—" : `${row.bytes.files} ${row.bytes.files === 1 ? "file" : "files"} · ${cell(row.bytes, [["verified", "verified"], ["verification_failed", "failed"], ["absent", "absent"]])}`;
+    const kitObserver = row.kitObserver
+      ? cell(row.kitObserver, [["verified", "verified"], ["verification_failed", "verification failed"], ["invalid", "invalid"]])
+      : "— (family-level only, unclaimed)";
     const kit = row.kit.checks === 0 ? "—" : `${row.kit.checks} ${row.kit.checks === 1 ? "check" : "checks"}${row.kit.compared ? ` · ${row.kit.compared} compared` : ""}`;
     const divergence = row.kit.compared === 0 ? "— (no per-vector verdict on the kit line)" : row.kit.divergences.length === 0 ? `0 of ${row.kit.compared}` : row.kit.divergences.map((d) => `\`${d.name}\``).join(", ");
-    out.push(`| \`${row.key}\` | ${row.vectors} | ${parser}${reasons} | ${bytes} | ${kit} | ${divergence} |`);
+    out.push(`| \`${row.key}\` | ${row.vectors} | ${parser}${reasons} | ${bytes} | ${kitObserver} | ${kit} | ${divergence} |`);
   }
   out.push("");
   out.push(
@@ -266,7 +285,10 @@ function render(report) {
   out.push("## What the join shows, and what it refuses to show");
   out.push("");
   out.push(
-    `- The joined verdict column has ${divergences.length === 0 ? "no divergence" : `${divergences.length} divergences`} against the reference kit on ${rows.reduce((n, row) => n + row.kit.compared, 0)} compared vectors. The observation column adds reads; it does not move that number.`,
+    `- The \`aer1-kit:per-vector\` observer column is present for **${kitCompared} compared rows** and unclaimed elsewhere. On those ${kitCompared} rows the divergence count is **${comparedDivergences}**; on family-level-only kit lines there is no per-vector verdict to compare, so the page does not invent one.`,
+  );
+  out.push(
+    `- The joined verdict column has ${divergences.length === 0 ? "no divergence" : `${divergences.length} divergences`} against the reference kit on ${rows.reduce((n, row) => n + row.kit.compared, 0)} compared vectors. The observation columns add reads; they do not move that number.`,
   );
   out.push(
     "- These rows carry no timestamps. A clock value on a corpus read would be invented, and the layer refuses invented time where it matters: the ledger page exercises the append-order rule with a real backfilled read and a named refusal (`OUT_OF_ORDER`).",
@@ -317,6 +339,18 @@ if (invokedDirectly) {
       observationLayer: OBSERVATION_VERSION,
       parser: report.report.parserVersion,
       joinKey: "name",
+      kitObserver: {
+        observer: "aer1-kit:per-vector",
+        source: "pinned reference kit column, joined by name, not re-run",
+        comparedRows: report.observations.filter((o) => o.kitObserver).length,
+        comparedDivergences: report.observations.filter((o) => {
+          if (!o.kitObserver) return false;
+          const ours = o.outcome === "verified" ? "verified" : "invalid";
+          if (o.family === "id-binding") return o.kitObserver.outcome !== "verified";
+          return o.kitObserver.outcome !== ours;
+        }).length,
+        scope: "compared rows only where the pinned kit line carries a per-vector verdict; family-level-only kit lines remain unclaimed",
+      },
       rows: report.observations,
       fileReads: report.bytes,
     },
