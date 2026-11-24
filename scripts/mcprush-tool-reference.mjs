@@ -14,9 +14,10 @@
 
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline";
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { createControlPlane } from "../packages/agent-commerce/control-plane.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(here, "..");
@@ -26,6 +27,27 @@ const CHECK = process.argv.includes("--check");
 
 const pkg = JSON.parse(readFileSync(resolve(ROOT, "packages/agent-commerce/package.json"), "utf8"));
 const server = JSON.parse(readFileSync(resolve(ROOT, "packages/agent-commerce/server.json"), "utf8"));
+
+/**
+ * The CGCP/1 tools operate on a file-backed control plane, so the reference seeds
+ * one exactly the way an operator would: a policy, an agent bound to it, then the
+ * MCP calls. The seed clock is pinned; the MCP server's own clock is not, which is
+ * why those six results are printed as stable-field summaries instead of raw
+ * objects (the omitted fields are call-time stamps and hashes over them).
+ */
+const CONTROL_PLANE_RELATIVE = "tmp/mcprush-reference/control-plane.json";
+
+function seedControlPlane() {
+  const dir = resolve(ROOT, "tmp/mcprush-reference");
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  const storePath = join(dir, "control-plane.json");
+  const plane = createControlPlane({ storePath, now: () => new Date("2026-11-22T10:00:00.000Z"), create: true });
+  plane.upsertPolicy({ id: "policy-01", name: "Agent Commerce Policy", spendLimitMinor: "50000", allowMerchants: ["synthetic-store.example"] });
+  plane.upsertAgent({ id: "agent-0001", name: "Agent One" });
+  plane.bindPolicy("agent-0001", "policy-01");
+  return storePath;
+}
 
 const MERCHANT = "0x0000000000000000000000000000000000000042";
 const AGENT = "0x000000000000000000000000000000000000000d";
@@ -148,6 +170,7 @@ async function buildExamples(rpc) {
 
   const int = intent();
   const pol = policy();
+  const store = seedControlPlane();
 
   const consent = await call("coreguard_authorize", { intent: int, policy: pol, declaredTrace: trace(), nowSeconds: NOW });
   const consentRecord = consent.consent ?? consent;
@@ -184,6 +207,75 @@ async function buildExamples(rpc) {
     receiptId: consentRecord.receipt?.receiptId ?? consentRecord.receiptId ?? "rcpt-example-0001",
     action: "check",
   });
+
+  // Wave 1 — deterministic offline evidence tools (full result is reproducible).
+  const challenge = { accepts: [{ scheme: "exact", network: "base", asset: "USDC", amount: "100", payTo: "0xabc" }] };
+  const x402Policy = { maxAmount: "100", allowedNetworks: ["base"], allowedAssets: ["USDC"], allowedPayTo: ["0xabc"] };
+  const x402Parsed = await call("coreguard_parse_x402_challenge", { challenge });
+  const x402Authorized = await call("coreguard_authorize_x402_payment", { challenge, policy: x402Policy });
+  const settlement = { network: "base", asset: "USDC", amount: "100", payTo: "0xabc", txRef: "0xexample", status: "confirmed" };
+  const x402Settled = await call("coreguard_verify_x402_settlement", { challenge, settlement });
+  const reconciled = await call("coreguard_reconcile_payment", {
+    authorization: x402Authorized,
+    challenge,
+    settlement,
+    receipt: { authorizationId: x402Authorized.authorizationId, txRef: "0xexample" },
+  });
+  const usage = await call("coreguard_meter_agent_usage", { agentId: "agent-0001", currency: "USD", events: [{ amount: "10" }, { amount: "25", resource: "tool" }] });
+  const machine = await call("coreguard_register_machine", { machineId: "machine-0001", owner: "org-example", manifest: { capabilities: ["deliver", "scan"], model: "R2" } });
+  const machineTask = await call("coreguard_create_machine_task", { taskId: "task-0001", machineId: "machine-0001", terms: { price: "500", currency: "USD", sla: "30m" } });
+  const telemetry = await call("coreguard_verify_telemetry", { taskId: "task-0001", telemetry: { machineId: "machine-0001", timestamp: 1, readings: [{ k: "temp", v: 1 }] } });
+  const completion = await call("coreguard_verify_task_completion", {
+    task: machineTask,
+    completion: { taskId: "task-0001", machineId: "machine-0001", status: "completed", evidence: [{ type: "photo", ref: "hash://1" }] },
+  });
+  const delegation = await call("coreguard_verify_delegation_chain", {
+    chain: [{ delegator: "did:example:hq", delegate: "did:example:agent-0001", scope: ["pay"], signature: "sig" }],
+  });
+
+  // Wave 2 — CGCP/1 mappings against the seeded file-backed plane.
+  const cgcpIntent = await call("coreguard_create_intent", {
+    storePath: store,
+    intentId: "intent-0001",
+    agentId: "agent-0001",
+    policyId: "policy-01",
+    merchant: "synthetic-store.example",
+    amountMinor: "47000",
+    currency: "USD",
+    requestedBy: "owner@example",
+  });
+  const cgcpReceipt = await call("coreguard_issue_receipt", {
+    storePath: store,
+    receiptId: "receipt-0001",
+    agentId: "agent-0001",
+    policyId: "policy-01",
+    approvalId: "intent-0001",
+    merchant: "synthetic-store.example",
+    amountMinor: "47000",
+    currency: "USD",
+    status: "executed",
+    txRef: "0xexample",
+  });
+  const cgcpVerified = await call("coreguard_verify_receipt", { storePath: store, receiptId: "receipt-0001" });
+  const cgcpLimits = await call("coreguard_check_limits", {
+    storePath: store,
+    agentId: "agent-0001",
+    policyId: "policy-01",
+    merchant: "synthetic-store.example",
+    amountMinor: "47000",
+    currency: "USD",
+    approvalId: "intent-0001",
+  });
+  const cgcpRevoked = await call("coreguard_revoke_consent", {
+    storePath: store,
+    targetType: "approval",
+    targetId: "intent-0001",
+    reason: "owner revoked before execution",
+    decidedBy: "owner@example",
+  });
+  const cgcpAudit = await call("coreguard_audit_transaction", { storePath: store, agentId: "agent-0001", limit: 20 });
+
+  const pick = (source, keys) => Object.fromEntries(keys.filter((k) => source?.[k] !== undefined).map((k) => [k, source[k]]));
 
   const use = (what) => ({ $ref: what });
 
@@ -248,6 +340,118 @@ async function buildExamples(rpc) {
     coreguard_consumption_status: {
       args: { receiptId: consentRecord.receipt?.receiptId ?? consentRecord.receiptId ?? "rcpt-example-0001", action: "check" },
       out: consumption,
+    },
+    coreguard_parse_x402_challenge: { args: { challenge }, out: x402Parsed },
+    coreguard_authorize_x402_payment: { args: { challenge, policy: x402Policy }, out: x402Authorized },
+    coreguard_verify_x402_settlement: { args: { challenge, settlement }, out: x402Settled },
+    coreguard_reconcile_payment: {
+      args: { authorization: x402Authorized, challenge, settlement, receipt: { authorizationId: x402Authorized.authorizationId, txRef: "0xexample" } },
+      display: {
+        authorization: use("authorization decision returned by coreguard_authorize_x402_payment"),
+        challenge,
+        settlement,
+        receipt: { authorizationId: x402Authorized.authorizationId, txRef: "0xexample" },
+      },
+      out: reconciled,
+    },
+    coreguard_meter_agent_usage: {
+      args: { agentId: "agent-0001", currency: "USD", events: [{ amount: "10" }, { amount: "25", resource: "tool" }] },
+      out: usage,
+    },
+    coreguard_register_machine: {
+      args: { machineId: "machine-0001", owner: "org-example", manifest: { capabilities: ["deliver", "scan"], model: "R2" } },
+      out: machine,
+    },
+    coreguard_create_machine_task: {
+      args: { taskId: "task-0001", machineId: "machine-0001", terms: { price: "500", currency: "USD", sla: "30m" } },
+      out: machineTask,
+    },
+    coreguard_verify_telemetry: {
+      args: { taskId: "task-0001", telemetry: { machineId: "machine-0001", timestamp: 1, readings: [{ k: "temp", v: 1 }] } },
+      out: telemetry,
+    },
+    coreguard_verify_task_completion: {
+      args: { task: machineTask, completion: { taskId: "task-0001", machineId: "machine-0001", status: "completed", evidence: [{ type: "photo", ref: "hash://1" }] } },
+      display: {
+        task: use("machine task record returned by coreguard_create_machine_task"),
+        completion: { taskId: "task-0001", machineId: "machine-0001", status: "completed", evidence: [{ type: "photo", ref: "hash://1" }] },
+      },
+      out: completion,
+    },
+    coreguard_verify_delegation_chain: {
+      args: { chain: [{ delegator: "did:example:hq", delegate: "did:example:agent-0001", scope: ["pay"], signature: "sig" }] },
+      out: delegation,
+    },
+    coreguard_create_intent: {
+      args: { storePath: CONTROL_PLANE_RELATIVE, intentId: "intent-0001", agentId: "agent-0001", policyId: "policy-01", merchant: "synthetic-store.example", amountMinor: "47000", currency: "USD", requestedBy: "owner@example" },
+      summary: {
+        type: cgcpIntent.type,
+        spec: cgcpIntent.spec,
+        intent: pick(cgcpIntent.intent, ["id", "agentId", "policyId", "merchant", "amountMinor", "currency", "status", "requestedBy"]),
+        mapping: cgcpIntent.mapping,
+      },
+      summaryNote: "the raw result also carries `requestedAt` / `expiresAt` / `hash`, stamped and chained at call time",
+    },
+    coreguard_issue_receipt: {
+      args: { storePath: CONTROL_PLANE_RELATIVE, receiptId: "receipt-0001", agentId: "agent-0001", policyId: "policy-01", approvalId: "intent-0001", merchant: "synthetic-store.example", amountMinor: "47000", currency: "USD", status: "executed", txRef: "0xexample" },
+      summary: {
+        type: cgcpReceipt.type,
+        spec: cgcpReceipt.spec,
+        receipt: pick(cgcpReceipt.receipt, ["id", "agentId", "policyId", "approvalId", "merchant", "amountMinor", "currency", "status", "txRef"]),
+        mapping: cgcpReceipt.mapping,
+      },
+      summaryNote: "the raw result also carries `at` / `hash`, stamped and chained at call time",
+    },
+    coreguard_verify_receipt: {
+      args: { storePath: CONTROL_PLANE_RELATIVE, receiptId: "receipt-0001" },
+      summary: {
+        type: cgcpVerified.type,
+        spec: cgcpVerified.spec,
+        verdict: cgcpVerified.verdict,
+        issues: cgcpVerified.issues,
+        receiptId: cgcpVerified.receiptId,
+        receiptFound: cgcpVerified.receiptFound,
+        auditChain: pick(cgcpVerified.auditChain, ["ok", "length", "brokenAt"]),
+        mapping: cgcpVerified.mapping,
+      },
+      summaryNote: "the raw result also carries the full receipt record and the audit chain's `headHash`, both stamped at call time",
+    },
+    coreguard_check_limits: {
+      args: { storePath: CONTROL_PLANE_RELATIVE, agentId: "agent-0001", policyId: "policy-01", merchant: "synthetic-store.example", amountMinor: "47000", currency: "USD", approvalId: "intent-0001" },
+      summary: {
+        type: cgcpLimits.type,
+        spec: cgcpLimits.spec,
+        decision: pick(cgcpLimits.decision, ["version", "allowed", "reasons", "agentId", "policyId", "policyVersion", "merchant", "amountMinor", "currency"]),
+        mapping: cgcpLimits.mapping,
+      },
+      summaryNote: "the raw result also carries the per-check detail and a call-time `at` stamp",
+    },
+    coreguard_revoke_consent: {
+      args: { storePath: CONTROL_PLANE_RELATIVE, targetType: "approval", targetId: "intent-0001", reason: "owner revoked before execution", decidedBy: "owner@example" },
+      summary: {
+        type: cgcpRevoked.type,
+        spec: cgcpRevoked.spec,
+        targetType: cgcpRevoked.targetType,
+        targetId: cgcpRevoked.targetId,
+        result: pick(cgcpRevoked.result, ["id", "agentId", "status", "decidedBy", "reason"]),
+        mapping: cgcpRevoked.mapping,
+      },
+      summaryNote: "the raw result also carries `requestedAt` / `decidedAt` / `hash`, stamped and chained at call time",
+    },
+    coreguard_audit_transaction: {
+      args: { storePath: CONTROL_PLANE_RELATIVE, agentId: "agent-0001", limit: 20 },
+      summary: {
+        type: cgcpAudit.type,
+        spec: cgcpAudit.spec,
+        report: {
+          version: cgcpAudit.report?.version,
+          schema: cgcpAudit.report?.schema,
+          counts: cgcpAudit.report?.counts,
+          chain: pick(cgcpAudit.report?.chain, ["ok", "length", "brokenAt"]),
+        },
+        mapping: cgcpAudit.mapping,
+      },
+      summaryNote: "the raw result is the full audit report: every record, every audit entry and its `headHash`, all stamped at call time",
     },
   };
 }
@@ -319,7 +523,9 @@ function section(tool, example) {
 
   const body = JSON.stringify(example.display ?? example.args, null, 2);
   const volatileHits = { n: 0 };
-  const outBody = JSON.stringify(normalizeVolatile(stripForDocs(example.out), volatileHits), null, 2);
+  const outBody = example.summary
+    ? JSON.stringify(example.summary, null, 2)
+    : JSON.stringify(normalizeVolatile(stripForDocs(example.out), volatileHits), null, 2);
   const schemaBody = JSON.stringify(tool.inputSchema, null, 2);
 
   const lines = [];
@@ -351,7 +557,11 @@ function section(tool, example) {
   lines.push(body);
   lines.push("```");
   lines.push("");
-  lines.push("**Result of that exact call:**");
+  lines.push(
+    example.summary
+      ? `**Stable fields of that exact call** (the tool was executed; ${example.summaryNote}):`
+      : "**Result of that exact call:**",
+  );
   lines.push("");
   lines.push("```json");
   lines.push(outBody.length > 1800 ? outBody.slice(0, 1800) + "\n… (abridged — full object is returned by the server)" : outBody);
@@ -435,12 +645,15 @@ const main = async () => {
       console.error("docs/mcprush/tool-reference.md is stale — run: npm run docs:mcprush");
       process.exit(1);
     }
+    rmSync(resolve(ROOT, "tmp/mcprush-reference"), { recursive: true, force: true });
     console.log("mcprush tool reference: up to date");
     return;
   }
 
   mkdirSync(dirname(OUT_PATH), { recursive: true });
   writeFileSync(OUT_PATH, content);
+  // The seeded control plane is a build input, not an artifact: leave no state.
+  rmSync(resolve(ROOT, "tmp/mcprush-reference"), { recursive: true, force: true });
   const tools = (content.match(/^### `/gm) ?? []).length;
   console.log(`wrote docs/mcprush/tool-reference.md (${tools} tools, every example executed)`);
 };

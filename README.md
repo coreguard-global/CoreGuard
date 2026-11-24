@@ -349,7 +349,7 @@ Run the offline arc: `npm run stellar:presign` — no signing, no wallet, no net
 
 ### Recent developments — Nov 10–14 2026 (by network, measured & evidenced)
 
-> Canonical measured state for this cycle: **2059 / 2059 tests**, **1546 files scanned / 0 violations**, **docs-node 140 executed · 89 skip-listed · 33 covered**, **Foundry 43/43 pass** — [docs/state-snapshot.json](docs/state-snapshot.json) · [docs/STATUS.md](docs/STATUS.md). Every item below is labeled by its committed evidence; nothing implies revenue, customers, partnerships, external adoption, or a third-party audit.
+> Canonical measured state for this cycle: **2065 / 2065 tests**, **1554 files scanned / 0 violations**, **docs-node 140 executed · 89 skip-listed · 33 covered**, **Foundry 43/43 pass** — [docs/state-snapshot.json](docs/state-snapshot.json) · [docs/STATUS.md](docs/STATUS.md). Every item below is labeled by its committed evidence; nothing implies revenue, customers, partnerships, external adoption, or a third-party audit.
 
 #### Stellar — pre-sign receipts, agent-gate envelope path, Freighter evaluation, DEX integration
 
@@ -726,7 +726,7 @@ CoreGuard answers one question with evidence: **did this execution conform to wh
 npm install
 
 # 2. Test + benchmark
-npm test              # 2059 tests (machine-pinned) — canonicalization, policy, tamper, anchor, verifier, P1/P2, provenance, pricing, encoding, attack-lab, DDE delivery/dispute suites (incl. doc-curl contract), pages-settle guard, verification-platform suite, executed-evidence contract (agent gate · real-book DEX gate · universal shield · first funded signed mainnet swap), the PSAR/1 pre-sign receipt suite (offline PASS/BLOCK demo), owner-authorized deploy battery
+npm test              # 2065 tests (machine-pinned) — canonicalization, policy, tamper, anchor, verifier, P1/P2, provenance, pricing, encoding, attack-lab, DDE delivery/dispute suites (incl. doc-curl contract), pages-settle guard, verification-platform suite, executed-evidence contract (agent gate · real-book DEX gate · universal shield · first funded signed mainnet swap), the PSAR/1 pre-sign receipt suite (offline PASS/BLOCK demo), owner-authorized deploy battery
 git config core.hooksPath .githooks   # install the Pages settle pre-push guard — every main push waits for the Pages build
 npm run corpus        # deterministic 73-scenario adversarial corpus
 npm run benchmark     # 73/73 pass

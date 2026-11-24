@@ -1,0 +1,2091 @@
+{
+  "format": "aer1-observation-rows/1",
+  "kit": "1.5.7",
+  "setDigest": "sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2",
+  "vectorTotal": 143,
+  "observationLayer": "CG-OBS/1",
+  "parser": "CG-AER1/1",
+  "joinKey": "name",
+  "rows": [
+    {
+      "name": "anchor-resolves",
+      "family": "anchor",
+      "file": "base/anchor-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "anchor-unresolvable",
+      "family": "anchor",
+      "file": "base/anchor-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "unresolvable_record",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "anchor-not-checked",
+      "family": "anchor",
+      "file": "base/anchor-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "not_checked",
+      "reason": "outside_scope",
+      "detail": null
+    },
+    {
+      "name": "anchor-verification-failed",
+      "family": "anchor",
+      "file": "base/anchor-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "anchor-absent",
+      "family": "anchor",
+      "file": "base/anchor-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "absent",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "anchor-other-profile",
+      "family": "anchor",
+      "file": "base/anchor-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "absent",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "anchor-unresolvable-bad-leaf",
+      "family": "anchor",
+      "file": "base/anchor-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "unresolvable_record",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "anchor-partial-profile",
+      "family": "anchor",
+      "file": "base/anchor-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "v07-valid-5",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "v07-valid-single",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "v07-truncation-limit-prefix",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "v07-relabel-provenance",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry"
+    },
+    {
+      "name": "v07-relabel-tool-id",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry"
+    },
+    {
+      "name": "v07-close-middle",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry; close is boolean and true only on the last entry"
+    },
+    {
+      "name": "v07-close-wrong-type",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "close is boolean and true only on the last entry; the timeline ends with a closing entry"
+    },
+    {
+      "name": "v07-delete-identical-pair",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-insert-duplicate",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-splice-cross-job",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-bad-genesis",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "first entry carries the zero genesis digest; every link recomputes from the previous entry"
+    },
+    {
+      "name": "v07-seq-gap",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-mixed-job-id",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-bad-base64",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry"
+    },
+    {
+      "name": "v07-v06-chain-rejected",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-seq-float-valid",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "v07-seq-bool-invalid",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-seq-fraction-invalid",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-seq-negative-invalid",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-seq-string-invalid",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-seq-null-invalid",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "v07-seq-missing-invalid",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry; seq is contiguous from 1 and the job id is constant; each entry names an id, tool and provenance class"
+    },
+    {
+      "name": "x-genesis-single",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "first entry carries the zero genesis digest"
+    },
+    {
+      "name": "x-encoding-reference",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "x-encoding-draft-literal",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry"
+    },
+    {
+      "name": "ax-genesis-single",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "first entry carries the zero genesis digest"
+    },
+    {
+      "name": "ax-esc-hex-upper",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry"
+    },
+    {
+      "name": "ax-esc-long-escape",
+      "family": "chain",
+      "file": "base/chain-vectors-v07.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry"
+    },
+    {
+      "name": "chain-valid-3",
+      "family": "chain",
+      "file": "base/chain-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "chain-single-entry-valid",
+      "family": "chain",
+      "file": "base/chain-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "chain-tampered-middle",
+      "family": "chain",
+      "file": "base/chain-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry"
+    },
+    {
+      "name": "chain-truncated-no-close",
+      "family": "chain",
+      "file": "base/chain-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "the timeline ends with a closing entry"
+    },
+    {
+      "name": "chain-reordered",
+      "family": "chain",
+      "file": "base/chain-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "every link recomputes from the previous entry; close is boolean and true only on the last entry; the timeline ends with a closing entry"
+    },
+    {
+      "name": "chain-bad-genesis",
+      "family": "chain",
+      "file": "base/chain-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "first entry carries the zero genesis digest"
+    },
+    {
+      "name": "chain-close-wrong-type",
+      "family": "chain",
+      "file": "base/chain-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "close is boolean and true only on the last entry; the timeline ends with a closing entry"
+    },
+    {
+      "name": "commit-valid-1",
+      "family": "commitment",
+      "file": "base/commitment-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "commit-digest-mismatch",
+      "family": "commitment",
+      "file": "base/commitment-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "final_entry_digest is lowercase hex and matches the last entry"
+    },
+    {
+      "name": "commit-count-mismatch",
+      "family": "commitment",
+      "file": "base/commitment-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "entry_count is an integer equal to the number of entries"
+    },
+    {
+      "name": "commit-job-mismatch",
+      "family": "commitment",
+      "file": "base/commitment-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "commitment job_id matches the timeline's job"
+    },
+    {
+      "name": "commit-malformed-missing",
+      "family": "commitment",
+      "file": "base/commitment-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "commitment carries job_id, final_entry_digest, entry_count and published_at; final_entry_digest is lowercase hex and matches the last entry"
+    },
+    {
+      "name": "commit-malformed-types",
+      "family": "commitment",
+      "file": "base/commitment-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "final_entry_digest is lowercase hex and matches the last entry; entry_count is an integer equal to the number of entries; published_at is an RFC 3339 timestamp"
+    },
+    {
+      "name": "commit-not-an-object",
+      "family": "commitment",
+      "file": "base/commitment-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "commitment is an object"
+    },
+    {
+      "name": "x-entry-count-float",
+      "family": "commitment",
+      "file": "base/commitment-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "entry_count is an integer equal to the number of entries"
+    },
+    {
+      "name": "id-alone-unverified",
+      "family": "id-binding",
+      "file": "base/id-binding-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "the committed digest disagrees with the id it was presented under"
+    },
+    {
+      "name": "id-expected-match",
+      "family": "id-binding",
+      "file": "base/id-binding-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "id-expected-mismatch",
+      "family": "id-binding",
+      "file": "base/id-binding-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "the committed digest disagrees with the id it was presented under"
+    },
+    {
+      "name": "id-resolution-agreement",
+      "family": "id-binding",
+      "file": "base/id-binding-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "the committed digest disagrees with the id it was presented under"
+    },
+    {
+      "name": "id-resolution-disagreement",
+      "family": "id-binding",
+      "file": "base/id-binding-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "the committed digest disagrees with the id it was presented under"
+    },
+    {
+      "name": "id-absent",
+      "family": "id-binding",
+      "file": "base/id-binding-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "the committed digest disagrees with the id it was presented under"
+    },
+    {
+      "name": "canonical-5-step",
+      "family": "merkle",
+      "file": "base/merkle-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "legacy-construction-rejected",
+      "family": "merkle",
+      "file": "base/merkle-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "vector carries receipt_ids, not the legacy preimage form; every receipt_id is a non-empty string; merkle root recomputes from the receipt ids in file order; the root is not the rejected construction's root"
+    },
+    {
+      "name": "odd-duplication-3",
+      "family": "merkle",
+      "file": "base/merkle-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "ordering-matters",
+      "family": "merkle",
+      "file": "base/merkle-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "single-leaf",
+      "family": "merkle",
+      "file": "base/merkle-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "empty",
+      "family": "merkle",
+      "file": "base/merkle-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "worked-example-byte-exact",
+      "family": "merkle",
+      "file": "base/merkle-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "duplicate-receipt-id-collision",
+      "family": "merkle",
+      "file": "base/merkle-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "no receipt_id appears twice"
+    },
+    {
+      "name": "one-step-single-receipt",
+      "family": "merkle",
+      "file": "base/merkle-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "anchored-bad-id-version.json",
+      "family": "anchored",
+      "file": "base/test-vectors/anchored/anchored-bad-id-version.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "anchored receipt id is a lowercase UUID v4"
+    },
+    {
+      "name": "anchored-bad-leaf-hash.json",
+      "family": "anchored",
+      "file": "base/test-vectors/anchored/anchored-bad-leaf-hash.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "the resolved leaf digest equals the committed leaf_hash; leaf_hash equals the digest of canonical_bytes; leaf_hash equals the receipt output_hash"
+    },
+    {
+      "name": "anchored-bad-timestamp.json",
+      "family": "anchored",
+      "file": "base/test-vectors/anchored/anchored-bad-timestamp.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "anchored_at is a calendar-valid RFC 3339 instant"
+    },
+    {
+      "name": "anchored-missing-proof.json",
+      "family": "anchored",
+      "file": "base/test-vectors/anchored/anchored-missing-proof.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "anchor carries exactly the Section 3.3 profile; proof is present and non-empty"
+    },
+    {
+      "name": "anchored-unresolvable-anchor.json",
+      "family": "anchored",
+      "file": "base/test-vectors/anchored/anchored-unresolvable-anchor.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "unresolvable_record",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "anchored-valid.json",
+      "family": "anchored",
+      "file": "base/test-vectors/anchored/anchored-valid.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "missing-inputs.json",
+      "family": "invalid-profile",
+      "file": "base/test-vectors/invalid-profile/missing-inputs.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "ax-base64-unpadded.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/ax-base64-unpadded.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "ax-feb29-1900.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/ax-feb29-1900.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "ax-feb29-non-leap.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/ax-feb29-non-leap.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "ax-tool-empty-scope.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/ax-tool-empty-scope.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "bad-created-at.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/bad-created-at.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "bad-id.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/bad-id.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "bad-offset-range.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/bad-offset-range.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "bad-provenance.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/bad-provenance.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "bad-verification-status.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/bad-verification-status.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "base64-pad-bit.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/base64-pad-bit.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "base64-unpadded.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/base64-unpadded.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "bytes-not-base64.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/bytes-not-base64.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "duplicate-member-name.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/duplicate-member-name.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "feb29-1900.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/feb29-1900.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "feb29-non-leap.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/feb29-non-leap.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "hash-bad-format.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/hash-bad-format.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "hash-mismatch.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/hash-mismatch.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "id-trailing-newline.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/id-trailing-newline.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "impossible-date.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/impossible-date.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "input-hash-key-order-20.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/input-hash-key-order-20.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "input-hash-mismatch.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/input-hash-mismatch.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "leap-second-created-at.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/leap-second-created-at.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "lowercase-timestamp.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/lowercase-timestamp.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "missing-output-hash.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/missing-output-hash.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "nil-uuid.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/nil-uuid.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "non-utf8-bytes.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/non-utf8-bytes.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "payload-is-array.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/payload-is-array.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "payload-omits-issuer-claims.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/payload-omits-issuer-claims.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "provenance-control-char.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/provenance-control-char.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "provenance-trailing-newline.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/provenance-trailing-newline.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "tampered-provenance.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/tampered-provenance.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "timestamp-no-timezone.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/timestamp-no-timezone.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "tool-empty-name.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/tool-empty-name.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "tool-not-object.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/tool-not-object.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "uppercase-id.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/uppercase-id.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "version-downgrade.json",
+      "family": "invalid",
+      "file": "base/test-vectors/invalid/version-downgrade.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "bound-04.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/bound-04.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "deep-nesting.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/deep-nesting.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "edge-numbers.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/edge-numbers.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "empty-members.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/empty-members.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "feb29-leap.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/feb29-leap.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "fraction-one-digit.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/fraction-one-digit.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "input-hash-multikey-20.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/input-hash-multikey-20.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "large-payload.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/large-payload.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "legacy-02.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/legacy-02.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "legacy-03.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/legacy-03.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "legacy-real-2.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/legacy-real-2.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "maximum-offset-timestamp.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/maximum-offset-timestamp.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "metadata-hash-non-ascii-tool.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/metadata-hash-non-ascii-tool.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "optional-members-18.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/optional-members-18.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "real-04.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/real-04.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "real-1-bare.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/real-1-bare.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "receipt-01.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/receipt-01.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "receipt-02.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/receipt-02.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "receipt-03-live.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/receipt-03-live.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "typographic-unicode.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/typographic-unicode.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "uuid-v1-core.json",
+      "family": "valid",
+      "file": "base/test-vectors/valid/uuid-v1-core.json",
+      "observer": "cg-aer1:parser",
+      "scope": "record:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "unicode-nfc-form",
+      "family": "unicode",
+      "file": "base/unicode-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "unicode-nfd-form",
+      "family": "unicode",
+      "file": "base/unicode-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "unicode-nfd-against-nfc-commitment",
+      "family": "unicode",
+      "file": "base/unicode-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "the digest recomputes from the raw bytes without normalization"
+    },
+    {
+      "name": "unicode-narrow-nbsp-curly-quote",
+      "family": "unicode",
+      "file": "base/unicode-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "unicode-nonbreaking-hyphen-against-ascii",
+      "family": "unicode",
+      "file": "base/unicode-vectors.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verification_failed",
+      "reason": null,
+      "detail": "the digest recomputes from the raw bytes without normalization"
+    },
+    {
+      "name": "legacy-receipt-id-v0-mixed-version",
+      "family": "workflow-merkle-seq-output-v1",
+      "file": "workflow-merkle-seq-output-v1.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "seq-output-v1-single-step",
+      "family": "workflow-merkle-seq-output-v1",
+      "file": "workflow-merkle-seq-output-v1.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "seq-output-v1-multi-step",
+      "family": "workflow-merkle-seq-output-v1",
+      "file": "workflow-merkle-seq-output-v1.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "seq-output-v1-odd-level-duplicates-last",
+      "family": "workflow-merkle-seq-output-v1",
+      "file": "workflow-merkle-seq-output-v1.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "seq-output-v1-multi-step-odd-levels",
+      "family": "workflow-merkle-seq-output-v1",
+      "file": "workflow-merkle-seq-output-v1.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "xversion-seq-output-v1-evaluated-as-receipt-id-v0",
+      "family": "workflow-merkle-seq-output-v1",
+      "file": "workflow-merkle-seq-output-v1.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "xversion-receipt-id-v0-evaluated-as-seq-output-v1",
+      "family": "workflow-merkle-seq-output-v1",
+      "file": "workflow-merkle-seq-output-v1.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    },
+    {
+      "name": "seq-output-v1-thirteen-step",
+      "family": "workflow-merkle-seq-output-v1",
+      "file": "workflow-merkle-seq-output-v1.json",
+      "observer": "cg-aer1:parser",
+      "scope": "vector:bytes",
+      "outcome": "verified",
+      "reason": null,
+      "detail": null
+    }
+  ],
+  "fileReads": [
+    {
+      "file": "base/anchor-vectors.json",
+      "family": "anchor",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:15fe803468cc54a0bbddf04f592ac42fcbdb71d9353b91c8ef0b903557578fb8",
+      "observed": "sha256:15fe803468cc54a0bbddf04f592ac42fcbdb71d9353b91c8ef0b903557578fb8"
+    },
+    {
+      "file": "base/chain-vectors-v07.json",
+      "family": "chain",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:d72b815585afdb075311da892f54041c9ffd5e7d875afbf32bd8165c3ca9ea94",
+      "observed": "sha256:d72b815585afdb075311da892f54041c9ffd5e7d875afbf32bd8165c3ca9ea94"
+    },
+    {
+      "file": "base/chain-vectors.json",
+      "family": "chain",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:10de1cadb45b8d5c91ae94a601c6bb567aab59b26e89abbbb64af6896d3aba19",
+      "observed": "sha256:10de1cadb45b8d5c91ae94a601c6bb567aab59b26e89abbbb64af6896d3aba19"
+    },
+    {
+      "file": "base/commitment-vectors.json",
+      "family": "commitment",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:964169123c341176fe47cd87eb1c7af3d94b302241e55840ed7bcb382bc516ee",
+      "observed": "sha256:964169123c341176fe47cd87eb1c7af3d94b302241e55840ed7bcb382bc516ee"
+    },
+    {
+      "file": "base/id-binding-vectors.json",
+      "family": "id-binding",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:78cb42cbc8be1306458f63e90e01f0e9201504ff5bf5d455a659631f21237009",
+      "observed": "sha256:78cb42cbc8be1306458f63e90e01f0e9201504ff5bf5d455a659631f21237009"
+    },
+    {
+      "file": "base/merkle-vectors.json",
+      "family": "merkle",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:8c76473616ba909fab61cdb96d3e432f3e91b322833716d494e7afc92ad13a25",
+      "observed": "sha256:8c76473616ba909fab61cdb96d3e432f3e91b322833716d494e7afc92ad13a25"
+    },
+    {
+      "file": "base/test-vectors/anchored/anchored-bad-id-version.json",
+      "family": "anchored",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:36d9c375fdcc49423e11d73aea78d8ffd69c80bb4400d57b48c7ca9aafbe1400",
+      "observed": "sha256:36d9c375fdcc49423e11d73aea78d8ffd69c80bb4400d57b48c7ca9aafbe1400"
+    },
+    {
+      "file": "base/test-vectors/anchored/anchored-bad-leaf-hash.json",
+      "family": "anchored",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:5e8ea1918e69be2f26dfa2da6707ad6868797f9114d6d19a3c19189662e377e2",
+      "observed": "sha256:5e8ea1918e69be2f26dfa2da6707ad6868797f9114d6d19a3c19189662e377e2"
+    },
+    {
+      "file": "base/test-vectors/anchored/anchored-bad-timestamp.json",
+      "family": "anchored",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:a3b9b400b552777b6cdfb2ff60704682eb46b541ac59d79a0f310a79f424dbe5",
+      "observed": "sha256:a3b9b400b552777b6cdfb2ff60704682eb46b541ac59d79a0f310a79f424dbe5"
+    },
+    {
+      "file": "base/test-vectors/anchored/anchored-missing-proof.json",
+      "family": "anchored",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:9afad2db7b553b9ada209dd86e9d7ed16c5243f8b89f6d932ce8c9978a0538e2",
+      "observed": "sha256:9afad2db7b553b9ada209dd86e9d7ed16c5243f8b89f6d932ce8c9978a0538e2"
+    },
+    {
+      "file": "base/test-vectors/anchored/anchored-unresolvable-anchor.json",
+      "family": "anchored",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:7060532c55c6d01a9d420433f5578810993f428597edfcd1612996e140647473",
+      "observed": "sha256:7060532c55c6d01a9d420433f5578810993f428597edfcd1612996e140647473"
+    },
+    {
+      "file": "base/test-vectors/anchored/anchored-valid.json",
+      "family": "anchored",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:03dcdc8be19340ce91ddc6f6fc6c98f2b8b2bc183b350c6c3f2b849bd0f52daf",
+      "observed": "sha256:03dcdc8be19340ce91ddc6f6fc6c98f2b8b2bc183b350c6c3f2b849bd0f52daf"
+    },
+    {
+      "file": "base/test-vectors/invalid-profile/missing-inputs.json",
+      "family": "invalid-profile",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:8041ed4574a7b26a44fa553d2dc93aebbe091a7257e16c10f828c8fbe9161b94",
+      "observed": "sha256:8041ed4574a7b26a44fa553d2dc93aebbe091a7257e16c10f828c8fbe9161b94"
+    },
+    {
+      "file": "base/test-vectors/invalid/ax-base64-unpadded.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:90d117c203b80b138777e516ccfcbd2477a76c797f038aa713ab1de59bcb0725",
+      "observed": "sha256:90d117c203b80b138777e516ccfcbd2477a76c797f038aa713ab1de59bcb0725"
+    },
+    {
+      "file": "base/test-vectors/invalid/ax-feb29-1900.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:b4023db4366e78183be18e8a5265b4614cfc2b0cd0cefe8c5bb1bdb9ccd58793",
+      "observed": "sha256:b4023db4366e78183be18e8a5265b4614cfc2b0cd0cefe8c5bb1bdb9ccd58793"
+    },
+    {
+      "file": "base/test-vectors/invalid/ax-feb29-non-leap.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:3d773f1a9f0ef21b452e36bb6152d33371c696ebd34cda2f7c807362840101ff",
+      "observed": "sha256:3d773f1a9f0ef21b452e36bb6152d33371c696ebd34cda2f7c807362840101ff"
+    },
+    {
+      "file": "base/test-vectors/invalid/ax-tool-empty-scope.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:cc76d333b02e982ab5db0d9a2a1115a640c8122c334d79bd86242d87cfd97775",
+      "observed": "sha256:cc76d333b02e982ab5db0d9a2a1115a640c8122c334d79bd86242d87cfd97775"
+    },
+    {
+      "file": "base/test-vectors/invalid/bad-created-at.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:dccbd735cb36b69dde71bdd7b1c2389e7fd237ce3b2f29a56b0580c2fe2c6b6e",
+      "observed": "sha256:dccbd735cb36b69dde71bdd7b1c2389e7fd237ce3b2f29a56b0580c2fe2c6b6e"
+    },
+    {
+      "file": "base/test-vectors/invalid/bad-id.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:a9f8523eeaccfffa2014e3186c3f58a4fe84fffd4b5d84b99d5293c741e3f923",
+      "observed": "sha256:a9f8523eeaccfffa2014e3186c3f58a4fe84fffd4b5d84b99d5293c741e3f923"
+    },
+    {
+      "file": "base/test-vectors/invalid/bad-offset-range.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:9b95fd0759f4ed860c600bdf5f6f51c91759c75b2fc43f91dc47ed2bcc834e27",
+      "observed": "sha256:9b95fd0759f4ed860c600bdf5f6f51c91759c75b2fc43f91dc47ed2bcc834e27"
+    },
+    {
+      "file": "base/test-vectors/invalid/bad-provenance.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:77ddc01eec7b7113070f6d11886e8e670c7a17787550902996aca4ee59d51430",
+      "observed": "sha256:77ddc01eec7b7113070f6d11886e8e670c7a17787550902996aca4ee59d51430"
+    },
+    {
+      "file": "base/test-vectors/invalid/bad-verification-status.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:d966fd2201144c75022843260067fbe5c6204fca74c95939135c3522f973ef3b",
+      "observed": "sha256:d966fd2201144c75022843260067fbe5c6204fca74c95939135c3522f973ef3b"
+    },
+    {
+      "file": "base/test-vectors/invalid/base64-pad-bit.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:320d5c77ba934f10cf58f781bb1cd64fca81c7318573dd0ac7b0037fe1dca223",
+      "observed": "sha256:320d5c77ba934f10cf58f781bb1cd64fca81c7318573dd0ac7b0037fe1dca223"
+    },
+    {
+      "file": "base/test-vectors/invalid/base64-unpadded.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:540be27e771e0250d912081ae6836a15b625ccd3851b970a8b46ebb8a3f9576b",
+      "observed": "sha256:540be27e771e0250d912081ae6836a15b625ccd3851b970a8b46ebb8a3f9576b"
+    },
+    {
+      "file": "base/test-vectors/invalid/bytes-not-base64.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:d6ec1b14646d8d9ec517c15601e3b2ff304d2d5e9ff071e2813c2d0ee8d06921",
+      "observed": "sha256:d6ec1b14646d8d9ec517c15601e3b2ff304d2d5e9ff071e2813c2d0ee8d06921"
+    },
+    {
+      "file": "base/test-vectors/invalid/duplicate-member-name.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:998db2c1ac01ef86ac71d2b5c0a61d9b43adbe174c7bf71d068c8af2ab714702",
+      "observed": "sha256:998db2c1ac01ef86ac71d2b5c0a61d9b43adbe174c7bf71d068c8af2ab714702"
+    },
+    {
+      "file": "base/test-vectors/invalid/feb29-1900.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:fda0c98071b6b368ee22ae2e49ffc1fc8206177505accf5aebb8b8565aa44fe2",
+      "observed": "sha256:fda0c98071b6b368ee22ae2e49ffc1fc8206177505accf5aebb8b8565aa44fe2"
+    },
+    {
+      "file": "base/test-vectors/invalid/feb29-non-leap.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:7583c4a1963f9e722b377701c511a8e65cae5b5b7c36777f23147aecb809add4",
+      "observed": "sha256:7583c4a1963f9e722b377701c511a8e65cae5b5b7c36777f23147aecb809add4"
+    },
+    {
+      "file": "base/test-vectors/invalid/hash-bad-format.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:36d6537681da8b38dc7fac2df360938e30f1b9c7a2e6e3156ddf8caa831279fd",
+      "observed": "sha256:36d6537681da8b38dc7fac2df360938e30f1b9c7a2e6e3156ddf8caa831279fd"
+    },
+    {
+      "file": "base/test-vectors/invalid/hash-mismatch.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:6037f4dd7abe55c8fcf88224e7fe02ef0ea7eccbde462d4f16263dc8557f9228",
+      "observed": "sha256:6037f4dd7abe55c8fcf88224e7fe02ef0ea7eccbde462d4f16263dc8557f9228"
+    },
+    {
+      "file": "base/test-vectors/invalid/id-trailing-newline.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:c762e701a43dde808a8c636bc5cca65a9dd13413f788c732cb3c323e82c9a57f",
+      "observed": "sha256:c762e701a43dde808a8c636bc5cca65a9dd13413f788c732cb3c323e82c9a57f"
+    },
+    {
+      "file": "base/test-vectors/invalid/impossible-date.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:13543933b5073c6d0a52df0621c73ae8189eeae9bc5cc31bb57b5c3134f47749",
+      "observed": "sha256:13543933b5073c6d0a52df0621c73ae8189eeae9bc5cc31bb57b5c3134f47749"
+    },
+    {
+      "file": "base/test-vectors/invalid/input-hash-key-order-20.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:d1f0809e01a7f6d79100400083c13c935fece85695492f7a52373c6c381e9b54",
+      "observed": "sha256:d1f0809e01a7f6d79100400083c13c935fece85695492f7a52373c6c381e9b54"
+    },
+    {
+      "file": "base/test-vectors/invalid/input-hash-mismatch.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:5c745d87db58d21ab577759eb83976988b59aa17830fb10eec2709e5603281a6",
+      "observed": "sha256:5c745d87db58d21ab577759eb83976988b59aa17830fb10eec2709e5603281a6"
+    },
+    {
+      "file": "base/test-vectors/invalid/leap-second-created-at.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:7de2f86121d25c098199f361a29ba29db733418a49738c4b072fbf0cb53b912f",
+      "observed": "sha256:7de2f86121d25c098199f361a29ba29db733418a49738c4b072fbf0cb53b912f"
+    },
+    {
+      "file": "base/test-vectors/invalid/lowercase-timestamp.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:9badda72f3de29a1b1f88024a3404ff3ee8f85706d09574ccc47232b614ad09a",
+      "observed": "sha256:9badda72f3de29a1b1f88024a3404ff3ee8f85706d09574ccc47232b614ad09a"
+    },
+    {
+      "file": "base/test-vectors/invalid/missing-output-hash.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:cea9fc18f725b7a55f627f9347cd6da1b634892588bb163af7fbb49712c200d3",
+      "observed": "sha256:cea9fc18f725b7a55f627f9347cd6da1b634892588bb163af7fbb49712c200d3"
+    },
+    {
+      "file": "base/test-vectors/invalid/nil-uuid.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:3fd21b593d8094c9e51a584aea7a088993f00cb5b22528818dfb26b6e6c7264b",
+      "observed": "sha256:3fd21b593d8094c9e51a584aea7a088993f00cb5b22528818dfb26b6e6c7264b"
+    },
+    {
+      "file": "base/test-vectors/invalid/non-utf8-bytes.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:de44cf86810753d96eacbc20b07693f27759661921da1f3d6233fbbed31d57dd",
+      "observed": "sha256:de44cf86810753d96eacbc20b07693f27759661921da1f3d6233fbbed31d57dd"
+    },
+    {
+      "file": "base/test-vectors/invalid/payload-is-array.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:47473c911b3811352ea32ed9b29dac7a9b6a735661281854d106d481315ffa50",
+      "observed": "sha256:47473c911b3811352ea32ed9b29dac7a9b6a735661281854d106d481315ffa50"
+    },
+    {
+      "file": "base/test-vectors/invalid/payload-omits-issuer-claims.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:5eefdff72210b2c047908cd7079966b56bea7d47e8786bbebef43afd0f3400d5",
+      "observed": "sha256:5eefdff72210b2c047908cd7079966b56bea7d47e8786bbebef43afd0f3400d5"
+    },
+    {
+      "file": "base/test-vectors/invalid/provenance-control-char.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:fd4a9610ae1a9ee7deada0de63b4f7a2e70d6dc01f3f0b74111ee7c771f4c782",
+      "observed": "sha256:fd4a9610ae1a9ee7deada0de63b4f7a2e70d6dc01f3f0b74111ee7c771f4c782"
+    },
+    {
+      "file": "base/test-vectors/invalid/provenance-trailing-newline.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:476a2bcc998e9dd9d7a43760bcb3b9851d6afed77f4e6b2baf6da76a2b6d1ba3",
+      "observed": "sha256:476a2bcc998e9dd9d7a43760bcb3b9851d6afed77f4e6b2baf6da76a2b6d1ba3"
+    },
+    {
+      "file": "base/test-vectors/invalid/tampered-provenance.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:60fe34e381b33b58150479dcd990943d86c26e9c05aec39f7bd0567f982772cd",
+      "observed": "sha256:60fe34e381b33b58150479dcd990943d86c26e9c05aec39f7bd0567f982772cd"
+    },
+    {
+      "file": "base/test-vectors/invalid/timestamp-no-timezone.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:221deb13a3c237c54c13af5139ae507dd6edc108937e7da29393f1d44431f0d4",
+      "observed": "sha256:221deb13a3c237c54c13af5139ae507dd6edc108937e7da29393f1d44431f0d4"
+    },
+    {
+      "file": "base/test-vectors/invalid/tool-empty-name.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:0ec508c84e748a29ebfe022e0cf1f86c05e6338345a06219534226b40c0b23ab",
+      "observed": "sha256:0ec508c84e748a29ebfe022e0cf1f86c05e6338345a06219534226b40c0b23ab"
+    },
+    {
+      "file": "base/test-vectors/invalid/tool-not-object.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:48d7101c5bea3da303322ed93c4dd693d3d6ccf5f9011a1cc80d896bd31d88a3",
+      "observed": "sha256:48d7101c5bea3da303322ed93c4dd693d3d6ccf5f9011a1cc80d896bd31d88a3"
+    },
+    {
+      "file": "base/test-vectors/invalid/uppercase-id.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:08d0d98a613c864682bb692a3743319fbfb1eb53dd257c8916ae97e8ec8a99e3",
+      "observed": "sha256:08d0d98a613c864682bb692a3743319fbfb1eb53dd257c8916ae97e8ec8a99e3"
+    },
+    {
+      "file": "base/test-vectors/invalid/version-downgrade.json",
+      "family": "invalid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:228160b1c6fa8985df13a11342fae58844dc05bd34a3017f344c8d08deb1d3b9",
+      "observed": "sha256:228160b1c6fa8985df13a11342fae58844dc05bd34a3017f344c8d08deb1d3b9"
+    },
+    {
+      "file": "base/test-vectors/valid/bound-04.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:f9a447049112554c475c99c78b77bf6c3bd142f7ae6e90deb35d5135bf67bdb9",
+      "observed": "sha256:f9a447049112554c475c99c78b77bf6c3bd142f7ae6e90deb35d5135bf67bdb9"
+    },
+    {
+      "file": "base/test-vectors/valid/deep-nesting.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:ac4aeb75626572922e80452e2f6843d11d408d3c7a7abbf0d8fddac502d4acda",
+      "observed": "sha256:ac4aeb75626572922e80452e2f6843d11d408d3c7a7abbf0d8fddac502d4acda"
+    },
+    {
+      "file": "base/test-vectors/valid/edge-numbers.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:ef70b12a9f2f8a8478adfdbd5d5f27868241f85995012053d5cb26725ad56552",
+      "observed": "sha256:ef70b12a9f2f8a8478adfdbd5d5f27868241f85995012053d5cb26725ad56552"
+    },
+    {
+      "file": "base/test-vectors/valid/empty-members.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:b88a78eaf5596dd1d2f7d905823cb2fd65cd664b51087eedd3816fb343b317b4",
+      "observed": "sha256:b88a78eaf5596dd1d2f7d905823cb2fd65cd664b51087eedd3816fb343b317b4"
+    },
+    {
+      "file": "base/test-vectors/valid/feb29-leap.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:b2df61da76e75d12cf2ccdcaa496d05deaccca0b62fea78cab64f3b260d6ab2e",
+      "observed": "sha256:b2df61da76e75d12cf2ccdcaa496d05deaccca0b62fea78cab64f3b260d6ab2e"
+    },
+    {
+      "file": "base/test-vectors/valid/fraction-one-digit.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:8e70a6d38a03dba4e15437cb8183fc35479d58bbe738a35d1d9ec94153e91c67",
+      "observed": "sha256:8e70a6d38a03dba4e15437cb8183fc35479d58bbe738a35d1d9ec94153e91c67"
+    },
+    {
+      "file": "base/test-vectors/valid/input-hash-multikey-20.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:a4ac5c0973f0a90861d326fb00b5be728aefe3a2fc5017fa7b4647334117ac7d",
+      "observed": "sha256:a4ac5c0973f0a90861d326fb00b5be728aefe3a2fc5017fa7b4647334117ac7d"
+    },
+    {
+      "file": "base/test-vectors/valid/large-payload.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:f3b7818b5b9668accadd03164784ce2c594f266e225f2a37c9715dcb101a8e39",
+      "observed": "sha256:f3b7818b5b9668accadd03164784ce2c594f266e225f2a37c9715dcb101a8e39"
+    },
+    {
+      "file": "base/test-vectors/valid/legacy-02.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:7b2ab6a1fa7166a9bea9a6d86d75fb57c1bbf1b5bd14159ef609dbc7b80d8230",
+      "observed": "sha256:7b2ab6a1fa7166a9bea9a6d86d75fb57c1bbf1b5bd14159ef609dbc7b80d8230"
+    },
+    {
+      "file": "base/test-vectors/valid/legacy-03.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:39d7781fc5054424b7f070cab225dcd010dd84a0de9a265238b7bb95163b40f9",
+      "observed": "sha256:39d7781fc5054424b7f070cab225dcd010dd84a0de9a265238b7bb95163b40f9"
+    },
+    {
+      "file": "base/test-vectors/valid/legacy-real-2.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:b80604ba15697f2281ead8926335e0491c255aecc21c0bb8aca7553576242fc4",
+      "observed": "sha256:b80604ba15697f2281ead8926335e0491c255aecc21c0bb8aca7553576242fc4"
+    },
+    {
+      "file": "base/test-vectors/valid/maximum-offset-timestamp.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:f313b4b7bf389e82c3b370e917a74ddc96a40b8201eb0ee19852e35b684ddcc4",
+      "observed": "sha256:f313b4b7bf389e82c3b370e917a74ddc96a40b8201eb0ee19852e35b684ddcc4"
+    },
+    {
+      "file": "base/test-vectors/valid/metadata-hash-non-ascii-tool.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:3ca5bb484e04c11e699b17ab1fe06c110c844ebc207824180f6682822ed609d5",
+      "observed": "sha256:3ca5bb484e04c11e699b17ab1fe06c110c844ebc207824180f6682822ed609d5"
+    },
+    {
+      "file": "base/test-vectors/valid/optional-members-18.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:922cd701e967dc6ce550f368f41083893a5891556460ce79212dbc241370350b",
+      "observed": "sha256:922cd701e967dc6ce550f368f41083893a5891556460ce79212dbc241370350b"
+    },
+    {
+      "file": "base/test-vectors/valid/real-04.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:45c6af65806ad125d9ac33da9e13c737d89e1f2efde5c662cd7baa2db3ab51f8",
+      "observed": "sha256:45c6af65806ad125d9ac33da9e13c737d89e1f2efde5c662cd7baa2db3ab51f8"
+    },
+    {
+      "file": "base/test-vectors/valid/real-1-bare.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:5b1999cd2f1083735658b022e468712f80b3126238dd69ee20e8b3f0e1016263",
+      "observed": "sha256:5b1999cd2f1083735658b022e468712f80b3126238dd69ee20e8b3f0e1016263"
+    },
+    {
+      "file": "base/test-vectors/valid/receipt-01.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:f6f2b532a70c1969a0e70a8342ad5a9fefa5810f163b930560b4bfffb9a24931",
+      "observed": "sha256:f6f2b532a70c1969a0e70a8342ad5a9fefa5810f163b930560b4bfffb9a24931"
+    },
+    {
+      "file": "base/test-vectors/valid/receipt-02.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:cd7fbaf943d691fb25761b14bec6cd26b9a8c001c4f5fc98ee86a5fd4e8178c7",
+      "observed": "sha256:cd7fbaf943d691fb25761b14bec6cd26b9a8c001c4f5fc98ee86a5fd4e8178c7"
+    },
+    {
+      "file": "base/test-vectors/valid/receipt-03-live.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:c28e45d6d5ee4e532a1f2191e72fe2bccb70fe9d3ee746f54958f2e3e363dd6f",
+      "observed": "sha256:c28e45d6d5ee4e532a1f2191e72fe2bccb70fe9d3ee746f54958f2e3e363dd6f"
+    },
+    {
+      "file": "base/test-vectors/valid/typographic-unicode.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:91a3d7fda2f82c3e19aeb25c712c1c44cc0a19c4c33d06bf86e6f58b2b99dcf1",
+      "observed": "sha256:91a3d7fda2f82c3e19aeb25c712c1c44cc0a19c4c33d06bf86e6f58b2b99dcf1"
+    },
+    {
+      "file": "base/test-vectors/valid/uuid-v1-core.json",
+      "family": "valid",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:597522c8279f4012b983019bb5cbd61bcbcf5fb34388a876476767602cb6e568",
+      "observed": "sha256:597522c8279f4012b983019bb5cbd61bcbcf5fb34388a876476767602cb6e568"
+    },
+    {
+      "file": "base/unicode-vectors.json",
+      "family": "unicode",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:e9d084c5c03076d522227fc4fba59b4647a89df86f6d1fa09c8f74f870feb08f",
+      "observed": "sha256:e9d084c5c03076d522227fc4fba59b4647a89df86f6d1fa09c8f74f870feb08f"
+    },
+    {
+      "file": "workflow-merkle-seq-output-v1.json",
+      "family": "workflow-merkle-seq-output-v1",
+      "observer": "cg-aer1:bytes",
+      "scope": "file:sha256",
+      "outcome": "verified",
+      "expected": "sha256:4915d874da5a62a7ab5780d95f2863266687b7007344ec4c4ede00c89c915ea5",
+      "observed": "sha256:4915d874da5a62a7ab5780d95f2863266687b7007344ec4c4ede00c89c915ea5"
+    }
+  ]
+}

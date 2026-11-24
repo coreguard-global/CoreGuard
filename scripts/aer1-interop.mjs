@@ -213,6 +213,23 @@ function buildKitJoin(kit, observedByName, idRows) {
   return { rows, orphans };
 }
 
+/**
+ * The observation outcome for one read, in the five words the corpus uses.
+ * `verified` is about the bytes that were read, never about the record being
+ * right: an invalid vector whose bytes match its own claim is `verified` here
+ * and invalid in the column beside it, and both statements stay true.
+ */
+function observationOutcome(observed, reason) {
+  if (observed === "verified") return { outcome: "verified", reason: null };
+  if (observed === "absent") return { outcome: "absent", reason: null };
+  if (observed === "rejected: unresolvable record") return { outcome: "unresolvable_record", reason: null };
+  if (observed === "not checked" || observed === "not_checked") {
+    const why = /schema/i.test(reason ?? "") ? "schema_not_implemented" : "outside_scope";
+    return { outcome: "not_checked", reason: why };
+  }
+  return { outcome: "verification_failed", reason: reason ?? null };
+}
+
 const isRefusalOutcome = (outcome) =>
   outcome === "invalid" || outcome === "verification failed" || outcome === "rejected: unresolvable record" || outcome === "absent";
 
@@ -229,7 +246,25 @@ function runCorpus() {
   const falseAccepts = [];
   const falseRejects = [];
   const notChecked = [];
+  const observations = [];
   let vectorTotal = 0;
+
+  /** One immutable event per read: who read, over what, and what it found. */
+  const observe = (name, path, observed, reason, scope = "record:bytes") => {
+    const mapped = observationOutcome(observed, reason);
+    observations.push({
+      name,
+      family: familyKey(path),
+      file: path,
+      observer: "cg-aer1:parser",
+      scope,
+      outcome: mapped.outcome,
+      // The layer's contract: a reason exists on `not_checked` and nowhere else.
+      // What a failed check found is detail, not a reason.
+      reason: mapped.outcome === "not_checked" ? mapped.reason : null,
+      detail: mapped.outcome === "verification_failed" ? reason ?? null : null,
+    });
+  };
 
   for (const f of files) {
     const same = families.get(f.path) ?? { path: f.path, vectors: 0, checks: 0, expected: EXPECTED(f.path), agree: 0, falseAccept: 0, falseReject: 0, notChecked: 0, unclassified: 0 };
@@ -240,6 +275,12 @@ function runCorpus() {
       const rows = runIdBinding();
       same.agree += rows.filter((r) => r.agree).length;
       for (const r of rows) if (!r.agree) same.falseReject += 1;
+      for (const r of rows) {
+        // The read either matched the id it was presented under or it did not;
+        // that is the observation, independent of the fixture's own verdict.
+        const matched = r.observed.idState === "verified-expected";
+        observe(r.name, f.path, matched ? "verified" : "verification_failed", matched ? null : "the committed digest disagrees with the id it was presented under");
+      }
       families.set(f.path, same);
       continue;
     }
@@ -263,6 +304,7 @@ function runCorpus() {
         continue;
       }
       for (const verdict of verdicts) {
+        observe(verdict.name, f.path, verdict.observed, verdict.reason, "vector:bytes");
         observedByName.set(verdict.name, verdict.joinObserved ?? (verdict.observed === "verified" ? "verified" : "invalid"));
         const kind = mismatchKind(verdict.expected, verdict.observed);
         if (kind === "agree") same.agree += 1;
@@ -279,6 +321,7 @@ function runCorpus() {
     }
     const name = f.path.split("/").pop();
     const { observed, reason } = classifyRecord(data, text);
+    observe(name, f.path, observed, reason);
     const expected = same.expected;
     observedByName.set(name, expected === null ? "not_checked" : observed === "verified" ? "verified" : "invalid");
     if (expected === null) {
@@ -307,7 +350,18 @@ function runCorpus() {
   const sum = (k) => rows.reduce((n, r) => n + r[k], 0);
   const kit = loadKitColumn();
   const kitJoin = buildKitJoin(kit, observedByName, runIdBinding());
+  const observationTotals = observations.reduce(
+    (acc, o) => {
+      acc.events += 1;
+      acc[o.outcome] += 1;
+      if (o.reason) acc.reasons[o.reason] = (acc.reasons[o.reason] ?? 0) + 1;
+      return acc;
+    },
+    { events: 0, verified: 0, verification_failed: 0, not_checked: 0, absent: 0, unresolvable_record: 0, reasons: {} },
+  );
   return {
+    observations,
+    observationTotals,
     kitPins: {
       kit: KIT,
       commit: kit.commit,
@@ -463,8 +517,28 @@ function render(report) {
   out.push("");
   out.push("Two columns from two runners against the same pinned set, joined on vector name. The kit column is generated from the reference kit's own run (pinned below), not typed from the classification.");
   out.push("");
-  out.push("| Family | Vectors | CG-AER1/1 | Reference kit | Divergence |");
-  out.push("|---|---|---|---|---|");
+  out.push("| Family | Vectors | CG-AER1/1 | Observation (CG-OBS/1) | Reference kit | Divergence |");
+  out.push("|---|---|---|---|---|---|");
+  const observed = new Map();
+  for (const o of r.observations) {
+    const row = observed.get(o.family) ?? { events: 0, verified: 0, verification_failed: 0, not_checked: 0, absent: 0, unresolvable_record: 0, reasons: new Set() };
+    row.events += 1;
+    row[o.outcome] += 1;
+    if (o.reason) row.reasons.add(o.reason);
+    observed.set(o.family, row);
+  }
+  const observationCell = (row) => {
+    if (row === undefined) return "— (no read on this side)";
+    const parts = [
+      `${row.events} ${row.events === 1 ? "event" : "events"}`,
+      row.verified ? `${row.verified} verified` : null,
+      row.verification_failed ? `${row.verification_failed} verification failed` : null,
+      row.unresolvable_record ? `${row.unresolvable_record} unresolvable` : null,
+      row.absent ? `${row.absent} absent` : null,
+      row.not_checked ? `${row.not_checked} not checked${row.reasons.size ? ` (${[...row.reasons].join(", ")})` : ""}` : null,
+    ].filter(Boolean);
+    return parts.join(" · ");
+  };
   const grouped = new Map();
   for (const f of r.families) {
     const key = familyKey(f.path);
@@ -492,8 +566,14 @@ function render(report) {
           : k.divergences.length === 0
             ? `0 of ${k.compared}`
             : k.divergences.map((d) => `\`${d.name}\``).join(", ");
-    out.push(`| \`${key}\` | ${g.vectors} | ${ours} | ${kit} | ${divergence} |`);
+    out.push(`| \`${key}\` | ${g.vectors} | ${ours} | ${observationCell(observed.get(key))} | ${kit} | ${divergence} |`);
   }
+  out.push("");
+  out.push("### What the observation column counts");
+  out.push("");
+  out.push("One row per read, not per vector: `cg-aer1:parser` reads the same pinned bytes for every vector and records what it found in the five-word outcome vocabulary, with a named reason on `not_checked`. `verified` here means the bytes this reader recomputed matched the claim the record makes — never that the record is valid, and never that the work happened. That is why a family can read `verified` on this column and `invalid` in the column beside it without contradicting itself.");
+  out.push("");
+  out.push(`Across the pinned set: ${r.observationTotals.events} reads — ${r.observationTotals.verified} \`verified\`, ${r.observationTotals.verification_failed} \`verification_failed\`, ${r.observationTotals.unresolvable_record} \`unresolvable_record\`, ${r.observationTotals.not_checked} \`not_checked\`, ${r.observationTotals.absent} \`absent\`. The full ledger, with the per-vector rows this column is aggregated from, is [AER1-OBSERVATION-JOIN.md](./AER1-OBSERVATION-JOIN.md).`);
   out.push("");
   out.push("## The two interop pairs");
   out.push("");

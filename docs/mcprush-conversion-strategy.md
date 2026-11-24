@@ -19,7 +19,7 @@ customer traction, or "downloads = active users".
 
 | Stage | What the visitor needs | Asset that exists today | Owner action |
 |---|---|---|---|
-| **1. Discovery** | A one-line reason to click | MCPRush listing; `server.json` (10 tools, stdio, npm identifier); package README; org profile announcement (merged) | Update listing version/metadata after npm publish |
+| **1. Discovery** | A one-line reason to click | MCPRush listing; `server.json` (26 tools, stdio, npm identifier); package README; org profile announcement (merged) | Update listing version/metadata after npm publish |
 | **2. Trust** | Evidence they can re-run | `node examples/agent-commerce-mcp/run.mjs` (8/8); `node scripts/agent-commerce-mcp-smoke.mjs` (11/11, real stdio child); 11 MCP contract tests; security model; compatibility matrix with an honest Run Log | Paste the smoke output + release-notes link into the listing; request a runtime scan on the live server |
 | **3. Activation** | A working call in under five minutes | `npx -y @coreguard/agent-commerce`; ten tool schemas with `inputSchema`/`outputSchema`; 60-second demo (approve → refuse); client config snippets | Publish `0.1.3`, then record the first real RUN-BY-HAND in the compatibility log |
 | **4. Depth** | A reason to keep it beyond one call | Control plane: versioned policies, approvals bound to one order, rolling spend caps, revocation, hash-chained audit, HTTP API + CLI, 8/8 offline demo | Link the control-plane architecture/runbook from the listing |

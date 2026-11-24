@@ -19,19 +19,25 @@ A `verified` outcome here means the saved bytes were not changed after they were
 
 Two columns from two runners against the same pinned set, joined on vector name. The kit column is generated from the reference kit's own run (pinned below), not typed from the classification.
 
-| Family | Vectors | CG-AER1/1 | Reference kit | Divergence |
-|---|---|---|---|---|
-| `invalid` | 36 | 36 agree | 36 checks, all as expected · 36 non-verified | 0 of 36 |
-| `chain` | 35 | 35 agree | 35 checks, all as expected | — (kit line carries no per-vector verdict) |
-| `valid` | 21 | 21 agree | 21 checks, all as expected | 0 of 9 |
-| `merkle` | 9 | 9 agree | 12 checks, all as expected | — (kit line carries no per-vector verdict) |
-| `anchor` | 8 | 8 agree | 8 checks, all as expected · 7 non-verified | 0 of 8 |
-| `commitment` | 8 | 8 agree | 8 checks, all as expected | — (kit line carries no per-vector verdict) |
-| `workflow-merkle-seq-output-v1` | 8 | 8 agree | 8 checks, all as expected | — (kit line carries no per-vector verdict) |
-| `id-binding` | 6 | 6 agree | 6 checks, all as expected | 0 of 6 |
-| `anchored` | 6 | 6 agree | 6 checks, all as expected · 5 non-verified | 0 of 6 |
-| `unicode` | 5 | 5 agree | 5 checks, all as expected | — (kit line carries no per-vector verdict) |
-| `invalid-profile` | 1 | 1 agree | 1 check, all as expected · 1 non-verified | 0 of 1 |
+| Family | Vectors | CG-AER1/1 | Observation (CG-OBS/1) | Reference kit | Divergence |
+|---|---|---|---|---|---|
+| `invalid` | 36 | 36 agree | 36 events · 36 verification failed | 36 checks, all as expected · 36 non-verified | 0 of 36 |
+| `chain` | 35 | 35 agree | 35 events · 7 verified · 28 verification failed | 35 checks, all as expected | — (kit line carries no per-vector verdict) |
+| `valid` | 21 | 21 agree | 21 events · 21 verified | 21 checks, all as expected | 0 of 9 |
+| `merkle` | 9 | 9 agree | 9 events · 7 verified · 2 verification failed | 12 checks, all as expected | — (kit line carries no per-vector verdict) |
+| `anchor` | 8 | 8 agree | 8 events · 1 verified · 2 verification failed · 2 unresolvable · 2 absent · 1 not checked (outside_scope) | 8 checks, all as expected · 7 non-verified | 0 of 8 |
+| `commitment` | 8 | 8 agree | 8 events · 1 verified · 7 verification failed | 8 checks, all as expected | — (kit line carries no per-vector verdict) |
+| `workflow-merkle-seq-output-v1` | 8 | 8 agree | 8 events · 8 verified | 8 checks, all as expected | — (kit line carries no per-vector verdict) |
+| `id-binding` | 6 | 6 agree | 6 events · 1 verified · 5 verification failed | 6 checks, all as expected | 0 of 6 |
+| `anchored` | 6 | 6 agree | 6 events · 1 verified · 4 verification failed · 1 unresolvable | 6 checks, all as expected · 5 non-verified | 0 of 6 |
+| `unicode` | 5 | 5 agree | 5 events · 3 verified · 2 verification failed | 5 checks, all as expected | — (kit line carries no per-vector verdict) |
+| `invalid-profile` | 1 | 1 agree | 1 event · 1 verification failed | 1 check, all as expected · 1 non-verified | 0 of 1 |
+
+### What the observation column counts
+
+One row per read, not per vector: `cg-aer1:parser` reads the same pinned bytes for every vector and records what it found in the five-word outcome vocabulary, with a named reason on `not_checked`. `verified` here means the bytes this reader recomputed matched the claim the record makes — never that the record is valid, and never that the work happened. That is why a family can read `verified` on this column and `invalid` in the column beside it without contradicting itself.
+
+Across the pinned set: 143 reads — 50 `verified`, 87 `verification_failed`, 3 `unresolvable_record`, 1 `not_checked`, 2 `absent`. The full ledger, with the per-vector rows this column is aggregated from, is [AER1-OBSERVATION-JOIN.md](./AER1-OBSERVATION-JOIN.md).
 
 ## The two interop pairs
 
@@ -51,7 +57,7 @@ Drift named by CG-AER1/1:
 |---|---|
 | Corpus | kit 1.5.7 · `sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2` · 143 vectors |
 | Reference kit run | commit `e04e4c91d4630a2e0ceb4e12c48accacac10155e` · column sha256 `sha256:eb6cec8cf8d927c6af0460913fbf82ae1e2ae021b2cdde295b4d7c3aa4b29cd9` · 146 checks |
-| CG-AER1/1 | parser sha256:b939d615de4d6b99bdd322547929171f37d1b1ddf1999b58245dfb350ecbea45 · generator sha256:438ed719eb93e841975cbd458c6ef9a44ece30ee9e44b134b485aea48c3445ed |
+| CG-AER1/1 | parser sha256:b939d615de4d6b99bdd322547929171f37d1b1ddf1999b58245dfb350ecbea45 · generator sha256:dfcb133281cc960a98057619ecd267a37fcc264c9e74f3742cb2250415f079f7 |
 
 The kit's closing line is `CONFORMANCE OK: 143 vectors, 146 checks, sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2`; the join key is the vector name, and the extra checks are the merkle family's workflow checks (9 vectors carry 12 checks). The kit column was published at https://github.com/zambodotdev/aer1-kit/blob/main/interop/kit-column-2026-11-23.txt and is vendored here so this page regenerates offline; its sha256 is checked before the column is read.
 
