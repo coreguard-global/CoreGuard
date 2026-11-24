@@ -70,22 +70,34 @@ Two consequences are load-bearing:
 - A `verified` outcome with `observed_digest = null` is invalid. Verification is a statement about bytes that were read.
 - A `reason` outside `not_checked` is invalid. A finding is described by `detail`; a non-event is described by a reason.
 
+**Three checks that must not be collapsed:**
+
+| Check | Question | Not the same as |
+|---|---|---|
+| **Receipt/record verification** | Does the record satisfy the profile/schema/binding checks it claims? | Bytes being intact |
+| **Bytes/integrity verification** | Do the bytes read now match the digest/bytes the record committed to? | The record being semantically valid or the described work happening |
+| **Reader/principal authorization** | Was this observer allowed to read/evaluate this scope at this time? | Receipt validity or byte integrity |
+
+A `not_checked` caused by access refusal is an authorization/read event, not a receipt failure and not a byte-integrity failure. Implementations and profiles should name which check produced which outcome.
+
 ---
 
 ## 4. The reason set, frozen
 
-`not_checked` is the one outcome whose remedy depends entirely on why, so the profile fixes the six causes that actually occur:
+`not_checked` is the one outcome whose remedy depends entirely on why, so the reason set is frozen. A profile MUST NOT introduce a new reason without a version bump, and MUST NOT use a free-text reason.
 
-| Reason | Remedy |
-|---|---|
-| `not_attempted` | nothing to fix on the record — nobody tried |
-| `access_refused` | re-scope the caller, or read with another identity |
-| `access_revoked` | the credential is gone; obtain access again |
-| `outside_scope` | this verifier never claims that layer |
-| `unsupported_family` | a build limitation, named as one |
-| `schema_not_implemented` | upgrade the parser, then re-read |
+**Reconciliation note (open, to resolve before ACP submission/meeting):** the current draft carries two six-reason sets that must be reconciled into one normative set or an explicitly mapped pair.
 
-A profile MUST NOT introduce a seventh without a version bump, and MUST NOT use a free-text reason.
+| Set | Reasons | Where used |
+|---|---|---|
+| **CG-OBS/1 reference implementation** | `not_attempted`, `access_refused`, `access_revoked`, `outside_scope`, `unsupported_family`, `schema_not_implemented` | `packages/agent-commerce/observations.mjs`, current ledger/join implementation and tests |
+| **ACP compact profile text (Appendix A, wired as-is)** | `access_refused`, `unsupported_family`, `schema_not_implemented`, `outside_scope`, `provenance_not_present`, `not_yet_materialized` | Appendix A / issue #59 comment 7144044159 |
+
+**Overlap:** `access_refused`, `outside_scope`, `unsupported_family`, `schema_not_implemented`.  
+**CG-OBS/1 only:** `not_attempted`, `access_revoked`.  
+**Appendix A only:** `provenance_not_present`, `not_yet_materialized`.
+
+**Working interpretation (draft, not ratified):** `provenance_not_present` and `not_yet_materialized` describe record/provenance availability states; `not_attempted` and `access_revoked` describe observer/access lifecycle states. These may be different axes rather than competing labels. Before meeting/submission, we should publish one normative table that either (a) unifies them into one frozen set with clear definitions, or (b) splits them into two named fields (e.g. `reason` + `access_state`/`availability_state`) with no silent remapping. No implementation should guess a mapping.
 
 ---
 
