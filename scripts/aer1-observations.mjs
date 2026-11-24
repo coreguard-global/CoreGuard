@@ -239,9 +239,9 @@ function render(report) {
   out.push("");
   out.push("## The five outcomes and the six reasons");
   out.push("");
-  out.push("| Outcomes | |");
-  out.push("|---|---|");
-  out.push(`| ${CHECK_OUTCOMES.map((o) => `\`${o}\``).join(" | ")} | |`);
+  out.push("The five outcomes, spelled exactly as the corpus spells them — an observation never invents a sixth:");
+  out.push("");
+  for (const outcome of CHECK_OUTCOMES) out.push(`- \`${outcome}\``);
   out.push("");
   out.push("`not_checked` reasons, frozen because the remedy differs:");
   out.push("");

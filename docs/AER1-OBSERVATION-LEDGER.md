@@ -67,9 +67,13 @@ Append order is enforced separately: a read appended after a later read is refus
 
 ## The five outcomes and the six reasons
 
-| Outcomes | |
-|---|---|
-| `verified` | `verification_failed` | `not_checked` | `absent` | `unresolvable_record` | |
+The five outcomes, spelled exactly as the corpus spells them — an observation never invents a sixth:
+
+- `verified`
+- `verification_failed`
+- `not_checked`
+- `absent`
+- `unresolvable_record`
 
 `not_checked` reasons, frozen because the remedy differs:
 
