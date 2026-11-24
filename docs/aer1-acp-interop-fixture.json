@@ -65,5 +65,12 @@
     "joinPage": "docs/AER1-OBSERVATION-JOIN.md",
     "interopTable": "docs/AER1-INTEROP-TABLE.md",
     "fixtureSpec": "docs/AER1-ACP-INTEROP-FIXTURE.md"
+  },
+  "profile": {
+    "status": "draft-thread-wired",
+    "source": "https://github.com/coreguard-global/CoreGuard/issues/59#issuecomment-7144044159",
+    "wiredAsIs": true,
+    "kitPinInManifest": true,
+    "text": "AER-1 observation profile (ACP interop). An observer runs the pinned AER-1 corpus and publishes its own column over the same rows, joined on vector name, against the kit release and evaluated-set digest stated in the fixture manifest. Every claimed row carries the observer's stable name, what it read, and one of the five run-level outcomes: verified, verification_failed, not_checked, absent, unresolvable_record. not_checked carries exactly one of the six frozen reasons: access_refused, unsupported_family, schema_not_implemented, outside_scope, provenance_not_present, not_yet_materialized. A column claims per-vector comparison only where a per-vector verdict is actually measured; family-level-only lines stay explicitly unclaimed, and the compared scope is printed on the fixture's face. Two rules are load-bearing: no invented timestamps on corpus reads, and no execution language for fixture reads. verified means the check the observer recomputed matched the claim it evaluated; it is not proof the described work happened, and it is not a conformance claim or a certification. When a per-vector kit emit lands for the remaining families, columns widen on evidence, and the divergence count stays honest wherever it lands."
   }
 }
