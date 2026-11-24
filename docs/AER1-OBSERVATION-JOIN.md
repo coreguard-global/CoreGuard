@@ -73,7 +73,7 @@ The six `not_checked` reasons are frozen, and one appears on this set: `outside_
 |---|---|
 | Corpus | kit 1.5.7 · `sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2` · 143 vectors · 146 kit checks |
 | Reference kit run | commit `e04e4c91d4630a2e0ceb4e12c48accacac10155e` · column `sha256:eb6cec8cf8d927c6af0460913fbf82ae1e2ae021b2cdde295b4d7c3aa4b29cd9` |
-| CG-AER1/1 | parser `sha256:b939d615de4d6b99bdd322547929171f37d1b1ddf1999b58245dfb350ecbea45` · interop generator `sha256:6b2d4d45becab86cb09f25494fee9eb7b2b85612a6a8adcd06c8880959e50815` |
+| CG-AER1/1 | parser `sha256:b939d615de4d6b99bdd322547929171f37d1b1ddf1999b58245dfb350ecbea45` · interop generator `sha256:dfcb133281cc960a98057619ecd267a37fcc264c9e74f3742cb2250415f079f7` |
 | This generator | `sha256:ce816527520645051e1bbbb443e1ed2dfa99116dfe33878bab6d8bd862f98897` · layer `CG-OBS/1` (6 frozen reasons, 5 outcomes) |
 
 ## Boundary
