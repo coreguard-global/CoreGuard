@@ -57,7 +57,7 @@ Drift named by CG-AER1/1:
 |---|---|
 | Corpus | kit 1.5.7 · `sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2` · 143 vectors |
 | Reference kit run | commit `e04e4c91d4630a2e0ceb4e12c48accacac10155e` · column sha256 `sha256:eb6cec8cf8d927c6af0460913fbf82ae1e2ae021b2cdde295b4d7c3aa4b29cd9` · 146 checks |
-| CG-AER1/1 | parser sha256:b939d615de4d6b99bdd322547929171f37d1b1ddf1999b58245dfb350ecbea45 · generator sha256:a376662cc79557c1a90eadd0d816230c063df7c8519c0f2209a07cf83e96e9d5 |
+| CG-AER1/1 | parser sha256:b939d615de4d6b99bdd322547929171f37d1b1ddf1999b58245dfb350ecbea45 · generator sha256:e0d767caf0b33af970045152596b2b15e67eec150b555a6784fdffbd96f6dfa5 |
 
 The kit's closing line is `CONFORMANCE OK: 143 vectors, 146 checks, sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2`; the join key is the vector name, and the extra checks are the merkle family's workflow checks (9 vectors carry 12 checks). The kit column was published at https://github.com/zambodotdev/aer1-kit/blob/main/interop/kit-column-2026-11-23.txt and is vendored here so this page regenerates offline; its sha256 is checked before the column is read.
 
