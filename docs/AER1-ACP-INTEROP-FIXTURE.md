@@ -34,9 +34,16 @@ An implementation may publish its own observer column over the same 143 rows, jo
 - **Widening rule.** When a per-vector kit emit lands for the remaining families, the column widens on evidence and the divergence count stays honest wherever it lands.
 - **Three checks, never collapsed.** Receipt/record verification, bytes/integrity verification, and reader/principal authorization are different checks. An access refusal is not a receipt failure and not a byte-integrity failure.
 
-## Reason-set reconciliation (open)
+## Reason-set reconciliation (draft direction)
 
-The CG-OBS/1 reference implementation and the Appendix A compact profile text currently use different six-reason `not_checked` sets. The overlap is `access_refused`, `outside_scope`, `unsupported_family`, `schema_not_implemented`. CG-OBS/1 also has `not_attempted`, `access_revoked`; Appendix A also has `provenance_not_present`, `not_yet_materialized`. This is recorded openly in the manifest and must be reconciled before ACP submission/meeting: either one normative frozen set, or two named fields with no silent remapping.
+The CG-OBS/1 reference implementation and the Appendix A compact profile text currently use different six-reason `not_checked` sets. They are not vocabulary drift — they answer different questions. The thread direction is **two named fields, no silent remapping** (observer/access axis + record/provenance axis). Appendix A remains wired as-is while field names and schema are finalized.
+
+| Axis | Draft field | Reasons |
+|---|---|---|
+| Observer/access lifecycle | `observer_reason` (draft name) | `not_attempted`, `access_refused`, `access_revoked`, `outside_scope`, `unsupported_family`, `schema_not_implemented` |
+| Record/provenance availability | `record_reason` (draft name) | `provenance_not_present`, `not_yet_materialized` |
+
+One normative set would make the second axis borrow labels (silent remapping), so it is rejected as the direction. Exact field names and forward mapping for existing CG-OBS/1 rows remain open.
 
 ## Current CoreGuard observer scope
 
