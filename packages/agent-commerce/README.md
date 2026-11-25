@@ -349,7 +349,7 @@ License: MIT.
 
 ## Release readiness / MCPRush evidence
 
-- **Release notes:** `docs/releases/0.3.0.md` (latest) · `docs/releases/0.2.1.md`
+- **Release notes:** `docs/releases/0.4.0.md` (latest, run `45717671413`) · `docs/releases/0.3.0.md`
 - **Publish readiness checklist:** `docs/releases/0.1.3-publish-readiness.md`
 - **Security & threat model:** `docs/agent-commerce-mcp-security.md`
 - **Client compatibility matrix + run log:** `docs/agent-commerce-mcp-compatibility.md`
