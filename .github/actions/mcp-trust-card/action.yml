@@ -84,7 +84,7 @@ runs:
         if [ -n "$CG_URL" ]; then args+=(--url "$CG_URL"); fi
         node "$GITHUB_ACTION_PATH/../../../packages/agent-commerce/trust-card-cli.mjs" "${args[@]}"
         if [ -n "$CG_JSON_OUT" ] && [ -f "$CG_JSON_OUT" ]; then
-          verdict=$(node -e 'const c=require(process.argv[1]);process.stdout.write(c.verdict)' "$PWD/$CG_JSON_OUT")
+          verdict=$(node -e 'const fs=require("fs");const c=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));process.stdout.write(c.verdict)' "$CG_JSON_OUT")
           echo "verdict=$verdict" >> "$GITHUB_OUTPUT"
         else
           verdict=$(grep -oE 'Verdict: (PASS|REVIEW|BLOCKED)' "$CG_OUT" | head -1 | awk '{print $2}')
