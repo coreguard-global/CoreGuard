@@ -45,4 +45,4 @@ Targets: Freighter, Albedo, xBull, Lobstr, Rabet, Soroswap, Phoenix, Aquarius, B
 - Live testnet demo: npm run stellar:demo (real tx verified + replayed)
 - Packages: packages/stellar/, packages/stellar-agent/, packages/stellar-killer/, packages/agent-gate/
 - Tests: all passing, CI green
-- Measured: 2068 tests, 1522 files / 0 violations, 0 red checks (state-snapshot)
+- Measured: 2097 tests, 1522 files / 0 violations, 0 red checks (state-snapshot)

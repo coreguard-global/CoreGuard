@@ -31,7 +31,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_diff_tool_surface`](#coreguard_diff_tool_surface) | `before`, `after` | `callerContext` | Diff two tools/list snapshots (before/after an upgrade) to catch rug pulls: added, removed and re-described tools,… |
 | [`coreguard_emit_test_vectors`](#coreguard_emit_test_vectors) | `policy`, `baseIntent` | `nowSeconds`, `callerContext` | Emit deterministic integration test vectors for an SDK or gateway: baseline allow, amount drift, recipient swap,… |
 | [`coreguard_explain_decision`](#coreguard_explain_decision) | `policy`, `intent`, `nowSeconds` | `callerContext` | Evaluate an intent against a policy and explain the verdict rule by rule, including the smallest single change… |
-| [`coreguard_freeze_agent`](#coreguard_freeze_agent) | `storePath`, `agentId` | `reason`, `decidedBy`, `nowSeconds`, `callerContext` | Kill switch over a CGCP/1 control plane: revoke the agent and reject every open approval it holds in one audited… |
+| [`coreguard_freeze_agent`](#coreguard_freeze_agent) | `storePath`, `agentId` | `reason`, `decidedBy`, `nowSeconds`, `callerContext` | Kill switch over a CGCP/1 control plane: revoke the agent, reject every pending approval it holds in one audited… |
 | [`coreguard_generate_boundary_cases`](#coreguard_generate_boundary_cases) | `policy`, `baseIntent`, `nowSeconds` | `callerContext` | Generate the cases that break naive policy tests: at the limit, one unit below, one above, unlisted… |
 | [`coreguard_incident_timeline`](#coreguard_incident_timeline) | `report` | `storePath`, `callerContext` | Assemble an incident timeline from a control-plane ledger (storePath or an audit report): sequence-ordered events,… |
 | [`coreguard_inspect_identity`](#coreguard_inspect_identity) | `issuer`, `scope`, `subject`, `contentDigest` | `anchor`, `other`, `callerContext` | Inspect CG-ID/1 identity split: recordId (who) vs contentDigest (what), with optional anchor facts and optional… |
@@ -2567,7 +2567,7 @@ Evaluate an intent against a policy and explain the verdict rule by rule, includ
 
 ### `coreguard_freeze_agent`
 
-Kill switch over a CGCP/1 control plane: revoke the agent and reject every open approval it holds in one audited operation, returning the chain head and the rejected approval ids.
+Kill switch over a CGCP/1 control plane: revoke the agent, reject every pending approval it holds in one audited operation, and report approved-but-unexecuted approvals as superseded by the revocation. Returns the chain head and every affected id.
 
 **Required:** `storePath`, `agentId` · **Optional:** `reason`, `decidedBy`, `nowSeconds`, `callerContext`
 
@@ -2641,7 +2641,8 @@ Kill switch over a CGCP/1 control plane: revoke the agent and reject every open 
   "approvals": {
     "open": 1,
     "rejected": 1,
-    "failures": 0
+    "failures": 0,
+    "approvedSuperseded": 0
   },
   "openApprovalIds": [
     "approval-0002"

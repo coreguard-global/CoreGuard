@@ -80,10 +80,12 @@ export function compilePolicy(args = {}) {
     rules.push({ ruleId: "RECIPIENT_001", type: "RECIPIENT_ALLOWLIST", params: { addresses: spec.allowRecipients.map(String) }, severity: "CRITICAL" });
   }
   if (Array.isArray(spec.allowSelectors) && spec.allowSelectors.length) {
-    rules.push({ ruleId: "SELECTOR_001", type: "SELECTOR_ALLOWLIST", params: { selectors: spec.allowSelectors.map(String) }, severity: "CRITICAL" });
+    // Selectors are bytes, not prose: normalise at compile time so a spec written
+    // as "0xA9059CBB" and an intent written as "0xa9059cbb" are the same rule.
+    rules.push({ ruleId: "SELECTOR_001", type: "SELECTOR_ALLOWLIST", params: { selectors: spec.allowSelectors.map((s) => String(s).toLowerCase()) }, severity: "CRITICAL" });
   }
   if (spec.currency) {
-    rules.push({ ruleId: "CURRENCY_001", type: "CURRENCY_ALLOWLIST", params: { currencies: [String(spec.currency)] }, severity: "HIGH" });
+    rules.push({ ruleId: "CURRENCY_001", type: "CURRENCY_ALLOWLIST", params: { currencies: [String(spec.currency).toUpperCase()] }, severity: "HIGH" });
   }
   const policy = {
     version: "CGEP/1",
@@ -358,11 +360,12 @@ export function scanToolDescriptions(args = {}) {
     const name = String(tool?.name ?? `tool-${toolIndex}`);
     const description = String(tool?.description ?? "");
     for (let i = 0; i < description.length; i++) {
+      const start = i; // astral code points consume two UTF-16 units; report where the character STARTS
       const cp = description.codePointAt(i);
-      if (cp > 0xffff) i++; // surrogate pair consumed
+      if (cp > 0xffff) i++; // consume the low surrogate
       const kind = HIDDEN_CHAR_KINDS.find(([lo, hi]) => cp >= lo && cp <= hi)?.[2];
       if (kind) {
-        findings.push({ tool: name, toolIndex, index: i, codepoint: "U+" + cp.toString(16).toUpperCase().padStart(4, "0"), kind, severity: kind === "unicode_tag" || kind === "bidi_override" ? "HIGH" : "MEDIUM" });
+        findings.push({ tool: name, toolIndex, index: start, codepoint: "U+" + cp.toString(16).toUpperCase().padStart(4, "0"), kind, severity: kind === "unicode_tag" || kind === "bidi_override" ? "HIGH" : "MEDIUM" });
       }
     }
     const lower = description.toLowerCase();
@@ -397,13 +400,80 @@ const CONFUSABLES = Object.freeze({
   "5": "s", "3": "e", "8": "b", "|": "l", "!": "i",
 });
 
+/**
+ * Minimal RFC 3492 decoder for a single `xn--` label.
+ *
+ * Without this, an attacker writes the homoglyph in punycode and the string
+ * comparison sees two unrelated ASCII names — the exact trick the check exists
+ * to catch. Returns null when the label is not decodable (the caller then keeps
+ * the raw label and the `punycode` signal still fires).
+ */
+function decodePunycodeLabel(label) {
+  const prefix = "xn--";
+  if (!label.startsWith(prefix)) return label;
+  const input = label.slice(prefix.length);
+  const base = 36, tMin = 1, tMax = 26, skew = 38, damp = 700, initialBias = 72, initialN = 128;
+  const adapt = (delta, numPoints, firstTime) => {
+    let d = firstTime ? Math.floor(delta / damp) : delta >> 1;
+    d += Math.floor(d / numPoints);
+    let k = 0;
+    while (d > ((base - tMin) * tMax) >> 1) {
+      d = Math.floor(d / (base - tMin));
+      k += base;
+    }
+    return Math.floor(k + ((base - tMin + 1) * d) / (d + skew));
+  };
+  const digitOf = (code) => {
+    if (code >= 0x30 && code <= 0x39) return code - 22;
+    if (code >= 0x41 && code <= 0x5a) return code - 0x41;
+    if (code >= 0x61 && code <= 0x7a) return code - 0x61;
+    return -1;
+  };
+  const output = [];
+  let n = initialN, i = 0, bias = initialBias;
+  const basic = input.lastIndexOf("-");
+  if (basic > 0) {
+    for (let j = 0; j < basic; j++) {
+      const code = input.charCodeAt(j);
+      if (code >= 0x80) return null;
+      output.push(String.fromCharCode(code));
+    }
+  }
+  let idx = basic > 0 ? basic + 1 : 0;
+  while (idx < input.length) {
+    const oldi = i;
+    let w = 1;
+    for (let k = base; ; k += base) {
+      if (idx >= input.length) return null;
+      const digit = digitOf(input.charCodeAt(idx++));
+      if (digit < 0) return null;
+      i += digit * w;
+      const t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
+      if (digit < t) break;
+      w *= base - t;
+    }
+    const total = output.length + 1;
+    bias = adapt(i - oldi, total, oldi === 0);
+    n += Math.floor(i / total);
+    i %= total;
+    if (n > 0x10ffff || (n >= 0xd800 && n <= 0xdfff)) return null;
+    output.splice(i, 0, String.fromCodePoint(n));
+    i++;
+  }
+  return output.join("");
+}
+
 function skeleton(domain) {
-  return String(domain ?? "")
+  const labels = String(domain ?? "")
     .toLowerCase()
     .trim()
     .replace(/^https?:\/\//, "")
     .replace(/\/.*$/, "")
     .replace(/\.$/, "")
+    .split(".")
+    .map((label) => decodePunycodeLabel(label) ?? label);
+  return labels
+    .join(".")
     .replace(/[^a-z0-9.\-\u0080-\uffff]/g, "")
     .split("")
     .map((ch) => CONFUSABLES[ch] ?? ch)
@@ -664,9 +734,16 @@ export function freezeAgent(args = {}) {
   const pinned = args.nowSeconds === undefined ? null : Number(args.nowSeconds);
   const cp = createControlPlane({ storePath, create: true, ...(pinned === null ? {} : { now: () => new Date(pinned * 1000) }) });
   const state = cp.getState();
-  const open = Object.values(state.approvals ?? {}).filter((a) => a.agentId === agentId && (a.status === "pending" || a.status === "approved"));
+  const wasRevoked = state.agents?.[agentId]?.status === "revoked";
+  const pending = Object.values(state.approvals ?? {}).filter((a) => a.agentId === agentId && a.status === "pending");
+  // The ledger only transitions pending → approved/rejected. An approval that was
+  // already approved cannot be re-decided, so the freeze must not pretend it did:
+  // revocation already makes it fail closed at evaluate() time. Report it as
+  // superseded instead of counting a silent "rejection" that never happened.
+  // A second freeze must not re-report approvals the first one already superseded.
+  const approved = wasRevoked ? [] : Object.values(state.approvals ?? {}).filter((a) => a.agentId === agentId && a.status === "approved");
   const revoked = cp.revokeAgent(agentId, reason);
-  const rejected = open.map((a) => {
+  const rejected = pending.map((a) => {
     try {
       return cp.decideApproval(a.id, { decision: "rejected", decidedBy: decidedBy ?? "freeze", reason: `agent frozen: ${reason}` });
     } catch (err) {
@@ -674,14 +751,23 @@ export function freezeAgent(args = {}) {
     }
   });
   const report = cp.auditReport({ limit: 1 });
+  const rejectedOk = rejected.filter((r) => !r.error);
   return {
     type: "agent_freeze",
     spec: "CG-FZ/1",
     agentId,
     reason,
     revoked,
-    approvals: { open: open.length, rejected: rejected.filter((r) => !r.error).length, failures: rejected.filter((r) => r.error).length },
-    openApprovalIds: open.map((a) => a.id),
+    approvals: {
+      open: pending.length + approved.length,
+      rejected: rejectedOk.length,
+      failures: rejected.filter((r) => r.error).length,
+      approvedSuperseded: approved.length,
+    },
+    openApprovalIds: [...pending, ...approved].map((a) => a.id),
+    rejectedApprovalIds: rejectedOk.map((r) => r.id),
+    approvedSupersededIds: approved.map((a) => a.id),
+    note: "pending approvals are rejected in this operation; approved-but-unexecuted approvals cannot be re-decided by the ledger and are superseded by the agent revocation (evaluate() denies them)",
     chain: { ok: report.chain?.ok ?? null, length: report.chain?.length ?? null, headHash: report.chain?.headHash ?? null },
     boundary: "revocation and rejection are recorded in the local hash-chained ledger; they do not reach a chain, a merchant or a payment network. " + WAVE3_BOUNDARY,
   };
@@ -984,9 +1070,9 @@ export const WAVE3_TOOLS = Object.freeze([
   },
   {
     name: "coreguard_freeze_agent",
-    description: "Kill switch over a CGCP/1 control plane: revoke the agent and reject every open approval it holds in one audited operation, returning the chain head and the rejected approval ids.",
+    description: "Kill switch over a CGCP/1 control plane: revoke the agent, reject every pending approval it holds in one audited operation, and report approved-but-unexecuted approvals as superseded by the revocation. Returns the chain head and every affected id.",
     inputSchema: schema({ storePath: { type: "string" }, agentId: { type: "string" }, reason: { type: "string" }, decidedBy: { type: "string" }, nowSeconds: { type: "string", pattern: "^[0-9]+$", description: "optional pinned epoch seconds; omit to let the local ledger stamp call time" } }, ["storePath", "agentId"], "Control-plane path and the agent to freeze."),
-    outputSchema: out("Revocation record, rejected approvals and chain status."),
+    outputSchema: out("Revocation record, rejected and superseded approval ids, failure count and chain status."),
   },
   {
     name: "coreguard_budget_runway",
