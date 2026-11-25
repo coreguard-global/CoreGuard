@@ -1,0 +1,2039 @@
+[
+  {
+    "name": "coreguard_authorize",
+    "description": "Bind a user's approval as a CoreGuard Consent Receipt (CGCR/1): the exact approved order bytes (intent + policy + declared submit payload) committed as an independently re-derivable receipt. nowSeconds must be a pinned unix-seconds string.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "intent": {
+          "type": "object",
+          "description": "CGEP/1 intent (the approved order, incl. merchant/items/total/credentialRef/window)"
+        },
+        "policy": {
+          "type": "object",
+          "description": "CGEP/1 policy (value limit + target/recipient/selector allowlists)"
+        },
+        "declaredTrace": {
+          "type": "object",
+          "description": "the exact submit-order payload the approval covers"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "description": "pinned approval epoch (unix seconds) — never the wall clock",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "intent",
+        "policy",
+        "declaredTrace",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CGCR/1 consent record with pinned commitments over approved bytes.",
+      "properties": {
+        "spec": {
+          "type": "string",
+          "description": "always CGCR/1"
+        },
+        "receipt": {
+          "type": "object",
+          "description": "pinned receipt commitments and timestamp"
+        },
+        "intent": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "echoed caller context when supplied"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_consent",
+    "description": "Verify a consent record's integrity and binding: recompute every commitment against the record's own approved bytes. Any tampered byte fails closed.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "consent": {
+          "type": "object",
+          "description": "CGCR/1 consent record as returned by coreguard_authorize"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "consent"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Integrity verdict for the record's own bytes; fail-closed on tamper.",
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "description": "VERIFIED or INVALID/UNKNOWN — never SAFE"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_execution",
+    "description": "Verify an executed order against a consent record, fail-closed: exact execution -> VERIFIED; any drift -> INVALID with the drifted field named (AGR/1). Single-use consents are consumed by first verified execution (process-local by default; file-backed host store via AC-CS/1 when supplied by caller integration).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "consent": {
+          "type": "object",
+          "description": "CGCR/1 consent record"
+        },
+        "trace": {
+          "type": "object",
+          "description": "the executed order payload as observed"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "consent",
+        "trace"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Fail-closed execution verdict with AGR/1 risk report and consumption boundary.",
+      "properties": {
+        "spec": {
+          "type": "string",
+          "description": "AC-SDK/1"
+        },
+        "verdict": {
+          "type": "string",
+          "description": "VERIFIED or INVALID"
+        },
+        "risk": {
+          "type": "object"
+        },
+        "consumed": {
+          "type": "boolean"
+        },
+        "consumedLedger": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_assess_risk",
+    "description": "Classify one executed order against one approved authorization with the deterministic AGR/1 taxonomy. Not a probabilistic fraud score; VERIFIED ≠ SAFE.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "intent": {
+          "type": "object",
+          "description": "the approved order"
+        },
+        "policy": {
+          "type": "object",
+          "description": "the committed policy"
+        },
+        "trace": {
+          "type": "object",
+          "description": "the executed order payload"
+        },
+        "consumed": {
+          "type": "boolean",
+          "description": "whether this authorization was already consumed",
+          "default": false
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "intent",
+        "policy",
+        "trace"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Deterministic AGR/1 risk report with classification, named violations, and taxonomy metadata.",
+      "properties": {
+        "classification": {
+          "type": "string"
+        },
+        "violations": {
+          "type": "array"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_inspect_identity",
+    "description": "Inspect CG-ID/1 identity split: recordId (who) vs contentDigest (what), with optional anchor facts and optional comparison to another identity. Offline and deterministic.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "issuer": {
+          "type": "string",
+          "description": "identity issuer"
+        },
+        "scope": {
+          "type": "string",
+          "description": "identity scope"
+        },
+        "subject": {
+          "type": "string",
+          "description": "identity subject"
+        },
+        "contentDigest": {
+          "type": "string",
+          "description": "content digest as 64-char lowercase hex (no 0x prefix)"
+        },
+        "anchor": {
+          "type": "object",
+          "description": "optional anchor reference"
+        },
+        "other": {
+          "type": "object",
+          "description": "optional other identity for comparison"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "issuer",
+        "scope",
+        "subject",
+        "contentDigest"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CG-ID/1 identity view with anchor facts and optional comparison.",
+      "properties": {
+        "identity": {
+          "type": "object"
+        },
+        "anchorFacts": {
+          "type": "object"
+        },
+        "comparison": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_build_attestation",
+    "description": "Build a CGXA/1 offline execution attestation from a consent record and executed trace. No broadcast; no chain/network contact. nowSeconds must be pinned.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "consent": {
+          "type": "object",
+          "description": "CGCR/1 consent record"
+        },
+        "executedTrace": {
+          "type": "object",
+          "description": "executed trace observed by caller"
+        },
+        "adapterId": {
+          "type": "string",
+          "description": "CGXA adapter id"
+        },
+        "nowSeconds": {
+          "description": "pinned approval epoch (unix seconds) as non-negative integer or digit string — never wall clock",
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9]+$"
+            }
+          ]
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "consent",
+        "executedTrace",
+        "adapterId",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CGXA/1 offline attestation payload with attestation record and deterministic attestationId.",
+      "properties": {
+        "attestation": {
+          "type": "object"
+        },
+        "attestationId": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_attestation",
+    "description": "Verify a CGXA/1 attestation against its consent and executed trace. Offline, fail-closed; no chain/network contact.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "attestation": {
+          "type": "object",
+          "description": "CGXA/1 attestation"
+        },
+        "attestationId": {
+          "type": "string",
+          "description": "attestation identifier"
+        },
+        "consent": {
+          "type": "object",
+          "description": "CGCR/1 consent record"
+        },
+        "executedTrace": {
+          "type": "object",
+          "description": "executed trace"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "attestation",
+        "attestationId",
+        "consent",
+        "executedTrace"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CGXA/1 attestation verification result with deterministic verdict and boundary-aware details.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_decide_outcome",
+    "description": "Map a verification report to CG-OUT/1 outcome and authorization decision. ABSENT/NOT_CHECKED never render as BLOCK; VERIFIED ≠ SAFE.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "report": {
+          "type": "object",
+          "description": "verification report or bridge-compatible report object"
+        },
+        "receiptId": {
+          "type": "string",
+          "description": "optional receipt id for profile reference"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "report"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CG-OUT/1 outcome, authorization decision, and optional profile reference.",
+      "properties": {
+        "outcome": {
+          "type": "object"
+        },
+        "decision": {
+          "type": "object"
+        },
+        "profileReference": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_profile_reference",
+    "description": "Create or parse a CG-OUT/1 profile reference. action='make' requires receiptId; action='parse' requires reference.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "make",
+            "parse"
+          ],
+          "description": "make or parse"
+        },
+        "receiptId": {
+          "type": "string",
+          "description": "receipt id for action=make"
+        },
+        "reference": {
+          "description": "profile reference object/string for action=parse"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "action"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CG-OUT/1 profile reference result for make or parse actions with explicit action echo.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "profileReference": {
+          "type": "object"
+        },
+        "parsed": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_consumption_status",
+    "description": "Check/consume/release a receiptId in a consumption ledger. Default is process-local (this MCP process only). If storePath is supplied (or COREGUARD_CONSUMPTION_STORE is set), uses the AC-CS/1 lock-guarded file store, which is atomic across processes on the same host. Cross-host reconciliation is CG-SPEND/1 merge; on-chain anchoring is NOT_BUILT.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "receiptId": {
+          "type": "string",
+          "description": "receipt/consent identifier key"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "check",
+            "consume",
+            "release"
+          ],
+          "description": "check, consume, or release",
+          "default": "check"
+        },
+        "storePath": {
+          "type": "string",
+          "description": "optional AC-CS/1 file-backed store path for same-host cross-process consumption (default: COREGUARD_CONSUMPTION_STORE)"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "receiptId"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Consumption status with explicit ledger boundary.",
+      "properties": {
+        "receiptId": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "consumed": {
+          "type": "boolean"
+        },
+        "ledger": {
+          "type": "string",
+          "description": "process-local or file-backed (AC-CS/1, cross-process on this host)"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_parse_x402_challenge",
+    "description": "Parse and normalize an x402 payment challenge (HTTP 402 accepts). Offline deterministic validation only; no network contact, no payment execution.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "object",
+          "description": "x402 challenge/402 body with accepts[]"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "challenge"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Parsed x402 challenge with normalized accepts, issues, and boundary; no network call.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "issues": {
+          "type": "array"
+        },
+        "accepts": {
+          "type": "array"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_authorize_x402_payment",
+    "description": "Evaluate an x402 challenge against a local policy and produce an authorization decision. No custody, no broadcast, no payment execution.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object",
+          "description": "policy: maxAmount, allowedNetworks, allowedAssets, allowedPayTo"
+        },
+        "selectedIndex": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "challenge",
+        "policy"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "x402 authorization decision with policy issues and authorizationId; no payment executed.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "authorizationId": {
+          "type": "string"
+        },
+        "issues": {
+          "type": "array"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_x402_settlement",
+    "description": "Verify caller-supplied x402 settlement evidence against a challenge. No network confirmation performed; evidence-only, fail-closed.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "object"
+        },
+        "settlement": {
+          "type": "object",
+          "description": "caller-supplied settlement evidence (network, asset, amount, payTo, txRef, status)"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "challenge",
+        "settlement"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "x402 settlement verification from caller-supplied evidence; no network confirmation.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "issues": {
+          "type": "array"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_reconcile_payment",
+    "description": "Reconcile authorization, settlement evidence, and receipt. Deterministic evidence check only; no external ledger/custody.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "authorization": {
+          "type": "object"
+        },
+        "challenge": {
+          "type": "object"
+        },
+        "settlement": {
+          "type": "object"
+        },
+        "receipt": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "authorization"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Payment reconciliation verdict across authorization, settlement, and receipt evidence.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "issues": {
+          "type": "array"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_meter_agent_usage",
+    "description": "Deterministically meter agent usage/cost events into an auditable total. No billing custody or external payment.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "agentId": {
+          "type": "string"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "currency": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "agentId",
+        "events"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Deterministic agent usage metering totals and event digest; no billing custody.",
+      "properties": {
+        "totalAmount": {
+          "type": "string"
+        },
+        "eventCount": {
+          "type": "integer"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_register_machine",
+    "description": "Create a local machine registration record from a manifest. No external device attestation/TPM trust root verification performed.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "machineId": {
+          "type": "string"
+        },
+        "manifest": {
+          "type": "object"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "machineId",
+        "manifest"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Local machine registration record; external device attestation not performed.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "registrationId": {
+          "type": "string"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_create_machine_task",
+    "description": "Create a deterministic machine task record with terms/price/SLA conditions. No payment custody or physical execution guarantee.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string"
+        },
+        "machineId": {
+          "type": "string"
+        },
+        "terms": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "taskId",
+        "machineId",
+        "terms"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Deterministic machine task record with terms digest and boundary.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "taskDigest": {
+          "type": "string"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_telemetry",
+    "description": "Verify caller-supplied telemetry evidence structure/digest and optionally verify Ed25519 signature when trust roots/public keys are supplied. Signature trust/physical-world truth not proven beyond supplied key material.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string"
+        },
+        "telemetry": {
+          "type": "object"
+        },
+        "trust": {
+          "type": "object",
+          "description": "Optional trust roots: { publicKeyPem } or { publicKeys: [{keyId,publicKeyPem}]|{keyId:pem} } or { keyring }"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "taskId",
+        "telemetry"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Telemetry evidence verification result; signature trust/physical truth not proven.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "issues": {
+          "type": "array"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_task_completion",
+    "description": "Verify task completion evidence against task record. Evidence acceptance is not physical-world proof; independent verification required for high-stakes actions.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "type": "object"
+        },
+        "completion": {
+          "type": "object"
+        },
+        "telemetryVerification": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "task",
+        "completion"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Task completion evidence verification result; evidence acceptance is not physical proof.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "issues": {
+          "type": "array"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_delegation_chain",
+    "description": "Verify delegation chain structure/continuity and optionally verify Ed25519 signatures when trust roots/public keys are supplied. Verification proves signatures over supplied payloads, not delegator identity beyond supplied key material.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "chain": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "trust": {
+          "type": "object",
+          "description": "Optional trust roots: { publicKeyPem } or { publicKeys: [{keyId,publicKeyPem}]|{keyId:pem} } or { keyring }"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "chain"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Delegation chain structural verification result; signatures require trusted roots.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "issues": {
+          "type": "array"
+        },
+        "depth": {
+          "type": "integer"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_create_intent",
+    "description": "CGCP/1 mapping: create an intent/approval request in a self-hosted file-backed control plane. Not a blockchain receipt and not payment execution.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "storePath": {
+          "type": "string"
+        },
+        "intentId": {
+          "type": "string"
+        },
+        "agentId": {
+          "type": "string"
+        },
+        "policyId": {
+          "type": "string"
+        },
+        "merchant": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "amountMinor": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "requestedBy": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "storePath",
+        "agentId"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CGCP/1 intent/approval request record with mapping and boundary.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "intent": {
+          "type": "object"
+        },
+        "mapping": {
+          "type": "string"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_issue_receipt",
+    "description": "CGCP/1 mapping: record an execution receipt in a self-hosted file-backed control plane. This is a local execution record, not an on-chain proof or external payment receipt.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "storePath": {
+          "type": "string"
+        },
+        "receiptId": {
+          "type": "string"
+        },
+        "agentId": {
+          "type": "string"
+        },
+        "policyId": {
+          "type": "string"
+        },
+        "approvalId": {
+          "type": "string"
+        },
+        "merchant": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "amountMinor": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "txRef": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "storePath",
+        "agentId"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CGCP/1 execution receipt record with mapping and boundary.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "receipt": {
+          "type": "object"
+        },
+        "mapping": {
+          "type": "string"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_receipt",
+    "description": "CGCP/1 mapping: verify a receipt record and the audit chain in a file-backed control plane. No external anchor/witness/on-chain verification is performed.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "storePath": {
+          "type": "string"
+        },
+        "receiptId": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "storePath"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CGCP/1 receipt verification verdict, receipt lookup, and audit chain status.",
+      "properties": {
+        "verdict": {
+          "type": "string"
+        },
+        "issues": {
+          "type": "array"
+        },
+        "receiptFound": {
+          "type": "boolean"
+        },
+        "auditChain": {
+          "type": "object"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_check_limits",
+    "description": "CGCP/1 mapping: evaluate policy/limit decision for an agent request in a file-backed control plane. No funds moved and no external IdP/KMS involved.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "storePath": {
+          "type": "string"
+        },
+        "agentId": {
+          "type": "string"
+        },
+        "policyId": {
+          "type": "string"
+        },
+        "merchant": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "amountMinor": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "approvalId": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "storePath",
+        "agentId"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CGCP/1 policy evaluation decision with mapping and boundary.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "object"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_revoke_consent",
+    "description": "CGCP/1 mapping: revoke an approval, agent, or policy in a file-backed control plane. Local single-host revocation; no distributed propagation, no external IdP lifecycle.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "storePath": {
+          "type": "string"
+        },
+        "targetType": {
+          "type": "string",
+          "enum": [
+            "approval",
+            "agent",
+            "policy"
+          ]
+        },
+        "targetId": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "decidedBy": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "storePath",
+        "targetType",
+        "targetId"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CGCP/1 revocation record with mapping and boundary.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "targetType": {
+          "type": "string"
+        },
+        "result": {
+          "type": "object"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_audit_transaction",
+    "description": "CGCP/1 mapping: read and optionally filter the append-only hash-chained audit report from a file-backed control plane. No external audit/audit anchoring.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "storePath": {
+          "type": "string"
+        },
+        "txRef": {
+          "type": "string"
+        },
+        "approvalId": {
+          "type": "string"
+        },
+        "agentId": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed in structuredContent.callerContext; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "storePath"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CGCP/1 audit report with chain status and optional filters.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "report": {
+          "type": "object"
+        },
+        "mapping": {
+          "type": "string"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_compile_policy",
+    "description": "Compile a compact spending spec (limit, merchant/recipient/selector allowlists, currency) into a canonical CGEP/1 policy with a stable digest. Compiling the same spec twice yields the same digest; nothing is stored.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Compact policy spec to compile.",
+      "properties": {
+        "spec": {
+          "type": "object",
+          "description": "policyId, name, maxAmountMinor (decimal string), allowMerchants[], allowRecipients[], allowSelectors[], currency"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Canonical CGEP/1 policy plus its digest and rule summary.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_explain_decision",
+    "description": "Evaluate an intent against a policy and explain the verdict rule by rule, including the smallest single change (counterfactual) that clears the first blocking rule. Deterministic, no state written.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Policy and intent to explain.",
+      "properties": {
+        "policy": {
+          "type": "object"
+        },
+        "intent": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "pinned epoch seconds used for expiry checks"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "policy",
+        "intent",
+        "nowSeconds"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Verdict, per-rule checks and a counterfactual.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_simulate_spend",
+    "description": "Dry-run a batch of intents against a policy: allowed/denied per row, blocking rules, totals and counterfactuals. No approval, spend counter or ledger state is written.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Policy plus the batch of intents to simulate.",
+      "properties": {
+        "policy": {
+          "type": "object"
+        },
+        "intents": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "intent objects in CGEP/1 shape"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "policy",
+        "intents",
+        "nowSeconds"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Per-intent verdicts and aggregate totals, marked dryRun.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_diff_policies",
+    "description": "Semantic diff of two CGEP/1 policies by rule id: added, removed, changed rules, value-limit delta, strictness trend, and whether an agent must re-consent.",
+    "inputSchema": {
+      "type": "object",
+      "description": "The two policies to compare.",
+      "properties": {
+        "before": {
+          "type": "object"
+        },
+        "after": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "before",
+        "after"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Rule-level diff with strictness and reconsent flags.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_generate_boundary_cases",
+    "description": "Generate the cases that break naive policy tests: at the limit, one unit below, one above, unlisted target/recipient, closed window, wrong currency — each with the verdict the real rule engine computes.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Policy and a representative intent.",
+      "properties": {
+        "policy": {
+          "type": "object"
+        },
+        "baseIntent": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "policy",
+        "baseIntent",
+        "nowSeconds"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Boundary cases with expected verdicts computed by the server.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_audit_server_manifest",
+    "description": "Audit an MCP server manifest (server.json) before installing it: remote transports, unpinned packages, missing provenance, secret env requests, undeclared distribution. Returns a deterministic risk card.",
+    "inputSchema": {
+      "type": "object",
+      "description": "The MCP server manifest to audit.",
+      "properties": {
+        "manifest": {
+          "type": "object",
+          "description": "the server.json record as published"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "manifest"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Risk level, findings with severities and the manifest digest.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_scan_tool_descriptions",
+    "description": "Scan MCP tool descriptions for hidden-instruction and spoofing payloads: bidi overrides, Unicode tag characters, zero-width and invisible operators, HTML comments, and a fixed imperative phrase list — with offsets.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Tool metadata to scan.",
+      "properties": {
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "tools from tools/list: name + description"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "tools"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "CLEAN/SUSPICIOUS/DANGEROUS verdict with byte-level findings.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_check_lookalike",
+    "description": "Check a merchant domain or package name for homoglyph, mixed-script and punycode impersonation of a reference: confusable folding, skeleton edit distance and explicit signals.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Candidate string and the reference it claims to be.",
+      "properties": {
+        "candidate": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "candidate",
+        "reference"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "IDENTICAL/LOOKALIKE/DISTINCT verdict with the signals behind it.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_diff_tool_surface",
+    "description": "Diff two tools/list snapshots (before/after an upgrade) to catch rug pulls: added, removed and re-described tools, schema changes, description similarity, severity and whether re-consent is required.",
+    "inputSchema": {
+      "type": "object",
+      "description": "The two tool surfaces.",
+      "properties": {
+        "before": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "after": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "before",
+        "after"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Surface diff with severity and requiresReconsent.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_evidence_bundle",
+    "description": "Verify a portable evidence bundle against its own digest and each item's digest: detects edits, dropped items and digest substitution without any network or trust root.",
+    "inputSchema": {
+      "type": "object",
+      "description": "The bundle to verify.",
+      "properties": {
+        "bundle": {
+          "type": "object",
+          "description": "{ spec, digest, items:[{id, body, digest}] }"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "bundle"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "VERIFIED/INVALID with the computed digest and item issues.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_redact_receipt",
+    "description": "Produce a shareable redacted receipt: sensitive fields (credentials, tokens, PAN/card, email, phone, keys) are masked, every redaction is listed, and both the original and redacted digests are returned so a holder can prove it is the same record.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Receipt to redact.",
+      "properties": {
+        "receipt": {
+          "type": "object"
+        },
+        "reveal": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "field names or dotted paths to keep visible"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "receipt"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Redacted copy, redaction manifest and both digests.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_attest_batch",
+    "description": "Commit many receipts with one Merkle root: domain-separated SHA-256 leaves, RFC 6962-style tree, per-item inclusion proof. Publish only the root; each holder keeps a verifiable proof.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Receipts to batch.",
+      "properties": {
+        "receipts": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "receipts"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Merkle root, leaf digests and inclusion proofs.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_batch_proof",
+    "description": "Verify a Merkle inclusion proof offline: recompute the root from the leaf digest and the supplied left/right path, and report the exact root mismatch if any.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Leaf, root and proof to verify.",
+      "properties": {
+        "leafDigest": {
+          "type": "string"
+        },
+        "root": {
+          "type": "string"
+        },
+        "proof": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "{ side: left|right, hash }"
+          }
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "leafDigest",
+        "root",
+        "proof"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "VERIFIED or INVALID with the recomputed root, the issue code and the proof steps used.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_freeze_agent",
+    "description": "Kill switch over a CGCP/1 control plane: revoke the agent, reject every pending approval it holds in one audited operation, and report approved-but-unexecuted approvals as superseded by the revocation. Returns the chain head and every affected id.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Control-plane path and the agent to freeze.",
+      "properties": {
+        "storePath": {
+          "type": "string"
+        },
+        "agentId": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "decidedBy": {
+          "type": "string"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "optional pinned epoch seconds; omit to let the local ledger stamp call time"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "storePath",
+        "agentId"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Revocation record, rejected and superseded approval ids, failure count and chain status.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_budget_runway",
+    "description": "Project budget runway from pinned inputs: limit, spend to date, a pinned asOf and a spend window. Straight-line burn, remaining budget, runway seconds/days and the exhaustion epoch — no wall clock, no forecasting model.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Pinned budget inputs.",
+      "properties": {
+        "asOfSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "policyLimitMinor": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "spentMinor": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "windowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "{ atSeconds, amountMinor }"
+          }
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "asOfSeconds",
+        "policyLimitMinor",
+        "spentMinor",
+        "windowSeconds"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Remaining budget, burn rate, runway and exhaustion epoch.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_detect_spend_anomaly",
+    "description": "Flag unusual spend events with a median/MAD robust score (no training data, no clock): returns the baseline, the threshold for the chosen sensitivity, and each anomaly with its score and direction.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Spend events to scan.",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "{ id, amountMinor, atSeconds }"
+          }
+        },
+        "sensitivity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "events"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Baseline, anomaly list and the score threshold used.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_incident_timeline",
+    "description": "Assemble an incident timeline from a control-plane ledger (storePath or an audit report): sequence-ordered events, detected sequence gaps and audit-chain status. Ordering comes from the ledger, never from arrival time.",
+    "inputSchema": {
+      "type": "object",
+      "description": "An audit report, or a storePath when no report is supplied.",
+      "properties": {
+        "report": {
+          "type": "object"
+        },
+        "storePath": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "report"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Sequence-ordered events, detected sequence gaps and audit-chain status.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_translate_receipt",
+    "description": "Structurally translate a receipt to ACP, x402 or CGCR/1 and list exactly what the target cannot carry. Translation only: nothing is signed, verified or settled.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Receipt and target shape.",
+      "properties": {
+        "receipt": {
+          "type": "object"
+        },
+        "to": {
+          "type": "string",
+          "enum": [
+            "acp",
+            "x402",
+            "cgcr"
+          ]
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "receipt",
+        "to"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Translated object, loss list and source digest.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_emit_test_vectors",
+    "description": "Emit deterministic integration test vectors for an SDK or gateway: baseline allow, amount drift, recipient swap, expired window and at-limit, each with the verdict the real rule engine computes.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Policy and baseline intent.",
+      "properties": {
+        "policy": {
+          "type": "object"
+        },
+        "baseIntent": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "policy",
+        "baseIntent"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Vectors with expected verdicts and how to run them.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_describe_surface",
+    "description": "Return this server's capability card (or a one-line badge): version, transport, protocol, tool count, categories and the standing boundary — the record a directory, catalog or buyer can quote verbatim.",
+    "inputSchema": {
+      "type": "object",
+      "description": "card or badge.",
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": [
+            "card",
+            "badge"
+          ]
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-provided trace/context metadata. Echoed back; never a cryptographic input."
+        }
+      },
+      "required": [
+        "format"
+      ],
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Capability card with the server's own boundary.",
+      "additionalProperties": true
+    }
+  }
+]

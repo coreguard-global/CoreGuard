@@ -1,0 +1,47 @@
+{
+  "spec": "CG-TC/1",
+  "server": {
+    "name": "io.github.domdomegg/filesystem-mcp",
+    "version": "2.0.0",
+    "transport": "package"
+  },
+  "verdict": "PASS",
+  "reasons": [],
+  "coverage": {
+    "manifest": true,
+    "tools": true
+  },
+  "manifest": {
+    "digest": "sha256:d07d9b14de6e273f7faf04de65ef3ecf55ffb24103ff108337dcb4e5029916a4",
+    "risk": "low",
+    "findings": [],
+    "counts": {
+      "total": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "tools": {
+    "count": 4,
+    "digest": "sha256:a9db3caa91fa75c244b29099715b49b890b0f7febda23d3d0d2ce4a68e8283af",
+    "shape": "array",
+    "scan": {
+      "verdict": "CLEAN",
+      "counts": {
+        "findings": 0,
+        "high": 0,
+        "medium": 0
+      },
+      "findings": []
+    }
+  },
+  "sources": {
+    "manifest": "docs/trust-cards/sources/filesystem-mcp-server.json",
+    "tools": "docs/trust-cards/sources/filesystem-mcp-tools-list.json"
+  },
+  "cardDigest": "sha256:8d3df02831046bd0147ac4edc20ead7631638267840118b940466eb9e88e4498",
+  "date": "2026-11-25",
+  "boundary": "structural audit only; executes nothing; PASS ≠ SAFE"
+}

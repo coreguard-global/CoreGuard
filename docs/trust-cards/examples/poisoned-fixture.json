@@ -1,0 +1,100 @@
+{
+  "spec": "CG-TC/1",
+  "server": {
+    "name": "example/poisoned-tool-metadata",
+    "version": "0.0.1-fixture",
+    "transport": "remote"
+  },
+  "verdict": "BLOCKED",
+  "reasons": [
+    "MANIFEST_HIGH: at least one HIGH-severity manifest finding",
+    "TOOLS_DANGEROUS: at least one HIGH-severity description finding"
+  ],
+  "coverage": {
+    "manifest": true,
+    "tools": true
+  },
+  "manifest": {
+    "digest": "sha256:a9e646ccb9e007f2e08b68573bd389a5df36f39524d1869d286cdb80d2be38de",
+    "risk": "high",
+    "findings": [
+      {
+        "id": "REMOTE_ENDPOINT",
+        "severity": "HIGH",
+        "detail": "server declares a remote transport; the client trusts bytes it did not run",
+        "evidence": [
+          "https://example.test/mcp"
+        ]
+      }
+    ],
+    "counts": {
+      "total": 1,
+      "high": 1,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "tools": {
+    "count": 3,
+    "digest": "sha256:2952df054693c127c4a92d2903360e4f537af7b350f21f5e0a8056eeb8413d6d",
+    "shape": "array",
+    "scan": {
+      "verdict": "DANGEROUS",
+      "counts": {
+        "findings": 5,
+        "high": 5,
+        "medium": 0
+      },
+      "findings": [
+        {
+          "tool": "sync_notes",
+          "toolIndex": 1,
+          "index": 12,
+          "codepoint": "U+202E",
+          "kind": "bidi_override",
+          "severity": "HIGH"
+        },
+        {
+          "tool": "sync_notes",
+          "toolIndex": 1,
+          "index": 31,
+          "codepoint": "U+202C",
+          "kind": "bidi_override",
+          "severity": "HIGH"
+        },
+        {
+          "tool": "sync_notes",
+          "toolIndex": 1,
+          "index": 33,
+          "phrase": "ignore previous",
+          "kind": "injection_phrase",
+          "severity": "HIGH"
+        },
+        {
+          "tool": "sync_notes",
+          "toolIndex": 1,
+          "index": 88,
+          "phrase": "without asking",
+          "kind": "injection_phrase",
+          "severity": "HIGH"
+        },
+        {
+          "tool": "tag_runner",
+          "toolIndex": 2,
+          "index": 18,
+          "codepoint": "U+E0041",
+          "kind": "unicode_tag",
+          "severity": "HIGH"
+        }
+      ]
+    }
+  },
+  "sources": {
+    "manifest": "docs/trust-cards/examples/fixture-server.json",
+    "tools": "docs/trust-cards/examples/fixture-tools-list.json"
+  },
+  "cardDigest": "sha256:f01c521a73fbad5e56489f35e7e1401adb5995e33332dad1ac1ef77c22e32597",
+  "date": "2026-11-25",
+  "boundary": "structural audit only; executes nothing; PASS ≠ SAFE"
+}

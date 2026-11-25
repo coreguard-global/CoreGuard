@@ -11,6 +11,7 @@
     "./client.mjs": "./client.mjs",
     "./firewall.mjs": "./firewall.mjs",
     "./risk.mjs": "./risk.mjs",
+    "./trust-card.mjs": "./trust-card.mjs",
     "./risk-cli.mjs": "./risk-cli.mjs",
     "./outcomes.mjs": "./outcomes.mjs",
     "./outcomes-bridge.mjs": "./outcomes-bridge.mjs",
@@ -38,7 +39,8 @@
     "./cgcp-mcp-tools.mjs": "./cgcp-mcp-tools.mjs"
   },
   "bin": {
-    "coreguard-agent-commerce-mcp": "./bin/mcp.mjs"
+    "coreguard-agent-commerce-mcp": "./bin/mcp.mjs",
+    "coreguard-trust-card": "./bin/trust-card.mjs"
   },
   "files": [
     "aer1.mjs",
@@ -78,6 +80,9 @@
     "server.json",
     "spend.mjs",
     "trust.mjs",
+    "trust-card-cli.mjs",
+    "trust-card.mjs",
+    "bin/trust-card.mjs",
     "wave3.mjs"
   ],
   "engines": {

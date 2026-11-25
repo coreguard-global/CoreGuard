@@ -1,0 +1,144 @@
+[
+  {
+    "name": "view",
+    "title": "View",
+    "description": "View file contents or list directory.\n\nFor files:\n- Returns content with line numbers (format: \"   N\\t<content>\")\n- Use view_range to read specific lines [start, end] (1-indexed, inclusive)\n- Large files are truncated at 16000 characters\n\nFor directories:\n- Lists contents with type indicator (/ for directories)\n- Shows 2 levels deep by default\n- Ignores hidden files and node_modules",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Absolute path to file or directory"
+        },
+        "view_range": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "description": "Line range [start, end] for text files (1-indexed, inclusive)"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "readOnlyHint": true
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "create",
+    "title": "Create",
+    "description": "Create or overwrite a file with the specified content.\n\n- Creates parent directories if they don't exist\n- Overwrites existing files without warning\n- Use absolute paths",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Absolute path where file will be created"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content to write to the file"
+        }
+      },
+      "required": [
+        "path",
+        "content"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "str_replace",
+    "title": "String Replace",
+    "description": "Replace an exact string in a file.\n\n- old_str must match exactly and be unique in the file\n- If old_str appears 0 times or more than once, the operation fails\n- If new_str is omitted, old_str is deleted\n- Use absolute paths",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Absolute path to file"
+        },
+        "old_str": {
+          "type": "string",
+          "description": "Exact string to find (must be unique)"
+        },
+        "new_str": {
+          "type": "string",
+          "description": "Replacement string (omit to delete)"
+        }
+      },
+      "required": [
+        "path",
+        "old_str"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  },
+  {
+    "name": "insert",
+    "title": "Insert",
+    "description": "Insert text at a specific line in a file.\n\n- insert_line = 0: Insert at the beginning\n- insert_line = N: Insert after line N\n- insert_line = -1: Insert at the end\n- insert_text should typically end with a newline\n- Use absolute paths",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Absolute path to file"
+        },
+        "insert_line": {
+          "type": "integer",
+          "minimum": -1,
+          "description": "Line number to insert after (0 = beginning, -1 = end)"
+        },
+        "insert_text": {
+          "type": "string",
+          "description": "Text to insert (should end with newline)"
+        }
+      },
+      "required": [
+        "path",
+        "insert_line",
+        "insert_text"
+      ],
+      "additionalProperties": false,
+      "$schema": "http://json-schema.org/draft-07/schema#"
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
+    "execution": {
+      "taskSupport": "forbidden"
+    }
+  }
+]

@@ -80,6 +80,13 @@ That is accurate and worth keeping: the server reads no environment variable at 
 **Badge:** ![MCP tools: 46](./assets/badges/mcp-tools.svg)
 <!-- /generated: mcp-surface -->
 
+**Trust card** (CG-TC/1) — generated from the published `server.json` and a live `tools/list`, re-runnable with `npm run trust:cards:check`:
+
+> **Trust card:** PASS · manifest risk `low` · tool descriptions `CLEAN` · 46 tools · card `sha256:c0c8ab49202a38b1ada59aed3ee0862b822f3ebb8aebf767ba892667b9246e63`
+> Structural audit by CoreGuard (CG-TC/1) from the server record and a live `tools/list`. PASS ≠ SAFE.
+
+Full card: [trust-cards/coreguard-agent-commerce.md](./trust-cards/coreguard-agent-commerce.md) · machine-readable sidecar: [trust-cards/coreguard-agent-commerce.json](./trust-cards/coreguard-agent-commerce.json). The same command works on any server record: see [TRUST-CARD.md](./TRUST-CARD.md), the third-party example [filesystem-mcp.md](./trust-cards/filesystem-mcp.md), and the blocked [poisoned fixture](./trust-cards/examples/poisoned-fixture.md).
+
 Paste-ready per-tool reference, with every example executed against the shipped server: [`docs/mcprush/tool-reference.md`](./mcprush/tool-reference.md).
 
 ## 6. Pricing and sale
@@ -112,6 +119,7 @@ That is the live badge code, not a screenshot of a grade. The studio's "Get the 
 | Interop: 143 pinned vectors, 0 false accepts, 0 divergences | `node scripts/aer1-interop.mjs --check` → `docs/AER1-INTEROP-TABLE.md` |
 | Observation family on the same set and digest | `node scripts/aer1-observation-join.mjs --check` → `docs/AER1-OBSERVATION-JOIN.md` |
 | Offline demo, approve then refuse | `node examples/agent-commerce-mcp/run.mjs` |
+| Trust card: manifest findings, poisoned-tool scan, inventory, digests | `npm run trust:cards:check` → `docs/trust-cards/*.md` |
 
 Use the numbers as they are printed by those commands, and do not add a percentage, a user count or a revenue figure — none of them is measured anywhere.
 
