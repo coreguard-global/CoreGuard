@@ -383,22 +383,32 @@ export function accrue(ledger, { action_id, subject_digest } = {}) {
 
   const observers = [...byObserver.values()].map((entry) => {
     const latest = entry.history[entry.history.length - 1];
+    const lastVerified = [...entry.history].reverse().find((e) => e.outcome === "verified") ?? null;
+    const failedAfterVerified = lastVerified
+      ? entry.history.some((e) => at(e) > at(lastVerified) && e.outcome === "verification_failed")
+      : false;
     return Object.freeze({
       observer: entry.observer,
       latest_outcome: latest.outcome,
       latest_code: latest.code,
       latest_reason: latest.reason,
       latest_checked_at: latest.checked_at,
+      verified_at: lastVerified?.checked_at ?? null,
+      verified_observation_id: lastVerified?.observation_id ?? null,
+      confirmation_stands: lastVerified !== null && !failedAfterVerified,
       scopes: Object.freeze([...entry.scopes]),
       reads: entry.history.length,
       observation_ids: Object.freeze(entry.history.map((e) => e.observation_id)),
     });
   });
 
-  const verifiedBy = observers.filter((o) => o.latest_outcome === "verified").map((o) => o.observer);
+  // A confirmation stands unless the same observer later refused the bytes.
+  // Losing access after a verified read is not a contradiction: the observer
+  // matched the bytes earlier and cannot fetch them now — both true.
+  const verifiedBy = observers.filter((o) => o.confirmation_stands).map((o) => o.observer);
   const notCheckedBy = observers
     .filter((o) => o.latest_outcome === "not_checked")
-    .map((o) => Object.freeze({ observer: o.observer, reason: o.latest_reason, at: o.latest_checked_at }));
+    .map((o) => Object.freeze({ observer: o.observer, reason: o.latest_reason, at: o.latest_checked_at, confirmed_before: o.confirmation_stands }));
   const failedBy = observers.filter((o) => o.latest_outcome === "verification_failed").map((o) => o.observer);
   const absentBy = observers.filter((o) => o.latest_outcome === "absent").map((o) => o.observer);
 
@@ -456,10 +466,21 @@ export function describeAccrual(accrual) {
   // bytes", and burying that after two observers who could not read invites the
   // reader to scan for the refusal and stop there.
   const ordered = [...accrual.observers].sort((a, b) => {
-    const rank = (o) => (o.latest_outcome === "verified" ? 0 : o.latest_outcome === "not_checked" ? 2 : 1);
+    const rank = (o) => (o.confirmation_stands ? 0 : o.latest_outcome === "not_checked" ? 2 : 1);
     return rank(a) - rank(b) || a.observer.localeCompare(b.observer);
   });
   const parts = ordered.map((o) => {
+    if (o.confirmation_stands && o.latest_outcome !== "verified") {
+      const tail =
+        o.latest_outcome === "not_checked"
+          ? `later did not check (${o.latest_reason}) at ${o.latest_checked_at}`
+          : o.latest_outcome === "verification_failed"
+            ? `later refused (${o.latest_code}) at ${o.latest_checked_at}`
+            : o.latest_outcome === "absent"
+              ? `later found nothing to read at ${o.latest_checked_at}`
+              : `later could not resolve the record at ${o.latest_checked_at}`;
+      return `${o.observer} matched the bytes at ${o.verified_at}; ${tail}`;
+    }
     const verb =
       o.latest_outcome === "verified"
         ? "matched the bytes"

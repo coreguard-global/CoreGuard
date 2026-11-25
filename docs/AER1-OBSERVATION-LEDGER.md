@@ -23,20 +23,20 @@ A verdict on a run is not one fact. It is a history of reads, and each read belo
 |---|---|---|---|---|---|---|
 | 1 | `caller:status-only` | `status:read` | `not_checked` | `access_refused` | 2026-11-19T16:40:00Z | 0 confirmed · 1 not checked |
 | 2 | `auditor:files` | `files:orders/*` | `verified` | — | 2026-11-19T16:52:00Z | 1 confirmed · 1 not checked |
-| 3 | `caller:status-only` | `status:read` | `not_checked` | `access_revoked` | 2026-11-19T17:05:00Z | 1 confirmed · 1 not checked |
+| 3 | `auditor:files` | `files:orders/*` | `not_checked` | `access_revoked` | 2026-11-19T17:05:00Z | 1 confirmed · 2 not checked |
 
-Each row is an immutable event with its own `observation_id` (a digest over observer, scope, bytes, outcome and read time). The third read does not overwrite the first: `caller:status-only` is still **not checked / access_refused at 16:40** in the history, and **not checked / access_revoked at 17:05** in its latest state. Both are true. Neither is a failure of the receipt.
+Each row is an immutable event with its own `observation_id` (a digest over observer, scope, bytes, outcome and read time). The third read does not overwrite the earlier ones: `auditor:files` is still **verified at 16:52** in the history, and **not checked / access_revoked at 17:05** in its latest state. Both are true. The same observer can say "I verified these bytes earlier" and "I cannot fetch them now", and neither statement cancels the other. `caller:status-only` remains **not checked / access_refused at 16:40** — a refusal to read, not a failed verification.
 
 What the run supports, stated by the layer itself:
 
 ```
-1 independent confirmation: auditor:files matched the bytes at 2026-11-19T16:52:00Z; caller:status-only did not check (access_revoked) at 2026-11-19T17:05:00Z · 1 execution
+1 independent confirmation: auditor:files matched the bytes at 2026-11-19T16:52:00Z; later did not check (access_revoked) at 2026-11-19T17:05:00Z; caller:status-only did not check (access_refused) at 2026-11-19T16:40:00Z · 1 execution
 ```
 
 | Accrual field | Value |
 |---|---|
 | independent confirmations | 1 (`auditor:files`) |
-| not checked, by observer | `caller:status-only` (access_revoked) |
+| not checked, by observer | `caller:status-only` (access_refused) · `auditor:files` (access_revoked) |
 | first read / first confirmation | 2026-11-19T16:40:00Z / 2026-11-19T16:52:00Z |
 | composite | `verified` |
 | contested | false |
@@ -92,7 +92,7 @@ The five outcomes, spelled exactly as the corpus spells them — an observation 
 |---|---|
 | Corpus | kit 1.5.7 · `sha256:60bf73f325793e16843370cfa24903bb0d017525cb297e42bebc35857e2db0d2` |
 | Subject | `130da435-e157-498e-af90-605866a86a27` · `sha256:0492c18e09059aa2e30ba0864f6aada2ef08475a5b35944cbf2a9ce46d12b9f1` · parser verdict `pass` |
-| Code | observations `sha256:63536ff8ea0dcedd9c3dbfff286d95bf5a165d1e271d3bfa28d539bbd3d951d7` · parser `sha256:b939d615de4d6b99bdd322547929171f37d1b1ddf1999b58245dfb350ecbea45` |
+| Code | observations `sha256:ff5d821d3a1174ca29025ef700723d33e76ca0405119aed56b67423593487b7c` · parser `sha256:b939d615de4d6b99bdd322547929171f37d1b1ddf1999b58245dfb350ecbea45` |
 
 ## Boundary
 

@@ -5,8 +5,9 @@
  * rejected with a named code, and the honest twin still records. The three-read
  * scenario is the one from the AER-1 discussion thread: a caller holding only a
  * status scope gets a 403, an auditor with a file scope matches the bytes, and
- * the file key is revoked before the status caller reads again. One run, one
- * digest, three true statements — and the earlier ones are never rewritten.
+ * the files-scoped reader's key is revoked after that match. One run, one
+ * digest, three true statements — the same observer can verify earlier and lose
+ * access later, and the earlier observation is never rewritten.
  */
 
 import { test } from "node:test";
@@ -171,20 +172,31 @@ test("one run, three reads: 403, match, 401 — all three statements survive", (
       observed_digest: SUBJECT,
       checked_at: "2026-11-19T16:52:00Z",
     }),
-    base({ outcome: "not_checked", reason: "access_revoked", checked_at: "2026-11-19T17:05:00Z" }),
+    base({
+      observer: "auditor:files",
+      scope: "files:orders/*",
+      outcome: "not_checked",
+      reason: "access_revoked",
+      checked_at: "2026-11-19T17:05:00Z",
+    }),
   ]);
   assert.equal(built.ok, true);
 
   const state = accrue(built.ledger, { action_id: "run-0001" });
   assert.equal(state.events, 3);
+  // The same observer verified the bytes, then lost access. Both statements are
+  // true and neither cancels the other: the confirmation stands in history.
   assert.deepEqual([...state.verified_by], ["auditor:files"]);
-  // The status caller's latest state is the revocation, but its earlier 403 is
-  // still in the history — the later read did not edit it out.
+  const auditor = state.observers.find((o) => o.observer === "auditor:files");
+  assert.equal(auditor.latest_outcome, "not_checked");
+  assert.equal(auditor.latest_reason, "access_revoked");
+  assert.equal(auditor.verified_at, "2026-11-19T16:52:00Z");
+  assert.equal(auditor.confirmation_stands, true);
+  assert.equal(auditor.reads, 2);
   const caller = state.observers.find((o) => o.observer === "caller:status-only");
-  assert.equal(caller.latest_reason, "access_revoked");
-  assert.equal(caller.reads, 2);
-  assert.equal(caller.observation_ids.length, 2);
-  // A confirmation is not contested by somebody who never got to look.
+  assert.equal(caller.latest_reason, "access_refused");
+  assert.equal(caller.reads, 1);
+  // A revocation after a match is not a contest — nobody refused the bytes.
   assert.equal(state.contested, false);
   assert.equal(state.composite, "verified");
   assert.equal(state.executions, 1);
@@ -193,7 +205,8 @@ test("one run, three reads: 403, match, 401 — all three statements survive", (
 
   const sentence = describeAccrual(state);
   assert.match(sentence, /1 independent confirmation/);
-  assert.match(sentence, /auditor:files matched the bytes at 2026-11-19T16:52:00Z/);
+  assert.match(sentence, /auditor:files matched the bytes at 2026-11-19T16:52:00Z; later did not check \(access_revoked\) at 2026-11-19T17:05:00Z/);
+  assert.match(sentence, /caller:status-only did not check \(access_refused\) at 2026-11-19T16:40:00Z/);
   assert.match(sentence, /1 execution/);
 });
 
