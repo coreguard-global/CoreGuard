@@ -87,13 +87,13 @@ function scenario(s) {
     },
     {
       ...common,
-      observer: "caller:status-only",
-      scope: "status:read",
+      observer: "auditor:files",
+      scope: "files:orders/*",
       outcome: "not_checked",
       reason: "access_revoked",
       observed_digest: null,
       checked_at: "2026-11-19T17:05:00Z",
-      evidence: { http_status: 401, note: "the file key was revoked after the first successful read; access is time-varying" },
+      evidence: { http_status: 401, note: "the files-scoped reader's key was revoked after it matched the bytes; the earlier confirmation stands, the access is gone" },
     },
   ];
 }
@@ -206,7 +206,7 @@ function render(report) {
     );
   });
   out.push("");
-  out.push("Each row is an immutable event with its own `observation_id` (a digest over observer, scope, bytes, outcome and read time). The third read does not overwrite the first: `caller:status-only` is still **not checked / access_refused at 16:40** in the history, and **not checked / access_revoked at 17:05** in its latest state. Both are true. Neither is a failure of the receipt.");
+  out.push("Each row is an immutable event with its own `observation_id` (a digest over observer, scope, bytes, outcome and read time). The third read does not overwrite the earlier ones: `auditor:files` is still **verified at 16:52** in the history, and **not checked / access_revoked at 17:05** in its latest state. Both are true. The same observer can say \"I verified these bytes earlier\" and \"I cannot fetch them now\", and neither statement cancels the other. `caller:status-only` remains **not checked / access_refused at 16:40** — a refusal to read, not a failed verification.");
   out.push("");
   out.push("What the run supports, stated by the layer itself:");
   out.push("");

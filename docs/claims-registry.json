@@ -68,7 +68,7 @@
       "recheck": "npm run boundary:audit",
       "external": false,
       "derived": {
-        "filesScanned": 1595,
+        "filesScanned": 1596,
         "violations": 0
       },
       "deriveError": null,
