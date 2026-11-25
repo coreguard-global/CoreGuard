@@ -105,7 +105,7 @@ A `HIGH` record finding or a `DANGEROUS` scan yields `BLOCKED`; any medium findi
 
 | Card | Verdict | What it shows |
 |---|---|---|
-| [CoreGuard Agent Commerce](trust-cards/coreguard-agent-commerce.md) | PASS | Our own server: 70 tools, clean descriptions, pinned npm package, live `tools/list`. |
+| [CoreGuard Agent Commerce](trust-cards/coreguard-agent-commerce.md) | PASS | Our own server: 94 tools, clean descriptions, pinned npm package, live `tools/list`. |
 | [domdomegg/filesystem-mcp 2.0.0](trust-cards/filesystem-mcp.md) | PASS | A third-party server, from its published MCP Registry record plus its own stdio `tools/list`. Not affiliated with CoreGuard. |
 | [Poisoned fixture](trust-cards/examples/poisoned-fixture.md) | BLOCKED | **Synthetic, not a real server.** Shows the gate catching a remote transport, a bidi override, an injected instruction and a Unicode tag character. |
 

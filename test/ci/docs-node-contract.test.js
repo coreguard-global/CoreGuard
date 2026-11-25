@@ -163,6 +163,7 @@ const SKIP = [
   { re: /npm run publish:check/, reason: "publish machinery (npm pack + tarball gate) — owned by test/ci/publish-gate.test.js" },
   { re: /node examples\/live\/live-verify\.js/, reason: "live Core Mainnet RPC (external network, non-deterministic block input)" },
   { re: /verify-run --bundle.*--rpc/, reason: "live Testnet2 RPC on a committed bundle — the offline --bundle form below covers the contract" },
+  { re: /verify-run .*--rpc/, reason: "live Testnet2 RPC on a synthetic receipt — external, non-deterministic and can hang when the endpoint is unreachable; the offline --bundle/--receipt forms cover the exit-code contract" },
   { re: /build-verifier\.mjs --update/, reason: "promotes the frozen wasm artifact (dev-only by its own header; the gate mode path stays frozen)" },
   { re: /startDeliveryEndpoint/, reason: "server-start one-liner — executed against a live child by doc-curl-contract.test.js (double-binding port 8787 here would also hang this fence)" },
   { re: /^cd coreguard(\/|$)/, reason: "lands in the clone path the fence documents (external-network reader world); the package's own verification fences run from the package root" },

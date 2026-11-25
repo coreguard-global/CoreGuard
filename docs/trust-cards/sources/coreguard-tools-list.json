@@ -2834,5 +2834,1933 @@
       "description": "Incident war-room packet and digest. (deterministic, caller-supplied evidence).",
       "additionalProperties": true
     }
+  },
+  {
+    "name": "coreguard_canonicalize_payment_instruction",
+    "description": "Normalize a caller-supplied payment instruction into a canonical, digest-bound object ready for approval. Offline; no bank or rail contact.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Payment instruction to canonicalize.",
+      "additionalProperties": true,
+      "properties": {
+        "instruction": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "instruction"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Canonical instruction, digest and checks.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_payment_authorization_chain",
+    "description": "Verify a caller-supplied delegation chain for continuity, scoped authority, expiry and signature markers at a pinned time. No IdP call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Delegation links and pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "chain": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "chain"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Authorization chain verdict with scope intersection.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_kyc_evidence",
+    "description": "Check a caller-supplied KYC evidence packet for freshness, required documents and provider allowlist. No live KYC or identity-provider call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "KYC evidence, policy, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "policy",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "KYC evidence verdict with explicit boundary.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_ubo_evidence",
+    "description": "Verify a caller-supplied beneficial-ownership packet for owner identifiers, percentage sum and disclosure threshold. No registry call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Entity ownership packet and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "entity": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "entity"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Ownership packet verdict and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_travel_rule_packet",
+    "description": "Check a caller-supplied travel-rule packet for required originator, beneficiary, VASP and amount fields. No VASP network is contacted.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Travel-rule packet and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "packet": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "packet"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Travel-rule packet completeness verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_aml_alert_disposition",
+    "description": "Verify a caller-supplied AML alert disposition for reviewer, rationale, sequence and case id. No alert is generated or reported.",
+    "inputSchema": {
+      "type": "object",
+      "description": "AML alert disposition packet.",
+      "additionalProperties": true,
+      "properties": {
+        "alert": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "alert"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "AML disposition verdict with explicit boundary.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_sanctions_list_version",
+    "description": "Check a caller-supplied sanctions-list version stamp against a pinned policy minimum and freshness window. No list is downloaded.",
+    "inputSchema": {
+      "type": "object",
+      "description": "List stamp, policy, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "policy",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "List-version assessment and checks. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_fx_rate_lock",
+    "description": "Verify a caller-supplied FX rate lock against an expected intent amount and a pinned expiry. No market-data feed is used.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Rate lock, optional expected values, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "lock": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "lock",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Rate-lock verdict with expiry state. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_reconcile_multi_ledger",
+    "description": "Reconcile caller-supplied ledger sources against an expected amount/currency and emit named breaks. No ledger API is contacted.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Ledger sources and expected values.",
+      "additionalProperties": true,
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "sources"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Reconciliation verdict with explicit breaks.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_camt054_notification",
+    "description": "Parse and validate a caller-supplied camt.054-like credit notification with entries and balance. No bank statement API is contacted.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Camt.054-like notification and optional expectations.",
+      "additionalProperties": true,
+      "properties": {
+        "notification": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "notification"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Notification verdict, entry count and digest.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_mt103_fields",
+    "description": "Validate mandatory fields and the 32A date/currency/amount shape in a caller-supplied MT103-like field map. No SWIFT access.",
+    "inputSchema": {
+      "type": "object",
+      "description": "MT103-like field map.",
+      "additionalProperties": true,
+      "properties": {
+        "fields": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "fields"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Present/missing tags and parsed 32A field.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_beneficiary_change",
+    "description": "Detect beneficiary, account or bank drift between an approved instruction and an executed packet, with an explicit re-approval gate. Offline.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Approved and executed beneficiary packets.",
+      "additionalProperties": true,
+      "properties": {
+        "approved": {
+          "type": "object"
+        },
+        "executed": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "approved",
+        "executed"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Change verdict with re-approval requirement.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_path_payment",
+    "description": "Verify caller-supplied Stellar path-payment evidence for status, assets, amounts, destination and path digest. No Horizon call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Path-payment evidence and optional expectations.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Path-payment evidence verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_evm_permit_evidence",
+    "description": "Verify caller-supplied EVM permit evidence for token, spender, value, deadline, nonce and signature marker. No RPC or signature recovery.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Permit evidence, policy, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Permit evidence verdict and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_coredao_delegation_evidence",
+    "description": "Verify caller-supplied Core DAO delegation evidence for chain 1116, validator allowlist, amount and unbonding policy. No RPC call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Delegation evidence and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Delegation evidence verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_pi_attestation_chain",
+    "description": "Verify the digest linkage and root of a caller-supplied Pi payment attestation chain. No Pi API or mainnet settlement check.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Attestation links and optional expectations.",
+      "additionalProperties": true,
+      "properties": {
+        "chain": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "chain"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Attestation chain verdict and root digest.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_erc4337_userop_evidence",
+    "description": "Verify a caller-supplied ERC-4337 UserOperation packet for sender, nonce, calldata digest, signature marker and gas policy. No bundler call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "UserOperation packet and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "userOp": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "userOp"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "UserOperation evidence verdict and digest.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_token_approval_revocation",
+    "description": "Verify caller-supplied token approval revocation evidence shows a positive previous allowance and a zero current allowance. No broadcast.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Allowance revocation evidence packet.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Revocation verdict with digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_create_machine_budget_lease",
+    "description": "Create a deterministic, digest-bound budget lease for a machine or robot with scope, time window and amount ceiling. No control of any device.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Lease terms and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "lease": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "lease"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Lease record, digest and checks. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_machine_budget_consumption",
+    "description": "Verify machine spend events against a budget lease for amount, window, scope and reference, with named breaks. Offline arithmetic only.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Lease and consumption events.",
+      "additionalProperties": true,
+      "properties": {
+        "lease": {
+          "type": "object"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "lease",
+        "events"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Spend total, remaining budget and breaks.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_robot_handoff_chain",
+    "description": "Verify a robot task handoff chain for a single task id, continuity, time order and digest linkage. No robot telemetry source is contacted.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Handoff links and optional expectations.",
+      "additionalProperties": true,
+      "properties": {
+        "chain": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "chain"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Handoff chain verdict and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_agent_authority_intersection",
+    "description": "Intersect principal, agent and requested authority scopes and name any overreach. Deterministic set arithmetic; no policy service call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Principal, agent and requested scopes.",
+      "additionalProperties": true,
+      "properties": {
+        "principalScope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "agentScope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requested": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "principalScope",
+        "agentScope"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Authority intersection and overreach lists.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_create_inference_receipt",
+    "description": "Create a deterministic receipt binding caller-supplied model, prompt, output and policy digests with cost and latency. It does not attest correctness.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Inference evidence to bind.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Inference receipt and digest with boundary.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_export_evidence_pack",
+    "description": "Export a redacted, digest-rooted evidence pack from caller-supplied items for human review. Nothing is submitted to any external party.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Evidence items and optional export policy.",
+      "additionalProperties": true,
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "items"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Evidence pack, merkle-style root and digest.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
   }
 ]

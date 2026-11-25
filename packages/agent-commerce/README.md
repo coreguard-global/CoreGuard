@@ -12,7 +12,7 @@ bytes approved, and for verifying any executed trace against that receipt.
 - **Fail-closed execution verification** — a consent plus an executed trace
   yields a verdict with named drift classes (AGR/1 taxonomy); incomplete or
   ambiguous evidence is never treated as a pass.
-- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing 70 tools,
+- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing 94 tools,
   all offline, all deterministic, zero keys.
 
 MIT. Node ≥ 18. No network calls, no stored credentials, no wall clock.

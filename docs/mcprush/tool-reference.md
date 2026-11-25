@@ -1,12 +1,12 @@
 # CoreGuard Agent Commerce — MCP tool reference
 
-Paste-ready reference for the MCP directory listing. Package `@coreguard/agent-commerce@0.3.0`, server `io.github.EslaM-X/coreguard-agent-commerce`, transport **stdio**, protocol `2025-06-18`.
+Paste-ready reference for the MCP directory listing. Package `@coreguard/agent-commerce@0.4.0`, server `io.github.EslaM-X/coreguard-agent-commerce`, transport **stdio**, protocol `2025-06-18`.
 
 Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.mjs`. Every example arguments block below was executed against that server when this page was built; the shown result is the real response (long consent payloads abridged where marked).
 
 **Boundary:** this is an offline, deterministic verification engine. `VERIFIED` means the executed bytes matched the approved bytes — it is not a safety, fraud or settlement guarantee, and no payment, chain or provider is contacted.
 
-## Tools (70)
+## Tools (94)
 
 | Tool | Required | Optional | Purpose |
 |---|---|---|---|
@@ -25,12 +25,15 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_authorize_x402_payment`](#coreguard_authorize_x402_payment) | `challenge`, `policy` | `selectedIndex`, `callerContext` | Evaluate an x402 challenge against a local policy and produce an authorization decision. No custody, no broadcast,… |
 | [`coreguard_budget_runway`](#coreguard_budget_runway) | `asOfSeconds`, `policyLimitMinor`, `spentMinor`, `windowSeconds` | `events`, `callerContext` | Project budget runway from pinned inputs: limit, spend to date, a pinned asOf and a spend window. Straight-line… |
 | [`coreguard_build_attestation`](#coreguard_build_attestation) | `consent`, `executedTrace`, `adapterId`, `nowSeconds` | `callerContext` | Build a CGXA/1 offline execution attestation from a consent record and executed trace. No broadcast; no… |
+| [`coreguard_canonicalize_payment_instruction`](#coreguard_canonicalize_payment_instruction) | `instruction` | `callerContext` | Normalize a caller-supplied payment instruction into a canonical, digest-bound object ready for approval. Offline;… |
 | [`coreguard_check_limits`](#coreguard_check_limits) | `storePath`, `agentId` | `policyId`, `merchant`, `address`, `amountMinor`, `currency`, `approvalId`, `callerContext` | CGCP/1 mapping: evaluate policy/limit decision for an agent request in a file-backed control plane. No funds moved… |
 | [`coreguard_check_lookalike`](#coreguard_check_lookalike) | `candidate`, `reference` | `callerContext` | Check a merchant domain or package name for homoglyph, mixed-script and punycode impersonation of a reference:… |
 | [`coreguard_compile_policy`](#coreguard_compile_policy) | `spec` | `callerContext` | Compile a compact spending spec (limit, merchant/recipient/selector allowlists, currency) into a canonical CGEP/1… |
 | [`coreguard_consumption_status`](#coreguard_consumption_status) | `receiptId` | `action`, `storePath`, `callerContext` | Check/consume/release a receiptId in a consumption ledger. Default is process-local (this MCP process only). If… |
 | [`coreguard_create_incident_war_room`](#coreguard_create_incident_war_room) | `incident` | `events`, `actions`, `nowSeconds`, `callerContext` | Create a deterministic incident war-room packet from incident metadata, events, and actions. Local evidence… |
+| [`coreguard_create_inference_receipt`](#coreguard_create_inference_receipt) | `evidence` | `nowSeconds`, `callerContext` | Create a deterministic receipt binding caller-supplied model, prompt, output and policy digests with cost and… |
 | [`coreguard_create_intent`](#coreguard_create_intent) | `storePath`, `agentId` | `intentId`, `policyId`, `merchant`, `address`, `amountMinor`, `currency`, `requestedBy`, `expiresAt`, `callerContext` | CGCP/1 mapping: create an intent/approval request in a self-hosted file-backed control plane. Not a blockchain… |
+| [`coreguard_create_machine_budget_lease`](#coreguard_create_machine_budget_lease) | `lease` | `policy`, `nowSeconds`, `callerContext` | Create a deterministic, digest-bound budget lease for a machine or robot with scope, time window and amount ceiling.… |
 | [`coreguard_create_machine_task`](#coreguard_create_machine_task) | `taskId`, `machineId`, `terms` | `callerContext` | Create a deterministic machine task record with terms/price/SLA conditions. No payment custody or physical execution… |
 | [`coreguard_create_robot_mission_receipt`](#coreguard_create_robot_mission_receipt) | `mission`, `policy`, `nowSeconds` | `callerContext` | Create a deterministic robot/agent mission receipt binding mission, zone, budget, and time window to a policy… |
 | [`coreguard_decide_outcome`](#coreguard_decide_outcome) | `report` | `receiptId`, `callerContext` | Map a verification report to CG-OUT/1 outcome and authorization decision. ABSENT/NOT_CHECKED never render as BLOCK;… |
@@ -40,6 +43,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_diff_tool_surface`](#coreguard_diff_tool_surface) | `before`, `after` | `callerContext` | Diff two tools/list snapshots (before/after an upgrade) to catch rug pulls: added, removed and re-described tools,… |
 | [`coreguard_emit_test_vectors`](#coreguard_emit_test_vectors) | `policy`, `baseIntent` | `nowSeconds`, `callerContext` | Emit deterministic integration test vectors for an SDK or gateway: baseline allow, amount drift, recipient swap,… |
 | [`coreguard_explain_decision`](#coreguard_explain_decision) | `policy`, `intent`, `nowSeconds` | `callerContext` | Evaluate an intent against a policy and explain the verdict rule by rule, including the smallest single change… |
+| [`coreguard_export_evidence_pack`](#coreguard_export_evidence_pack) | `items` | `policy`, `nowSeconds`, `callerContext` | Export a redacted, digest-rooted evidence pack from caller-supplied items for human review. Nothing is submitted to… |
 | [`coreguard_freeze_agent`](#coreguard_freeze_agent) | `storePath`, `agentId` | `reason`, `decidedBy`, `nowSeconds`, `callerContext` | Kill switch over a CGCP/1 control plane: revoke the agent, reject every pending approval it holds in one audited… |
 | [`coreguard_generate_boundary_cases`](#coreguard_generate_boundary_cases) | `policy`, `baseIntent`, `nowSeconds` | `callerContext` | Generate the cases that break naive policy tests: at the limit, one unit below, one above, unlisted… |
 | [`coreguard_generate_payment_compliance_packet`](#coreguard_generate_payment_compliance_packet) | `payment` | `evidence`, `checks`, `redactFields`, `nowSeconds`, `callerContext` | Bundle payment evidence into a redacted, hashed compliance packet for review/export. Local only; no regulatory… |
@@ -50,6 +54,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_parse_iso20022_payment`](#coreguard_parse_iso20022_payment) | `message` | `callerContext` | Parse and validate a caller-supplied ISO 20022-like payment message (pain.001/pacs.008/camt.054 etc.) into… |
 | [`coreguard_parse_x402_challenge`](#coreguard_parse_x402_challenge) | `challenge` | `callerContext` | Parse and normalize an x402 payment challenge (HTTP 402 accepts). Offline deterministic validation only; no network… |
 | [`coreguard_profile_reference`](#coreguard_profile_reference) | `action` | `receiptId`, `reference`, `callerContext` | Create or parse a CG-OUT/1 profile reference. action='make' requires receiptId; action='parse' requires reference. |
+| [`coreguard_reconcile_multi_ledger`](#coreguard_reconcile_multi_ledger) | `sources` | `expected`, `callerContext` | Reconcile caller-supplied ledger sources against an expected amount/currency and emit named breaks. No ledger API is… |
 | [`coreguard_reconcile_payment`](#coreguard_reconcile_payment) | `authorization` | `challenge`, `settlement`, `receipt`, `callerContext` | Reconcile authorization, settlement evidence, and receipt. Deterministic evidence check only; no external… |
 | [`coreguard_redact_receipt`](#coreguard_redact_receipt) | `receipt` | `reveal`, `callerContext` | Produce a shareable redacted receipt: sensitive fields (credentials, tokens, PAN/card, email, phone, keys) are… |
 | [`coreguard_register_machine`](#coreguard_register_machine) | `machineId`, `manifest` | `owner`, `callerContext` | Create a local machine registration record from a manifest. No external device attestation/TPM trust root… |
@@ -57,27 +62,46 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_scan_tool_descriptions`](#coreguard_scan_tool_descriptions) | `tools` | `callerContext` | Scan MCP tool descriptions for hidden-instruction and spoofing payloads: bidi overrides, Unicode tag characters,… |
 | [`coreguard_simulate_spend`](#coreguard_simulate_spend) | `policy`, `intents`, `nowSeconds` | `callerContext` | Dry-run a batch of intents against a policy: allowed/denied per row, blocking rules, totals and counterfactuals. No… |
 | [`coreguard_translate_receipt`](#coreguard_translate_receipt) | `receipt`, `to` | `callerContext` | Structurally translate a receipt to ACP, x402 or CGCR/1 and list exactly what the target cannot carry. Translation… |
+| [`coreguard_verify_agent_authority_intersection`](#coreguard_verify_agent_authority_intersection) | `principalScope`, `agentScope` | `requested`, `callerContext` | Intersect principal, agent and requested authority scopes and name any overreach. Deterministic set arithmetic; no… |
+| [`coreguard_verify_aml_alert_disposition`](#coreguard_verify_aml_alert_disposition) | `alert` | `callerContext` | Verify a caller-supplied AML alert disposition for reviewer, rationale, sequence and case id. No alert is generated… |
 | [`coreguard_verify_attestation`](#coreguard_verify_attestation) | `attestation`, `attestationId`, `consent`, `executedTrace` | `callerContext` | Verify a CGXA/1 attestation against its consent and executed trace. Offline, fail-closed; no chain/network contact. |
 | [`coreguard_verify_bank_transfer_evidence`](#coreguard_verify_bank_transfer_evidence) | `evidence`, `expected` | `callerContext` | Verify bank transfer evidence against expected instruction fields. Offline evidence check; no bank API call. |
 | [`coreguard_verify_batch_proof`](#coreguard_verify_batch_proof) | `leafDigest`, `root`, `proof` | `callerContext` | Verify a Merkle inclusion proof offline: recompute the root from the leaf digest and the supplied left/right path,… |
+| [`coreguard_verify_beneficiary_change`](#coreguard_verify_beneficiary_change) | `approved`, `executed` | `policy`, `callerContext` | Detect beneficiary, account or bank drift between an approved instruction and an executed packet, with an explicit… |
+| [`coreguard_verify_camt054_notification`](#coreguard_verify_camt054_notification) | `notification` | `expected`, `callerContext` | Parse and validate a caller-supplied camt.054-like credit notification with entries and balance. No bank statement… |
 | [`coreguard_verify_collateral_packet`](#coreguard_verify_collateral_packet) | `collateral`, `policy`, `nowSeconds` | `callerContext` | Verify collateral evidence packet for valuation, expiry, owner, and evidence digest presence. No registry/custody… |
 | [`coreguard_verify_consent`](#coreguard_verify_consent) | `consent` | `callerContext` | Verify a consent record's integrity and binding: recompute every commitment against the record's own approved bytes.… |
+| [`coreguard_verify_coredao_delegation_evidence`](#coreguard_verify_coredao_delegation_evidence) | `evidence` | `policy`, `callerContext` | Verify caller-supplied Core DAO delegation evidence for chain 1116, validator allowlist, amount and unbonding… |
 | [`coreguard_verify_coredao_settlement_evidence`](#coreguard_verify_coredao_settlement_evidence) | `evidence` | `expected`, `callerContext` | Verify caller-supplied Core DAO EVM settlement evidence with Core DAO chain-id profile checks. No RPC call; evidence… |
 | [`coreguard_verify_cross_border_instruction`](#coreguard_verify_cross_border_instruction) | `instruction`, `policy` | `callerContext` | Verify a cross-border payment instruction against corridor/currency/amount/cutoff policy. Deterministic policy… |
 | [`coreguard_verify_delegation_chain`](#coreguard_verify_delegation_chain) | `chain` | `trust`, `callerContext` | Verify delegation chain structure/continuity and optionally verify Ed25519 signatures when trust roots/public keys… |
+| [`coreguard_verify_erc4337_userop_evidence`](#coreguard_verify_erc4337_userop_evidence) | `userOp` | `policy`, `callerContext` | Verify a caller-supplied ERC-4337 UserOperation packet for sender, nonce, calldata digest, signature marker and gas… |
 | [`coreguard_verify_escrow_milestone`](#coreguard_verify_escrow_milestone) | `escrow`, `milestone` | `callerContext` | Verify escrow milestone release conditions: approvals, evidence, and release amount within remaining escrow. No… |
 | [`coreguard_verify_evidence_bundle`](#coreguard_verify_evidence_bundle) | `bundle` | `callerContext` | Verify a portable evidence bundle against its own digest and each item's digest: detects edits, dropped items and… |
+| [`coreguard_verify_evm_permit_evidence`](#coreguard_verify_evm_permit_evidence) | `evidence`, `nowSeconds` | `policy`, `callerContext` | Verify caller-supplied EVM permit evidence for token, spender, value, deadline, nonce and signature marker. No RPC… |
 | [`coreguard_verify_evm_settlement_evidence`](#coreguard_verify_evm_settlement_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied EVM tx/receipt evidence against expected chain, recipient, token, and amount. No RPC call;… |
 | [`coreguard_verify_execution`](#coreguard_verify_execution) | `consent`, `trace` | `callerContext` | Verify an executed order against a consent record, fail-closed: exact execution -> VERIFIED; any drift -> INVALID… |
+| [`coreguard_verify_fx_rate_lock`](#coreguard_verify_fx_rate_lock) | `lock`, `nowSeconds` | `expected`, `callerContext` | Verify a caller-supplied FX rate lock against an expected intent amount and a pinned expiry. No market-data feed is… |
 | [`coreguard_verify_invoice_match`](#coreguard_verify_invoice_match) | `invoice`, `payment` | `callerContext` | Deterministic 3-way style match between invoice and payment evidence (amount, currency, payee, reference). |
+| [`coreguard_verify_kyc_evidence`](#coreguard_verify_kyc_evidence) | `evidence`, `policy`, `nowSeconds` | `callerContext` | Check a caller-supplied KYC evidence packet for freshness, required documents and provider allowlist. No live KYC or… |
+| [`coreguard_verify_machine_budget_consumption`](#coreguard_verify_machine_budget_consumption) | `lease`, `events` | `callerContext` | Verify machine spend events against a budget lease for amount, window, scope and reference, with named breaks.… |
+| [`coreguard_verify_mt103_fields`](#coreguard_verify_mt103_fields) | `fields` | `callerContext` | Validate mandatory fields and the 32A date/currency/amount shape in a caller-supplied MT103-like field map. No SWIFT… |
+| [`coreguard_verify_payment_authorization_chain`](#coreguard_verify_payment_authorization_chain) | `chain` | `nowSeconds`, `callerContext` | Verify a caller-supplied delegation chain for continuity, scoped authority, expiry and signature markers at a pinned… |
+| [`coreguard_verify_pi_attestation_chain`](#coreguard_verify_pi_attestation_chain) | `chain` | `expected`, `callerContext` | Verify the digest linkage and root of a caller-supplied Pi payment attestation chain. No Pi API or mainnet… |
 | [`coreguard_verify_pi_payment_evidence`](#coreguard_verify_pi_payment_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied Pi Network payment evidence packet against expected values. Explicit boundary: attested/mock… |
 | [`coreguard_verify_receipt`](#coreguard_verify_receipt) | `storePath` | `receiptId`, `callerContext` | CGCP/1 mapping: verify a receipt record and the audit chain in a file-backed control plane. No external… |
+| [`coreguard_verify_robot_handoff_chain`](#coreguard_verify_robot_handoff_chain) | `chain` | `expected`, `callerContext` | Verify a robot task handoff chain for a single task id, continuity, time order and digest linkage. No robot… |
 | [`coreguard_verify_robot_mission_evidence`](#coreguard_verify_robot_mission_evidence) | `receipt`, `evidence` | `receiptDigest`, `callerContext` | Verify robot/agent mission execution evidence against a mission receipt. Offline evidence check. |
+| [`coreguard_verify_sanctions_list_version`](#coreguard_verify_sanctions_list_version) | `evidence`, `policy`, `nowSeconds` | `callerContext` | Check a caller-supplied sanctions-list version stamp against a pinned policy minimum and freshness window. No list… |
 | [`coreguard_verify_stablecoin_reserve_evidence`](#coreguard_verify_stablecoin_reserve_evidence) | `evidence`, `policy`, `nowSeconds` | `callerContext` | Assess caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy. No issuer API… |
+| [`coreguard_verify_stellar_path_payment`](#coreguard_verify_stellar_path_payment) | `evidence` | `expected`, `callerContext` | Verify caller-supplied Stellar path-payment evidence for status, assets, amounts, destination and path digest. No… |
 | [`coreguard_verify_stellar_settlement_evidence`](#coreguard_verify_stellar_settlement_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied Stellar settlement evidence against expected payment fields. No Horizon/network call;… |
 | [`coreguard_verify_swift_remittance_evidence`](#coreguard_verify_swift_remittance_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied SWIFT/remittance evidence against expected amount/currency/accounts/reference. Evidence only;… |
 | [`coreguard_verify_task_completion`](#coreguard_verify_task_completion) | `task`, `completion` | `telemetryVerification`, `callerContext` | Verify task completion evidence against task record. Evidence acceptance is not physical-world proof; independent… |
 | [`coreguard_verify_telemetry`](#coreguard_verify_telemetry) | `taskId`, `telemetry` | `trust`, `callerContext` | Verify caller-supplied telemetry evidence structure/digest and optionally verify Ed25519 signature when trust… |
+| [`coreguard_verify_token_approval_revocation`](#coreguard_verify_token_approval_revocation) | `evidence` | `callerContext` | Verify caller-supplied token approval revocation evidence shows a positive previous allowance and a zero current… |
+| [`coreguard_verify_travel_rule_packet`](#coreguard_verify_travel_rule_packet) | `packet` | `policy`, `callerContext` | Check a caller-supplied travel-rule packet for required originator, beneficiary, VASP and amount fields. No VASP… |
+| [`coreguard_verify_ubo_evidence`](#coreguard_verify_ubo_evidence) | `entity` | `policy`, `callerContext` | Verify a caller-supplied beneficial-ownership packet for owner identifiers, percentage sum and disclosure threshold.… |
 | [`coreguard_verify_web3_signature_evidence`](#coreguard_verify_web3_signature_evidence) | `evidence` | `callerContext` | Verify caller-supplied Web3 signature evidence structure and recovered/claimed signer match. No key custody or… |
 | [`coreguard_verify_x402_settlement`](#coreguard_verify_x402_settlement) | `challenge`, `settlement` | `callerContext` | Verify caller-supplied x402 settlement evidence against a challenge. No network confirmation performed;… |
 
@@ -1193,8 +1217,8 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
 {
   "manifest": {
     "name": "io.github.EslaM-X/coreguard-agent-commerce",
-    "version": "0.3.0",
-    "description": "Fail-closed consent receipts and execution verification for agentic purchases. 70 MCP tools.",
+    "version": "0.4.0",
+    "description": "Fail-closed consent receipts and execution verification for agentic purchases. 94 MCP tools.",
     "repository": {
       "url": "https://github.com/coreguard-global/CoreGuard",
       "source": "github"
@@ -1203,7 +1227,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
       {
         "registryType": "npm",
         "identifier": "@coreguard/agent-commerce",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "transport": {
           "type": "stdio"
         }
@@ -1220,7 +1244,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
   "type": "mcp_manifest_audit",
   "spec": "CG-MM/1",
   "serverName": "io.github.EslaM-X/coreguard-agent-commerce",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "transport": "package",
   "risk": "low",
   "findings": [],
@@ -1231,7 +1255,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
     "low": 0,
     "info": 0
   },
-  "manifestDigest": "sha256:6ea68cbf520283c7fb2c3336ffea88febbbc0c0e3f339181738fc5591624d0f4",
+  "manifestDigest": "sha256:5450f8cb9d8667bb180413bb40dabb8d120d5524db2a3ba5115f962d3c349c91",
   "note": "structural audit of the record only — it does not execute the server or attest its behaviour",
   "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment."
 }
@@ -1864,6 +1888,120 @@ Build a CGXA/1 offline execution attestation from a consent record and executed 
 }
 ```
 
+### `coreguard_canonicalize_payment_instruction`
+
+Normalize a caller-supplied payment instruction into a canonical, digest-bound object ready for approval. Offline; no bank or rail contact.
+
+**Required:** `instruction` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `instruction` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Payment instruction to canonicalize.",
+  "additionalProperties": true,
+  "properties": {
+    "instruction": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "instruction"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "instruction": {
+    "instructionId": "pay-1",
+    "payerId": "buyer",
+    "payeeId": "merchant",
+    "amountMinor": "10000",
+    "currency": "USD",
+    "sourceCountry": "US",
+    "destinationCountry": "GB",
+    "purpose": "SUPP"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "canonicalize_payment_instruction",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "canonical": {
+    "instructionId": "pay-1",
+    "payerId": "buyer",
+    "payeeId": "merchant",
+    "amountMinor": "10000",
+    "currency": "USD",
+    "purpose": "SUPP",
+    "corridor": "US->GB"
+  },
+  "digest": "sha256:c42945aec4fa5396760382b4c433acde87e4a23097e9e064de55752f7748038b",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "INSTRUCTION_ID",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "instructionId present",
+      "evidence": {}
+    },
+    {
+      "id": "PAYER",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "payerId present",
+      "evidence": {}
+    },
+    {
+      "id": "PAYEE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "payeeId present",
+      "evidence": {}
+    },
+    {
+      "id": "AMOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "amountMinor is a digit string",
+      "evidence": {}
+    },
+    {
+      "id": "CURRENCY",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "currency present",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed."
+}
+```
+
 ### `coreguard_check_limits`
 
 CGCP/1 mapping: evaluate policy/limit decision for an agent request in a file-backed control plane. No funds moved and no external IdP/KMS involved.
@@ -2395,6 +2533,133 @@ Create a deterministic incident war-room packet from incident metadata, events, 
 }
 ```
 
+### `coreguard_create_inference_receipt`
+
+Create a deterministic receipt binding caller-supplied model, prompt, output and policy digests with cost and latency. It does not attest correctness.
+
+**Required:** `evidence` · **Optional:** `nowSeconds`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `nowSeconds` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Inference evidence to bind.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "evidence": {
+    "modelId": "model-x",
+    "promptDigest": "sha256:4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b",
+    "outputDigest": "sha256:5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c",
+    "policyDigest": "sha256:6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d",
+    "costMinor": "10",
+    "latencyMs": 42
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "create_inference_receipt",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "receipt": {
+    "spec": "CG-W5/1",
+    "type": "inference_receipt",
+    "modelId": "model-x",
+    "promptDigest": "sha256:4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b",
+    "outputDigest": "sha256:5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c",
+    "policyDigest": "sha256:6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d",
+    "costMinor": "10",
+    "latencyMs": 42,
+    "createdAtSeconds": "1794657600"
+  },
+  "receiptDigest": "sha256:969c24b0ca824d7dcc59e5a00887f6f1c69b311fe187fffd5950c84547456775",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "MODEL",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "modelId present",
+      "evidence": {}
+    },
+    {
+      "id": "PROMPT_DIGEST",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "promptDigest format",
+      "evidence": {}
+    },
+    {
+      "id": "OUTPUT_DIGEST",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "outputDigest format",
+      "evidence": {}
+    },
+    {
+      "id": "POLICY_DIGEST",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "policyDigest present",
+      "evidence": {}
+    },
+    {
+      "id": "COST",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "costMinor parseable",
+      "evidence": {}
+    },
+    {
+      "id": "LATENCY",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "latencyMs non-negative",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureau
+… (abridged — full object is returned by the server)
+```
+
 ### `coreguard_create_intent`
 
 CGCP/1 mapping: create an intent/approval request in a self-hosted file-backed control plane. Not a blockchain receipt and not payment execution.
@@ -2498,6 +2763,142 @@ CGCP/1 mapping: create an intent/approval request in a self-hosted file-backed c
   },
   "mapping": "coreguard_create_intent -> CGCP requestApproval (intent/approval request)"
 }
+```
+
+### `coreguard_create_machine_budget_lease`
+
+Create a deterministic, digest-bound budget lease for a machine or robot with scope, time window and amount ceiling. No control of any device.
+
+**Required:** `lease` · **Optional:** `policy`, `nowSeconds`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `lease` | `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `nowSeconds` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Lease terms and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "lease": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "lease"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "lease": {
+    "leaseId": "lease-1",
+    "machineId": "robot-1",
+    "scope": [
+      "deliver"
+    ],
+    "amountMinor": "1000",
+    "startAtSeconds": "1794657600",
+    "endAtSeconds": "1794661200"
+  },
+  "policy": {
+    "allowedScopes": [
+      "deliver",
+      "scan"
+    ],
+    "maxAmountMinor": "2000"
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "create_machine_budget_lease",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "lease": {
+    "spec": "CG-W5/1",
+    "type": "machine_budget_lease",
+    "leaseId": "lease-1",
+    "machineId": "robot-1",
+    "scope": [
+      "deliver"
+    ],
+    "amountMinor": "1000",
+    "startAtSeconds": "1794657600",
+    "endAtSeconds": "1794661200",
+    "policyDigest": "sha256:461bace4fd239fc8a475b52dc47756cb7d3f31cf0547fe8f5767fe5eab1b6566",
+    "createdAtSeconds": "1794657600"
+  },
+  "leaseDigest": "sha256:5c9e1e7810bbbd41192722fc90e69f203b1703bebc9e2805123d3774cf84c260",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "LEASE_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "leaseId present",
+      "evidence": {}
+    },
+    {
+      "id": "MACHINE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "machineId present",
+      "evidence": {}
+    },
+    {
+      "id": "WINDOW",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "valid time window",
+      "evidence": {}
+    },
+    {
+      "id": "AMOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "lease amount within policy",
+      "evidence": {}
+    },
+    {
+      "id": "SCOPES",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "scopes are non-empty and allowed",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certi
+… (abridged — full object is returned by the server)
 ```
 
 ### `coreguard_create_machine_task`
@@ -2848,10 +3249,10 @@ Return this server's capability card (or a one-line badge): version, transport, 
   "type": "capability_card",
   "spec": "CG-CC/1",
   "server": "coreguard-agent-commerce",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "protocolVersion": "2025-06-18",
   "transport": "stdio (newline-delimited JSON-RPC 2.0)",
-  "tools": 70,
+  "tools": 94,
   "categories": [
     "consent receipts (CGCR/1)",
     "execution verification (AGR/1)",
@@ -3651,6 +4052,144 @@ Evaluate an intent against a policy and explain the verdict rule by rule, includ
   "policyDigest": "sha256:5ce761f532e22bfa579f2b94e6348f637bc11abc2f626366eff6feac44e61233",
   "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment."
 }
+```
+
+### `coreguard_export_evidence_pack`
+
+Export a redacted, digest-rooted evidence pack from caller-supplied items for human review. Nothing is submitted to any external party.
+
+**Required:** `items` · **Optional:** `policy`, `nowSeconds`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `items` | array of `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `nowSeconds` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Evidence items and optional export policy.",
+  "additionalProperties": true,
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "policy": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "items"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "items": [
+    {
+      "id": "evidence-1",
+      "body": {
+        "amountMinor": "10000",
+        "email": "buyer@example.test"
+      }
+    }
+  ],
+  "policy": {
+    "redactFields": [
+      "email"
+    ],
+    "maxItems": "10"
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "export_evidence_pack",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "pack": {
+    "spec": "CG-W5/1",
+    "type": "evidence_pack",
+    "root": "sha256:6c9b16135f96a0cbfd3fdae8c55846b1c13d1e367a638dd2a53b6ee24b2a4c58",
+    "redactedFields": [
+      "email"
+    ],
+    "items": [
+      {
+        "id": "evidence-1",
+        "body": {
+          "amountMinor": "10000",
+          "email": "[REDACTED]"
+        },
+        "providedDigest": "",
+        "computedDigest": "sha256:4beea1c52d98f040a062c0010d9e1400062e60dbe46f67d1bff2ce9b5c832066",
+        "intact": true
+      }
+    ],
+    "createdAtSeconds": "1794657600"
+  },
+  "packDigest": "sha256:74459483af8c37b5dd7042a883afa218a164654356df1bcf5ef8e724165e1a90",
+  "root": "sha256:6c9b16135f96a0cbfd3fdae8c55846b1c13d1e367a638dd2a53b6ee24b2a4c58",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "ITEMS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "1 evidence items",
+      "evidence": {}
+    },
+    {
+      "id": "MAX_ITEMS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "item count within policy",
+      "evidence": {}
+    },
+    {
+      "id": "INTEGRITY",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "every provided digest matches its body",
+      "evidence": {}
+    },
+    {
+      "id": "IDS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "every item has an id",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no set
+… (abridged — full object is returned by the server)
 ```
 
 ### `coreguard_freeze_agent`
@@ -4674,6 +5213,109 @@ Create or parse a CG-OUT/1 profile reference. action='make' requires receiptId; 
 }
 ```
 
+### `coreguard_reconcile_multi_ledger`
+
+Reconcile caller-supplied ledger sources against an expected amount/currency and emit named breaks. No ledger API is contacted.
+
+**Required:** `sources` · **Optional:** `expected`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `sources` | array of `object` | **required** | — |  |
+| `expected` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Ledger sources and expected values.",
+  "additionalProperties": true,
+  "properties": {
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "expected": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "sources"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "sources": [
+    {
+      "sourceId": "bank",
+      "amountMinor": "10000",
+      "currency": "USD",
+      "reference": "r-1",
+      "digest": "sha256:d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4"
+    },
+    {
+      "sourceId": "ledger",
+      "amountMinor": "10000",
+      "currency": "USD",
+      "reference": "r-2",
+      "digest": "sha256:e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5"
+    }
+  ],
+  "expected": {
+    "amountMinor": "10000",
+    "currency": "USD"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "reconcile_multi_ledger",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "sourceCount": 2,
+  "breaks": [],
+  "digest": "sha256:0951d2b3a74f3a125c2cff23bc181545d471e85030e978f6429e2432aa1dc9f4",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "SOURCES",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "2 sources supplied",
+      "evidence": {}
+    },
+    {
+      "id": "BREAKS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "0 ledger break(s)",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed."
+}
+```
+
 ### `coreguard_reconcile_payment`
 
 Reconcile authorization, settlement evidence, and receipt. Deterministic evidence check only; no external ledger/custody.
@@ -5413,6 +6055,247 @@ Structurally translate a receipt to ACP, x402 or CGCR/1 and list exactly what th
 }
 ```
 
+### `coreguard_verify_agent_authority_intersection`
+
+Intersect principal, agent and requested authority scopes and name any overreach. Deterministic set arithmetic; no policy service call.
+
+**Required:** `principalScope`, `agentScope` · **Optional:** `requested`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `principalScope` | array of `string` | **required** | — |  |
+| `agentScope` | array of `string` | **required** | — |  |
+| `requested` | array of `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Principal, agent and requested scopes.",
+  "additionalProperties": true,
+  "properties": {
+    "principalScope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "agentScope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requested": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "principalScope",
+    "agentScope"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "principalScope": [
+    "pay",
+    "read"
+  ],
+  "agentScope": [
+    "pay",
+    "trade"
+  ],
+  "requested": [
+    "pay"
+  ]
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_agent_authority_intersection",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "intersection": [
+    "pay"
+  ],
+  "agentOverreach": [
+    "trade"
+  ],
+  "requestOverreach": [],
+  "digest": "sha256:a4b8288cb4cb5d0df750c6ccb640d52552c2956806f30c1b359f9014041a21b1",
+  "verdict": "FAIL",
+  "checks": [
+    {
+      "id": "PRINCIPAL_SCOPE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "principal scope is non-empty",
+      "evidence": {}
+    },
+    {
+      "id": "AGENT_SCOPE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "agent scope is non-empty",
+      "evidence": {}
+    },
+    {
+      "id": "AGENT_WITHIN_PRINCIPAL",
+      "ok": false,
+      "severity": "CRITICAL",
+      "detail": "agent-only scopes: trade",
+      "evidence": {}
+    },
+    {
+      "id": "REQUEST_WITHIN_AGENT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "requested scopes outside agent authority: none",
+      "evidence": {}
+    }
+  ],
+  "failed": [
+    "AGENT_WITHIN_PRINCIPAL"
+  ],
+  "critical": [
+    "AGENT_WITHIN_PRINCIPAL"
+  ],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_aml_alert_disposition`
+
+Verify a caller-supplied AML alert disposition for reviewer, rationale, sequence and case id. No alert is generated or reported.
+
+**Required:** `alert` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `alert` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "AML alert disposition packet.",
+  "additionalProperties": true,
+  "properties": {
+    "alert": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "alert"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "alert": {
+    "alertId": "alert-1",
+    "type": "VELOCITY",
+    "detectedAtSeconds": "100",
+    "disposition": "ESCALATED",
+    "reviewer": "ops@example.test",
+    "reviewedAtSeconds": "200",
+    "rationale": "Reviewed caller-supplied velocity evidence.",
+    "caseId": "case-1"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_aml_alert_disposition",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "alertId": "alert-1",
+  "disposition": "ESCALATED",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "ALERT_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "alertId present",
+      "evidence": {}
+    },
+    {
+      "id": "DISPOSITION",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "disposition=ESCALATED",
+      "evidence": {}
+    },
+    {
+      "id": "REVIEWER",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "reviewer present",
+      "evidence": {}
+    },
+    {
+      "id": "RATIONALE",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "rationale length 43",
+      "evidence": {}
+    },
+    {
+      "id": "SEQUENCE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "review is not before detection",
+      "evidence": {}
+    },
+    {
+      "id": "CASE_ID",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "caseId present",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed. Disposition is caller-supplied evidence; no alert is generated, closed or reported to any authority."
+}
+```
+
 ### `coreguard_verify_attestation`
 
 Verify a CGXA/1 attestation against its consent and executed trace. Offline, fail-closed; no chain/network contact.
@@ -5722,6 +6605,256 @@ Verify a Merkle inclusion proof offline: recompute the root from the leaf digest
 }
 ```
 
+### `coreguard_verify_beneficiary_change`
+
+Detect beneficiary, account or bank drift between an approved instruction and an executed packet, with an explicit re-approval gate. Offline.
+
+**Required:** `approved`, `executed` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `approved` | `object` | **required** | — |  |
+| `executed` | `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Approved and executed beneficiary packets.",
+  "additionalProperties": true,
+  "properties": {
+    "approved": {
+      "type": "object"
+    },
+    "executed": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "approved",
+    "executed"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "approved": {
+    "beneficiaryId": "ben-1",
+    "account": "ACC-2",
+    "bank": "bank-a"
+  },
+  "executed": {
+    "beneficiaryId": "ben-1",
+    "account": "ACC-2",
+    "bank": "bank-a"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_beneficiary_change",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "changedFields": [],
+  "reapprovalRequired": false,
+  "reapprovalGateRequested": true,
+  "digest": "sha256:116b7d7b1f13a7b51c11f91801b9161f4d066862fd507d6485b7038fd27bcf47",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "BENEFICIARY_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "approved=ben-1 executed=ben-1",
+      "evidence": {}
+    },
+    {
+      "id": "ACCOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "approved=ACC-2 executed=ACC-2",
+      "evidence": {}
+    },
+    {
+      "id": "BANK",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "bank matches approved instruction",
+      "evidence": {}
+    },
+    {
+      "id": "REAPPROVAL",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "re-approval gate active",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_camt054_notification`
+
+Parse and validate a caller-supplied camt.054-like credit notification with entries and balance. No bank statement API is contacted.
+
+**Required:** `notification` · **Optional:** `expected`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `notification` | `object` | **required** | — |  |
+| `expected` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Camt.054-like notification and optional expectations.",
+  "additionalProperties": true,
+  "properties": {
+    "notification": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "notification"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "notification": {
+    "messageId": "camt-1",
+    "accountId": "acc-1",
+    "statementId": "st-1",
+    "balanceMinor": "20000",
+    "entries": [
+      {
+        "amountMinor": "10000",
+        "currency": "USD",
+        "reference": "r-1",
+        "creditDebit": "CRDT",
+        "bookingDate": "2026-11-25"
+      }
+    ]
+  },
+  "expected": {
+    "amountMinor": "10000"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_camt054_notification",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "messageId": "camt-1",
+  "entryCount": 1,
+  "digest": "sha256:97fd70be5dc33265af69bff0341c1a3af2131fa61d9de923be51f84b62d5f6d5",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "MESSAGE_ID",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "messageId present",
+      "evidence": {}
+    },
+    {
+      "id": "ACCOUNT",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "accountId present",
+      "evidence": {}
+    },
+    {
+      "id": "ENTRIES",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "at least one notification entry",
+      "evidence": {}
+    },
+    {
+      "id": "ENTRY_0_AMOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "entry 0 amount parseable",
+      "evidence": {}
+    },
+    {
+      "id": "ENTRY_0_CURRENCY",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "entry 0 currency present",
+      "evidence": {}
+    },
+    {
+      "id": "ENTRY_0_REFERENCE",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "entry 0 reference present",
+      "evidence": {}
+    },
+    {
+      "id": "BALANCE",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "balanceMinor parseable",
+      "evidence": {}
+    },
+    {
+      "id": "EXPECTED_AMOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "an entry matches the expected amount",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk s
+… (abridged — full object is returned by the server)
+```
+
 ### `coreguard_verify_collateral_packet`
 
 Verify collateral evidence packet for valuation, expiry, owner, and evidence digest presence. No registry/custody verification.
@@ -5954,6 +7087,128 @@ Verify a consent record's integrity and binding: recompute every commitment agai
 ```
 
 <sub>Call-time clock fields (1) are shown as placeholders; they are read by the tool, not committed by it.</sub>
+
+### `coreguard_verify_coredao_delegation_evidence`
+
+Verify caller-supplied Core DAO delegation evidence for chain 1116, validator allowlist, amount and unbonding policy. No RPC call.
+
+**Required:** `evidence` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Delegation evidence and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "evidence": {
+    "chainId": 1116,
+    "delegator": "delegator-1",
+    "validator": "validator-1",
+    "amount": "1000",
+    "status": "BONDED",
+    "unbondingSeconds": "100"
+  },
+  "policy": {
+    "allowedValidators": [
+      "validator-1"
+    ],
+    "minAmount": "100",
+    "maxUnbondingSeconds": "200"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_coredao_delegation_evidence",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "validator": "validator-1",
+  "amount": "1000",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "CHAIN_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "caller-supplied chainId is explicitly 1116",
+      "evidence": {}
+    },
+    {
+      "id": "DELEGATOR",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "delegator present",
+      "evidence": {}
+    },
+    {
+      "id": "VALIDATOR",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "validator allowed when an allowlist is supplied",
+      "evidence": {}
+    },
+    {
+      "id": "AMOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "delegated amount meets policy minimum",
+      "evidence": {}
+    },
+    {
+      "id": "STATUS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "status=BONDED",
+      "evidence": {}
+    },
+    {
+      "id": "UNBONDING",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "unbonding period within policy",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed. No Core DAO RPC or staking contract call is made; evidence is caller-supplied."
+}
+```
 
 ### `coreguard_verify_coredao_settlement_evidence`
 
@@ -6280,6 +7535,128 @@ Verify delegation chain structure/continuity and optionally verify Ed25519 signa
 }
 ```
 
+### `coreguard_verify_erc4337_userop_evidence`
+
+Verify a caller-supplied ERC-4337 UserOperation packet for sender, nonce, calldata digest, signature marker and gas policy. No bundler call.
+
+**Required:** `userOp` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `userOp` | `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "UserOperation packet and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "userOp": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "userOp"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "userOp": {
+    "sender": "0xsender",
+    "nonce": "1",
+    "callDataDigest": "sha256:1818181818181818181818181818181818181818181818181818181818181818",
+    "signature": "0xsig",
+    "paymaster": "0xpaymaster",
+    "gasLimit": "1000",
+    "maxFeePerGas": "2"
+  },
+  "policy": {
+    "maxGasLimit": "2000",
+    "allowedPaymasters": [
+      "0xpaymaster"
+    ]
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_erc4337_userop_evidence",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "sender": "0xsender",
+  "digest": "sha256:e26fc74c24cca19799f538b757ee466804dda70f0797451243877798003b51c3",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "SENDER",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "sender allowed when an allowlist is supplied",
+      "evidence": {}
+    },
+    {
+      "id": "NONCE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "nonce parseable",
+      "evidence": {}
+    },
+    {
+      "id": "CALLDATA_DIGEST",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "callDataDigest format",
+      "evidence": {}
+    },
+    {
+      "id": "SIGNATURE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "caller-supplied signature marker present",
+      "evidence": {}
+    },
+    {
+      "id": "GAS_LIMIT",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "gas limit within policy",
+      "evidence": {}
+    },
+    {
+      "id": "PAYMASTER",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "paymaster allowed when supplied",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed. No bundler, paymaster or chain call is made; signature validity is not recovered."
+}
+```
+
 ### `coreguard_verify_escrow_milestone`
 
 Verify escrow milestone release conditions: approvals, evidence, and release amount within remaining escrow. No custody/broadcast.
@@ -6475,6 +7852,144 @@ Verify a portable evidence bundle against its own digest and each item's digest:
   "itemIssues": [],
   "boundary": "checks the bundle against its own digest; it does not attest that the events happened. Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment."
 }
+```
+
+### `coreguard_verify_evm_permit_evidence`
+
+Verify caller-supplied EVM permit evidence for token, spender, value, deadline, nonce and signature marker. No RPC or signature recovery.
+
+**Required:** `evidence`, `nowSeconds` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Permit evidence, policy, pinned time.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence",
+    "nowSeconds"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "evidence": {
+    "token": "0x1111111111111111111111111111111111111111",
+    "owner": "0xowner",
+    "spender": "0x2222222222222222222222222222222222222222",
+    "value": "10000",
+    "nonce": "1",
+    "deadline": "1794657700",
+    "signature": "0xsig",
+    "chainId": 1
+  },
+  "policy": {
+    "allowedSpenders": [
+      "0x2222222222222222222222222222222222222222"
+    ],
+    "maxValue": "50000"
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_evm_permit_evidence",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "token": "0x1111111111111111111111111111111111111111",
+  "spender": "0x2222222222222222222222222222222222222222",
+  "digest": "sha256:42c1676b26cbf73b13d1ed3448d31ede9017b097f65262489d8d5d29d74407fa",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "TOKEN",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "token address format",
+      "evidence": {}
+    },
+    {
+      "id": "OWNER",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "owner present",
+      "evidence": {}
+    },
+    {
+      "id": "SPENDER",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "spender allowed when an allowlist is supplied",
+      "evidence": {}
+    },
+    {
+      "id": "VALUE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "permit value within policy",
+      "evidence": {}
+    },
+    {
+      "id": "DEADLINE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "permit not expired at pinned nowSeconds",
+      "evidence": {}
+    },
+    {
+      "id": "SIGNATURE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "caller-supplied signature marker present",
+      "evidence": {}
+    },
+    {
+      "id": "NONCE",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "nonce parseable",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML app
+… (abridged — full object is returned by the server)
 ```
 
 ### `coreguard_verify_evm_settlement_evidence`
@@ -6732,6 +8247,134 @@ Verify an executed order against a consent record, fail-closed: exact execution 
 
 **Drift variant** — same consent, executed total `57000` instead of `47000`: verdict `INVALID`, classification `VIOLATIONS`.
 
+### `coreguard_verify_fx_rate_lock`
+
+Verify a caller-supplied FX rate lock against an expected intent amount and a pinned expiry. No market-data feed is used.
+
+**Required:** `lock`, `nowSeconds` · **Optional:** `expected`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `lock` | `object` | **required** | — |  |
+| `expected` | `object` | optional | — |  |
+| `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Rate lock, optional expected values, pinned time.",
+  "additionalProperties": true,
+  "properties": {
+    "lock": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "lock",
+    "nowSeconds"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "lock": {
+    "lockId": "fx-lock-1",
+    "baseCurrency": "USD",
+    "quoteCurrency": "EUR",
+    "rate": "0.92",
+    "amountMinor": "10000",
+    "quoteMinor": "9200",
+    "expiresAtSeconds": "1794658200"
+  },
+  "expected": {
+    "amountMinor": "10000",
+    "quoteMinor": "9200"
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_fx_rate_lock",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "lockId": "fx-lock-1",
+  "expired": false,
+  "digest": "sha256:8be1758b005b69fea26db85ade19dddef23499a0bdf2feb19101a748b7a60feb",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "LOCK_ID",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "lockId present",
+      "evidence": {}
+    },
+    {
+      "id": "PAIR",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "currency pair present",
+      "evidence": {}
+    },
+    {
+      "id": "RATE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "rate=0.92",
+      "evidence": {}
+    },
+    {
+      "id": "AMOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "locked amount matches expected amount",
+      "evidence": {}
+    },
+    {
+      "id": "QUOTE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "locked quote matches expected quote",
+      "evidence": {}
+    },
+    {
+      "id": "NOT_EXPIRED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "rate lock not expired at pinned nowSeconds",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed."
+}
+```
+
 ### `coreguard_verify_invoice_match`
 
 Deterministic 3-way style match between invoice and payment evidence (amount, currency, payee, reference).
@@ -6842,6 +8485,607 @@ Deterministic 3-way style match between invoice and payment evidence (amount, cu
   "failed": [],
   "critical": [],
   "boundary": "Wave 4 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar, Ethereum, Core DAO, DeFi protocols, credit bureaus, or regulators. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_kyc_evidence`
+
+Check a caller-supplied KYC evidence packet for freshness, required documents and provider allowlist. No live KYC or identity-provider call.
+
+**Required:** `evidence`, `policy`, `nowSeconds` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `policy` | `object` | **required** | — |  |
+| `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "KYC evidence, policy, pinned time.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence",
+    "policy",
+    "nowSeconds"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "evidence": {
+    "subjectId": "subject-1",
+    "result": "VERIFIED",
+    "checkedAtSeconds": "1794657590",
+    "documentDigests": [
+      "sha256:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "sha256:b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+    ],
+    "providerId": "kyc-a"
+  },
+  "policy": {
+    "maxAgeSeconds": "3600",
+    "requiredDocuments": [
+      "sha256:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "sha256:b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+    ],
+    "allowedProviders": [
+      "kyc-a"
+    ]
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_kyc_evidence",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "subjectId": "subject-1",
+  "fresh": true,
+  "missingDocuments": [],
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "SUBJECT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "subjectId present",
+      "evidence": {}
+    },
+    {
+      "id": "RESULT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "result=VERIFIED",
+      "evidence": {}
+    },
+    {
+      "id": "FRESH",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "KYC evidence is fresh at pinned nowSeconds",
+      "evidence": {}
+    },
+    {
+      "id": "DOCUMENTS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "missing document digests: none",
+      "evidence": {}
+    },
+    {
+      "id": "PROVIDER",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "provider allowed when an allowlist is supplied",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed. KYC evidence is caller-supplied; no identity provider, document registry or regulator decision is contacted."
+}
+```
+
+### `coreguard_verify_machine_budget_consumption`
+
+Verify machine spend events against a budget lease for amount, window, scope and reference, with named breaks. Offline arithmetic only.
+
+**Required:** `lease`, `events` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `lease` | `object` | **required** | — |  |
+| `events` | array of `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Lease and consumption events.",
+  "additionalProperties": true,
+  "properties": {
+    "lease": {
+      "type": "object"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "lease",
+    "events"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "lease": {
+    "leaseId": "lease-1",
+    "machineId": "robot-1",
+    "scope": [
+      "deliver"
+    ],
+    "amountMinor": "1000",
+    "startAtSeconds": "1794657600",
+    "endAtSeconds": "1794661200"
+  },
+  "events": [
+    {
+      "atSeconds": "1794657610",
+      "amountMinor": "100",
+      "scope": "deliver",
+      "reference": "event-1"
+    }
+  ]
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_machine_budget_consumption",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "leaseId": "lease-1",
+  "spentMinor": "100",
+  "remainingMinor": "900",
+  "breaks": [],
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "EVENTS",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "1 consumption events",
+      "evidence": {}
+    },
+    {
+      "id": "BREAKS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "0 policy break(s)",
+      "evidence": {}
+    },
+    {
+      "id": "BUDGET",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "spent 100 <= lease 1000",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_mt103_fields`
+
+Validate mandatory fields and the 32A date/currency/amount shape in a caller-supplied MT103-like field map. No SWIFT access.
+
+**Required:** `fields` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `fields` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "MT103-like field map.",
+  "additionalProperties": true,
+  "properties": {
+    "fields": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "fields"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "fields": {
+    ":20:": "ref-1",
+    ":23B:": "CRED",
+    ":32A:": "261125USD10000,00",
+    ":50K:": "Alice",
+    ":59:": "Bob",
+    ":70:": "invoice-1",
+    "uetr": "uetr-1"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_mt103_fields",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "present": [
+    ":20:",
+    ":23B:",
+    ":32A:",
+    ":50K:",
+    ":59:",
+    ":70:"
+  ],
+  "missing": [],
+  "parsed32A": {
+    "date": "261125",
+    "currency": "USD",
+    "amount": "10000,00"
+  },
+  "digest": "sha256:4d238a679fc9c2c8db5aa368356386cad17883d3e8c05bddbd4e4a7a40a8b2f5",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "MANDATORY_FIELDS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "missing tags: none",
+      "evidence": {}
+    },
+    {
+      "id": "32A_FORMAT",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "field 32A is YYMMDDCCCamount",
+      "evidence": {}
+    },
+    {
+      "id": "UETR",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "uetr present when supplied",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_payment_authorization_chain`
+
+Verify a caller-supplied delegation chain for continuity, scoped authority, expiry and signature markers at a pinned time. No IdP call.
+
+**Required:** `chain` · **Optional:** `nowSeconds`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `chain` | array of `object` | **required** | — |  |
+| `nowSeconds` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Delegation links and pinned time.",
+  "additionalProperties": true,
+  "properties": {
+    "chain": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "chain"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "chain": [
+    {
+      "delegator": "principal",
+      "delegate": "agent-a",
+      "scope": [
+        "pay",
+        "read"
+      ],
+      "expiresAtSeconds": "1794657700",
+      "signature": "sig-a"
+    },
+    {
+      "delegator": "agent-a",
+      "delegate": "agent-b",
+      "scope": [
+        "pay"
+      ],
+      "expiresAtSeconds": "1794657700",
+      "signature": "sig-b"
+    }
+  ],
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_payment_authorization_chain",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "root": "principal",
+  "terminal": "agent-b",
+  "scopeIntersection": [
+    "pay"
+  ],
+  "expiredLinks": [],
+  "chainDigest": "sha256:c6c089435748e04fe08c3db1cafda2a9d45d94789391a3dc4fe57294a67c2eda",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "LINKS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "2 authorization links",
+      "evidence": {}
+    },
+    {
+      "id": "CONTINUOUS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "each delegate is the next delegator",
+      "evidence": {}
+    },
+    {
+      "id": "SCOPE_PRESENT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "every link carries at least one scope",
+      "evidence": {}
+    },
+    {
+      "id": "NOT_EXPIRED",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "expired links: 0",
+      "evidence": {}
+    },
+    {
+      "id": "SIGNATURES",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "every link carries a caller-supplied signature marker",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_pi_attestation_chain`
+
+Verify the digest linkage and root of a caller-supplied Pi payment attestation chain. No Pi API or mainnet settlement check.
+
+**Required:** `chain` · **Optional:** `expected`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `chain` | array of `object` | **required** | — |  |
+| `expected` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Attestation links and optional expectations.",
+  "additionalProperties": true,
+  "properties": {
+    "chain": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "expected": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "chain"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "chain": [
+    {
+      "paymentId": "pi-1",
+      "attestor": "attestor-a",
+      "digest": "sha256:f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6"
+    },
+    {
+      "paymentId": "pi-1",
+      "attestor": "attestor-b",
+      "previousDigest": "sha256:f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6",
+      "digest": "sha256:0707070707070707070707070707070707070707070707070707070707070707"
+    }
+  ],
+  "expected": {
+    "paymentId": "pi-1",
+    "rootDigest": "sha256:0707070707070707070707070707070707070707070707070707070707070707"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_pi_attestation_chain",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "rootDigest": "sha256:0707070707070707070707070707070707070707070707070707070707070707",
+  "paymentId": "pi-1",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "LINKS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "2 attestation links",
+      "evidence": {}
+    },
+    {
+      "id": "DIGESTS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "every link carries a sha256 digest",
+      "evidence": {}
+    },
+    {
+      "id": "LINKED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "each link cites a valid previous sha256 digest",
+      "evidence": {}
+    },
+    {
+      "id": "ROOT",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "attestation root matches expected root",
+      "evidence": {}
+    },
+    {
+      "id": "PAYMENT_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "paymentId matches expected",
+      "evidence": {}
+    },
+    {
+      "id": "ATTESTORS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "every link names an attestor",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed. Pi attestation evidence is caller-supplied; no Pi Network API or mainnet settlement check is performed."
 }
 ```
 
@@ -7039,6 +9283,137 @@ CGCP/1 mapping: verify a receipt record and the audit chain in a file-backed con
 }
 ```
 
+### `coreguard_verify_robot_handoff_chain`
+
+Verify a robot task handoff chain for a single task id, continuity, time order and digest linkage. No robot telemetry source is contacted.
+
+**Required:** `chain` · **Optional:** `expected`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `chain` | array of `object` | **required** | — |  |
+| `expected` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Handoff links and optional expectations.",
+  "additionalProperties": true,
+  "properties": {
+    "chain": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "expected": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "chain"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "chain": [
+    {
+      "taskId": "task-1",
+      "fromRobot": "robot-1",
+      "toRobot": "robot-2",
+      "atSeconds": "1794657600",
+      "digest": "sha256:2929292929292929292929292929292929292929292929292929292929292929"
+    },
+    {
+      "taskId": "task-1",
+      "fromRobot": "robot-2",
+      "toRobot": "robot-3",
+      "atSeconds": "1794657601",
+      "previousDigest": "sha256:2929292929292929292929292929292929292929292929292929292929292929",
+      "digest": "sha256:3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a"
+    }
+  ],
+  "expected": {
+    "taskId": "task-1"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_robot_handoff_chain",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "taskId": "task-1",
+  "handoffs": 2,
+  "digest": "sha256:051629093408b5b372c2bbc2a125c1ac55654835781aafb76b7b54313cae9569",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "LINKS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "2 handoff links",
+      "evidence": {}
+    },
+    {
+      "id": "TASK_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "task ids: task-1",
+      "evidence": {}
+    },
+    {
+      "id": "CONTINUOUS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "each toRobot becomes the next fromRobot",
+      "evidence": {}
+    },
+    {
+      "id": "TIME_ORDER",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "handoffs are time-ordered with parseable atSeconds",
+      "evidence": {}
+    },
+    {
+      "id": "DIGESTS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "every link carries a sha256 digest",
+      "evidence": {}
+    },
+    {
+      "id": "DIGEST_CHAIN",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "each link cites a valid previous sha256 digest",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed."
+}
+```
+
 ### `coreguard_verify_robot_mission_evidence`
 
 Verify robot/agent mission execution evidence against a mission receipt. Offline evidence check.
@@ -7171,6 +9546,119 @@ Verify robot/agent mission execution evidence against a mission receipt. Offline
 }
 ```
 
+### `coreguard_verify_sanctions_list_version`
+
+Check a caller-supplied sanctions-list version stamp against a pinned policy minimum and freshness window. No list is downloaded.
+
+**Required:** `evidence`, `policy`, `nowSeconds` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `policy` | `object` | **required** | — |  |
+| `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "List stamp, policy, pinned time.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence",
+    "policy",
+    "nowSeconds"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "evidence": {
+    "listName": "sdn",
+    "listVersion": "20261120",
+    "publishedAtSeconds": "1794657590",
+    "digest": "sha256:c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3"
+  },
+  "policy": {
+    "requiredListName": "sdn",
+    "minVersion": "20261101",
+    "maxAgeSeconds": "3600"
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_sanctions_list_version",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "listName": "sdn",
+  "listVersion": "20261120",
+  "fresh": true,
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "LIST_NAME",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "list name matches policy",
+      "evidence": {}
+    },
+    {
+      "id": "VERSION",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "listVersion 20261120 >= 20261101",
+      "evidence": {}
+    },
+    {
+      "id": "FRESH",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "list snapshot is fresh at pinned nowSeconds",
+      "evidence": {}
+    },
+    {
+      "id": "DIGEST",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "list digest is a sha256 digest string",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed. No sanctions list is downloaded or screened; this checks a caller-supplied version stamp only."
+}
+```
+
 ### `coreguard_verify_stablecoin_reserve_evidence`
 
 Assess caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy. No issuer API call; evidence only.
@@ -7287,6 +9775,136 @@ Assess caller-supplied stablecoin reserve/attestation evidence for freshness and
   "failed": [],
   "critical": [],
   "boundary": "Wave 4 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar, Ethereum, Core DAO, DeFi protocols, credit bureaus, or regulators. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_stellar_path_payment`
+
+Verify caller-supplied Stellar path-payment evidence for status, assets, amounts, destination and path digest. No Horizon call.
+
+**Required:** `evidence` · **Optional:** `expected`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `expected` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Path-payment evidence and optional expectations.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "evidence": {
+    "txHash": "stellar-tx-1",
+    "status": "SUCCESS",
+    "sourceAsset": "USDC",
+    "destAsset": "XLM",
+    "sendAmount": "100.00",
+    "destAmount": "320.00",
+    "destination": "GDEST",
+    "path": [
+      "USDC",
+      "XLM"
+    ]
+  },
+  "expected": {
+    "destination": "GDEST"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_path_payment",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "txHash": "stellar-tx-1",
+  "pathLength": 2,
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "TX_HASH",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "txHash present",
+      "evidence": {}
+    },
+    {
+      "id": "STATUS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "status=SUCCESS",
+      "evidence": {}
+    },
+    {
+      "id": "SOURCE_ASSET",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "source asset matches",
+      "evidence": {}
+    },
+    {
+      "id": "DEST_ASSET",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "destination asset matches",
+      "evidence": {}
+    },
+    {
+      "id": "AMOUNTS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "send and destination amounts parseable",
+      "evidence": {}
+    },
+    {
+      "id": "DESTINATION",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "destination account matches",
+      "evidence": {}
+    },
+    {
+      "id": "PATH_DIGEST",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "path digest or path assets present",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed. No Stellar Horizon or network call is made; the path is a caller-supplied packet."
 }
 ```
 
@@ -7702,6 +10320,350 @@ Verify caller-supplied telemetry evidence structure/digest and optionally verify
   "telemetryDigest": "57e5822638431fa59b45ec0c1e63701a450aeaa12a6c6a13991cdde5604f86dc",
   "computedDigest": "416d707ea412b599fdd665a7f1343a814ecbf7d4e669a18f8208e10811ee576f",
   "boundary": "deterministic offline verification/planning surface; no payment custody, no broadcast, no network calls; x402 settlement/telemetry/physical completion verified only from caller-supplied evidence; VERIFIED != SAFE. Cryptographic signature verification is performed only when a trust root/public key is supplied; supplied-key verification does NOT prove device identity, key custody, or physical-world truth."
+}
+```
+
+### `coreguard_verify_token_approval_revocation`
+
+Verify caller-supplied token approval revocation evidence shows a positive previous allowance and a zero current allowance. No broadcast.
+
+**Required:** `evidence` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Allowance revocation evidence packet.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "evidence": {
+    "token": "0x1111111111111111111111111111111111111111",
+    "owner": "0xowner",
+    "spender": "0xspender",
+    "allowanceBefore": "10000",
+    "allowanceAfter": "0",
+    "txHash": "0xabababababababababababababababababababababababababababababababab"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_token_approval_revocation",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "token": "0x1111111111111111111111111111111111111111",
+  "spender": "0xspender",
+  "digest": "sha256:433b99c3a54b196d8c1225316d99e0cb49cabae6067d54b5ef93d5582bc65db8",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "TOKEN",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "token address format",
+      "evidence": {}
+    },
+    {
+      "id": "OWNER",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "owner present",
+      "evidence": {}
+    },
+    {
+      "id": "SPENDER",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "spender present",
+      "evidence": {}
+    },
+    {
+      "id": "BEFORE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "there was an allowance to revoke",
+      "evidence": {}
+    },
+    {
+      "id": "AFTER_ZERO",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "allowanceAfter=0",
+      "evidence": {}
+    },
+    {
+      "id": "TX_HASH",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "txHash format",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed. No transaction is broadcast and no chain state is read; this checks a caller-supplied receipt."
+}
+```
+
+### `coreguard_verify_travel_rule_packet`
+
+Check a caller-supplied travel-rule packet for required originator, beneficiary, VASP and amount fields. No VASP network is contacted.
+
+**Required:** `packet` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `packet` | `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Travel-rule packet and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "packet": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "packet"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "packet": {
+    "packetId": "tr-1",
+    "originatorName": "Alice",
+    "originatorAccount": "ACC-1",
+    "beneficiaryName": "Bob",
+    "beneficiaryAccount": "ACC-2",
+    "originatorVasp": "vasp-a",
+    "beneficiaryVasp": "vasp-b",
+    "amountMinor": "10000",
+    "currency": "USD"
+  },
+  "policy": {
+    "allowedVasps": [
+      "vasp-a",
+      "vasp-b"
+    ]
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_travel_rule_packet",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "packetId": "tr-1",
+  "missingFields": [],
+  "digest": "sha256:bc694eb720b3cd27c825c3527f12fad84585ce4cd01919bdf9c2b2282445de39",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "FIELDS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "missing fields: none",
+      "evidence": {}
+    },
+    {
+      "id": "AMOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "amountMinor parseable",
+      "evidence": {}
+    },
+    {
+      "id": "CURRENCY",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "currency present",
+      "evidence": {}
+    },
+    {
+      "id": "VASPS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "VASPs allowed when an allowlist is supplied",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed. This is packet completeness evidence only; no travel-rule message is sent and no VASP is contacted."
+}
+```
+
+### `coreguard_verify_ubo_evidence`
+
+Verify a caller-supplied beneficial-ownership packet for owner identifiers, percentage sum and disclosure threshold. No registry call.
+
+**Required:** `entity` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `entity` | `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Entity ownership packet and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "entity": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "entity"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "entity": {
+    "entityId": "entity-1",
+    "owners": [
+      {
+        "ownerId": "owner-1",
+        "pct": 60
+      },
+      {
+        "ownerId": "owner-2",
+        "pct": 40
+      }
+    ]
+  },
+  "policy": {
+    "minDisclosurePct": 25
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_ubo_evidence",
+  "spec": "CG-W5/1",
+  "status": "OK",
+  "entityId": "entity-1",
+  "ownershipSumPct": 100,
+  "disclosedOwners": [
+    "owner-1",
+    "owner-2"
+  ],
+  "digest": "sha256:473680fb6e9bc50ad5eefc5f8650796f8ac4e71a051972990adadad921429987",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "ENTITY_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "entityId present",
+      "evidence": {}
+    },
+    {
+      "id": "OWNERS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "at least one owner is disclosed",
+      "evidence": {}
+    },
+    {
+      "id": "OWNER_IDS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "every owner has an ownerId",
+      "evidence": {}
+    },
+    {
+      "id": "PCT_SUM",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "ownership percentages sum to 100",
+      "evidence": {}
+    },
+    {
+      "id": "DISCLOSURE",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "at least one owner at or above 25%",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, model correctness or compliance certification is claimed. Ownership is a caller-supplied packet; no company registry or beneficial-ownership database is queried."
 }
 ```
 

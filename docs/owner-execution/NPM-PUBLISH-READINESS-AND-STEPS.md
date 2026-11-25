@@ -1,7 +1,7 @@
 # npm Publication — Execution Record (post-publish truth sync)
 
 **Status:** publication executed on **2026-11-18** (owner-authorized). This document retains the readiness/steps context below and records what was actually published.  
-**Measured repo state (canonical):** 2106/2106 tests, 1629 files / 0 boundary violations (`docs/state-snapshot.json`), CI green on `main` context as recorded in repo docs.
+**Measured repo state (canonical):** 2168/2168 tests, 1664 files / 0 boundary violations (`docs/state-snapshot.json`), CI green on `main` context as recorded in repo docs.
 
 ## 0) Publication outcome (recorded)
 

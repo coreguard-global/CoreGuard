@@ -91,7 +91,7 @@ test("verifyDelegationChain detects breaks and missing signatures", () => {
   assert.ok(r.issues.includes("DELEGATION_0_MISSING_SIGNATURE"));
 });
 
-test("MCP exposes 70 tools and Wave 1 tool call works", async () => {
+test("MCP exposes 94 tools and Wave 1 tool call works", async () => {
   const child = spawn(process.execPath, ["packages/agent-commerce/bin/mcp.mjs"], { cwd: process.cwd(), stdio: ["pipe", "pipe", "pipe"] });
   const rl = createInterface({ input: child.stdout });
   const pending = [];
@@ -100,7 +100,7 @@ test("MCP exposes 70 tools and Wave 1 tool call works", async () => {
   const init = await req(1, "initialize", { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "t", version: "0" } });
   assert.equal(init.result.serverInfo.name, "coreguard-agent-commerce");
   const list = await req(2, "tools/list", {});
-  assert.equal(list.result.tools.length, 70);
+  assert.equal(list.result.tools.length, 94);
   const call = await req(3, "tools/call", { name: "coreguard_parse_x402_challenge", arguments: { challenge: { accepts: [{ network: "base", asset: "USDC", amount: "1", payTo: "0xabc" }] } } });
   assert.equal(call.result.structuredContent.verdict, "PARSED");
   child.stdin.end();

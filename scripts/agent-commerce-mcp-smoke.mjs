@@ -4,7 +4,7 @@
  *
  * Proves, with a live JSON-RPC 2.0 stdio process:
  *   - initialize responds with the expected protocol/version identity
- *   - tools/list exposes the 70 tools with inputSchema + outputSchema
+ *   - tools/list exposes the 94 tools with inputSchema + outputSchema
  *   - coreguard_authorize returns a CGCR/1 receipt (structuredContent)
  *   - coreguard_verify_execution returns VERIFIED on exact execution
  *   - coreguard_verify_execution returns INVALID with named drift on escalation
@@ -17,6 +17,7 @@ import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { WAVE5_TOOLS } from '../packages/agent-commerce/wave5.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const MCP_PATH = resolve(here, '../packages/agent-commerce/mcp.mjs');
@@ -104,7 +105,7 @@ async function main() {
     });
 
     let listed;
-    await run('tools/list exposes 70 tools with inputSchema+outputSchema', async () => {
+    await run('tools/list exposes 94 tools with inputSchema+outputSchema', async () => {
       listed = await request('tools/list', {});
       const tools = listed.result?.tools || [];
       const names = tools.map(t => t.name).sort();
@@ -126,8 +127,9 @@ async function main() {
         "coreguard_verify_evidence_bundle","coreguard_verify_evm_settlement_evidence","coreguard_verify_execution","coreguard_verify_invoice_match",
         "coreguard_verify_pi_payment_evidence","coreguard_verify_receipt","coreguard_verify_robot_mission_evidence","coreguard_verify_stablecoin_reserve_evidence",
         "coreguard_verify_stellar_settlement_evidence","coreguard_verify_swift_remittance_evidence","coreguard_verify_task_completion","coreguard_verify_telemetry",
-        "coreguard_verify_web3_signature_evidence","coreguard_verify_x402_settlement"
-      ];
+        "coreguard_verify_web3_signature_evidence","coreguard_verify_x402_settlement",
+        ...WAVE5_TOOLS.map((t) => t.name),
+      ].sort();
       assert(JSON.stringify(names) === JSON.stringify(expected), `unexpected tool names: ${names.join(',')}`);
       for (const t of tools) {
         assert(t.inputSchema?.type === 'object', `${t.name} missing inputSchema`);
