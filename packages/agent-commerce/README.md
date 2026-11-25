@@ -12,7 +12,7 @@ bytes approved, and for verifying any executed trace against that receipt.
 - **Fail-closed execution verification** — a consent plus an executed trace
   yields a verdict with named drift classes (AGR/1 taxonomy); incomplete or
   ambiguous evidence is never treated as a pass.
-- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing twenty-six tools,
+- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing forty-six tools,
   all offline, all deterministic, zero keys.
 
 MIT. Node ≥ 18. No network calls, no stored credentials, no wall clock.
@@ -217,6 +217,35 @@ These 10 tools extend CoreGuard into x402/machine/delegation evidence flows. **B
 | `coreguard_revoke_consent` | `decideApproval` / `revokeAgent` / `revokePolicy` |
 | `coreguard_audit_transaction` | `auditReport` with optional filters |
 
+### Wave 3 — reasoning, supply chain, evidence, operations (CG-W3/1)
+
+20 deterministic tools that answer questions the receipt layer could only imply. All offline, zero keys, no wall clock in any commitment.
+
+| Tool | Purpose |
+|---|---|
+| `coreguard_compile_policy` | Compile a compact spend spec into a canonical CGEP/1 policy + stable digest. |
+| `coreguard_explain_decision` | Per-rule verdict plus the smallest single change that clears the first block. |
+| `coreguard_simulate_spend` | Dry-run a batch against a policy; no state written. |
+| `coreguard_diff_policies` | Rule-level diff, limit delta, tightness, re-consent flag. |
+| `coreguard_generate_boundary_cases` | At/±1 the limit, unlisted target/recipient, closed window, wrong currency — verdicts computed by the engine. |
+| `coreguard_audit_server_manifest` | Risk card for a third-party MCP `server.json` before install. |
+| `coreguard_scan_tool_descriptions` | Byte-level scan for bidi/tag/zero-width characters, HTML comments, imperative payloads. |
+| `coreguard_check_lookalike` | Homoglyph, mixed-script and punycode impersonation check. |
+| `coreguard_diff_tool_surface` | Rug-pull detector between two `tools/list` snapshots. |
+| `coreguard_verify_evidence_bundle` | Recompute bundle + item digests offline. |
+| `coreguard_redact_receipt` | Share a receipt with a redaction manifest and both digests. |
+| `coreguard_attest_batch` | Merkle root + per-item inclusion proofs over many receipts. |
+| `coreguard_verify_batch_proof` | Offline inclusion proof verification. |
+| `coreguard_freeze_agent` | Revoke an agent and reject its open approvals in one audited operation. |
+| `coreguard_budget_runway` | Straight-line runway from pinned inputs; exhaustion epoch. |
+| `coreguard_detect_spend_anomaly` | Median/MAD outlier scan with explicit threshold. |
+| `coreguard_incident_timeline` | Sequence-ordered ledger events, gaps and chain status. |
+| `coreguard_translate_receipt` | Structural ACP/x402/CGCR mapping with an explicit loss list. |
+| `coreguard_emit_test_vectors` | Integration vectors with the verdicts the enforcer computes. |
+| `coreguard_describe_surface` | Capability card/badge a directory can quote verbatim. |
+
+**Wave 3 boundary:** every answer is arithmetic over caller-supplied JSON. A finding is evidence for a human decision, not a verdict on a third party; the manifest and description audits do not execute the server. `VERIFIED ≠ SAFE`.
+
 ## Errors
 
 Failures are tool results, never exceptions and never a process exit:
@@ -320,7 +349,7 @@ License: MIT.
 
 ## Release readiness / MCPRush evidence
 
-- **Release notes:** `docs/releases/0.1.3.md`
+- **Release notes:** `docs/releases/0.2.1.md` (latest) · `docs/releases/0.2.0.md`
 - **Publish readiness checklist:** `docs/releases/0.1.3-publish-readiness.md`
 - **Security & threat model:** `docs/agent-commerce-mcp-security.md`
 - **Client compatibility matrix + run log:** `docs/agent-commerce-mcp-compatibility.md`

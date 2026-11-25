@@ -1,7 +1,7 @@
 {
   "name": "@coreguard/agent-commerce",
-  "version": "0.1.5",
-  "description": "CoreGuard Agent Commerce: consent receipts (CGCR/1) and fail-closed execution verification (AGR/1) for agentic purchases — SDK, REST surface, and a stdio MCP server (26 tools, JSON-RPC 2.0, offline, zero keys)",
+  "version": "0.2.1",
+  "description": "CoreGuard Agent Commerce: consent receipts (CGCR/1) and fail-closed execution verification (AGR/1) for agentic purchases — SDK, REST surface, and a stdio MCP server (46 tools, JSON-RPC 2.0, offline, zero keys)",
   "type": "module",
   "main": "./index.mjs",
   "exports": {
@@ -11,6 +11,7 @@
     "./client.mjs": "./client.mjs",
     "./firewall.mjs": "./firewall.mjs",
     "./risk.mjs": "./risk.mjs",
+    "./trust-card.mjs": "./trust-card.mjs",
     "./risk-cli.mjs": "./risk-cli.mjs",
     "./outcomes.mjs": "./outcomes.mjs",
     "./outcomes-bridge.mjs": "./outcomes-bridge.mjs",
@@ -38,7 +39,8 @@
     "./cgcp-mcp-tools.mjs": "./cgcp-mcp-tools.mjs"
   },
   "bin": {
-    "coreguard-agent-commerce-mcp": "./bin/mcp.mjs"
+    "coreguard-agent-commerce-mcp": "./bin/mcp.mjs",
+    "coreguard-trust-card": "./bin/trust-card.mjs"
   },
   "files": [
     "aer1.mjs",
@@ -77,7 +79,11 @@
     "risk.mjs",
     "server.json",
     "spend.mjs",
-    "trust.mjs"
+    "trust.mjs",
+    "trust-card-cli.mjs",
+    "trust-card.mjs",
+    "bin/trust-card.mjs",
+    "wave3.mjs"
   ],
   "engines": {
     "node": ">=18"

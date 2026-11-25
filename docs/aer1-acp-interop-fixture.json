@@ -36,7 +36,9 @@
         "provenance_not_present",
         "not_yet_materialized"
       ],
-      "reconciliation": "Open before ACP submission/meeting: unify into one normative set or split into named fields with no silent remapping. Overlap: access_refused,outside_scope,unsupported_family,schema_not_implemented."
+      "reconciliation": "Direction (thread, draft): two named fields, no silent remapping. Observer/access axis: not_attempted,access_refused,access_revoked,outside_scope,unsupported_family,schema_not_implemented. Record/provenance axis: provenance_not_present,not_yet_materialized. Appendix A remains wired as-is until field names/schema are finalized.",
+      "direction": "two_named_fields_no_silent_remapping",
+      "directionSource": "https://github.com/coreguard-global/CoreGuard/issues/59#issuecomment-7146471149"
     },
     "runLevelOutcomesUntouched": true
   },

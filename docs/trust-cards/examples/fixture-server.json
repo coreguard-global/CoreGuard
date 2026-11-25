@@ -1,0 +1,26 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "example/poisoned-tool-metadata",
+  "description": "Synthetic fixture: a server record whose tool descriptions carry poisoning. Not a real server; nothing here is published.",
+  "version": "0.0.1-fixture",
+  "repository": {
+    "url": "https://example.test/fixture",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "example-poisoned-fixture",
+      "version": "0.0.1-fixture",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://example.test/mcp"
+    }
+  ]
+}

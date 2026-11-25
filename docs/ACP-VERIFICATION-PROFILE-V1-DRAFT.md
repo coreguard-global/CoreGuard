@@ -86,18 +86,16 @@ A `not_checked` caused by access refusal is an authorization/read event, not a r
 
 `not_checked` is the one outcome whose remedy depends entirely on why, so the reason set is frozen. A profile MUST NOT introduce a new reason without a version bump, and MUST NOT use a free-text reason.
 
-**Reconciliation note (open, to resolve before ACP submission/meeting):** the current draft carries two six-reason sets that must be reconciled into one normative set or an explicitly mapped pair.
+**Reconciliation direction (from thread, draft — not ratified):** the two six-reason sets are not vocabulary drift; they answer different questions. The direction is **two named fields, no silent remapping** (per [zambodotdev, issue #59 comment 7146471149](https://github.com/coreguard-global/CoreGuard/issues/59#issuecomment-7146471149)). Appendix A remains wired as-is while the field split is drafted.
 
-| Set | Reasons | Where used |
-|---|---|---|
-| **CG-OBS/1 reference implementation** | `not_attempted`, `access_refused`, `access_revoked`, `outside_scope`, `unsupported_family`, `schema_not_implemented` | `packages/agent-commerce/observations.mjs`, current ledger/join implementation and tests |
-| **ACP compact profile text (Appendix A, wired as-is)** | `access_refused`, `unsupported_family`, `schema_not_implemented`, `outside_scope`, `provenance_not_present`, `not_yet_materialized` | Appendix A / issue #59 comment 7144044159 |
+| Axis | Proposed field | Reasons | Question it answers |
+|---|---|---|---|
+| **Observer/access lifecycle** | `observer_reason` (draft name) | `not_attempted`, `access_refused`, `access_revoked`, `outside_scope`, `unsupported_family`, `schema_not_implemented` | Did the observer run the check, and if not, why from the observer/access side? |
+| **Record/provenance availability** | `record_reason` (draft name) | `provenance_not_present`, `not_yet_materialized` | Did the record/provenance exist in a checkable form? |
 
-**Overlap:** `access_refused`, `outside_scope`, `unsupported_family`, `schema_not_implemented`.  
-**CG-OBS/1 only:** `not_attempted`, `access_revoked`.  
-**Appendix A only:** `provenance_not_present`, `not_yet_materialized`.
+**Overlap in current text:** `access_refused`, `outside_scope`, `unsupported_family`, `schema_not_implemented` appear in both source texts; in the two-field model they belong to the observer/access axis. A consumer reading only one axis must still get an honest answer. One normative set would make the second axis borrow labels — silent remapping with better presentation — so it is rejected as the direction.
 
-**Working interpretation (draft, not ratified):** `provenance_not_present` and `not_yet_materialized` describe record/provenance availability states; `not_attempted` and `access_revoked` describe observer/access lifecycle states. These may be different axes rather than competing labels. Before meeting/submission, we should publish one normative table that either (a) unifies them into one frozen set with clear definitions, or (b) splits them into two named fields (e.g. `reason` + `access_state`/`availability_state`) with no silent remapping. No implementation should guess a mapping.
+**Still open (field naming/final schema):** exact field names, whether `record_reason` is required/optional when the observer axis explains the non-check, and how existing CG-OBS/1 events map forward without breaking pinned rows. No implementation should guess a mapping.
 
 ---
 

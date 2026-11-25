@@ -1,0 +1,92 @@
+name: CoreGuard MCP trust card
+description: >-
+  Turn an MCP server record and a tools/list into a publishable CG-TC/1 trust
+  card (manifest findings, tool-poisoning scan, inventory, digests), and
+  optionally fail the job when the structural verdict is too high.
+
+branding:
+  icon: shield
+  color: purple
+
+inputs:
+  server-json:
+    description: Path to the MCP registry server record (server.json).
+    required: false
+    default: server.json
+  tools-list:
+    description: >-
+      Path to a tools/list result (array, {tools:[...]} or a JSON-RPC response).
+      Mutually exclusive with stdio.
+    required: false
+    default: ""
+  stdio:
+    description: >-
+      Command that starts a stdio MCP server, e.g. "npx -y @scope/server".
+      The action runs it locally and requests tools/list. Mutually exclusive
+      with tools-list.
+    required: false
+    default: ""
+  out:
+    description: Markdown trust-card destination.
+    required: false
+    default: trust-card.md
+  json-out:
+    description: Optional machine-readable sidecar destination.
+    required: false
+    default: ""
+  date:
+    description: Card date (YYYY-MM-DD). Omit to keep the card deterministic.
+    required: false
+    default: ""
+  url:
+    description: Published card URL, embedded in the paste-ready summary.
+    required: false
+    default: ""
+  fail-on:
+    description: Exit non-zero at this verdict — none, medium or high.
+    required: false
+    default: high
+
+outputs:
+  card-path:
+    description: Where the Markdown card was written.
+    value: ${{ inputs.out }}
+  verdict:
+    description: The verdict written into the card (PASS, REVIEW or BLOCKED).
+    value: ${{ steps.card.outputs.verdict }}
+
+runs:
+  using: composite
+  steps:
+    - name: Generate trust card
+      id: card
+      shell: bash
+      env:
+        CG_SERVER_JSON: ${{ inputs.server-json }}
+        CG_TOOLS_LIST: ${{ inputs.tools-list }}
+        CG_STDIO: ${{ inputs.stdio }}
+        CG_OUT: ${{ inputs.out }}
+        CG_JSON_OUT: ${{ inputs.json-out }}
+        CG_DATE: ${{ inputs.date }}
+        CG_URL: ${{ inputs.url }}
+        CG_FAIL_ON: ${{ inputs.fail-on }}
+      run: |
+        set -euo pipefail
+        args=(--server-json "$CG_SERVER_JSON" --out "$CG_OUT" --fail-on "$CG_FAIL_ON")
+        if [ -n "$CG_TOOLS_LIST" ] && [ -n "$CG_STDIO" ]; then
+          echo "::error::pass exactly one of tools-list or stdio"
+          exit 2
+        fi
+        if [ -n "$CG_TOOLS_LIST" ]; then args+=(--tools-list "$CG_TOOLS_LIST"); fi
+        if [ -n "$CG_STDIO" ]; then args+=(--stdio "$CG_STDIO"); fi
+        if [ -n "$CG_JSON_OUT" ]; then args+=(--json "$CG_JSON_OUT"); fi
+        if [ -n "$CG_DATE" ]; then args+=(--date "$CG_DATE"); fi
+        if [ -n "$CG_URL" ]; then args+=(--url "$CG_URL"); fi
+        node "$GITHUB_ACTION_PATH/../../../packages/agent-commerce/trust-card-cli.mjs" "${args[@]}"
+        if [ -n "$CG_JSON_OUT" ] && [ -f "$CG_JSON_OUT" ]; then
+          verdict=$(node -e 'const fs=require("fs");const c=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));process.stdout.write(c.verdict)' "$CG_JSON_OUT")
+          echo "verdict=$verdict" >> "$GITHUB_OUTPUT"
+        else
+          verdict=$(grep -oE 'Verdict: (PASS|REVIEW|BLOCKED)' "$CG_OUT" | head -1 | awk '{print $2}')
+          echo "verdict=${verdict:-UNKNOWN}" >> "$GITHUB_OUTPUT"
+        fi

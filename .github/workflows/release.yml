@@ -49,6 +49,9 @@ jobs:
           npm whoami || echo "(whoami failed — token not accepted)"
           npm config get //registry.npmjs.org/:_authToken | sed 's/./*/g' | wc -c
 
+      - name: Gate — generated MCP surface is current
+        run: npm run docs:mcprush:check
+
       - name: Gate — release-please (publish-check + plan + publish)
         env:
           # setup-node writes .npmrc with `//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}`;

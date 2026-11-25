@@ -1,0 +1,216 @@
+{
+  "schema": "CG-SK/1",
+  "server": {
+    "name": "coreguard-agent-commerce",
+    "version": "0.2.1"
+  },
+  "toolCount": 46,
+  "skills": [
+    {
+      "dir": "acp-interop-mapping",
+      "name": "acp-interop-mapping",
+      "description": "Use when a partner speaks a different receipt or checkout shape (ACP, x402, CGCR/1) and you need a structural mapping that names exactly what is lost, plus deterministic vectors to test their implementation.",
+      "intro": "Move records between profiles without pretending the mapping is lossless.",
+      "whenToUse": [
+        "A partner (agent commerce platform, gateway, marketplace) asks for receipts in their shape.",
+        "You are integrating an SDK and need test vectors that match the enforcer, not your reading of the spec.",
+        "A dispute needs the same record expressed in two profiles."
+      ],
+      "tools": [
+        "coreguard_translate_receipt",
+        "coreguard_emit_test_vectors",
+        "coreguard_verify_evidence_bundle",
+        "coreguard_verify_receipt",
+        "coreguard_verify_execution"
+      ],
+      "boundaries": "",
+      "path": "skills/acp-interop-mapping/SKILL.md",
+      "digest": "sha256:61480ed8530636d46f0bc87f0886bec1fe36c68f8dd0d60d07efb09b8e47afc9",
+      "bytes": 2802
+    },
+    {
+      "dir": "agent-purchase-guard",
+      "name": "agent-purchase-guard",
+      "description": "Use when an agent is about to spend money, submit an order, or sign a payment authorization, and you need the approval bound to exact bytes and the execution verified before anything is called successful.",
+      "intro": "Bind the buyer's approval to the order bytes, then verify what actually executed against that receipt. Offline, deterministic, fail-closed.",
+      "whenToUse": [
+        "An agent is about to place an order, pay an invoice, settle an x402 challenge, or call a merchant API that moves value.",
+        "You need a receipt a human (or a dispute process) can re-derive later without trusting your logs.",
+        "A verifier, firewall, or marketplace asks \"was this execution covered by an approval?\"."
+      ],
+      "tools": [
+        "coreguard_compile_policy",
+        "coreguard_explain_decision",
+        "coreguard_authorize",
+        "coreguard_verify_execution",
+        "coreguard_build_attestation",
+        "coreguard_verify_attestation",
+        "coreguard_consumption_status",
+        "coreguard_redact_receipt",
+        "coreguard_attest_batch",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/agent-purchase-guard/SKILL.md",
+      "digest": "sha256:0a8120c93800ce252e8dfc88feb3c30c7c699564c538b2e63d383ff4b5522ca1",
+      "bytes": 3680
+    },
+    {
+      "dir": "agent-spend-control",
+      "name": "agent-spend-control",
+      "description": "Use when setting, reviewing, or explaining an agent's spending limits — compile the policy, simulate the month, prove the boundary cases, and project runway without touching production state.",
+      "intro": "Make the policy explicit, testable and explainable before an agent spends against it.",
+      "whenToUse": [],
+      "tools": [
+        "coreguard_compile_policy",
+        "coreguard_explain_decision",
+        "coreguard_simulate_spend",
+        "coreguard_diff_policies",
+        "coreguard_generate_boundary_cases",
+        "coreguard_budget_runway",
+        "coreguard_detect_spend_anomaly"
+      ],
+      "boundaries": "",
+      "path": "skills/agent-spend-control/SKILL.md",
+      "digest": "sha256:d604c7477b10f6c7ca39384d27b4b3e207a82171162859a84c25daf118d55dc7",
+      "bytes": 2763
+    },
+    {
+      "dir": "incident-freeze-drill",
+      "name": "incident-freeze-drill",
+      "description": "Use when an agent must be stopped immediately — freeze it, reject its open approvals in one audited operation, then reconstruct the timeline for review.",
+      "intro": "Contain first, explain second. The kill switch must be one deterministic call, and the resulting ledger must be readable.",
+      "whenToUse": [
+        "A verification failed, a receipt was replayed, or a tool description was poisoned.",
+        "An owner says \"stop this agent now\".",
+        "You are rehearsing incident response before an agent goes live (do this drill monthly)."
+      ],
+      "tools": [
+        "coreguard_freeze_agent",
+        "coreguard_check_limits",
+        "coreguard_incident_timeline",
+        "coreguard_redact_receipt",
+        "coreguard_attest_batch",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/incident-freeze-drill/SKILL.md",
+      "digest": "sha256:7bcbae8fdb48b3379526d31062b0f1e37dcff5d68ca0dd29f6ecf211e6344810",
+      "bytes": 2657
+    },
+    {
+      "dir": "mcp-server-due-diligence",
+      "name": "mcp-server-due-diligence",
+      "description": "Use before installing, pinning, or approving a third-party MCP server, to turn its published manifest into a deterministic risk card a reviewer can act on.",
+      "intro": "Read the record before you run the code. This skill produces evidence, not a verdict on the vendor.",
+      "whenToUse": [
+        "An MCP client, marketplace, or platform is about to list or install a server.",
+        "A team asks \"is this server safe to add to our agent?\".",
+        "You need a repeatable pre-install check that does not depend on the vendor's marketing page."
+      ],
+      "tools": [
+        "coreguard_audit_server_manifest",
+        "coreguard_scan_tool_descriptions",
+        "coreguard_check_lookalike",
+        "coreguard_diff_tool_surface"
+      ],
+      "boundaries": "",
+      "path": "skills/mcp-server-due-diligence/SKILL.md",
+      "digest": "sha256:da9701180a50f067d34be8e7244871f320cb6607513f538bb138a23211afd738",
+      "bytes": 3111
+    },
+    {
+      "dir": "merchant-impersonation-check",
+      "name": "merchant-impersonation-check",
+      "description": "Use when an agent is about to pay a merchant, domain, or package whose name resembles a known brand, or when a payment instruction arrives from a new domain.",
+      "intro": "Catch homoglyph, mixed-script and punycode impersonation before value moves.",
+      "whenToUse": [],
+      "tools": [
+        "coreguard_check_lookalike",
+        "coreguard_verify_execution"
+      ],
+      "boundaries": "",
+      "path": "skills/merchant-impersonation-check/SKILL.md",
+      "digest": "sha256:429a75f8c388485a959a1aec8effa0e318335aefbbee05f625852760002eed0e",
+      "bytes": 2240
+    },
+    {
+      "dir": "receipt-forensics",
+      "name": "receipt-forensics",
+      "description": "Use when reconstructing what happened to a payment or approval — redact a receipt for sharing, verify an evidence bundle, and prove a record is included in a notarised batch.",
+      "intro": "Answer \"what exactly was approved, what executed, and can we prove it later?\" without a network or a trust root.",
+      "whenToUse": [],
+      "tools": [
+        "coreguard_redact_receipt",
+        "coreguard_verify_evidence_bundle",
+        "coreguard_attest_batch",
+        "coreguard_verify_batch_proof",
+        "coreguard_incident_timeline"
+      ],
+      "boundaries": "",
+      "path": "skills/receipt-forensics/SKILL.md",
+      "digest": "sha256:ab4b3d293079af30521a1c67b5d1ef0c6ede3e455e54ac2d19c73752b44f4627",
+      "bytes": 2640
+    },
+    {
+      "dir": "tool-poisoning-triage",
+      "name": "tool-poisoning-triage",
+      "description": "Use when tool descriptions or prompts look off, arrive from an untrusted MCP server, or an agent starts behaving as if it received instructions the user never gave.",
+      "intro": "Find hidden instructions in tool metadata before the model obeys them.",
+      "whenToUse": [],
+      "tools": [
+        "coreguard_scan_tool_descriptions",
+        "coreguard_diff_tool_surface",
+        "coreguard_freeze_agent",
+        "coreguard_incident_timeline",
+        "coreguard_redact_receipt",
+        "coreguard_attest_batch"
+      ],
+      "boundaries": "",
+      "path": "skills/tool-poisoning-triage/SKILL.md",
+      "digest": "sha256:f0494a25080765ab90755ba62f4ea304d3273493a757a4a92f0b2ad26a2a1c37",
+      "bytes": 2792
+    },
+    {
+      "dir": "tool-surface-drift-watch",
+      "name": "tool-surface-drift-watch",
+      "description": "Use on every MCP server upgrade or re-connect to detect rug pulls — tools added, removed, re-described or re-schema'd after the surface was approved.",
+      "intro": "An agent approved a tool surface, not a vendor. Verify the surface is still the one that was approved.",
+      "whenToUse": [
+        "A dependency bump changes an MCP server version.",
+        "A hosted server reconnects and `tools/list` may differ from yesterday.",
+        "A marketplace re-scans a listing (`rescan`) and needs to show what changed."
+      ],
+      "tools": [
+        "coreguard_diff_tool_surface",
+        "coreguard_scan_tool_descriptions",
+        "coreguard_audit_server_manifest",
+        "coreguard_describe_surface"
+      ],
+      "boundaries": "",
+      "path": "skills/tool-surface-drift-watch/SKILL.md",
+      "digest": "sha256:1c92e202ddc60aa28b6b278cb66c073731d7ca53bc9a5405a7a8817d1a793d98",
+      "bytes": 2525
+    },
+    {
+      "dir": "x402-payment-gate",
+      "name": "x402-payment-gate",
+      "description": "Use when an agent answers an HTTP 402 payment challenge — parse the challenge, authorize against policy, verify settlement evidence, and reconcile the payment without custody.",
+      "intro": "A deterministic gate for x402-style challenges: parse, authorize, verify, reconcile. No wallet, no broadcast, no custody.",
+      "whenToUse": [],
+      "tools": [
+        "coreguard_parse_x402_challenge",
+        "coreguard_authorize_x402_payment",
+        "coreguard_verify_x402_settlement",
+        "coreguard_reconcile_payment",
+        "coreguard_authorize",
+        "coreguard_verify_execution"
+      ],
+      "boundaries": "",
+      "path": "skills/x402-payment-gate/SKILL.md",
+      "digest": "sha256:f46cad705a37fe7988c389f3dc8ed3b2394de5611baf23427daf77a758e131b8",
+      "bytes": 2933
+    }
+  ],
+  "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment."
+}
