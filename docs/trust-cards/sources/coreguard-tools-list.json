@@ -2035,5 +2035,804 @@
       "description": "Capability card with the server's own boundary.",
       "additionalProperties": true
     }
+  },
+  {
+    "name": "coreguard_parse_iso20022_payment",
+    "description": "Parse and validate a caller-supplied ISO 20022-like payment message (pain.001/pacs.008/camt.054 etc.) into deterministic checks and a digest. Offline; no SWIFT/bank network access.",
+    "inputSchema": {
+      "type": "object",
+      "description": "ISO 20022-like payment message to parse.",
+      "additionalProperties": true,
+      "properties": {
+        "message": {
+          "type": "object",
+          "description": "ISO20022-like JSON message"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Parse verdict, normalized fields, digest, checks.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_cross_border_instruction",
+    "description": "Verify a cross-border payment instruction against corridor/currency/amount/cutoff policy. Deterministic policy evidence only; no live compliance or sanctions screening.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Instruction and corridor policy.",
+      "additionalProperties": true,
+      "properties": {
+        "instruction": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "instruction",
+        "policy"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Pass/warn/fail checks for the instruction.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_assess_fx_quote_risk",
+    "description": "Assess FX quote evidence for expiry, spread, provider allowlist, and rate presence at a pinned nowSeconds. Offline; no market data feed.",
+    "inputSchema": {
+      "type": "object",
+      "description": "FX quote, policy, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "quote": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "quote",
+        "policy",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "FX quote risk verdict and checks. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_swift_remittance_evidence",
+    "description": "Verify caller-supplied SWIFT/remittance evidence against expected amount/currency/accounts/reference. Evidence only; no SWIFT network access or settlement finality claim.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Remittance evidence and expected values.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "expected"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Evidence match verdict and checks. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_bank_transfer_evidence",
+    "description": "Verify bank transfer evidence against expected instruction fields. Offline evidence check; no bank API call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Bank transfer evidence and expected values.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "expected"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Bank transfer evidence verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_assess_sanctions_screening_evidence",
+    "description": "Assess a caller-supplied sanctions/screening result packet for freshness, provider allowlist, and clear/no-match result. No live sanctions screening; evidence only.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Screening evidence, policy, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "policy",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Screening evidence assessment. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_invoice_match",
+    "description": "Deterministic 3-way style match between invoice and payment evidence (amount, currency, payee, reference).",
+    "inputSchema": {
+      "type": "object",
+      "description": "Invoice and payment evidence.",
+      "additionalProperties": true,
+      "properties": {
+        "invoice": {
+          "type": "object"
+        },
+        "payment": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "invoice",
+        "payment"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Invoice match verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_generate_payment_compliance_packet",
+    "description": "Bundle payment evidence into a redacted, hashed compliance packet for review/export. Local only; no regulatory submission.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Payment and supporting evidence.",
+      "additionalProperties": true,
+      "properties": {
+        "payment": {
+          "type": "object"
+        },
+        "evidence": {
+          "type": "object"
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "redactFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "payment"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Redacted compliance packet and digests. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_settlement_evidence",
+    "description": "Verify caller-supplied Stellar settlement evidence against expected payment fields. No Horizon/network call; evidence only.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Stellar evidence and expected values.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "expected"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Stellar evidence verification verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_evm_settlement_evidence",
+    "description": "Verify caller-supplied EVM tx/receipt evidence against expected chain, recipient, token, and amount. No RPC call; evidence only.",
+    "inputSchema": {
+      "type": "object",
+      "description": "EVM evidence and expected values.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "expected"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "EVM evidence verification verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_coredao_settlement_evidence",
+    "description": "Verify caller-supplied Core DAO EVM settlement evidence with Core DAO chain-id profile checks. No RPC call; evidence only.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Core DAO evidence and optional expected values.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Core DAO evidence verification verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_pi_payment_evidence",
+    "description": "Verify caller-supplied Pi Network payment evidence packet against expected values. Explicit boundary: attested/mock evidence only, no live Pi API/mainnet verification.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Pi payment evidence and expected values.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "expected"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Pi payment evidence verdict with explicit boundary.",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_assess_bridge_risk",
+    "description": "Assess bridge transfer route risk from caller-supplied route/quote/proof/policy data. No bridge API call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Bridge route, policy, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "route": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "route",
+        "policy",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Bridge risk verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_assess_defi_position_risk",
+    "description": "Assess DeFi position risk from caller-supplied snapshot (health factor, LTV, oracle age). No onchain/protocol call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Position snapshot, policy, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "position": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "position",
+        "policy",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "DeFi position risk verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_web3_signature_evidence",
+    "description": "Verify caller-supplied Web3 signature evidence structure and recovered/claimed signer match. No key custody or onchain call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Signature evidence packet.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Signature evidence verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_stablecoin_reserve_evidence",
+    "description": "Assess caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy. No issuer API call; evidence only.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Reserve evidence, policy, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "policy",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Reserve evidence verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_create_robot_mission_receipt",
+    "description": "Create a deterministic robot/agent mission receipt binding mission, zone, budget, and time window to a policy digest. Offline; no robot control.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Mission, policy, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "mission": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "mission",
+        "policy",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Robot mission receipt and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_robot_mission_evidence",
+    "description": "Verify robot/agent mission execution evidence against a mission receipt. Offline evidence check.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Mission receipt and execution evidence.",
+      "additionalProperties": true,
+      "properties": {
+        "receipt": {
+          "type": "object"
+        },
+        "evidence": {
+          "type": "object"
+        },
+        "receiptDigest": {
+          "type": "string"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "receipt",
+        "evidence"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Mission evidence verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_assess_machine_sla",
+    "description": "Assess machine/agent SLA from caller-supplied downtime/events against policy thresholds. Deterministic, offline.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Events and SLA policy.",
+      "additionalProperties": true,
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "events"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "SLA assessment verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_assess_loan_application",
+    "description": "Assess loan application risk from caller-supplied financial fields and policy (DTI, amount, tenor). No credit bureau/bank/regulatory decision.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Loan application and policy.",
+      "additionalProperties": true,
+      "properties": {
+        "application": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "application",
+        "policy"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Loan application risk assessment. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_collateral_packet",
+    "description": "Verify collateral evidence packet for valuation, expiry, owner, and evidence digest presence. No registry/custody verification.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Collateral packet, policy, pinned time.",
+      "additionalProperties": true,
+      "properties": {
+        "collateral": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "collateral",
+        "policy",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Collateral packet verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_assess_credit_line_utilization",
+    "description": "Assess credit line utilization against a max utilization threshold. Deterministic arithmetic only.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Credit line with limitMinor/usedMinor.",
+      "additionalProperties": true,
+      "properties": {
+        "line": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "line"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Utilization assessment. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_escrow_milestone",
+    "description": "Verify escrow milestone release conditions: approvals, evidence, and release amount within remaining escrow. No custody/broadcast.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Escrow state and milestone evidence.",
+      "additionalProperties": true,
+      "properties": {
+        "escrow": {
+          "type": "object"
+        },
+        "milestone": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "escrow",
+        "milestone"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Escrow milestone verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_create_incident_war_room",
+    "description": "Create a deterministic incident war-room packet from incident metadata, events, and actions. Local evidence packaging only.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Incident metadata, events, actions.",
+      "additionalProperties": true,
+      "properties": {
+        "incident": {
+          "type": "object"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "incident"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Incident war-room packet and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true
+    }
   }
 ]

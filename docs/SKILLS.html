@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CoreGuard Agent Skills — 10 procedures for a 46-tool MCP server</title>
+<title>CoreGuard Agent Skills — 40 procedures for a 70-tool MCP server</title>
 <meta name="description" content="Ready-to-load agent skills for CoreGuard Agent Commerce: purchase guard, MCP server due diligence, tool-poisoning triage, spend control, receipt forensics, impersonation checks, surface drift, freeze drills, x402 and ACP interop.">
 <meta name="theme-color" content="#0B0F14"><link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="canonical" href="https://coreguard-global.github.io/CoreGuard/SKILLS.html">
@@ -38,9 +38,9 @@ footer{padding:40px 0 70px;color:#7f8fa1;font-size:13px}
 <header><div class="w">
   <span class="k">CoreGuard · Agent skills</span>
   <h1>Procedures an agent can <em>load, not improvise.</em></h1>
-  <p class="lead">10 skills that turn the 46-tool Agent Commerce MCP server into repeatable, auditable procedures: bind an approval, vet a server before install, triage poisoned metadata, freeze an agent, prove a receipt later. Every skill is a folder with a <code>SKILL.md</code>; every tool it names is one the server actually exposes.</p>
+  <p class="lead">40 skills that turn the 70-tool Agent Commerce MCP server into repeatable, auditable procedures: bind an approval, vet a server before install, triage poisoned metadata, freeze an agent, prove a receipt later. Every skill is a folder with a <code>SKILL.md</code>; every tool it names is one the server actually exposes.</p>
   <div class="badges">
-    <img src="assets/badges/mcp-tools.svg" alt="MCP tools: 46">
+    <img src="assets/badges/mcp-tools.svg" alt="MCP tools: 70">
     <span class="pill">offline · deterministic</span>
     <span class="pill">zero keys</span>
     <span class="pill">VERIFIED ≠ SAFE</span>
@@ -53,11 +53,11 @@ footer{padding:40px 0 70px;color:#7f8fa1;font-size:13px}
   <p class="sub">Skills are plain folders. Copy the set into your runtime's skills directory, or take a single skill with the command on its card below — no clone, no keys. The server is registered once.</p>
   <pre>mkdir -p .claude/skills &amp;&amp; cp -r skills/* .claude/skills/
 # mcp client config
-{"mcpServers":{"coreguard":{"command":"npx","args":["-y","@coreguard/agent-commerce@0.2.1"]}}}</pre>
+{"mcpServers":{"coreguard":{"command":"npx","args":["-y","@coreguard/agent-commerce@0.3.0"]}}}</pre>
   <div class="note">No skill here claims a tool is safe, a merchant honest or a payment settled, and nothing on this page is adoption evidence: no install count, user count, review or endorsement is claimed anywhere. Each skill ends with the boundary it cannot cross, and each card's byte count and digest are read from the file itself.</div>
 </div></section>
 <section><div class="w">
-  <h2>The 10 <em>skills.</em></h2>
+  <h2>The 40 <em>skills.</em></h2>
   <p class="sub">Each card links to its <code>SKILL.md</code> and to the tools it calls. The chips are generated from the file's own text, so a skill that names a missing tool fails the build instead of shipping.</p>
   <div class="grid">
 <article class="skill" id="acp-interop-mapping">
@@ -96,6 +96,150 @@ curl -fsSL -o .claude/skills/agent-spend-control/SKILL.md \
   https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/agent-spend-control/SKILL.md</pre>
   <div class="meta">2763 bytes · <code>sha256:d604c7477b10f6c7…</code></div>
 </article>
+<article class="skill" id="agent-treasury-ops">
+  <div class="skill-h"><h3>agent-treasury-ops</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/agent-treasury-ops/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when operating an agent treasury with spend limits, runway, anomaly detection, and freeze controls.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_budget_runway">budget_runway</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_detect_spend_anomaly">detect_spend_anomaly</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/agent-treasury-ops
+curl -fsSL -o .claude/skills/agent-treasury-ops/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/agent-treasury-ops/SKILL.md</pre>
+  <div class="meta">1375 bytes · <code>sha256:b90dd6d98506cfa1…</code></div>
+</article>
+<article class="skill" id="ai-agent-procurement">
+  <div class="skill-h"><h3>ai-agent-procurement</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/ai-agent-procurement/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when an AI agent procures tools/services and you need manifest audit, poisoning scan, and spend controls before purchase.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 6 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_server_manifest">audit_server_manifest</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_scan_tool_descriptions">scan_tool_descriptions</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_check_lookalike">check_lookalike</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_authorize">authorize</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/ai-agent-procurement
+curl -fsSL -o .claude/skills/ai-agent-procurement/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/ai-agent-procurement/SKILL.md</pre>
+  <div class="meta">1452 bytes · <code>sha256:80f8049643b9079d…</code></div>
+</article>
+<article class="skill" id="bank-transfer-evidence">
+  <div class="skill-h"><h3>bank-transfer-evidence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/bank-transfer-evidence/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when verifying bank transfer evidence against an expected instruction in a fail-closed, offline workflow.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_bank_transfer_evidence">verify_bank_transfer_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_invoice_match">verify_invoice_match</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/bank-transfer-evidence
+curl -fsSL -o .claude/skills/bank-transfer-evidence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/bank-transfer-evidence/SKILL.md</pre>
+  <div class="meta">1356 bytes · <code>sha256:74f4ab5afc81ee8a…</code></div>
+</article>
+<article class="skill" id="bridge-transfer-risk">
+  <div class="skill-h"><h3>bridge-transfer-risk</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/bridge-transfer-risk/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when an agent plans a cross-chain bridge transfer and you need deterministic risk checks on route, quote expiry, and slippage.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_bridge_risk">assess_bridge_risk</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_explain_decision">explain_decision</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/bridge-transfer-risk
+curl -fsSL -o .claude/skills/bridge-transfer-risk/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/bridge-transfer-risk/SKILL.md</pre>
+  <div class="meta">1373 bytes · <code>sha256:cf984904fdedcc43…</code></div>
+</article>
+<article class="skill" id="collateral-packet-verification">
+  <div class="skill-h"><h3>collateral-packet-verification</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/collateral-packet-verification/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when verifying collateral evidence packets for valuation, expiry, owner, and evidence digest before credit decisions.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_collateral_packet">verify_collateral_packet</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_loan_application">assess_loan_application</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/collateral-packet-verification
+curl -fsSL -o .claude/skills/collateral-packet-verification/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/collateral-packet-verification/SKILL.md</pre>
+  <div class="meta">1382 bytes · <code>sha256:0c51cb61432e5c2a…</code></div>
+</article>
+<article class="skill" id="coredao-settlement-evidence">
+  <div class="skill-h"><h3>coredao-settlement-evidence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/coredao-settlement-evidence/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when verifying Core DAO EVM settlement evidence with chain-id profile checks. No RPC call.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_coredao_settlement_evidence">verify_coredao_settlement_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_evm_settlement_evidence">verify_evm_settlement_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/coredao-settlement-evidence
+curl -fsSL -o .claude/skills/coredao-settlement-evidence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/coredao-settlement-evidence/SKILL.md</pre>
+  <div class="meta">1334 bytes · <code>sha256:79fc15e916da42c8…</code></div>
+</article>
+<article class="skill" id="credit-line-utilization">
+  <div class="skill-h"><h3>credit-line-utilization</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/credit-line-utilization/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when monitoring credit line utilization and enforcing deterministic threshold actions.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_credit_line_utilization">assess_credit_line_utilization</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_budget_runway">budget_runway</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/credit-line-utilization
+curl -fsSL -o .claude/skills/credit-line-utilization/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/credit-line-utilization/SKILL.md</pre>
+  <div class="meta">1295 bytes · <code>sha256:0b62281e8c81ad72…</code></div>
+</article>
+<article class="skill" id="cross-border-payment-guard">
+  <div class="skill-h"><h3>cross-border-payment-guard</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/cross-border-payment-guard/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when an agent initiates cross-border payments and you need corridor, amount, currency, and cutoff checks before execution.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_cross_border_instruction">verify_cross_border_instruction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_fx_quote_risk">assess_fx_quote_risk</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_sanctions_screening_evidence">assess_sanctions_screening_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/cross-border-payment-guard
+curl -fsSL -o .claude/skills/cross-border-payment-guard/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/cross-border-payment-guard/SKILL.md</pre>
+  <div class="meta">1534 bytes · <code>sha256:e8457483b77cccde…</code></div>
+</article>
+<article class="skill" id="defi-position-risk">
+  <div class="skill-h"><h3>defi-position-risk</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/defi-position-risk/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when monitoring DeFi positions from supplied snapshots for health factor, LTV, and oracle freshness. No onchain call.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_defi_position_risk">assess_defi_position_risk</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_detect_spend_anomaly">detect_spend_anomaly</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_create_incident_war_room">create_incident_war_room</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/defi-position-risk
+curl -fsSL -o .claude/skills/defi-position-risk/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/defi-position-risk/SKILL.md</pre>
+  <div class="meta">1375 bytes · <code>sha256:58f2b1002cbd51e7…</code></div>
+</article>
+<article class="skill" id="escrow-milestone-release">
+  <div class="skill-h"><h3>escrow-milestone-release</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/escrow-milestone-release/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when verifying escrow milestone release conditions before approving release. No custody/broadcast.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_escrow_milestone">verify_escrow_milestone</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_receipt">verify_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/escrow-milestone-release
+curl -fsSL -o .claude/skills/escrow-milestone-release/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/escrow-milestone-release/SKILL.md</pre>
+  <div class="meta">1335 bytes · <code>sha256:ccb01c0f27654b5c…</code></div>
+</article>
+<article class="skill" id="evm-settlement-evidence">
+  <div class="skill-h"><h3>evm-settlement-evidence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/evm-settlement-evidence/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when verifying caller-supplied EVM tx/receipt evidence against expected chain, recipient, token, and amount. No RPC call.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_evm_settlement_evidence">verify_evm_settlement_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_invoice_match">verify_invoice_match</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/evm-settlement-evidence
+curl -fsSL -o .claude/skills/evm-settlement-evidence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/evm-settlement-evidence/SKILL.md</pre>
+  <div class="meta">1381 bytes · <code>sha256:ca5bc9690b2cc167…</code></div>
+</article>
+<article class="skill" id="fx-quote-risk-gate">
+  <div class="skill-h"><h3>fx-quote-risk-gate</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/fx-quote-risk-gate/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when an agent is about to accept an FX quote and you need expiry, spread, and provider policy checks at a pinned time.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_fx_quote_risk">assess_fx_quote_risk</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_explain_decision">explain_decision</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/fx-quote-risk-gate
+curl -fsSL -o .claude/skills/fx-quote-risk-gate/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/fx-quote-risk-gate/SKILL.md</pre>
+  <div class="meta">1366 bytes · <code>sha256:d88a344d87c1bca7…</code></div>
+</article>
 <article class="skill" id="incident-freeze-drill">
   <div class="skill-h"><h3>incident-freeze-drill</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/incident-freeze-drill/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when an agent must be stopped immediately — freeze it, reject its open approvals in one audited operation, then reconstruct the timeline for review.</p>
@@ -107,6 +251,78 @@ curl -fsSL -o .claude/skills/agent-spend-control/SKILL.md \
 curl -fsSL -o .claude/skills/incident-freeze-drill/SKILL.md \
   https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/incident-freeze-drill/SKILL.md</pre>
   <div class="meta">2657 bytes · <code>sha256:7bcbae8fdb48b337…</code></div>
+</article>
+<article class="skill" id="incident-war-room">
+  <div class="skill-h"><h3>incident-war-room</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/incident-war-room/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when a payment/agent/robot incident occurs and you need a deterministic evidence packet with timeline and actions.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_create_incident_war_room">create_incident_war_room</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_incident_timeline">incident_timeline</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_redact_receipt">redact_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/incident-war-room
+curl -fsSL -o .claude/skills/incident-war-room/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/incident-war-room/SKILL.md</pre>
+  <div class="meta">1358 bytes · <code>sha256:e0caf6d344a35e96…</code></div>
+</article>
+<article class="skill" id="invoice-payment-reconciliation">
+  <div class="skill-h"><h3>invoice-payment-reconciliation</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/invoice-payment-reconciliation/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when you need deterministic 3-way style matching between invoice, payment evidence, and approval/receipt records.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_invoice_match">verify_invoice_match</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_receipt">verify_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/invoice-payment-reconciliation
+curl -fsSL -o .claude/skills/invoice-payment-reconciliation/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/invoice-payment-reconciliation/SKILL.md</pre>
+  <div class="meta">1361 bytes · <code>sha256:9bdc5776c51ffcb7…</code></div>
+</article>
+<article class="skill" id="iso20022-payment-evidence">
+  <div class="skill-h"><h3>iso20022-payment-evidence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/iso20022-payment-evidence/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when you need to parse, validate, and package ISO 20022-like payment messages before an agent acts on them.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_parse_iso20022_payment">parse_iso20022_payment</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_cross_border_instruction">verify_cross_border_instruction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_payment_compliance_packet">generate_payment_compliance_packet</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/iso20022-payment-evidence
+curl -fsSL -o .claude/skills/iso20022-payment-evidence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/iso20022-payment-evidence/SKILL.md</pre>
+  <div class="meta">1486 bytes · <code>sha256:017a06b39112bfcf…</code></div>
+</article>
+<article class="skill" id="loan-application-risk">
+  <div class="skill-h"><h3>loan-application-risk</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/loan-application-risk/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when evaluating a loan application packet deterministically (DTI, amount, tenor) from caller-supplied data. No credit bureau decision.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_loan_application">assess_loan_application</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_collateral_packet">verify_collateral_packet</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_payment_compliance_packet">generate_payment_compliance_packet</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/loan-application-risk
+curl -fsSL -o .claude/skills/loan-application-risk/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/loan-application-risk/SKILL.md</pre>
+  <div class="meta">1427 bytes · <code>sha256:e3211feb091becc7…</code></div>
+</article>
+<article class="skill" id="machine-sla-assessment">
+  <div class="skill-h"><h3>machine-sla-assessment</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/machine-sla-assessment/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when assessing machine/agent SLA compliance from supplied downtime/events against policy thresholds.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_machine_sla">assess_machine_sla</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_meter_agent_usage">meter_agent_usage</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_create_incident_war_room">create_incident_war_room</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/machine-sla-assessment
+curl -fsSL -o .claude/skills/machine-sla-assessment/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/machine-sla-assessment/SKILL.md</pre>
+  <div class="meta">1348 bytes · <code>sha256:dd25a4616352a88e…</code></div>
+</article>
+<article class="skill" id="machine-to-machine-micropayments">
+  <div class="skill-h"><h3>machine-to-machine-micropayments</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/machine-to-machine-micropayments/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when machines/agents make high-frequency micropayments and need metering, budget, and settlement evidence checks.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 6 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_meter_agent_usage">meter_agent_usage</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_budget_runway">budget_runway</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_x402_settlement">verify_x402_settlement</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_credit_line_utilization">assess_credit_line_utilization</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/machine-to-machine-micropayments
+curl -fsSL -o .claude/skills/machine-to-machine-micropayments/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/machine-to-machine-micropayments/SKILL.md</pre>
+  <div class="meta">1449 bytes · <code>sha256:87816984174eeac1…</code></div>
 </article>
 <article class="skill" id="mcp-server-due-diligence">
   <div class="skill-h"><h3>mcp-server-due-diligence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/mcp-server-due-diligence/SKILL.md">SKILL.md</a></div>
@@ -132,6 +348,66 @@ curl -fsSL -o .claude/skills/merchant-impersonation-check/SKILL.md \
   https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/merchant-impersonation-check/SKILL.md</pre>
   <div class="meta">2240 bytes · <code>sha256:429a75f8c388485a…</code></div>
 </article>
+<article class="skill" id="merchant-onboarding-verification">
+  <div class="skill-h"><h3>merchant-onboarding-verification</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/merchant-onboarding-verification/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when onboarding a merchant/payee and you need lookalike, manifest, and evidence checks before allowing agent spend.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_check_lookalike">check_lookalike</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_server_manifest">audit_server_manifest</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_sanctions_screening_evidence">assess_sanctions_screening_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/merchant-onboarding-verification
+curl -fsSL -o .claude/skills/merchant-onboarding-verification/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/merchant-onboarding-verification/SKILL.md</pre>
+  <div class="meta">1406 bytes · <code>sha256:2774cca3a5af7442…</code></div>
+</article>
+<article class="skill" id="multi-chain-reconciliation">
+  <div class="skill-h"><h3>multi-chain-reconciliation</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/multi-chain-reconciliation/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when reconciling payment evidence across Stellar, EVM, Core DAO, or Pi-supplied evidence packets.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 6 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_stellar_settlement_evidence">verify_stellar_settlement_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_evm_settlement_evidence">verify_evm_settlement_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_coredao_settlement_evidence">verify_coredao_settlement_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_pi_payment_evidence">verify_pi_payment_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/multi-chain-reconciliation
+curl -fsSL -o .claude/skills/multi-chain-reconciliation/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/multi-chain-reconciliation/SKILL.md</pre>
+  <div class="meta">1478 bytes · <code>sha256:fa02e5a0b66c6ede…</code></div>
+</article>
+<article class="skill" id="payment-compliance-packet">
+  <div class="skill-h"><h3>payment-compliance-packet</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/payment-compliance-packet/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when you need a redacted, hashed evidence packet for review, audit, or handoff without exposing sensitive fields.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_payment_compliance_packet">generate_payment_compliance_packet</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_redact_receipt">redact_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_evidence_bundle">verify_evidence_bundle</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/payment-compliance-packet
+curl -fsSL -o .claude/skills/payment-compliance-packet/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/payment-compliance-packet/SKILL.md</pre>
+  <div class="meta">1370 bytes · <code>sha256:f73a2769953626a2…</code></div>
+</article>
+<article class="skill" id="payment-dispute-evidence">
+  <div class="skill-h"><h3>payment-dispute-evidence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/payment-dispute-evidence/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when assembling evidence for a payment dispute: receipt, execution, invoice, and redacted packet.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 6 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_receipt">verify_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_execution">verify_execution</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_invoice_match">verify_invoice_match</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_payment_compliance_packet">generate_payment_compliance_packet</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/payment-dispute-evidence
+curl -fsSL -o .claude/skills/payment-dispute-evidence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/payment-dispute-evidence/SKILL.md</pre>
+  <div class="meta">1412 bytes · <code>sha256:88a27b5b37a768fb…</code></div>
+</article>
+<article class="skill" id="pi-payment-evidence">
+  <div class="skill-h"><h3>pi-payment-evidence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/pi-payment-evidence/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when verifying caller-supplied Pi Network payment evidence packets. Attested/mock evidence only; no live Pi API.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_pi_payment_evidence">verify_pi_payment_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_invoice_match">verify_invoice_match</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_payment_compliance_packet">generate_payment_compliance_packet</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/pi-payment-evidence
+curl -fsSL -o .claude/skills/pi-payment-evidence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/pi-payment-evidence/SKILL.md</pre>
+  <div class="meta">1395 bytes · <code>sha256:d50bf6574595bfba…</code></div>
+</article>
 <article class="skill" id="receipt-forensics">
   <div class="skill-h"><h3>receipt-forensics</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/receipt-forensics/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when reconstructing what happened to a payment or approval — redact a receipt for sharing, verify an evidence bundle, and prove a record is included in a notarised batch.</p>
@@ -143,6 +419,78 @@ curl -fsSL -o .claude/skills/merchant-impersonation-check/SKILL.md \
 curl -fsSL -o .claude/skills/receipt-forensics/SKILL.md \
   https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/receipt-forensics/SKILL.md</pre>
   <div class="meta">2640 bytes · <code>sha256:ab4b3d293079af30…</code></div>
+</article>
+<article class="skill" id="robot-mission-evidence">
+  <div class="skill-h"><h3>robot-mission-evidence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/robot-mission-evidence/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when verifying robot/agent mission execution evidence against a previously issued mission receipt.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_robot_mission_evidence">verify_robot_mission_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_create_incident_war_room">create_incident_war_room</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/robot-mission-evidence
+curl -fsSL -o .claude/skills/robot-mission-evidence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/robot-mission-evidence/SKILL.md</pre>
+  <div class="meta">1336 bytes · <code>sha256:3836f4f29edd7b31…</code></div>
+</article>
+<article class="skill" id="robot-mission-receipt">
+  <div class="skill-h"><h3>robot-mission-receipt</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/robot-mission-receipt/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when binding a robot or autonomous agent mission to policy, zone, budget, and time window before execution.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_create_robot_mission_receipt">create_robot_mission_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_explain_decision">explain_decision</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/robot-mission-receipt
+curl -fsSL -o .claude/skills/robot-mission-receipt/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/robot-mission-receipt/SKILL.md</pre>
+  <div class="meta">1350 bytes · <code>sha256:566de838b53f19e1…</code></div>
+</article>
+<article class="skill" id="sanctions-evidence-gate">
+  <div class="skill-h"><h3>sanctions-evidence-gate</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/sanctions-evidence-gate/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when you must evaluate a provided screening evidence packet before a payment or onboarding step. No live screening is performed.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_sanctions_screening_evidence">assess_sanctions_screening_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_payment_compliance_packet">generate_payment_compliance_packet</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/sanctions-evidence-gate
+curl -fsSL -o .claude/skills/sanctions-evidence-gate/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/sanctions-evidence-gate/SKILL.md</pre>
+  <div class="meta">1441 bytes · <code>sha256:c52d1925d1328ae5…</code></div>
+</article>
+<article class="skill" id="stablecoin-reserve-evidence">
+  <div class="skill-h"><h3>stablecoin-reserve-evidence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/stablecoin-reserve-evidence/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when evaluating caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_stablecoin_reserve_evidence">verify_stablecoin_reserve_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_payment_compliance_packet">generate_payment_compliance_packet</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/stablecoin-reserve-evidence
+curl -fsSL -o .claude/skills/stablecoin-reserve-evidence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/stablecoin-reserve-evidence/SKILL.md</pre>
+  <div class="meta">1398 bytes · <code>sha256:9e6d88392f676896…</code></div>
+</article>
+<article class="skill" id="stellar-settlement-evidence">
+  <div class="skill-h"><h3>stellar-settlement-evidence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/stellar-settlement-evidence/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when verifying caller-supplied Stellar settlement evidence against expected payment intent. No Horizon/network call.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_stellar_settlement_evidence">verify_stellar_settlement_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_invoice_match">verify_invoice_match</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/stellar-settlement-evidence
+curl -fsSL -o .claude/skills/stellar-settlement-evidence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/stellar-settlement-evidence/SKILL.md</pre>
+  <div class="meta">1398 bytes · <code>sha256:8ccac40a3c8c186a…</code></div>
+</article>
+<article class="skill" id="swift-remittance-verification">
+  <div class="skill-h"><h3>swift-remittance-verification</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/swift-remittance-verification/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when you have caller-supplied SWIFT/remittance evidence and need to verify it against expected payment fields without claiming live SWIFT access.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_swift_remittance_evidence">verify_swift_remittance_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_invoice_match">verify_invoice_match</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_payment_compliance_packet">generate_payment_compliance_packet</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/swift-remittance-verification
+curl -fsSL -o .claude/skills/swift-remittance-verification/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/swift-remittance-verification/SKILL.md</pre>
+  <div class="meta">1490 bytes · <code>sha256:e47ec50e50c146ce…</code></div>
 </article>
 <article class="skill" id="tool-poisoning-triage">
   <div class="skill-h"><h3>tool-poisoning-triage</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/tool-poisoning-triage/SKILL.md">SKILL.md</a></div>
@@ -168,6 +516,18 @@ curl -fsSL -o .claude/skills/tool-surface-drift-watch/SKILL.md \
   https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/tool-surface-drift-watch/SKILL.md</pre>
   <div class="meta">2525 bytes · <code>sha256:1c92e202ddc60aa2…</code></div>
 </article>
+<article class="skill" id="web3-signature-evidence">
+  <div class="skill-h"><h3>web3-signature-evidence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/web3-signature-evidence/SKILL.md">SKILL.md</a></div>
+  <p class="desc">Use when you need to verify caller-supplied signature evidence structure and recovered/claimed signer match before accepting an intent.</p>
+  <span class="lbl">When to use</span><ul><li>When you need a deterministic, evidence-first workflow for this scenario.</li><li>When outputs must be fail-closed and auditable.</li><li>When you need to avoid claiming live network/bank/chain access unless evidence is supplied.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
+  <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_web3_signature_evidence">verify_web3_signature_evidence</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_receipt">verify_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/web3-signature-evidence
+curl -fsSL -o .claude/skills/web3-signature-evidence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/web3-signature-evidence/SKILL.md</pre>
+  <div class="meta">1398 bytes · <code>sha256:7d97f8441d081cc1…</code></div>
+</article>
 <article class="skill" id="x402-payment-gate">
   <div class="skill-h"><h3>x402-payment-gate</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/x402-payment-gate/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when an agent answers an HTTP 402 payment challenge — parse the challenge, authorize against policy, verify settlement evidence, and reconcile the payment without custody.</p>
@@ -184,41 +544,66 @@ curl -fsSL -o .claude/skills/x402-payment-gate/SKILL.md \
 </div></section>
 <section><div class="w">
   <h2>Tool → skill <em>index.</em></h2>
-  <p class="sub">The inverse view: for each tool the skills reference, which procedure to load. 32 of 46 tools are referenced by at least one skill; the rest are documented in the <a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md">tool reference</a>.</p>
+  <p class="sub">The inverse view: for each tool the skills reference, which procedure to load. 57 of 70 tools are referenced by at least one skill; the rest are documented in the <a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md">tool reference</a>.</p>
   <table><thead><tr><th>Tool</th><th>Skills</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_bridge_risk"><code>coreguard_assess_bridge_risk</code></a></td><td><a href="#bridge-transfer-risk">bridge-transfer-risk</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_credit_line_utilization"><code>coreguard_assess_credit_line_utilization</code></a></td><td><a href="#credit-line-utilization">credit-line-utilization</a>, <a href="#machine-to-machine-micropayments">machine-to-machine-micropayments</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_defi_position_risk"><code>coreguard_assess_defi_position_risk</code></a></td><td><a href="#defi-position-risk">defi-position-risk</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_fx_quote_risk"><code>coreguard_assess_fx_quote_risk</code></a></td><td><a href="#cross-border-payment-guard">cross-border-payment-guard</a>, <a href="#fx-quote-risk-gate">fx-quote-risk-gate</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_loan_application"><code>coreguard_assess_loan_application</code></a></td><td><a href="#collateral-packet-verification">collateral-packet-verification</a>, <a href="#loan-application-risk">loan-application-risk</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_machine_sla"><code>coreguard_assess_machine_sla</code></a></td><td><a href="#machine-sla-assessment">machine-sla-assessment</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_assess_sanctions_screening_evidence"><code>coreguard_assess_sanctions_screening_evidence</code></a></td><td><a href="#cross-border-payment-guard">cross-border-payment-guard</a>, <a href="#merchant-onboarding-verification">merchant-onboarding-verification</a>, <a href="#sanctions-evidence-gate">sanctions-evidence-gate</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_attest_batch"><code>coreguard_attest_batch</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#incident-freeze-drill">incident-freeze-drill</a>, <a href="#receipt-forensics">receipt-forensics</a>, <a href="#tool-poisoning-triage">tool-poisoning-triage</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_server_manifest"><code>coreguard_audit_server_manifest</code></a></td><td><a href="#mcp-server-due-diligence">mcp-server-due-diligence</a>, <a href="#tool-surface-drift-watch">tool-surface-drift-watch</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction"><code>coreguard_audit_transaction</code></a></td><td><a href="#incident-freeze-drill">incident-freeze-drill</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_authorize"><code>coreguard_authorize</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#x402-payment-gate">x402-payment-gate</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_server_manifest"><code>coreguard_audit_server_manifest</code></a></td><td><a href="#ai-agent-procurement">ai-agent-procurement</a>, <a href="#mcp-server-due-diligence">mcp-server-due-diligence</a>, <a href="#merchant-onboarding-verification">merchant-onboarding-verification</a>, <a href="#tool-surface-drift-watch">tool-surface-drift-watch</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction"><code>coreguard_audit_transaction</code></a></td><td><a href="#agent-treasury-ops">agent-treasury-ops</a>, <a href="#ai-agent-procurement">ai-agent-procurement</a>, <a href="#bank-transfer-evidence">bank-transfer-evidence</a>, <a href="#bridge-transfer-risk">bridge-transfer-risk</a>, <a href="#collateral-packet-verification">collateral-packet-verification</a>, <a href="#coredao-settlement-evidence">coredao-settlement-evidence</a>, <a href="#credit-line-utilization">credit-line-utilization</a>, <a href="#cross-border-payment-guard">cross-border-payment-guard</a>, <a href="#defi-position-risk">defi-position-risk</a>, <a href="#escrow-milestone-release">escrow-milestone-release</a>, <a href="#evm-settlement-evidence">evm-settlement-evidence</a>, <a href="#fx-quote-risk-gate">fx-quote-risk-gate</a>, <a href="#incident-freeze-drill">incident-freeze-drill</a>, <a href="#incident-war-room">incident-war-room</a>, <a href="#invoice-payment-reconciliation">invoice-payment-reconciliation</a>, <a href="#iso20022-payment-evidence">iso20022-payment-evidence</a>, <a href="#loan-application-risk">loan-application-risk</a>, <a href="#machine-sla-assessment">machine-sla-assessment</a>, <a href="#machine-to-machine-micropayments">machine-to-machine-micropayments</a>, <a href="#merchant-onboarding-verification">merchant-onboarding-verification</a>, <a href="#multi-chain-reconciliation">multi-chain-reconciliation</a>, <a href="#payment-compliance-packet">payment-compliance-packet</a>, <a href="#payment-dispute-evidence">payment-dispute-evidence</a>, <a href="#pi-payment-evidence">pi-payment-evidence</a>, <a href="#robot-mission-evidence">robot-mission-evidence</a>, <a href="#robot-mission-receipt">robot-mission-receipt</a>, <a href="#sanctions-evidence-gate">sanctions-evidence-gate</a>, <a href="#stablecoin-reserve-evidence">stablecoin-reserve-evidence</a>, <a href="#stellar-settlement-evidence">stellar-settlement-evidence</a>, <a href="#swift-remittance-verification">swift-remittance-verification</a>, <a href="#web3-signature-evidence">web3-signature-evidence</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_authorize"><code>coreguard_authorize</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#ai-agent-procurement">ai-agent-procurement</a>, <a href="#x402-payment-gate">x402-payment-gate</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_authorize_x402_payment"><code>coreguard_authorize_x402_payment</code></a></td><td><a href="#x402-payment-gate">x402-payment-gate</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_budget_runway"><code>coreguard_budget_runway</code></a></td><td><a href="#agent-spend-control">agent-spend-control</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_budget_runway"><code>coreguard_budget_runway</code></a></td><td><a href="#agent-spend-control">agent-spend-control</a>, <a href="#agent-treasury-ops">agent-treasury-ops</a>, <a href="#credit-line-utilization">credit-line-utilization</a>, <a href="#machine-to-machine-micropayments">machine-to-machine-micropayments</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_build_attestation"><code>coreguard_build_attestation</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_check_limits"><code>coreguard_check_limits</code></a></td><td><a href="#incident-freeze-drill">incident-freeze-drill</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_check_lookalike"><code>coreguard_check_lookalike</code></a></td><td><a href="#mcp-server-due-diligence">mcp-server-due-diligence</a>, <a href="#merchant-impersonation-check">merchant-impersonation-check</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_check_lookalike"><code>coreguard_check_lookalike</code></a></td><td><a href="#ai-agent-procurement">ai-agent-procurement</a>, <a href="#mcp-server-due-diligence">mcp-server-due-diligence</a>, <a href="#merchant-impersonation-check">merchant-impersonation-check</a>, <a href="#merchant-onboarding-verification">merchant-onboarding-verification</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_compile_policy"><code>coreguard_compile_policy</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#agent-spend-control">agent-spend-control</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_consumption_status"><code>coreguard_consumption_status</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_create_incident_war_room"><code>coreguard_create_incident_war_room</code></a></td><td><a href="#defi-position-risk">defi-position-risk</a>, <a href="#incident-war-room">incident-war-room</a>, <a href="#machine-sla-assessment">machine-sla-assessment</a>, <a href="#robot-mission-evidence">robot-mission-evidence</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_create_robot_mission_receipt"><code>coreguard_create_robot_mission_receipt</code></a></td><td><a href="#robot-mission-receipt">robot-mission-receipt</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_describe_surface"><code>coreguard_describe_surface</code></a></td><td><a href="#tool-surface-drift-watch">tool-surface-drift-watch</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_detect_spend_anomaly"><code>coreguard_detect_spend_anomaly</code></a></td><td><a href="#agent-spend-control">agent-spend-control</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_detect_spend_anomaly"><code>coreguard_detect_spend_anomaly</code></a></td><td><a href="#agent-spend-control">agent-spend-control</a>, <a href="#agent-treasury-ops">agent-treasury-ops</a>, <a href="#defi-position-risk">defi-position-risk</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_diff_policies"><code>coreguard_diff_policies</code></a></td><td><a href="#agent-spend-control">agent-spend-control</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_diff_tool_surface"><code>coreguard_diff_tool_surface</code></a></td><td><a href="#mcp-server-due-diligence">mcp-server-due-diligence</a>, <a href="#tool-poisoning-triage">tool-poisoning-triage</a>, <a href="#tool-surface-drift-watch">tool-surface-drift-watch</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_emit_test_vectors"><code>coreguard_emit_test_vectors</code></a></td><td><a href="#acp-interop-mapping">acp-interop-mapping</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_explain_decision"><code>coreguard_explain_decision</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#agent-spend-control">agent-spend-control</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent"><code>coreguard_freeze_agent</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#incident-freeze-drill">incident-freeze-drill</a>, <a href="#tool-poisoning-triage">tool-poisoning-triage</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_explain_decision"><code>coreguard_explain_decision</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#agent-spend-control">agent-spend-control</a>, <a href="#bridge-transfer-risk">bridge-transfer-risk</a>, <a href="#fx-quote-risk-gate">fx-quote-risk-gate</a>, <a href="#robot-mission-receipt">robot-mission-receipt</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent"><code>coreguard_freeze_agent</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#agent-treasury-ops">agent-treasury-ops</a>, <a href="#ai-agent-procurement">ai-agent-procurement</a>, <a href="#bank-transfer-evidence">bank-transfer-evidence</a>, <a href="#bridge-transfer-risk">bridge-transfer-risk</a>, <a href="#collateral-packet-verification">collateral-packet-verification</a>, <a href="#coredao-settlement-evidence">coredao-settlement-evidence</a>, <a href="#credit-line-utilization">credit-line-utilization</a>, <a href="#cross-border-payment-guard">cross-border-payment-guard</a>, <a href="#defi-position-risk">defi-position-risk</a>, <a href="#escrow-milestone-release">escrow-milestone-release</a>, <a href="#evm-settlement-evidence">evm-settlement-evidence</a>, <a href="#fx-quote-risk-gate">fx-quote-risk-gate</a>, <a href="#incident-freeze-drill">incident-freeze-drill</a>, <a href="#incident-war-room">incident-war-room</a>, <a href="#invoice-payment-reconciliation">invoice-payment-reconciliation</a>, <a href="#iso20022-payment-evidence">iso20022-payment-evidence</a>, <a href="#loan-application-risk">loan-application-risk</a>, <a href="#machine-sla-assessment">machine-sla-assessment</a>, <a href="#machine-to-machine-micropayments">machine-to-machine-micropayments</a>, <a href="#merchant-onboarding-verification">merchant-onboarding-verification</a>, <a href="#multi-chain-reconciliation">multi-chain-reconciliation</a>, <a href="#payment-compliance-packet">payment-compliance-packet</a>, <a href="#payment-dispute-evidence">payment-dispute-evidence</a>, <a href="#pi-payment-evidence">pi-payment-evidence</a>, <a href="#robot-mission-evidence">robot-mission-evidence</a>, <a href="#robot-mission-receipt">robot-mission-receipt</a>, <a href="#sanctions-evidence-gate">sanctions-evidence-gate</a>, <a href="#stablecoin-reserve-evidence">stablecoin-reserve-evidence</a>, <a href="#stellar-settlement-evidence">stellar-settlement-evidence</a>, <a href="#swift-remittance-verification">swift-remittance-verification</a>, <a href="#tool-poisoning-triage">tool-poisoning-triage</a>, <a href="#web3-signature-evidence">web3-signature-evidence</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_boundary_cases"><code>coreguard_generate_boundary_cases</code></a></td><td><a href="#agent-spend-control">agent-spend-control</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_incident_timeline"><code>coreguard_incident_timeline</code></a></td><td><a href="#incident-freeze-drill">incident-freeze-drill</a>, <a href="#receipt-forensics">receipt-forensics</a>, <a href="#tool-poisoning-triage">tool-poisoning-triage</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_payment_compliance_packet"><code>coreguard_generate_payment_compliance_packet</code></a></td><td><a href="#iso20022-payment-evidence">iso20022-payment-evidence</a>, <a href="#loan-application-risk">loan-application-risk</a>, <a href="#payment-compliance-packet">payment-compliance-packet</a>, <a href="#payment-dispute-evidence">payment-dispute-evidence</a>, <a href="#pi-payment-evidence">pi-payment-evidence</a>, <a href="#sanctions-evidence-gate">sanctions-evidence-gate</a>, <a href="#stablecoin-reserve-evidence">stablecoin-reserve-evidence</a>, <a href="#swift-remittance-verification">swift-remittance-verification</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_incident_timeline"><code>coreguard_incident_timeline</code></a></td><td><a href="#incident-freeze-drill">incident-freeze-drill</a>, <a href="#incident-war-room">incident-war-room</a>, <a href="#receipt-forensics">receipt-forensics</a>, <a href="#tool-poisoning-triage">tool-poisoning-triage</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_meter_agent_usage"><code>coreguard_meter_agent_usage</code></a></td><td><a href="#machine-sla-assessment">machine-sla-assessment</a>, <a href="#machine-to-machine-micropayments">machine-to-machine-micropayments</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_parse_iso20022_payment"><code>coreguard_parse_iso20022_payment</code></a></td><td><a href="#iso20022-payment-evidence">iso20022-payment-evidence</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_parse_x402_challenge"><code>coreguard_parse_x402_challenge</code></a></td><td><a href="#x402-payment-gate">x402-payment-gate</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_reconcile_payment"><code>coreguard_reconcile_payment</code></a></td><td><a href="#x402-payment-gate">x402-payment-gate</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_redact_receipt"><code>coreguard_redact_receipt</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#incident-freeze-drill">incident-freeze-drill</a>, <a href="#receipt-forensics">receipt-forensics</a>, <a href="#tool-poisoning-triage">tool-poisoning-triage</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_scan_tool_descriptions"><code>coreguard_scan_tool_descriptions</code></a></td><td><a href="#mcp-server-due-diligence">mcp-server-due-diligence</a>, <a href="#tool-poisoning-triage">tool-poisoning-triage</a>, <a href="#tool-surface-drift-watch">tool-surface-drift-watch</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_redact_receipt"><code>coreguard_redact_receipt</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#incident-freeze-drill">incident-freeze-drill</a>, <a href="#incident-war-room">incident-war-room</a>, <a href="#payment-compliance-packet">payment-compliance-packet</a>, <a href="#receipt-forensics">receipt-forensics</a>, <a href="#tool-poisoning-triage">tool-poisoning-triage</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_scan_tool_descriptions"><code>coreguard_scan_tool_descriptions</code></a></td><td><a href="#ai-agent-procurement">ai-agent-procurement</a>, <a href="#mcp-server-due-diligence">mcp-server-due-diligence</a>, <a href="#tool-poisoning-triage">tool-poisoning-triage</a>, <a href="#tool-surface-drift-watch">tool-surface-drift-watch</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_simulate_spend"><code>coreguard_simulate_spend</code></a></td><td><a href="#agent-spend-control">agent-spend-control</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_translate_receipt"><code>coreguard_translate_receipt</code></a></td><td><a href="#acp-interop-mapping">acp-interop-mapping</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_attestation"><code>coreguard_verify_attestation</code></a></td><td><a href="#agent-purchase-guard">agent-purchase-guard</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_bank_transfer_evidence"><code>coreguard_verify_bank_transfer_evidence</code></a></td><td><a href="#bank-transfer-evidence">bank-transfer-evidence</a></td></tr>
 <tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_batch_proof"><code>coreguard_verify_batch_proof</code></a></td><td><a href="#receipt-forensics">receipt-forensics</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_evidence_bundle"><code>coreguard_verify_evidence_bundle</code></a></td><td><a href="#acp-interop-mapping">acp-interop-mapping</a>, <a href="#receipt-forensics">receipt-forensics</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_execution"><code>coreguard_verify_execution</code></a></td><td><a href="#acp-interop-mapping">acp-interop-mapping</a>, <a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#merchant-impersonation-check">merchant-impersonation-check</a>, <a href="#x402-payment-gate">x402-payment-gate</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_receipt"><code>coreguard_verify_receipt</code></a></td><td><a href="#acp-interop-mapping">acp-interop-mapping</a></td></tr>
-<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_x402_settlement"><code>coreguard_verify_x402_settlement</code></a></td><td><a href="#x402-payment-gate">x402-payment-gate</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_collateral_packet"><code>coreguard_verify_collateral_packet</code></a></td><td><a href="#collateral-packet-verification">collateral-packet-verification</a>, <a href="#loan-application-risk">loan-application-risk</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_coredao_settlement_evidence"><code>coreguard_verify_coredao_settlement_evidence</code></a></td><td><a href="#coredao-settlement-evidence">coredao-settlement-evidence</a>, <a href="#multi-chain-reconciliation">multi-chain-reconciliation</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_cross_border_instruction"><code>coreguard_verify_cross_border_instruction</code></a></td><td><a href="#cross-border-payment-guard">cross-border-payment-guard</a>, <a href="#iso20022-payment-evidence">iso20022-payment-evidence</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_escrow_milestone"><code>coreguard_verify_escrow_milestone</code></a></td><td><a href="#escrow-milestone-release">escrow-milestone-release</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_evidence_bundle"><code>coreguard_verify_evidence_bundle</code></a></td><td><a href="#acp-interop-mapping">acp-interop-mapping</a>, <a href="#payment-compliance-packet">payment-compliance-packet</a>, <a href="#receipt-forensics">receipt-forensics</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_evm_settlement_evidence"><code>coreguard_verify_evm_settlement_evidence</code></a></td><td><a href="#coredao-settlement-evidence">coredao-settlement-evidence</a>, <a href="#evm-settlement-evidence">evm-settlement-evidence</a>, <a href="#multi-chain-reconciliation">multi-chain-reconciliation</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_execution"><code>coreguard_verify_execution</code></a></td><td><a href="#acp-interop-mapping">acp-interop-mapping</a>, <a href="#agent-purchase-guard">agent-purchase-guard</a>, <a href="#merchant-impersonation-check">merchant-impersonation-check</a>, <a href="#payment-dispute-evidence">payment-dispute-evidence</a>, <a href="#x402-payment-gate">x402-payment-gate</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_invoice_match"><code>coreguard_verify_invoice_match</code></a></td><td><a href="#bank-transfer-evidence">bank-transfer-evidence</a>, <a href="#evm-settlement-evidence">evm-settlement-evidence</a>, <a href="#invoice-payment-reconciliation">invoice-payment-reconciliation</a>, <a href="#payment-dispute-evidence">payment-dispute-evidence</a>, <a href="#pi-payment-evidence">pi-payment-evidence</a>, <a href="#stellar-settlement-evidence">stellar-settlement-evidence</a>, <a href="#swift-remittance-verification">swift-remittance-verification</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_pi_payment_evidence"><code>coreguard_verify_pi_payment_evidence</code></a></td><td><a href="#multi-chain-reconciliation">multi-chain-reconciliation</a>, <a href="#pi-payment-evidence">pi-payment-evidence</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_receipt"><code>coreguard_verify_receipt</code></a></td><td><a href="#acp-interop-mapping">acp-interop-mapping</a>, <a href="#escrow-milestone-release">escrow-milestone-release</a>, <a href="#invoice-payment-reconciliation">invoice-payment-reconciliation</a>, <a href="#payment-dispute-evidence">payment-dispute-evidence</a>, <a href="#web3-signature-evidence">web3-signature-evidence</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_robot_mission_evidence"><code>coreguard_verify_robot_mission_evidence</code></a></td><td><a href="#robot-mission-evidence">robot-mission-evidence</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_stablecoin_reserve_evidence"><code>coreguard_verify_stablecoin_reserve_evidence</code></a></td><td><a href="#stablecoin-reserve-evidence">stablecoin-reserve-evidence</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_stellar_settlement_evidence"><code>coreguard_verify_stellar_settlement_evidence</code></a></td><td><a href="#multi-chain-reconciliation">multi-chain-reconciliation</a>, <a href="#stellar-settlement-evidence">stellar-settlement-evidence</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_swift_remittance_evidence"><code>coreguard_verify_swift_remittance_evidence</code></a></td><td><a href="#swift-remittance-verification">swift-remittance-verification</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_web3_signature_evidence"><code>coreguard_verify_web3_signature_evidence</code></a></td><td><a href="#web3-signature-evidence">web3-signature-evidence</a></td></tr>
+<tr><td><a href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_x402_settlement"><code>coreguard_verify_x402_settlement</code></a></td><td><a href="#machine-to-machine-micropayments">machine-to-machine-micropayments</a>, <a href="#x402-payment-gate">x402-payment-gate</a></td></tr>
   </tbody></table>
 </div></section>
-<footer><div class="w">Generated from <code>tools/list</code> and <code>skills/*/SKILL.md</code> by <code>scripts/mcp-surface.mjs</code> — do not edit by hand. Server <code>coreguard-agent-commerce@0.2.1</code>, protocol <code>2025-06-18</code>.</div></footer>
+<footer><div class="w">Generated from <code>tools/list</code> and <code>skills/*/SKILL.md</code> by <code>scripts/mcp-surface.mjs</code> — do not edit by hand. Server <code>coreguard-agent-commerce@0.3.0</code>, protocol <code>2025-06-18</code>.</div></footer>
 </body></html>

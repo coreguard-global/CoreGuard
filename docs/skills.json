@@ -2,9 +2,9 @@
   "schema": "CG-SK/1",
   "server": {
     "name": "coreguard-agent-commerce",
-    "version": "0.2.1"
+    "version": "0.3.0"
   },
-  "toolCount": 46,
+  "toolCount": 70,
   "skills": [
     {
       "dir": "acp-interop-mapping",
@@ -76,6 +76,262 @@
       "bytes": 2763
     },
     {
+      "dir": "agent-treasury-ops",
+      "name": "agent-treasury-ops",
+      "description": "Use when operating an agent treasury with spend limits, runway, anomaly detection, and freeze controls.",
+      "intro": "Use when operating an agent treasury with spend limits, runway, anomaly detection, and freeze controls.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_budget_runway",
+        "coreguard_detect_spend_anomaly",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/agent-treasury-ops/SKILL.md",
+      "digest": "sha256:b90dd6d98506cfa12ae748be14e95c944d4646ae318d5dab27e6f04b1157a9c4",
+      "bytes": 1375
+    },
+    {
+      "dir": "ai-agent-procurement",
+      "name": "ai-agent-procurement",
+      "description": "Use when an AI agent procures tools/services and you need manifest audit, poisoning scan, and spend controls before purchase.",
+      "intro": "Use when an AI agent procures tools/services and you need manifest audit, poisoning scan, and spend controls before purchase.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_audit_server_manifest",
+        "coreguard_scan_tool_descriptions",
+        "coreguard_check_lookalike",
+        "coreguard_authorize",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/ai-agent-procurement/SKILL.md",
+      "digest": "sha256:80f8049643b9079d1ef24000c853b72c8a4b1f5d5855d43ca7aa5f60515172c0",
+      "bytes": 1452
+    },
+    {
+      "dir": "bank-transfer-evidence",
+      "name": "bank-transfer-evidence",
+      "description": "Use when verifying bank transfer evidence against an expected instruction in a fail-closed, offline workflow.",
+      "intro": "Use when verifying bank transfer evidence against an expected instruction in a fail-closed, offline workflow.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_bank_transfer_evidence",
+        "coreguard_verify_invoice_match",
+        "coreguard_audit_transaction",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/bank-transfer-evidence/SKILL.md",
+      "digest": "sha256:74f4ab5afc81ee8ae7d860b6f7078310160c5a9e6c2e0318ade60fccf464a0ed",
+      "bytes": 1356
+    },
+    {
+      "dir": "bridge-transfer-risk",
+      "name": "bridge-transfer-risk",
+      "description": "Use when an agent plans a cross-chain bridge transfer and you need deterministic risk checks on route, quote expiry, and slippage.",
+      "intro": "Use when an agent plans a cross-chain bridge transfer and you need deterministic risk checks on route, quote expiry, and slippage.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_assess_bridge_risk",
+        "coreguard_explain_decision",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/bridge-transfer-risk/SKILL.md",
+      "digest": "sha256:cf984904fdedcc4322fcc6c47a20071360096255f1d72df25a4d131d20062804",
+      "bytes": 1373
+    },
+    {
+      "dir": "collateral-packet-verification",
+      "name": "collateral-packet-verification",
+      "description": "Use when verifying collateral evidence packets for valuation, expiry, owner, and evidence digest before credit decisions.",
+      "intro": "Use when verifying collateral evidence packets for valuation, expiry, owner, and evidence digest before credit decisions.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_collateral_packet",
+        "coreguard_assess_loan_application",
+        "coreguard_audit_transaction",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/collateral-packet-verification/SKILL.md",
+      "digest": "sha256:0c51cb61432e5c2ad8a87919eacbc655eafb1c6ae05f0a817e5fc6d2b21d1519",
+      "bytes": 1382
+    },
+    {
+      "dir": "coredao-settlement-evidence",
+      "name": "coredao-settlement-evidence",
+      "description": "Use when verifying Core DAO EVM settlement evidence with chain-id profile checks. No RPC call.",
+      "intro": "Use when verifying Core DAO EVM settlement evidence with chain-id profile checks. No RPC call.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_coredao_settlement_evidence",
+        "coreguard_verify_evm_settlement_evidence",
+        "coreguard_audit_transaction",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/coredao-settlement-evidence/SKILL.md",
+      "digest": "sha256:79fc15e916da42c8d47a3ad141fdba25e5eb33512456bf915fe455168a4b5108",
+      "bytes": 1334
+    },
+    {
+      "dir": "credit-line-utilization",
+      "name": "credit-line-utilization",
+      "description": "Use when monitoring credit line utilization and enforcing deterministic threshold actions.",
+      "intro": "Use when monitoring credit line utilization and enforcing deterministic threshold actions.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_assess_credit_line_utilization",
+        "coreguard_budget_runway",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/credit-line-utilization/SKILL.md",
+      "digest": "sha256:0b62281e8c81ad724945d715ab5ff0208e2fe7ae25546c28dc7b558c834e18ab",
+      "bytes": 1295
+    },
+    {
+      "dir": "cross-border-payment-guard",
+      "name": "cross-border-payment-guard",
+      "description": "Use when an agent initiates cross-border payments and you need corridor, amount, currency, and cutoff checks before execution.",
+      "intro": "Use when an agent initiates cross-border payments and you need corridor, amount, currency, and cutoff checks before execution.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_cross_border_instruction",
+        "coreguard_assess_fx_quote_risk",
+        "coreguard_assess_sanctions_screening_evidence",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/cross-border-payment-guard/SKILL.md",
+      "digest": "sha256:e8457483b77cccdeb1a21ec473b9c1fb6742eb5bce11d61e7c9973baee301ff8",
+      "bytes": 1534
+    },
+    {
+      "dir": "defi-position-risk",
+      "name": "defi-position-risk",
+      "description": "Use when monitoring DeFi positions from supplied snapshots for health factor, LTV, and oracle freshness. No onchain call.",
+      "intro": "Use when monitoring DeFi positions from supplied snapshots for health factor, LTV, and oracle freshness. No onchain call.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_assess_defi_position_risk",
+        "coreguard_detect_spend_anomaly",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/defi-position-risk/SKILL.md",
+      "digest": "sha256:58f2b1002cbd51e7f6f905959318d56031410685d8da9a22044d9c07bea6d4dc",
+      "bytes": 1375
+    },
+    {
+      "dir": "escrow-milestone-release",
+      "name": "escrow-milestone-release",
+      "description": "Use when verifying escrow milestone release conditions before approving release. No custody/broadcast.",
+      "intro": "Use when verifying escrow milestone release conditions before approving release. No custody/broadcast.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_escrow_milestone",
+        "coreguard_verify_receipt",
+        "coreguard_audit_transaction",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/escrow-milestone-release/SKILL.md",
+      "digest": "sha256:ccb01c0f27654b5ccf3beb6f4485368b6184c01885046159204686f633e08131",
+      "bytes": 1335
+    },
+    {
+      "dir": "evm-settlement-evidence",
+      "name": "evm-settlement-evidence",
+      "description": "Use when verifying caller-supplied EVM tx/receipt evidence against expected chain, recipient, token, and amount. No RPC call.",
+      "intro": "Use when verifying caller-supplied EVM tx/receipt evidence against expected chain, recipient, token, and amount. No RPC call.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_evm_settlement_evidence",
+        "coreguard_verify_invoice_match",
+        "coreguard_audit_transaction",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/evm-settlement-evidence/SKILL.md",
+      "digest": "sha256:ca5bc9690b2cc167746973910dd94f13d81cb353674b0b94af6735a3634d8586",
+      "bytes": 1381
+    },
+    {
+      "dir": "fx-quote-risk-gate",
+      "name": "fx-quote-risk-gate",
+      "description": "Use when an agent is about to accept an FX quote and you need expiry, spread, and provider policy checks at a pinned time.",
+      "intro": "Use when an agent is about to accept an FX quote and you need expiry, spread, and provider policy checks at a pinned time.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_assess_fx_quote_risk",
+        "coreguard_explain_decision",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/fx-quote-risk-gate/SKILL.md",
+      "digest": "sha256:d88a344d87c1bca737b1d587ca6caee67def23463c7e32e1c11c403fe82e25e0",
+      "bytes": 1366
+    },
+    {
       "dir": "incident-freeze-drill",
       "name": "incident-freeze-drill",
       "description": "Use when an agent must be stopped immediately — freeze it, reject its open approvals in one audited operation, then reconstruct the timeline for review.",
@@ -97,6 +353,138 @@
       "path": "skills/incident-freeze-drill/SKILL.md",
       "digest": "sha256:7bcbae8fdb48b3379526d31062b0f1e37dcff5d68ca0dd29f6ecf211e6344810",
       "bytes": 2657
+    },
+    {
+      "dir": "incident-war-room",
+      "name": "incident-war-room",
+      "description": "Use when a payment/agent/robot incident occurs and you need a deterministic evidence packet with timeline and actions.",
+      "intro": "Use when a payment/agent/robot incident occurs and you need a deterministic evidence packet with timeline and actions.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_create_incident_war_room",
+        "coreguard_incident_timeline",
+        "coreguard_redact_receipt",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/incident-war-room/SKILL.md",
+      "digest": "sha256:e0caf6d344a35e9676d7aa52e6388c34e4ab36cd7752e93676547d202d40664b",
+      "bytes": 1358
+    },
+    {
+      "dir": "invoice-payment-reconciliation",
+      "name": "invoice-payment-reconciliation",
+      "description": "Use when you need deterministic 3-way style matching between invoice, payment evidence, and approval/receipt records.",
+      "intro": "Use when you need deterministic 3-way style matching between invoice, payment evidence, and approval/receipt records.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_invoice_match",
+        "coreguard_verify_receipt",
+        "coreguard_audit_transaction",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/invoice-payment-reconciliation/SKILL.md",
+      "digest": "sha256:9bdc5776c51ffcb78c27cd33e126745a1753c87c5d57c5574e42080d2e7ab1a3",
+      "bytes": 1361
+    },
+    {
+      "dir": "iso20022-payment-evidence",
+      "name": "iso20022-payment-evidence",
+      "description": "Use when you need to parse, validate, and package ISO 20022-like payment messages before an agent acts on them.",
+      "intro": "Use when you need to parse, validate, and package ISO 20022-like payment messages before an agent acts on them.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_parse_iso20022_payment",
+        "coreguard_verify_cross_border_instruction",
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_audit_transaction",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/iso20022-payment-evidence/SKILL.md",
+      "digest": "sha256:017a06b39112bfcf488eaa86e19b5f782bcedeeb9f1a48f01e0fa82a0a0d30bf",
+      "bytes": 1486
+    },
+    {
+      "dir": "loan-application-risk",
+      "name": "loan-application-risk",
+      "description": "Use when evaluating a loan application packet deterministically (DTI, amount, tenor) from caller-supplied data. No credit bureau decision.",
+      "intro": "Use when evaluating a loan application packet deterministically (DTI, amount, tenor) from caller-supplied data. No credit bureau decision.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_assess_loan_application",
+        "coreguard_verify_collateral_packet",
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/loan-application-risk/SKILL.md",
+      "digest": "sha256:e3211feb091becc7e16c79e96a02ab50bc24c77e00d7d2509a8a576eaba04c0f",
+      "bytes": 1427
+    },
+    {
+      "dir": "machine-sla-assessment",
+      "name": "machine-sla-assessment",
+      "description": "Use when assessing machine/agent SLA compliance from supplied downtime/events against policy thresholds.",
+      "intro": "Use when assessing machine/agent SLA compliance from supplied downtime/events against policy thresholds.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_assess_machine_sla",
+        "coreguard_meter_agent_usage",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/machine-sla-assessment/SKILL.md",
+      "digest": "sha256:dd25a4616352a88e3fd7dc4ebe8dd0eb1b374d4e978e3a4efe8338035c60da21",
+      "bytes": 1348
+    },
+    {
+      "dir": "machine-to-machine-micropayments",
+      "name": "machine-to-machine-micropayments",
+      "description": "Use when machines/agents make high-frequency micropayments and need metering, budget, and settlement evidence checks.",
+      "intro": "Use when machines/agents make high-frequency micropayments and need metering, budget, and settlement evidence checks.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_meter_agent_usage",
+        "coreguard_budget_runway",
+        "coreguard_verify_x402_settlement",
+        "coreguard_assess_credit_line_utilization",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/machine-to-machine-micropayments/SKILL.md",
+      "digest": "sha256:87816984174eeac180b48b0f9333f23584a6807b3589a2a8daed998a62934b0e",
+      "bytes": 1449
     },
     {
       "dir": "mcp-server-due-diligence",
@@ -135,6 +523,118 @@
       "bytes": 2240
     },
     {
+      "dir": "merchant-onboarding-verification",
+      "name": "merchant-onboarding-verification",
+      "description": "Use when onboarding a merchant/payee and you need lookalike, manifest, and evidence checks before allowing agent spend.",
+      "intro": "Use when onboarding a merchant/payee and you need lookalike, manifest, and evidence checks before allowing agent spend.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_check_lookalike",
+        "coreguard_audit_server_manifest",
+        "coreguard_assess_sanctions_screening_evidence",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/merchant-onboarding-verification/SKILL.md",
+      "digest": "sha256:2774cca3a5af744259d5bed7603e87c3e0c98d325b103218f8201c11a6909e6b",
+      "bytes": 1406
+    },
+    {
+      "dir": "multi-chain-reconciliation",
+      "name": "multi-chain-reconciliation",
+      "description": "Use when reconciling payment evidence across Stellar, EVM, Core DAO, or Pi-supplied evidence packets.",
+      "intro": "Use when reconciling payment evidence across Stellar, EVM, Core DAO, or Pi-supplied evidence packets.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_settlement_evidence",
+        "coreguard_verify_evm_settlement_evidence",
+        "coreguard_verify_coredao_settlement_evidence",
+        "coreguard_verify_pi_payment_evidence",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/multi-chain-reconciliation/SKILL.md",
+      "digest": "sha256:fa02e5a0b66c6ede18a96eb241198b20ab10b26382aabd2f5cf0d820b74a229c",
+      "bytes": 1478
+    },
+    {
+      "dir": "payment-compliance-packet",
+      "name": "payment-compliance-packet",
+      "description": "Use when you need a redacted, hashed evidence packet for review, audit, or handoff without exposing sensitive fields.",
+      "intro": "Use when you need a redacted, hashed evidence packet for review, audit, or handoff without exposing sensitive fields.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_redact_receipt",
+        "coreguard_verify_evidence_bundle",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/payment-compliance-packet/SKILL.md",
+      "digest": "sha256:f73a2769953626a2011a98686494d24f2321e46cd155a8954dba8d6ba2d43a8a",
+      "bytes": 1370
+    },
+    {
+      "dir": "payment-dispute-evidence",
+      "name": "payment-dispute-evidence",
+      "description": "Use when assembling evidence for a payment dispute: receipt, execution, invoice, and redacted packet.",
+      "intro": "Use when assembling evidence for a payment dispute: receipt, execution, invoice, and redacted packet.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_receipt",
+        "coreguard_verify_execution",
+        "coreguard_verify_invoice_match",
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/payment-dispute-evidence/SKILL.md",
+      "digest": "sha256:88a27b5b37a768fb627e5b29aade2ccc76a00969e975aa17b3c8a899e8cb8415",
+      "bytes": 1412
+    },
+    {
+      "dir": "pi-payment-evidence",
+      "name": "pi-payment-evidence",
+      "description": "Use when verifying caller-supplied Pi Network payment evidence packets. Attested/mock evidence only; no live Pi API.",
+      "intro": "Use when verifying caller-supplied Pi Network payment evidence packets. Attested/mock evidence only; no live Pi API.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_pi_payment_evidence",
+        "coreguard_verify_invoice_match",
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/pi-payment-evidence/SKILL.md",
+      "digest": "sha256:d50bf6574595bfbacb3902719d16a36c869e4e5107b2d312c007bdc4bfd029c2",
+      "bytes": 1395
+    },
+    {
       "dir": "receipt-forensics",
       "name": "receipt-forensics",
       "description": "Use when reconstructing what happened to a payment or approval — redact a receipt for sharing, verify an evidence bundle, and prove a record is included in a notarised batch.",
@@ -151,6 +651,133 @@
       "path": "skills/receipt-forensics/SKILL.md",
       "digest": "sha256:ab4b3d293079af30521a1c67b5d1ef0c6ede3e455e54ac2d19c73752b44f4627",
       "bytes": 2640
+    },
+    {
+      "dir": "robot-mission-evidence",
+      "name": "robot-mission-evidence",
+      "description": "Use when verifying robot/agent mission execution evidence against a previously issued mission receipt.",
+      "intro": "Use when verifying robot/agent mission execution evidence against a previously issued mission receipt.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_robot_mission_evidence",
+        "coreguard_create_incident_war_room",
+        "coreguard_audit_transaction",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/robot-mission-evidence/SKILL.md",
+      "digest": "sha256:3836f4f29edd7b315973788ad167f11648d591c6389630fd65f13c918358ea2f",
+      "bytes": 1336
+    },
+    {
+      "dir": "robot-mission-receipt",
+      "name": "robot-mission-receipt",
+      "description": "Use when binding a robot or autonomous agent mission to policy, zone, budget, and time window before execution.",
+      "intro": "Use when binding a robot or autonomous agent mission to policy, zone, budget, and time window before execution.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_create_robot_mission_receipt",
+        "coreguard_explain_decision",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/robot-mission-receipt/SKILL.md",
+      "digest": "sha256:566de838b53f19e1502afcacb0e77318677d9736a76e2b11ff97f30f7a3d50de",
+      "bytes": 1350
+    },
+    {
+      "dir": "sanctions-evidence-gate",
+      "name": "sanctions-evidence-gate",
+      "description": "Use when you must evaluate a provided screening evidence packet before a payment or onboarding step. No live screening is performed.",
+      "intro": "Use when you must evaluate a provided screening evidence packet before a payment or onboarding step. No live screening is performed.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_assess_sanctions_screening_evidence",
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/sanctions-evidence-gate/SKILL.md",
+      "digest": "sha256:c52d1925d1328ae5a774359609a005fe4769f7ac5486f941af4528be4a072c94",
+      "bytes": 1441
+    },
+    {
+      "dir": "stablecoin-reserve-evidence",
+      "name": "stablecoin-reserve-evidence",
+      "description": "Use when evaluating caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy.",
+      "intro": "Use when evaluating caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_stablecoin_reserve_evidence",
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/stablecoin-reserve-evidence/SKILL.md",
+      "digest": "sha256:9e6d88392f6768968f362f5f1133b17f5795d52f9ccab4f3db0098db9c4ae683",
+      "bytes": 1398
+    },
+    {
+      "dir": "stellar-settlement-evidence",
+      "name": "stellar-settlement-evidence",
+      "description": "Use when verifying caller-supplied Stellar settlement evidence against expected payment intent. No Horizon/network call.",
+      "intro": "Use when verifying caller-supplied Stellar settlement evidence against expected payment intent. No Horizon/network call.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_settlement_evidence",
+        "coreguard_verify_invoice_match",
+        "coreguard_audit_transaction",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-settlement-evidence/SKILL.md",
+      "digest": "sha256:8ccac40a3c8c186aba23d2b19385dbde8c4b76d0dc7c85f1f72232ff8bd8fc6c",
+      "bytes": 1398
+    },
+    {
+      "dir": "swift-remittance-verification",
+      "name": "swift-remittance-verification",
+      "description": "Use when you have caller-supplied SWIFT/remittance evidence and need to verify it against expected payment fields without claiming live SWIFT access.",
+      "intro": "Use when you have caller-supplied SWIFT/remittance evidence and need to verify it against expected payment fields without claiming live SWIFT access.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_swift_remittance_evidence",
+        "coreguard_verify_invoice_match",
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/swift-remittance-verification/SKILL.md",
+      "digest": "sha256:e47ec50e50c146ce286c7bd924acb4da8cbee888f2f5379ae7ea5d681bc49f1b",
+      "bytes": 1490
     },
     {
       "dir": "tool-poisoning-triage",
@@ -191,6 +818,27 @@
       "path": "skills/tool-surface-drift-watch/SKILL.md",
       "digest": "sha256:1c92e202ddc60aa28b6b278cb66c073731d7ca53bc9a5405a7a8817d1a793d98",
       "bytes": 2525
+    },
+    {
+      "dir": "web3-signature-evidence",
+      "name": "web3-signature-evidence",
+      "description": "Use when you need to verify caller-supplied signature evidence structure and recovered/claimed signer match before accepting an intent.",
+      "intro": "Use when you need to verify caller-supplied signature evidence structure and recovered/claimed signer match before accepting an intent.",
+      "whenToUse": [
+        "When you need a deterministic, evidence-first workflow for this scenario.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need to avoid claiming live network/bank/chain access unless evidence is supplied."
+      ],
+      "tools": [
+        "coreguard_verify_web3_signature_evidence",
+        "coreguard_verify_receipt",
+        "coreguard_audit_transaction",
+        "coreguard_freeze_agent"
+      ],
+      "boundaries": "",
+      "path": "skills/web3-signature-evidence/SKILL.md",
+      "digest": "sha256:7d97f8441d081cc14dc8170680c9434d9ae785b74ad8c117e58b9f195b062bb3",
+      "bytes": 1398
     },
     {
       "dir": "x402-payment-gate",

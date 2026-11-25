@@ -4,7 +4,7 @@
  *
  * Proves, with a live JSON-RPC 2.0 stdio process:
  *   - initialize responds with the expected protocol/version identity
- *   - tools/list exposes the 46 tools with inputSchema + outputSchema
+ *   - tools/list exposes the 70 tools with inputSchema + outputSchema
  *   - coreguard_authorize returns a CGCR/1 receipt (structuredContent)
  *   - coreguard_verify_execution returns VERIFIED on exact execution
  *   - coreguard_verify_execution returns INVALID with named drift on escalation
@@ -104,18 +104,29 @@ async function main() {
     });
 
     let listed;
-    await run('tools/list exposes 46 tools with inputSchema+outputSchema', async () => {
+    await run('tools/list exposes 70 tools with inputSchema+outputSchema', async () => {
       listed = await request('tools/list', {});
       const tools = listed.result?.tools || [];
       const names = tools.map(t => t.name).sort();
       const expected = [
-        'coreguard_assess_risk','coreguard_audit_transaction','coreguard_authorize','coreguard_authorize_x402_payment',
-        'coreguard_build_attestation','coreguard_check_limits','coreguard_consumption_status','coreguard_create_intent',
-        'coreguard_create_machine_task','coreguard_decide_outcome','coreguard_inspect_identity','coreguard_issue_receipt',
-        'coreguard_meter_agent_usage','coreguard_parse_x402_challenge','coreguard_profile_reference','coreguard_reconcile_payment',
-        'coreguard_register_machine','coreguard_revoke_consent','coreguard_verify_attestation','coreguard_verify_consent',
-        'coreguard_verify_delegation_chain','coreguard_verify_execution','coreguard_verify_receipt','coreguard_verify_task_completion',
-        'coreguard_verify_telemetry','coreguard_verify_x402_settlement'
+        "coreguard_assess_bridge_risk","coreguard_assess_credit_line_utilization","coreguard_assess_defi_position_risk","coreguard_assess_fx_quote_risk",
+        "coreguard_assess_loan_application","coreguard_assess_machine_sla","coreguard_assess_risk","coreguard_assess_sanctions_screening_evidence",
+        "coreguard_attest_batch","coreguard_audit_server_manifest","coreguard_audit_transaction","coreguard_authorize",
+        "coreguard_authorize_x402_payment","coreguard_budget_runway","coreguard_build_attestation","coreguard_check_limits",
+        "coreguard_check_lookalike","coreguard_compile_policy","coreguard_consumption_status","coreguard_create_incident_war_room",
+        "coreguard_create_intent","coreguard_create_machine_task","coreguard_create_robot_mission_receipt","coreguard_decide_outcome",
+        "coreguard_describe_surface","coreguard_detect_spend_anomaly","coreguard_diff_policies","coreguard_diff_tool_surface",
+        "coreguard_emit_test_vectors","coreguard_explain_decision","coreguard_freeze_agent","coreguard_generate_boundary_cases",
+        "coreguard_generate_payment_compliance_packet","coreguard_incident_timeline","coreguard_inspect_identity","coreguard_issue_receipt",
+        "coreguard_meter_agent_usage","coreguard_parse_iso20022_payment","coreguard_parse_x402_challenge","coreguard_profile_reference",
+        "coreguard_reconcile_payment","coreguard_redact_receipt","coreguard_register_machine","coreguard_revoke_consent",
+        "coreguard_scan_tool_descriptions","coreguard_simulate_spend","coreguard_translate_receipt","coreguard_verify_attestation",
+        "coreguard_verify_bank_transfer_evidence","coreguard_verify_batch_proof","coreguard_verify_collateral_packet","coreguard_verify_consent",
+        "coreguard_verify_coredao_settlement_evidence","coreguard_verify_cross_border_instruction","coreguard_verify_delegation_chain","coreguard_verify_escrow_milestone",
+        "coreguard_verify_evidence_bundle","coreguard_verify_evm_settlement_evidence","coreguard_verify_execution","coreguard_verify_invoice_match",
+        "coreguard_verify_pi_payment_evidence","coreguard_verify_receipt","coreguard_verify_robot_mission_evidence","coreguard_verify_stablecoin_reserve_evidence",
+        "coreguard_verify_stellar_settlement_evidence","coreguard_verify_swift_remittance_evidence","coreguard_verify_task_completion","coreguard_verify_telemetry",
+        "coreguard_verify_web3_signature_evidence","coreguard_verify_x402_settlement"
       ];
       assert(JSON.stringify(names) === JSON.stringify(expected), `unexpected tool names: ${names.join(',')}`);
       for (const t of tools) {

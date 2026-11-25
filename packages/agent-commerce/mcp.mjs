@@ -58,6 +58,7 @@ import {
 } from "./machine-economy.mjs";
 import { createIntent, issueReceipt, verifyReceipt as verifyCgcpReceipt, checkLimits, revokeConsent, auditTransaction, CGCP_MCP_BOUNDARY } from "./cgcp-mcp-tools.mjs";
 import { WAVE3_TOOLS, WAVE3_HANDLERS, WAVE3_VALIDATORS, WAVE3_BOUNDARY } from "./wave3.mjs";
+import { WAVE4_TOOLS, WAVE4_HANDLERS, WAVE4_VALIDATORS, WAVE4_BOUNDARY } from "./wave4.mjs";
 
 const PROTOCOL_VERSION = "2025-06-18";
 
@@ -127,6 +128,31 @@ const TOOL_NAMES = Object.freeze([
   "coreguard_translate_receipt",
   "coreguard_emit_test_vectors",
   "coreguard_describe_surface",
+  // Wave 4 (CG-W4/1) — cross-border/bank/chain/machine/loan evidence tools. Offline, caller-supplied evidence only.
+  "coreguard_parse_iso20022_payment",
+  "coreguard_verify_cross_border_instruction",
+  "coreguard_assess_fx_quote_risk",
+  "coreguard_verify_swift_remittance_evidence",
+  "coreguard_verify_bank_transfer_evidence",
+  "coreguard_assess_sanctions_screening_evidence",
+  "coreguard_verify_invoice_match",
+  "coreguard_generate_payment_compliance_packet",
+  "coreguard_verify_stellar_settlement_evidence",
+  "coreguard_verify_evm_settlement_evidence",
+  "coreguard_verify_coredao_settlement_evidence",
+  "coreguard_verify_pi_payment_evidence",
+  "coreguard_assess_bridge_risk",
+  "coreguard_assess_defi_position_risk",
+  "coreguard_verify_web3_signature_evidence",
+  "coreguard_verify_stablecoin_reserve_evidence",
+  "coreguard_create_robot_mission_receipt",
+  "coreguard_verify_robot_mission_evidence",
+  "coreguard_assess_machine_sla",
+  "coreguard_assess_loan_application",
+  "coreguard_verify_collateral_packet",
+  "coreguard_assess_credit_line_utilization",
+  "coreguard_verify_escrow_milestone",
+  "coreguard_create_incident_war_room",
 ]);
 
 /**
@@ -181,6 +207,7 @@ function requireString(args, key) {
 /** Per-tool input validation. Returns null when the arguments are usable. */
 const VALIDATORS = Object.freeze({
   ...WAVE3_VALIDATORS,
+  ...WAVE4_VALIDATORS,
   coreguard_authorize(args) {
     const missing = requireObjects(args, ["intent", "policy", "declaredTrace"]);
     if (missing) return missing;
@@ -685,6 +712,7 @@ const TOOLS = Object.freeze([
     outputSchema: { type: "object", description: "CGCP/1 audit report with chain status and optional filters.", properties: { type: { type: "string" }, spec: { type: "string" }, report: { type: "object" }, mapping: { type: "string" }, boundary: { type: "string" }, callerContext: { type: "object" } }, additionalProperties: true },
   },
   ...WAVE3_TOOLS,
+  ...WAVE4_TOOLS,
 ]);
 
 function withCallerContext(value, args) {
@@ -776,6 +804,10 @@ async function callTool(name, args, { consumedSet } = {}) {
       const ctx = { toolNames: TOOL_NAMES, version: PACKAGE.version, serverName: SERVER_INFO.name, protocolVersion: PROTOCOL_VERSION };
       return success(withCallerContext(WAVE3_HANDLERS[name](a, ctx), a));
     }
+    if (WAVE4_HANDLERS[name]) {
+      const ctx = { toolNames: TOOL_NAMES, version: PACKAGE.version, serverName: SERVER_INFO.name, protocolVersion: PROTOCOL_VERSION };
+      return success(withCallerContext(WAVE4_HANDLERS[name](a, ctx), a));
+    }
     return failure(ERROR_CODES.UNKNOWN_TOOL, `unknown tool: ${String(name)}`);
   } catch (err) {
     return failure(ERROR_CODES.TOOL_ERROR, err?.message ?? String(err));
@@ -840,8 +872,10 @@ export function createMcpHandler({ write } = {}) {
 
 export function selfCheck() {
   return [
-    ["tools exposed", TOOL_NAMES.length === 46 && TOOL_NAMES[0] === "coreguard_authorize" && TOOL_NAMES[9] === "coreguard_consumption_status" && TOOL_NAMES[19] === "coreguard_verify_delegation_chain" && TOOL_NAMES[25] === "coreguard_audit_transaction" && TOOL_NAMES[45] === "coreguard_describe_surface"],
+    ["tools exposed", TOOL_NAMES.length === 70 && TOOL_NAMES[0] === "coreguard_authorize" && TOOL_NAMES[9] === "coreguard_consumption_status" && TOOL_NAMES[19] === "coreguard_verify_delegation_chain" && TOOL_NAMES[25] === "coreguard_audit_transaction" && TOOL_NAMES[45] === "coreguard_describe_surface" && TOOL_NAMES[69] === "coreguard_create_incident_war_room"],
     ["wave 3 declares schemas for every tool", WAVE3_TOOLS.length === 20 && WAVE3_TOOLS.every((t) => t.name.startsWith("coreguard_") && t.inputSchema?.required?.length > 0 && t.outputSchema?.type === "object" && WAVE3_HANDLERS[t.name])],
+    ["wave 4 declares schemas for every tool", WAVE4_TOOLS.length === 24 && WAVE4_TOOLS.every((t) => t.name.startsWith("coreguard_") && t.inputSchema && t.outputSchema?.type === "object" && WAVE4_HANDLERS[t.name])],
+    ["wave 4 boundary travels", WAVE4_BOUNDARY.includes("VERIFIED ≠ SAFE")],
     ["wave 3 boundary travels", WAVE3_BOUNDARY.includes("VERIFIED ≠ SAFE")],
     ["protocol version pinned", PROTOCOL_VERSION === "2025-06-18"],
     ["spec surfaced", CONSENT_SPEC === "CGCR/1" && AGENT_COMMERCE_VERSION === "AC-SDK/1"],
