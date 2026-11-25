@@ -89,6 +89,8 @@ Full card: [trust-cards/coreguard-agent-commerce.md](./trust-cards/coreguard-age
 
 Paste-ready per-tool reference, with every example executed against the shipped server: [`docs/mcprush/tool-reference.md`](./mcprush/tool-reference.md).
 
+**Agent skills** — 10 loadable `SKILL.md` procedures, each with when to use it, the tools it calls and its own copy-paste install line: [public skills page](https://coreguard-global.github.io/CoreGuard/SKILLS.html) · [`skills/README.md`](../skills/README.md). The page states no adoption: it names no install count, user, review or endorsement.
+
 ## 6. Pricing and sale
 
 | Field | Recommendation | Reason |
@@ -120,6 +122,7 @@ That is the live badge code, not a screenshot of a grade. The studio's "Get the 
 | Observation family on the same set and digest | `node scripts/aer1-observation-join.mjs --check` → `docs/AER1-OBSERVATION-JOIN.md` |
 | Offline demo, approve then refuse | `node examples/agent-commerce-mcp/run.mjs` |
 | Trust card: manifest findings, poisoned-tool scan, inventory, digests | `npm run trust:cards:check` → `docs/trust-cards/*.md` |
+| 10 skills: when to use, tools each calls, per-skill install line, file digests | `npm run docs:surface:check` → `docs/SKILLS.html` + `docs/skills.json` |
 
 Use the numbers as they are printed by those commands, and do not add a percentage, a user count or a revenue figure — none of them is measured anywhere.
 

@@ -125,8 +125,23 @@ function parseSkill(dir) {
   if (!name || !description) throw new Error(`${dir}: frontmatter must carry name and description`);
   const body = raw.slice(fm[0].length);
   const intro = (body.split(/\n\s*\n/).find((p) => p.trim() && !p.trim().startsWith("#")) ?? "").trim();
-  const whenToUse = [...body.matchAll(/^## When to use\n([\s\S]*?)(?=^## |\s*$)/gm)]
-    .flatMap((m) => [...m[1].matchAll(/^- (.+)$/gm)].map((x) => x[1].trim()));
+  // Section scan, not a regex: `(?=^## |\s*$)` can settle on an empty match at
+  // the heading's own newline, which silently emptied every bullet list.
+  const sections = new Map();
+  let section = "";
+  for (const line of body.split(/\r?\n/)) {
+    const heading = line.match(/^##\s+(.+?)\s*$/);
+    if (heading) {
+      section = heading[1].toLowerCase();
+      sections.set(section, []);
+      continue;
+    }
+    if (sections.has(section)) sections.get(section).push(line);
+  }
+  const whenToUse = (sections.get("when to use") ?? [])
+    .map((l) => l.trim())
+    .filter((l) => l.startsWith("- "))
+    .map((l) => l.slice(2).trim());
   const tools = [...new Set([...body.matchAll(/`(coreguard_[a-z0-9_]+)`/g)].map((m) => m[1]))];
   const boundaries = [...body.matchAll(/^## Boundaries\n([\s\S]*?)$/gm)].map((m) => m[1].trim()).join(" ").trim();
   return {
@@ -182,13 +197,19 @@ function renderSkillCard(s, toolIndex) {
   const chips = s.tools.length
     ? s.tools.map((t) => `<a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#${t}">${esc(t.replace(/^coreguard_/, ""))}</a>`).join("")
     : `<span class="chip">no tools referenced</span>`;
-  const bullets = s.whenToUse.length ? `<ul>${s.whenToUse.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>` : "";
+  const bullets = s.whenToUse.length
+    ? `<span class="lbl">When to use</span><ul>${s.whenToUse.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>`
+    : `<span class="lbl">When to use</span><ul><li>${esc(s.description.replace(/^Use (when|before|on)\s+/i, "").replace(/\.$/, "").replace(/^./, (c) => c.toUpperCase()))}</li></ul>`;
+  const install = `mkdir -p .claude/skills/${esc(s.name)}\ncurl -fsSL -o .claude/skills/${esc(s.name)}/SKILL.md \\\n  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/${esc(s.path)}`;
   return `<article class="skill" id="${esc(s.name)}">
   <div class="skill-h"><h3>${esc(s.name)}</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/${esc(s.path)}">SKILL.md</a></div>
   <p class="desc">${esc(s.description)}</p>
   ${bullets}
+  <span class="lbl">Calls ${s.tools.length} tool${s.tools.length === 1 ? "" : "s"}</span>
   <div class="chips">${chips}</div>
-  <div class="meta">${s.tools.length} tool${s.tools.length === 1 ? "" : "s"} · ${s.bytes} bytes · <code>${esc(s.digest.slice(0, 23))}…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>${install}</pre>
+  <div class="meta">${s.bytes} bytes · <code>${esc(s.digest.slice(0, 23))}…</code></div>
 </article>`;
 }
 
@@ -227,9 +248,11 @@ h2{font-size:clamp(24px,3.4vw,34px);margin:10px 0 8px}h2 em{font-style:normal;co
 .skill h3{margin:0;font-size:18px;color:var(--ink)}
 .src{font:600 11px ui-monospace,monospace;color:var(--o);text-decoration:none}
 .desc{color:#c7d2de;margin:10px 0}.skill ul{margin:8px 0 0;padding-inline-start:18px;color:var(--mu);font-size:14px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chip{font:600 11px ui-monospace,monospace;padding:4px 9px;border-radius:99px;border:1px solid rgba(255,138,0,.35);background:rgba(255,138,0,.07);color:var(--o2);text-decoration:none}
-.meta{margin-top:12px;color:#7f8fa1;font:500 11px ui-monospace,monospace}
+.skill pre{font-size:11.5px;padding:11px 12px;margin:6px 0 0;border-radius:12px}
+.lbl{display:block;margin-top:16px;font:700 10px/1.3 ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#7f8fa1}
+.meta{margin-top:14px;color:#7f8fa1;font:500 11px ui-monospace,monospace}
 pre{white-space:pre-wrap;word-break:break-word;background:#0B0F14;border:1px solid var(--l);border-radius:16px;padding:16px;font-size:12.5px;color:#cbd5e1}
 table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px}th,td{border:1px solid var(--l);padding:9px 11px;text-align:start;vertical-align:top}th{color:var(--o2);background:#121922}td code{color:#e0b64c}
 .note{border-left:3px solid var(--o);padding:6px 14px;color:var(--mu);margin-top:22px}
@@ -251,11 +274,11 @@ footer{padding:40px 0 70px;color:#7f8fa1;font-size:13px}
 </div></header>
 <section><div class="w">
   <h2>Install in <em>one copy.</em></h2>
-  <p class="sub">Skills are plain folders. Copy the set into your runtime's skills directory, or point the runtime at this folder. The server is registered once.</p>
+  <p class="sub">Skills are plain folders. Copy the set into your runtime's skills directory, or take a single skill with the command on its card below — no clone, no keys. The server is registered once.</p>
   <pre>mkdir -p .claude/skills &amp;&amp; cp -r skills/* .claude/skills/
 # mcp client config
 {"mcpServers":{"coreguard":{"command":"npx","args":["-y","@coreguard/agent-commerce@${esc(surface.serverInfo.version)}"]}}}</pre>
-  <div class="note">No skill here claims a tool is safe, a merchant honest or a payment settled. Each one ends with the boundary it cannot cross.</div>
+  <div class="note">No skill here claims a tool is safe, a merchant honest or a payment settled, and nothing on this page is adoption evidence: no install count, user count, review or endorsement is claimed anywhere. Each skill ends with the boundary it cannot cross, and each card's byte count and digest are read from the file itself.</div>
 </div></section>
 <section><div class="w">
   <h2>The ${skills.length} <em>skills.</em></h2>

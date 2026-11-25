@@ -11,7 +11,11 @@
       "name": "acp-interop-mapping",
       "description": "Use when a partner speaks a different receipt or checkout shape (ACP, x402, CGCR/1) and you need a structural mapping that names exactly what is lost, plus deterministic vectors to test their implementation.",
       "intro": "Move records between profiles without pretending the mapping is lossless.",
-      "whenToUse": [],
+      "whenToUse": [
+        "A partner (agent commerce platform, gateway, marketplace) asks for receipts in their shape.",
+        "You are integrating an SDK and need test vectors that match the enforcer, not your reading of the spec.",
+        "A dispute needs the same record expressed in two profiles."
+      ],
       "tools": [
         "coreguard_translate_receipt",
         "coreguard_emit_test_vectors",
@@ -29,7 +33,11 @@
       "name": "agent-purchase-guard",
       "description": "Use when an agent is about to spend money, submit an order, or sign a payment authorization, and you need the approval bound to exact bytes and the execution verified before anything is called successful.",
       "intro": "Bind the buyer's approval to the order bytes, then verify what actually executed against that receipt. Offline, deterministic, fail-closed.",
-      "whenToUse": [],
+      "whenToUse": [
+        "An agent is about to place an order, pay an invoice, settle an x402 challenge, or call a merchant API that moves value.",
+        "You need a receipt a human (or a dispute process) can re-derive later without trusting your logs.",
+        "A verifier, firewall, or marketplace asks \"was this execution covered by an approval?\"."
+      ],
       "tools": [
         "coreguard_compile_policy",
         "coreguard_explain_decision",
@@ -72,7 +80,11 @@
       "name": "incident-freeze-drill",
       "description": "Use when an agent must be stopped immediately — freeze it, reject its open approvals in one audited operation, then reconstruct the timeline for review.",
       "intro": "Contain first, explain second. The kill switch must be one deterministic call, and the resulting ledger must be readable.",
-      "whenToUse": [],
+      "whenToUse": [
+        "A verification failed, a receipt was replayed, or a tool description was poisoned.",
+        "An owner says \"stop this agent now\".",
+        "You are rehearsing incident response before an agent goes live (do this drill monthly)."
+      ],
       "tools": [
         "coreguard_freeze_agent",
         "coreguard_check_limits",
@@ -91,7 +103,11 @@
       "name": "mcp-server-due-diligence",
       "description": "Use before installing, pinning, or approving a third-party MCP server, to turn its published manifest into a deterministic risk card a reviewer can act on.",
       "intro": "Read the record before you run the code. This skill produces evidence, not a verdict on the vendor.",
-      "whenToUse": [],
+      "whenToUse": [
+        "An MCP client, marketplace, or platform is about to list or install a server.",
+        "A team asks \"is this server safe to add to our agent?\".",
+        "You need a repeatable pre-install check that does not depend on the vendor's marketing page."
+      ],
       "tools": [
         "coreguard_audit_server_manifest",
         "coreguard_scan_tool_descriptions",
@@ -160,7 +176,11 @@
       "name": "tool-surface-drift-watch",
       "description": "Use on every MCP server upgrade or re-connect to detect rug pulls — tools added, removed, re-described or re-schema'd after the surface was approved.",
       "intro": "An agent approved a tool surface, not a vendor. Verify the surface is still the one that was approved.",
-      "whenToUse": [],
+      "whenToUse": [
+        "A dependency bump changes an MCP server version.",
+        "A hosted server reconnects and `tools/list` may differ from yesterday.",
+        "A marketplace re-scans a listing (`rescan`) and needs to show what changed."
+      ],
       "tools": [
         "coreguard_diff_tool_surface",
         "coreguard_scan_tool_descriptions",

@@ -24,9 +24,11 @@ h2{font-size:clamp(24px,3.4vw,34px);margin:10px 0 8px}h2 em{font-style:normal;co
 .skill h3{margin:0;font-size:18px;color:var(--ink)}
 .src{font:600 11px ui-monospace,monospace;color:var(--o);text-decoration:none}
 .desc{color:#c7d2de;margin:10px 0}.skill ul{margin:8px 0 0;padding-inline-start:18px;color:var(--mu);font-size:14px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chip{font:600 11px ui-monospace,monospace;padding:4px 9px;border-radius:99px;border:1px solid rgba(255,138,0,.35);background:rgba(255,138,0,.07);color:var(--o2);text-decoration:none}
-.meta{margin-top:12px;color:#7f8fa1;font:500 11px ui-monospace,monospace}
+.skill pre{font-size:11.5px;padding:11px 12px;margin:6px 0 0;border-radius:12px}
+.lbl{display:block;margin-top:16px;font:700 10px/1.3 ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#7f8fa1}
+.meta{margin-top:14px;color:#7f8fa1;font:500 11px ui-monospace,monospace}
 pre{white-space:pre-wrap;word-break:break-word;background:#0B0F14;border:1px solid var(--l);border-radius:16px;padding:16px;font-size:12.5px;color:#cbd5e1}
 table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px}th,td{border:1px solid var(--l);padding:9px 11px;text-align:start;vertical-align:top}th{color:var(--o2);background:#121922}td code{color:#e0b64c}
 .note{border-left:3px solid var(--o);padding:6px 14px;color:var(--mu);margin-top:22px}
@@ -48,11 +50,11 @@ footer{padding:40px 0 70px;color:#7f8fa1;font-size:13px}
 </div></header>
 <section><div class="w">
   <h2>Install in <em>one copy.</em></h2>
-  <p class="sub">Skills are plain folders. Copy the set into your runtime's skills directory, or point the runtime at this folder. The server is registered once.</p>
+  <p class="sub">Skills are plain folders. Copy the set into your runtime's skills directory, or take a single skill with the command on its card below — no clone, no keys. The server is registered once.</p>
   <pre>mkdir -p .claude/skills &amp;&amp; cp -r skills/* .claude/skills/
 # mcp client config
 {"mcpServers":{"coreguard":{"command":"npx","args":["-y","@coreguard/agent-commerce@0.2.0"]}}}</pre>
-  <div class="note">No skill here claims a tool is safe, a merchant honest or a payment settled. Each one ends with the boundary it cannot cross.</div>
+  <div class="note">No skill here claims a tool is safe, a merchant honest or a payment settled, and nothing on this page is adoption evidence: no install count, user count, review or endorsement is claimed anywhere. Each skill ends with the boundary it cannot cross, and each card's byte count and digest are read from the file itself.</div>
 </div></section>
 <section><div class="w">
   <h2>The 10 <em>skills.</em></h2>
@@ -61,72 +63,122 @@ footer{padding:40px 0 70px;color:#7f8fa1;font-size:13px}
 <article class="skill" id="acp-interop-mapping">
   <div class="skill-h"><h3>acp-interop-mapping</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/acp-interop-mapping/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when a partner speaks a different receipt or checkout shape (ACP, x402, CGCR/1) and you need a structural mapping that names exactly what is lost, plus deterministic vectors to test their implementation.</p>
-  
+  <span class="lbl">When to use</span><ul><li>A partner (agent commerce platform, gateway, marketplace) asks for receipts in their shape.</li><li>You are integrating an SDK and need test vectors that match the enforcer, not your reading of the spec.</li><li>A dispute needs the same record expressed in two profiles.</li></ul>
+  <span class="lbl">Calls 5 tools</span>
   <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_translate_receipt">translate_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_emit_test_vectors">emit_test_vectors</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_evidence_bundle">verify_evidence_bundle</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_receipt">verify_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_execution">verify_execution</a></div>
-  <div class="meta">5 tools · 2802 bytes · <code>sha256:61480ed8530636d4…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/acp-interop-mapping
+curl -fsSL -o .claude/skills/acp-interop-mapping/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/acp-interop-mapping/SKILL.md</pre>
+  <div class="meta">2802 bytes · <code>sha256:61480ed8530636d4…</code></div>
 </article>
 <article class="skill" id="agent-purchase-guard">
   <div class="skill-h"><h3>agent-purchase-guard</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/agent-purchase-guard/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when an agent is about to spend money, submit an order, or sign a payment authorization, and you need the approval bound to exact bytes and the execution verified before anything is called successful.</p>
-  
+  <span class="lbl">When to use</span><ul><li>An agent is about to place an order, pay an invoice, settle an x402 challenge, or call a merchant API that moves value.</li><li>You need a receipt a human (or a dispute process) can re-derive later without trusting your logs.</li><li>A verifier, firewall, or marketplace asks &quot;was this execution covered by an approval?&quot;.</li></ul>
+  <span class="lbl">Calls 10 tools</span>
   <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_compile_policy">compile_policy</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_explain_decision">explain_decision</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_authorize">authorize</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_execution">verify_execution</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_build_attestation">build_attestation</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_attestation">verify_attestation</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_consumption_status">consumption_status</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_redact_receipt">redact_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_attest_batch">attest_batch</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a></div>
-  <div class="meta">10 tools · 3680 bytes · <code>sha256:0a8120c93800ce25…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/agent-purchase-guard
+curl -fsSL -o .claude/skills/agent-purchase-guard/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/agent-purchase-guard/SKILL.md</pre>
+  <div class="meta">3680 bytes · <code>sha256:0a8120c93800ce25…</code></div>
 </article>
 <article class="skill" id="agent-spend-control">
   <div class="skill-h"><h3>agent-spend-control</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/agent-spend-control/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when setting, reviewing, or explaining an agent's spending limits — compile the policy, simulate the month, prove the boundary cases, and project runway without touching production state.</p>
-  
+  <span class="lbl">When to use</span><ul><li>Setting, reviewing, or explaining an agent's spending limits — compile the policy, simulate the month, prove the boundary cases, and project runway without touching production state</li></ul>
+  <span class="lbl">Calls 7 tools</span>
   <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_compile_policy">compile_policy</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_explain_decision">explain_decision</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_simulate_spend">simulate_spend</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_diff_policies">diff_policies</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_generate_boundary_cases">generate_boundary_cases</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_budget_runway">budget_runway</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_detect_spend_anomaly">detect_spend_anomaly</a></div>
-  <div class="meta">7 tools · 2763 bytes · <code>sha256:d604c7477b10f6c7…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/agent-spend-control
+curl -fsSL -o .claude/skills/agent-spend-control/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/agent-spend-control/SKILL.md</pre>
+  <div class="meta">2763 bytes · <code>sha256:d604c7477b10f6c7…</code></div>
 </article>
 <article class="skill" id="incident-freeze-drill">
   <div class="skill-h"><h3>incident-freeze-drill</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/incident-freeze-drill/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when an agent must be stopped immediately — freeze it, reject its open approvals in one audited operation, then reconstruct the timeline for review.</p>
-  
+  <span class="lbl">When to use</span><ul><li>A verification failed, a receipt was replayed, or a tool description was poisoned.</li><li>An owner says &quot;stop this agent now&quot;.</li><li>You are rehearsing incident response before an agent goes live (do this drill monthly).</li></ul>
+  <span class="lbl">Calls 6 tools</span>
   <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_check_limits">check_limits</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_incident_timeline">incident_timeline</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_redact_receipt">redact_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_attest_batch">attest_batch</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_transaction">audit_transaction</a></div>
-  <div class="meta">6 tools · 2657 bytes · <code>sha256:7bcbae8fdb48b337…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/incident-freeze-drill
+curl -fsSL -o .claude/skills/incident-freeze-drill/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/incident-freeze-drill/SKILL.md</pre>
+  <div class="meta">2657 bytes · <code>sha256:7bcbae8fdb48b337…</code></div>
 </article>
 <article class="skill" id="mcp-server-due-diligence">
   <div class="skill-h"><h3>mcp-server-due-diligence</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/mcp-server-due-diligence/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use before installing, pinning, or approving a third-party MCP server, to turn its published manifest into a deterministic risk card a reviewer can act on.</p>
-  
+  <span class="lbl">When to use</span><ul><li>An MCP client, marketplace, or platform is about to list or install a server.</li><li>A team asks &quot;is this server safe to add to our agent?&quot;.</li><li>You need a repeatable pre-install check that does not depend on the vendor's marketing page.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
   <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_server_manifest">audit_server_manifest</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_scan_tool_descriptions">scan_tool_descriptions</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_check_lookalike">check_lookalike</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_diff_tool_surface">diff_tool_surface</a></div>
-  <div class="meta">4 tools · 3111 bytes · <code>sha256:da9701180a50f067…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/mcp-server-due-diligence
+curl -fsSL -o .claude/skills/mcp-server-due-diligence/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/mcp-server-due-diligence/SKILL.md</pre>
+  <div class="meta">3111 bytes · <code>sha256:da9701180a50f067…</code></div>
 </article>
 <article class="skill" id="merchant-impersonation-check">
   <div class="skill-h"><h3>merchant-impersonation-check</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/merchant-impersonation-check/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when an agent is about to pay a merchant, domain, or package whose name resembles a known brand, or when a payment instruction arrives from a new domain.</p>
-  
+  <span class="lbl">When to use</span><ul><li>An agent is about to pay a merchant, domain, or package whose name resembles a known brand, or when a payment instruction arrives from a new domain</li></ul>
+  <span class="lbl">Calls 2 tools</span>
   <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_check_lookalike">check_lookalike</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_execution">verify_execution</a></div>
-  <div class="meta">2 tools · 2240 bytes · <code>sha256:429a75f8c388485a…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/merchant-impersonation-check
+curl -fsSL -o .claude/skills/merchant-impersonation-check/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/merchant-impersonation-check/SKILL.md</pre>
+  <div class="meta">2240 bytes · <code>sha256:429a75f8c388485a…</code></div>
 </article>
 <article class="skill" id="receipt-forensics">
   <div class="skill-h"><h3>receipt-forensics</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/receipt-forensics/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when reconstructing what happened to a payment or approval — redact a receipt for sharing, verify an evidence bundle, and prove a record is included in a notarised batch.</p>
-  
+  <span class="lbl">When to use</span><ul><li>Reconstructing what happened to a payment or approval — redact a receipt for sharing, verify an evidence bundle, and prove a record is included in a notarised batch</li></ul>
+  <span class="lbl">Calls 5 tools</span>
   <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_redact_receipt">redact_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_evidence_bundle">verify_evidence_bundle</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_attest_batch">attest_batch</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_batch_proof">verify_batch_proof</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_incident_timeline">incident_timeline</a></div>
-  <div class="meta">5 tools · 2640 bytes · <code>sha256:ab4b3d293079af30…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/receipt-forensics
+curl -fsSL -o .claude/skills/receipt-forensics/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/receipt-forensics/SKILL.md</pre>
+  <div class="meta">2640 bytes · <code>sha256:ab4b3d293079af30…</code></div>
 </article>
 <article class="skill" id="tool-poisoning-triage">
   <div class="skill-h"><h3>tool-poisoning-triage</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/tool-poisoning-triage/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when tool descriptions or prompts look off, arrive from an untrusted MCP server, or an agent starts behaving as if it received instructions the user never gave.</p>
-  
+  <span class="lbl">When to use</span><ul><li>Tool descriptions or prompts look off, arrive from an untrusted MCP server, or an agent starts behaving as if it received instructions the user never gave</li></ul>
+  <span class="lbl">Calls 6 tools</span>
   <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_scan_tool_descriptions">scan_tool_descriptions</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_diff_tool_surface">diff_tool_surface</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_freeze_agent">freeze_agent</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_incident_timeline">incident_timeline</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_redact_receipt">redact_receipt</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_attest_batch">attest_batch</a></div>
-  <div class="meta">6 tools · 2792 bytes · <code>sha256:f0494a25080765ab…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/tool-poisoning-triage
+curl -fsSL -o .claude/skills/tool-poisoning-triage/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/tool-poisoning-triage/SKILL.md</pre>
+  <div class="meta">2792 bytes · <code>sha256:f0494a25080765ab…</code></div>
 </article>
 <article class="skill" id="tool-surface-drift-watch">
   <div class="skill-h"><h3>tool-surface-drift-watch</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/tool-surface-drift-watch/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use on every MCP server upgrade or re-connect to detect rug pulls — tools added, removed, re-described or re-schema'd after the surface was approved.</p>
-  
+  <span class="lbl">When to use</span><ul><li>A dependency bump changes an MCP server version.</li><li>A hosted server reconnects and `tools/list` may differ from yesterday.</li><li>A marketplace re-scans a listing (`rescan`) and needs to show what changed.</li></ul>
+  <span class="lbl">Calls 4 tools</span>
   <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_diff_tool_surface">diff_tool_surface</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_scan_tool_descriptions">scan_tool_descriptions</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_audit_server_manifest">audit_server_manifest</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_describe_surface">describe_surface</a></div>
-  <div class="meta">4 tools · 2525 bytes · <code>sha256:1c92e202ddc60aa2…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/tool-surface-drift-watch
+curl -fsSL -o .claude/skills/tool-surface-drift-watch/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/tool-surface-drift-watch/SKILL.md</pre>
+  <div class="meta">2525 bytes · <code>sha256:1c92e202ddc60aa2…</code></div>
 </article>
 <article class="skill" id="x402-payment-gate">
   <div class="skill-h"><h3>x402-payment-gate</h3><a class="src" href="https://github.com/coreguard-global/CoreGuard/blob/main/skills/x402-payment-gate/SKILL.md">SKILL.md</a></div>
   <p class="desc">Use when an agent answers an HTTP 402 payment challenge — parse the challenge, authorize against policy, verify settlement evidence, and reconcile the payment without custody.</p>
-  
+  <span class="lbl">When to use</span><ul><li>An agent answers an HTTP 402 payment challenge — parse the challenge, authorize against policy, verify settlement evidence, and reconcile the payment without custody</li></ul>
+  <span class="lbl">Calls 6 tools</span>
   <div class="chips"><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_parse_x402_challenge">parse_x402_challenge</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_authorize_x402_payment">authorize_x402_payment</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_x402_settlement">verify_x402_settlement</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_reconcile_payment">reconcile_payment</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_authorize">authorize</a><a class="chip" href="https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md#coreguard_verify_execution">verify_execution</a></div>
-  <div class="meta">6 tools · 2933 bytes · <code>sha256:f46cad705a37fe79…</code></div>
+  <span class="lbl">Install this skill</span>
+  <pre>mkdir -p .claude/skills/x402-payment-gate
+curl -fsSL -o .claude/skills/x402-payment-gate/SKILL.md \
+  https://raw.githubusercontent.com/coreguard-global/CoreGuard/main/skills/x402-payment-gate/SKILL.md</pre>
+  <div class="meta">2933 bytes · <code>sha256:f46cad705a37fe79…</code></div>
 </article>
   </div>
 </div></section>
