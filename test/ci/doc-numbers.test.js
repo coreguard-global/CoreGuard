@@ -78,6 +78,8 @@ const ALLOWED = new Set([
   "docs/AGENT-COMMERCE-PARTNER-FUNDING-ONE-PAGER-2026-11-16.md", // dated instrument: partner-funding one-pager measured 2026-11-16 (this push)
   "docs/RELEASE-NOTES-v1.2.0-DRAFT-2026-11-12.md", // dated instrument: pre-publish release-notes draft (2026-11-12), published 2026-11-13 as v1.2.0
   "docs/RELEASE-NOTES-v1.2.0.md", // dated instrument: release notes published 2026-11-13 (tag 33e5606; suite state as measured at publish)
+  "docs/SCF-46-RFP2-XDR-AUDIT-SUBMISSION-2026-11-13.md", // dated SCF RFP2 XDR audit submission, 2026-11-13 (verbatim historical suite claim)
+  "docs/SCF-INTEREST-FORM-2026-11-16.md", // dated SCF interest form, 2026-11-16 (verbatim historical suite claim)
 ]);
 
 /** The claim shapes the repo actually writes (shapes are pinned by controls below). */

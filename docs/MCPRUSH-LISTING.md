@@ -1,10 +1,10 @@
-# MCPRush listing — copy-paste sheet (0.3.0)
+# MCPRush listing — copy-paste sheet (0.4.0)
 
 Everything below is written to be pasted into the studio at `mcprush.com/studio#manage`. Where a value is factual it is measured in this repository; where it is a choice, the choice is named. Nothing here claims installs, revenue, users, partnership or an audit.
 
-**Why 0.3.0:** Wave 4 (CG-W4/1) adds 24 deterministic, offline evidence/policy tools for cross-border payments, ISO 20022/SWIFT/bank evidence packets, Stellar/EVM/Core DAO settlement evidence, Pi payment evidence (attested, no live API), bridge/DeFi risk, Web3 signature/reserve evidence, robot mission receipts, machine SLA, loan/collateral/credit-line checks, escrow milestones, and incident war rooms. The skill library grows to **40 skills**. All new tools are caller-supplied-evidence only; no live bank/chain/PI/compliance network calls. `VERIFIED ≠ SAFE`.
+**Why 0.4.0:** Wave 5 (CG-W5/1) adds 24 deterministic, offline evidence tools for payment-authority chains, KYC/UBO/travel-rule/AML/sanctions-version packets, FX locks, multi-ledger reconciliation, camt.054/MT103/beneficiary-change checks, Stellar/EVM/Core DAO/Pi/ERC-4337/approval-revocation evidence, machine budget leases, robot handoffs, inference receipts, and redacted evidence packs. The skill library grows to **72 skills**. All new tools are caller-supplied-evidence only; no live bank/chain/PI/compliance network calls. `VERIFIED ≠ SAFE`.
 
-**Cumulative:** the server now ships **70 tools** and **40 skills**. Wave 3 added policy reasoning, MCP supply-chain audit, evidence, and operations. Wave 4 adds cross-border/chain/machine/loan evidence tooling. Everything stays offline, deterministic, zero-key.
+**Cumulative:** the server now ships **94 tools** and **72 skills**. Wave 3 added policy reasoning, MCP supply-chain audit, evidence, and operations; Wave 4 added cross-border/chain/machine/loan evidence; Wave 5 adds authority, financial-compliance evidence, chain-specific packets and machine-economy operations. Everything stays offline, deterministic, zero-key.
 
 ---
 
@@ -29,7 +29,7 @@ Optional longer variant, still under 200 characters, if you want the offline gua
 
 <!-- generated: listing-short — run `npm run docs:surface`, do not edit -->
 ```
-Fail-closed consent receipts and execution verification for agentic purchases. 70 offline MCP tools, zero keys, no network.
+Fail-closed consent receipts and execution verification for agentic purchases. 94 offline MCP tools, zero keys, no network.
 ```
 
 <sub>123/200 characters · tool count read from `tools/list` at generation time.</sub>
@@ -38,7 +38,7 @@ Fail-closed consent receipts and execution verification for agentic purchases. 7
 **What it does** (the section that opens the listing page):
 
 ```
-Bind a buyer's approval to the exact order bytes, then verify any executed trace against that receipt — offline, deterministic, fail-closed. 70 MCP tools: consent receipts (CGCR/1), execution verification (AGR/1), x402/machine-economy evidence, CGCP/1 control plane, Wave 3 policy/supply-chain/evidence/ops/interop, and Wave 4 cross-border/bank/chain settlement evidence, bridge/DeFi/Web3 risk, robot mission receipts, SLA/loan/collateral/credit-line checks, escrow milestones, and incident war rooms.
+Bind a buyer's approval to the exact order bytes, then verify any executed trace against that receipt — offline, deterministic, fail-closed. 94 MCP tools: consent receipts (CGCR/1), execution verification (AGR/1), x402/machine-economy evidence, CGCP/1 control plane, Wave 3 policy/supply-chain/evidence/ops/interop, Wave 4 cross-border/bank/chain settlement evidence, bridge/DeFi/Web3 risk, robot mission receipts, SLA/loan/collateral/credit-line checks, escrow milestones and incident war rooms, and Wave 5 authority, KYC/AML, reconciliation, chain-specific evidence and machine-economy operations.
 
 VERIFIED means the executed bytes matched the approved bytes. It is not a safety, fraud or settlement guarantee, and the server contacts no payment network, chain or provider. No sign-in, no keys, no wall clock: every call is reproducible from its inputs.
 ```
@@ -65,7 +65,7 @@ That is accurate and worth keeping: the server reads no environment variable at 
 ## 5. Tool surface
 
 <!-- generated: mcp-surface — run `npm run docs:surface`, do not edit -->
-**Generated from `tools/list`** — server `coreguard-agent-commerce@0.3.0`, protocol `2025-06-18`, **70 tools**, tools digest `sha256:43ab7f7dee62553703a2f23f876e775699a4247e208c9bf22bc6f7f91e7650ec`.
+**Generated from `tools/list`** — server `coreguard-agent-commerce@0.4.0`, protocol `2025-06-18`, **94 tools**, tools digest `sha256:c4f42eec7a678dafea80f75c80b1bb1936d978af21d8dacb948bc8fabfaa1389`.
 
 | Group | Tools |
 |---|---|
@@ -74,24 +74,26 @@ That is accurate and worth keeping: the server reads no environment variable at 
 | CGCP/1 control plane (6) | `coreguard_create_intent`, `coreguard_issue_receipt`, `coreguard_verify_receipt`, `coreguard_check_limits`, `coreguard_revoke_consent`, `coreguard_audit_transaction` |
 | Wave 3 · policy reasoning + MCP supply chain (10) | `coreguard_compile_policy`, `coreguard_explain_decision`, `coreguard_simulate_spend`, `coreguard_diff_policies`, `coreguard_generate_boundary_cases`, `coreguard_audit_server_manifest`, `coreguard_scan_tool_descriptions`, `coreguard_check_lookalike`, `coreguard_diff_tool_surface`, `coreguard_verify_evidence_bundle` |
 | Wave 3 · evidence + operations + interop (10) | `coreguard_redact_receipt`, `coreguard_attest_batch`, `coreguard_verify_batch_proof`, `coreguard_freeze_agent`, `coreguard_budget_runway`, `coreguard_detect_spend_anomaly`, `coreguard_incident_timeline`, `coreguard_translate_receipt`, `coreguard_emit_test_vectors`, `coreguard_describe_surface` |
+| Wave 4 · cross-border/bank/chain/machine/loan evidence (24) | `coreguard_parse_iso20022_payment`, `coreguard_verify_cross_border_instruction`, `coreguard_assess_fx_quote_risk`, `coreguard_verify_swift_remittance_evidence`, `coreguard_verify_bank_transfer_evidence`, `coreguard_assess_sanctions_screening_evidence`, `coreguard_verify_invoice_match`, `coreguard_generate_payment_compliance_packet`, `coreguard_verify_stellar_settlement_evidence`, `coreguard_verify_evm_settlement_evidence`, `coreguard_verify_coredao_settlement_evidence`, `coreguard_verify_pi_payment_evidence`, `coreguard_assess_bridge_risk`, `coreguard_assess_defi_position_risk`, `coreguard_verify_web3_signature_evidence`, `coreguard_verify_stablecoin_reserve_evidence`, `coreguard_create_robot_mission_receipt`, `coreguard_verify_robot_mission_evidence`, `coreguard_assess_machine_sla`, `coreguard_assess_loan_application`, `coreguard_verify_collateral_packet`, `coreguard_assess_credit_line_utilization`, `coreguard_verify_escrow_milestone`, `coreguard_create_incident_war_room` |
+| Wave 5 · authority/KYC-AML/reconciliation/chain evidence/machine economy (24) | `coreguard_canonicalize_payment_instruction`, `coreguard_verify_payment_authorization_chain`, `coreguard_verify_kyc_evidence`, `coreguard_verify_ubo_evidence`, `coreguard_verify_travel_rule_packet`, `coreguard_verify_aml_alert_disposition`, `coreguard_verify_sanctions_list_version`, `coreguard_verify_fx_rate_lock`, `coreguard_reconcile_multi_ledger`, `coreguard_verify_camt054_notification`, `coreguard_verify_mt103_fields`, `coreguard_verify_beneficiary_change`, `coreguard_verify_stellar_path_payment`, `coreguard_verify_evm_permit_evidence`, `coreguard_verify_coredao_delegation_evidence`, `coreguard_verify_pi_attestation_chain`, `coreguard_verify_erc4337_userop_evidence`, `coreguard_verify_token_approval_revocation`, `coreguard_create_machine_budget_lease`, `coreguard_verify_machine_budget_consumption`, `coreguard_verify_robot_handoff_chain`, `coreguard_verify_agent_authority_intersection`, `coreguard_create_inference_receipt`, `coreguard_export_evidence_pack` |
 
 **Quoted capability card** (from `coreguard_describe_surface`; full JSON in [`docs/mcprush/CAPABILITY-CARD.md`](./mcprush/CAPABILITY-CARD.md)):
 
-> coreguard-agent-commerce 0.3.0 — 70 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
+> coreguard-agent-commerce 0.4.0 — 94 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
 
-**Badge:** ![MCP tools: 70](./assets/badges/mcp-tools.svg)
+**Badge:** ![MCP tools: 94](./assets/badges/mcp-tools.svg)
 <!-- /generated: mcp-surface -->
 
 **Trust card** (CG-TC/1) — generated from the published `server.json` and a live `tools/list`, re-runnable with `npm run trust:cards:check`:
 
-> **Trust card:** PASS · manifest risk `low` · tool descriptions `CLEAN` · 70 tools · card `sha256:9eacac4d79e34ad4bf29ae95d51fb59172cfe4b85c2d3b21bc6321233b412e27`
+> **Trust card:** PASS · manifest risk `low` · tool descriptions `CLEAN` · 94 tools · card `sha256:ee7cae0d637d6bca0476240520ca8872847c0bc5a3a2051b1f2ff0610e434665`
 > Structural audit by CoreGuard (CG-TC/1) from the server record and a live `tools/list`. PASS ≠ SAFE.
 
 Full card: [trust-cards/coreguard-agent-commerce.md](./trust-cards/coreguard-agent-commerce.md) · machine-readable sidecar: [trust-cards/coreguard-agent-commerce.json](./trust-cards/coreguard-agent-commerce.json). The same command works on any server record: see [TRUST-CARD.md](./TRUST-CARD.md), the third-party example [filesystem-mcp.md](./trust-cards/filesystem-mcp.md), and the blocked [poisoned fixture](./trust-cards/examples/poisoned-fixture.md).
 
 Paste-ready per-tool reference, with every example executed against the shipped server: [`docs/mcprush/tool-reference.md`](./mcprush/tool-reference.md).
 
-**Agent skills** — 40 loadable `SKILL.md` procedures, each with when to use it, the tools it calls and its own copy-paste install line: [public skills page](https://coreguard-global.github.io/CoreGuard/SKILLS.html) · [`skills/README.md`](../skills/README.md). The page states no adoption: it names no install count, user, review or endorsement.
+**Agent skills** — 72 loadable `SKILL.md` procedures, each with when to use it, the tools it calls and its own copy-paste install line: [public skills page](https://coreguard-global.github.io/CoreGuard/SKILLS.html) · [`skills/README.md`](../skills/README.md). The page states no adoption: it names no install count, user, review or endorsement.
 
 ## 6. Pricing and sale
 
@@ -102,7 +104,7 @@ Paste-ready per-tool reference, with every example executed against the shipped 
 
 ## 7. Releases
 
-**0.3.0 is published.** Gated release run `45688325860` completed; npm `latest` = `0.3.0`, MCP Registry `io.github.EslaM-X/coreguard-agent-commerce@0.3.0` is active and `isLatest`, and the published npm artifact re-reads at `0.3.0` / 70 tools. MCPRush Studio still requires the owner clicks in §10 — this repository cannot edit the listing.
+**Published:** 0.3.0. Gated release run `45688325860` completed; npm `latest` = `0.3.0`, MCP Registry `io.github.EslaM-X/coreguard-agent-commerce@0.3.0` is active and `isLatest`, and the published npm artifact re-reads at `0.3.0` / 70 tools. **Prepared, not yet published:** 0.4.0 carries Wave 5 (94 tools / 72 skills) and awaits the gated `confirm=RELEASE` workflow on `main`; the workspace surface is measured here, not on npm yet. MCPRush Studio still requires the owner clicks in §10 — this repository cannot edit the listing.
 
 ## 8. README badge
 
@@ -118,14 +120,14 @@ That is the live badge code, not a screenshot of a grade. The studio's "Get the 
 
 | Claim | Where it is re-runnable |
 |---|---|
-| 70 tools, schemas, executed examples | `node scripts/mcprush-tool-reference.mjs --check` → `docs/mcprush/tool-reference.md` |
+| 94 tools, schemas, executed examples | `node scripts/mcprush-tool-reference.mjs --check` → `docs/mcprush/tool-reference.md` |
 | MCP contract: initialize, tools/list, tools/call | `node --test test/integrations/agent-commerce-mcp.test.mjs` |
 | Interop: 143 pinned vectors, 0 false accepts, 0 divergences | `node scripts/aer1-interop.mjs --check` → `docs/AER1-INTEROP-TABLE.md` |
 | Observation family on the same set and digest | `node scripts/aer1-observation-join.mjs --check` → `docs/AER1-OBSERVATION-JOIN.md` |
 | Offline demo, approve then refuse | `node examples/agent-commerce-mcp/run.mjs` |
 | Trust card: manifest findings, poisoned-tool scan, inventory, digests | `npm run trust:cards:check` → `docs/trust-cards/*.md` |
 | 0.2.1 behaviour fixes: normalisation, astral offsets, punycode, freeze honesty | `node --test test/integrations/agent-commerce-wave3.test.mjs` → `docs/releases/0.2.1.md` |
-| 40 skills: when to use, tools each calls, per-skill install line, file digests | `npm run docs:surface:check` → `docs/SKILLS.html` + `docs/skills.json` |
+| 72 skills: when to use, tools each calls, per-skill install line, file digests | `npm run docs:surface:check` → `docs/SKILLS.html` + `docs/skills.json` |
 
 Use the numbers as they are printed by those commands, and do not add a percentage, a user count or a revenue figure — none of them is measured anywhere.
 
@@ -133,8 +135,9 @@ Use the numbers as they are printed by those commands, and do not add a percenta
 
 - [x] Publish `0.3.0` through the gated release workflow (run `45688325860`) and confirm npm + MCP Registry report `0.3.0` active/latest.
 - [x] Confirm the published npm artifact reports `0.3.0` and `tools/list` returns 70 tools (`npx -y -p @coreguard/agent-commerce@0.3.0 coreguard-agent-commerce-mcp`, agent-session re-read; owner may repeat in a clean environment).
-- [ ] In MCPRush Studio after 0.3.0 is live: update listing copy, add release `0.3.0`, re-read Tool surface to **70 tools**, and request rescan only if needed (once/day).
-- [ ] Tell the agent-skills pack (`skills/`) to the integration story: 40 skills, each a folder with `SKILL.md`.
+- [ ] Publish `0.4.0` through the same gated workflow only after this prepared commit is merged to `main`; record its run id, npm `latest`, MCP Registry active/latest and an artifact re-read at **94 tools** here.
+- [ ] In MCPRush Studio after 0.4.0 is live: update listing copy, add release `0.4.0`, re-read Tool surface to **94 tools**, and request rescan only if needed (once/day).
+- [ ] Tell the agent-skills pack (`skills/`) to the integration story: 72 skills, each a folder with `SKILL.md`.
 - [ ] In the studio: save the listing copy from §2, confirm sign-in/keys from §3, cut the release so the tool surface re-reads.
 - [ ] If the grade is stale relative to the new tarball, request the once-a-day rescan; the grade is deterministic and re-runnable, so a rescan is a measurement, not an appeal.
 - [ ] Deprecate nothing, unpublish nothing. The listing is the distribution; the funnel is the repository.

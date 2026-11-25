@@ -1,17 +1,17 @@
 {
-  "measuredAtUtc": "2026-11-25T01:05:56Z",
-  "gitCommit": "0163cd76541a9fefc941b0b3f0144df10e06facb",
-  "commitsAheadOfV060": 596,
-  "testsTotal": 2106,
+  "measuredAtUtc": "2026-11-25T22:32:41Z",
+  "gitCommit": "b9cb39247b5f0bca2d41ef4732d8123807b28a19",
+  "commitsAheadOfV060": 604,
+  "testsTotal": 2168,
   "boundaryAudit": {
-    "filesScanned": 1629,
+    "filesScanned": 1664,
     "violations": 0,
     "check": "PASS"
   },
   "peoplesCourtHarness": "PEOPLES_COURT_HARNESS_READY",
   "docsNode": {
-    "executed": 141,
-    "skipListed": 89,
+    "executed": 140,
+    "skipListed": 90,
     "docsCovered": 34
   },
   "reproduce": {

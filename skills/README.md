@@ -1,8 +1,11 @@
 # CoreGuard Agent Skills
 
-Ten agent skills that turn the `@coreguard/agent-commerce` MCP surface into
+72 agent skills that turn the `@coreguard/agent-commerce` MCP surface into
 repeatable procedures. Each skill is a folder with a `SKILL.md` (YAML
-frontmatter + instructions) that an agent runtime can load directly.
+frontmatter + instructions) that an agent runtime can load directly. The
+table below shows the original ten; the full generated inventory with every
+skill, tool reference and install line is in [`docs/SKILLS.html`](../docs/SKILLS.html)
+and [`docs/skills.json`](../docs/skills.json).
 
 Everything here is offline and deterministic: the skills call only local MCP
 tools, never a network, a wallet, or a vendor API. `VERIFIED ≠ SAFE` travels in

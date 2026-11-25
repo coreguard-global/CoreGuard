@@ -2,9 +2,9 @@
   "schema": "CG-SK/1",
   "server": {
     "name": "coreguard-agent-commerce",
-    "version": "0.3.0"
+    "version": "0.4.0"
   },
-  "toolCount": 70,
+  "toolCount": 94,
   "skills": [
     {
       "dir": "acp-interop-mapping",
@@ -27,6 +27,30 @@
       "path": "skills/acp-interop-mapping/SKILL.md",
       "digest": "sha256:61480ed8530636d46f0bc87f0886bec1fe36c68f8dd0d60d07efb09b8e47afc9",
       "bytes": 2802
+    },
+    {
+      "dir": "agent-authority-scope-check",
+      "name": "agent-authority-scope-check",
+      "description": "Use when an agent or subagent requests a new capability and you need to prove its authority is inherited, scoped and unexpired.",
+      "intro": "Use when an agent or subagent requests a new capability and you need to prove its authority is inherited, scoped and unexpired.",
+      "whenToUse": [
+        "use when an agent or subagent requests a new capability and you need to prove its authority is inherited, scoped and unexpired.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_payment_authorization_chain",
+        "coreguard_verify_agent_authority_intersection",
+        "coreguard_verify_delegation_chain",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/agent-authority-scope-check/SKILL.md",
+      "digest": "sha256:2453eb776a5ff1b447088b5806b310f9e8487dcb420666d2aa3b9d53db966ed5",
+      "bytes": 1805
     },
     {
       "dir": "agent-purchase-guard",
@@ -120,6 +144,53 @@
       "bytes": 1452
     },
     {
+      "dir": "aml-alert-disposition-review",
+      "name": "aml-alert-disposition-review",
+      "description": "Use when reviewing a caller-supplied AML alert disposition packet for reviewer, rationale, timing and case linkage.",
+      "intro": "Use when reviewing a caller-supplied AML alert disposition packet for reviewer, rationale, timing and case linkage.",
+      "whenToUse": [
+        "use when reviewing a caller-supplied AML alert disposition packet for reviewer, rationale, timing and case linkage.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_aml_alert_disposition",
+        "coreguard_verify_evidence_bundle",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/aml-alert-disposition-review/SKILL.md",
+      "digest": "sha256:bf86970e405a8a6a735d3bdb44cb3959bafa46bc38d540e7da751646c2a5cac1",
+      "bytes": 1745
+    },
+    {
+      "dir": "bank-payment-ops",
+      "name": "bank-payment-ops",
+      "description": "Use when a bank payment notification and transfer evidence must be checked together before an operator posts it.",
+      "intro": "Use when a bank payment notification and transfer evidence must be checked together before an operator posts it.",
+      "whenToUse": [
+        "use when a bank payment notification and transfer evidence must be checked together before an operator posts it.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_camt054_notification",
+        "coreguard_verify_bank_transfer_evidence",
+        "coreguard_reconcile_multi_ledger",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/bank-payment-ops/SKILL.md",
+      "digest": "sha256:87c71579c6d0b435ee54c6660660276e07ed137c6a8cb6b741c70139295d9496",
+      "bytes": 1617
+    },
+    {
       "dir": "bank-transfer-evidence",
       "name": "bank-transfer-evidence",
       "description": "Use when verifying bank transfer evidence against an expected instruction in a fail-closed, offline workflow.",
@@ -139,6 +210,29 @@
       "path": "skills/bank-transfer-evidence/SKILL.md",
       "digest": "sha256:74f4ab5afc81ee8ae7d860b6f7078310160c5a9e6c2e0318ade60fccf464a0ed",
       "bytes": 1356
+    },
+    {
+      "dir": "beneficiary-change-defense",
+      "name": "beneficiary-change-defense",
+      "description": "Use when an executed payment shows a different beneficiary, account or bank than the approved instruction.",
+      "intro": "Use when an executed payment shows a different beneficiary, account or bank than the approved instruction.",
+      "whenToUse": [
+        "use when an executed payment shows a different beneficiary, account or bank than the approved instruction.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_beneficiary_change",
+        "coreguard_verify_swift_remittance_evidence",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/beneficiary-change-defense/SKILL.md",
+      "digest": "sha256:1648d70126a2a7409c1ca69f3b64e552a5e2b1e59cb7f56eb277328307703d41",
+      "bytes": 1652
     },
     {
       "dir": "bridge-transfer-risk",
@@ -162,6 +256,30 @@
       "bytes": 1373
     },
     {
+      "dir": "camt054-notification-check",
+      "name": "camt054-notification-check",
+      "description": "Use when a camt.054-like credit notification arrives and you need deterministic entry and balance checks before posting.",
+      "intro": "Use when a camt.054-like credit notification arrives and you need deterministic entry and balance checks before posting.",
+      "whenToUse": [
+        "use when a camt.054-like credit notification arrives and you need deterministic entry and balance checks before posting.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_camt054_notification",
+        "coreguard_verify_bank_transfer_evidence",
+        "coreguard_reconcile_multi_ledger",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/camt054-notification-check/SKILL.md",
+      "digest": "sha256:29d243a0d68b77dce2b7ba22487a5f41bc90ec26e69ece00cd84dbd92f599db7",
+      "bytes": 1675
+    },
+    {
       "dir": "collateral-packet-verification",
       "name": "collateral-packet-verification",
       "description": "Use when verifying collateral evidence packets for valuation, expiry, owner, and evidence digest before credit decisions.",
@@ -181,6 +299,54 @@
       "path": "skills/collateral-packet-verification/SKILL.md",
       "digest": "sha256:0c51cb61432e5c2ad8a87919eacbc655eafb1c6ae05f0a817e5fc6d2b21d1519",
       "bytes": 1382
+    },
+    {
+      "dir": "compliance-review-desk",
+      "name": "compliance-review-desk",
+      "description": "Use when assembling a human compliance review packet from travel-rule, AML and evidence-pack checks.",
+      "intro": "Use when assembling a human compliance review packet from travel-rule, AML and evidence-pack checks.",
+      "whenToUse": [
+        "use when assembling a human compliance review packet from travel-rule, AML and evidence-pack checks.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_travel_rule_packet",
+        "coreguard_verify_aml_alert_disposition",
+        "coreguard_export_evidence_pack",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/compliance-review-desk/SKILL.md",
+      "digest": "sha256:0c93d7c3226c88941cec1769dfb1a20ed95a6d93508740d2e892561e93bbfaf8",
+      "bytes": 1550
+    },
+    {
+      "dir": "coredao-delegation-evidence",
+      "name": "coredao-delegation-evidence",
+      "description": "Use when a Core DAO delegation or staking packet needs chain-id, validator and unbonding checks without RPC.",
+      "intro": "Use when a Core DAO delegation or staking packet needs chain-id, validator and unbonding checks without RPC.",
+      "whenToUse": [
+        "use when a Core DAO delegation or staking packet needs chain-id, validator and unbonding checks without RPC.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_coredao_delegation_evidence",
+        "coreguard_verify_coredao_settlement_evidence",
+        "coreguard_export_evidence_pack",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/coredao-delegation-evidence/SKILL.md",
+      "digest": "sha256:f74b566a4daa107b970e5965239b97e3cd7cf5a261fd0ec87dda55049810a347",
+      "bytes": 1656
     },
     {
       "dir": "coredao-settlement-evidence",
@@ -247,6 +413,30 @@
       "bytes": 1534
     },
     {
+      "dir": "cross-border-payment-review",
+      "name": "cross-border-payment-review",
+      "description": "Use when reviewing a cross-border payment end to end from canonical intent through corridor policy to reconciliation.",
+      "intro": "Use when reviewing a cross-border payment end to end from canonical intent through corridor policy to reconciliation.",
+      "whenToUse": [
+        "use when reviewing a cross-border payment end to end from canonical intent through corridor policy to reconciliation.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_canonicalize_payment_instruction",
+        "coreguard_verify_cross_border_instruction",
+        "coreguard_reconcile_multi_ledger",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/cross-border-payment-review/SKILL.md",
+      "digest": "sha256:dec96ad174336f045d35897dc6e3d86072ddc18258783fef889d2d88d81774a9",
+      "bytes": 1684
+    },
+    {
       "dir": "defi-position-risk",
       "name": "defi-position-risk",
       "description": "Use when monitoring DeFi positions from supplied snapshots for health factor, LTV, and oracle freshness. No onchain call.",
@@ -269,6 +459,30 @@
       "bytes": 1375
     },
     {
+      "dir": "erc4337-userop-evidence",
+      "name": "erc4337-userop-evidence",
+      "description": "Use when an ERC-4337 UserOperation packet needs sender, nonce, gas and paymaster checks before bundling by a human.",
+      "intro": "Use when an ERC-4337 UserOperation packet needs sender, nonce, gas and paymaster checks before bundling by a human.",
+      "whenToUse": [
+        "use when an ERC-4337 UserOperation packet needs sender, nonce, gas and paymaster checks before bundling by a human.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_erc4337_userop_evidence",
+        "coreguard_verify_evm_permit_evidence",
+        "coreguard_export_evidence_pack",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/erc4337-userop-evidence/SKILL.md",
+      "digest": "sha256:cef16ded8b4a9578e81dac9f53feba5a0271998d1511a346a508bdb8417eb33a",
+      "bytes": 1661
+    },
+    {
       "dir": "escrow-milestone-release",
       "name": "escrow-milestone-release",
       "description": "Use when verifying escrow milestone release conditions before approving release. No custody/broadcast.",
@@ -288,6 +502,54 @@
       "path": "skills/escrow-milestone-release/SKILL.md",
       "digest": "sha256:ccb01c0f27654b5ccf3beb6f4485368b6184c01885046159204686f633e08131",
       "bytes": 1335
+    },
+    {
+      "dir": "evidence-pack-export",
+      "name": "evidence-pack-export",
+      "description": "Use when a reviewer needs a redacted, digest-rooted pack of evidence items and nothing should be submitted automatically.",
+      "intro": "Use when a reviewer needs a redacted, digest-rooted pack of evidence items and nothing should be submitted automatically.",
+      "whenToUse": [
+        "use when a reviewer needs a redacted, digest-rooted pack of evidence items and nothing should be submitted automatically.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_export_evidence_pack",
+        "coreguard_attest_batch",
+        "coreguard_verify_evidence_bundle",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/evidence-pack-export/SKILL.md",
+      "digest": "sha256:eb5c9d8d73d71b551851ef23d20b46b32b00a371f2e51b5528b39a22e84026e7",
+      "bytes": 1645
+    },
+    {
+      "dir": "evm-permit-evidence",
+      "name": "evm-permit-evidence",
+      "description": "Use when an EVM permit/allowance packet must be checked for spender, value, deadline and nonce before an agent signs anything.",
+      "intro": "Use when an EVM permit/allowance packet must be checked for spender, value, deadline and nonce before an agent signs anything.",
+      "whenToUse": [
+        "use when an EVM permit/allowance packet must be checked for spender, value, deadline and nonce before an agent signs anything.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_evm_permit_evidence",
+        "coreguard_verify_web3_signature_evidence",
+        "coreguard_verify_token_approval_revocation",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/evm-permit-evidence/SKILL.md",
+      "digest": "sha256:451cbf203b6ac850126e2e06d479e7e3998069242962a4552cfb5881bba814d1",
+      "bytes": 1729
     },
     {
       "dir": "evm-settlement-evidence",
@@ -330,6 +592,52 @@
       "path": "skills/fx-quote-risk-gate/SKILL.md",
       "digest": "sha256:d88a344d87c1bca737b1d587ca6caee67def23463c7e32e1c11c403fe82e25e0",
       "bytes": 1366
+    },
+    {
+      "dir": "fx-rate-lock-verification",
+      "name": "fx-rate-lock-verification",
+      "description": "Use when an agent holds an FX quote and must prove the locked rate was still valid for the exact intent amount at a pinned time.",
+      "intro": "Use when an agent holds an FX quote and must prove the locked rate was still valid for the exact intent amount at a pinned time.",
+      "whenToUse": [
+        "use when an agent holds an FX quote and must prove the locked rate was still valid for the exact intent amount at a pinned time.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_fx_rate_lock",
+        "coreguard_assess_fx_quote_risk",
+        "coreguard_verify_execution",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/fx-rate-lock-verification/SKILL.md",
+      "digest": "sha256:e641a1bbd6306007e182060757e033b87e50678f911dec0f6923a56037de5ff8",
+      "bytes": 1722
+    },
+    {
+      "dir": "incident-escalation-packet",
+      "name": "incident-escalation-packet",
+      "description": "Use when a verification break must be escalated with a local war-room packet and exportable evidence.",
+      "intro": "Use when a verification break must be escalated with a local war-room packet and exportable evidence.",
+      "whenToUse": [
+        "use when a verification break must be escalated with a local war-room packet and exportable evidence.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_create_incident_war_room",
+        "coreguard_export_evidence_pack",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/incident-escalation-packet/SKILL.md",
+      "digest": "sha256:319ec8dd1c125eb7e211d65aa143e37895f8ad4b8bb149cf008e51c428576607",
+      "bytes": 1607
     },
     {
       "dir": "incident-freeze-drill",
@@ -377,6 +685,30 @@
       "bytes": 1358
     },
     {
+      "dir": "inference-receipt",
+      "name": "inference-receipt",
+      "description": "Use when an agent makes a model call and you need a deterministic receipt binding prompt, output, policy, cost and latency.",
+      "intro": "Use when an agent makes a model call and you need a deterministic receipt binding prompt, output, policy, cost and latency.",
+      "whenToUse": [
+        "use when an agent makes a model call and you need a deterministic receipt binding prompt, output, policy, cost and latency.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_create_inference_receipt",
+        "coreguard_redact_receipt",
+        "coreguard_export_evidence_pack",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/inference-receipt/SKILL.md",
+      "digest": "sha256:c951eacc3114da8b0067ec09dc9ecd94dfe388ca5d3ca82fa6d2d083bb9efa47",
+      "bytes": 1640
+    },
+    {
       "dir": "invoice-payment-reconciliation",
       "name": "invoice-payment-reconciliation",
       "description": "Use when you need deterministic 3-way style matching between invoice, payment evidence, and approval/receipt records.",
@@ -420,6 +752,30 @@
       "bytes": 1486
     },
     {
+      "dir": "kyc-evidence-gate",
+      "name": "kyc-evidence-gate",
+      "description": "Use when a counterparty supplies KYC evidence and you need a freshness/document gate without claiming a live KYC decision.",
+      "intro": "Use when a counterparty supplies KYC evidence and you need a freshness/document gate without claiming a live KYC decision.",
+      "whenToUse": [
+        "use when a counterparty supplies KYC evidence and you need a freshness/document gate without claiming a live KYC decision.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_kyc_evidence",
+        "coreguard_verify_ubo_evidence",
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/kyc-evidence-gate/SKILL.md",
+      "digest": "sha256:93bb1f27ddcc7fc8d1c0aa57d9697e73b01127a8aab75c003c35e04a9fba1cfa",
+      "bytes": 1723
+    },
+    {
       "dir": "loan-application-risk",
       "name": "loan-application-risk",
       "description": "Use when evaluating a loan application packet deterministically (DTI, amount, tenor) from caller-supplied data. No credit bureau decision.",
@@ -440,6 +796,78 @@
       "path": "skills/loan-application-risk/SKILL.md",
       "digest": "sha256:e3211feb091becc7e16c79e96a02ab50bc24c77e00d7d2509a8a576eaba04c0f",
       "bytes": 1427
+    },
+    {
+      "dir": "loan-file-evidence",
+      "name": "loan-file-evidence",
+      "description": "Use when a loan file needs deterministic checks on application metrics, collateral and ownership packets.",
+      "intro": "Use when a loan file needs deterministic checks on application metrics, collateral and ownership packets.",
+      "whenToUse": [
+        "use when a loan file needs deterministic checks on application metrics, collateral and ownership packets.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_assess_loan_application",
+        "coreguard_verify_collateral_packet",
+        "coreguard_verify_ubo_evidence",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/loan-file-evidence/SKILL.md",
+      "digest": "sha256:e3a60107d12a31cd88ed20297d96b3db34a7bd074dcf14e3be0e5629dbaaccf7",
+      "bytes": 1591
+    },
+    {
+      "dir": "machine-budget-lease",
+      "name": "machine-budget-lease",
+      "description": "Use when a robot or machine needs a scoped, time-bounded spending lease before it performs work.",
+      "intro": "Use when a robot or machine needs a scoped, time-bounded spending lease before it performs work.",
+      "whenToUse": [
+        "use when a robot or machine needs a scoped, time-bounded spending lease before it performs work.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_create_machine_budget_lease",
+        "coreguard_verify_machine_budget_consumption",
+        "coreguard_meter_agent_usage",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/machine-budget-lease/SKILL.md",
+      "digest": "sha256:61cd835a8713a3a7ae86cfe5ea16c11b37a6f06bfe5e9d1769379d706c9b869d",
+      "bytes": 1617
+    },
+    {
+      "dir": "machine-economy-treasury",
+      "name": "machine-economy-treasury",
+      "description": "Use when metering agent usage, budgeting machine spend and checking runway for a machine-economy deployment.",
+      "intro": "Use when metering agent usage, budgeting machine spend and checking runway for a machine-economy deployment.",
+      "whenToUse": [
+        "use when metering agent usage, budgeting machine spend and checking runway for a machine-economy deployment.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_create_machine_budget_lease",
+        "coreguard_meter_agent_usage",
+        "coreguard_budget_runway",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/machine-economy-treasury/SKILL.md",
+      "digest": "sha256:97b4d7bb84486e3d51558869f344dd46c78d361b7cc50f66e8298747dbbbc4a9",
+      "bytes": 1577
     },
     {
       "dir": "machine-sla-assessment",
@@ -485,6 +913,31 @@
       "path": "skills/machine-to-machine-micropayments/SKILL.md",
       "digest": "sha256:87816984174eeac180b48b0f9333f23584a6807b3589a2a8daed998a62934b0e",
       "bytes": 1449
+    },
+    {
+      "dir": "mcp-listing-readiness",
+      "name": "mcp-listing-readiness",
+      "description": "Use before publishing or listing an MCP server version to confirm the live tool surface, manifest and descriptions are current.",
+      "intro": "Use before publishing or listing an MCP server version to confirm the live tool surface, manifest and descriptions are current.",
+      "whenToUse": [
+        "use before publishing or listing an MCP server version to confirm the live tool surface, manifest and descriptions are current.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_describe_surface",
+        "coreguard_audit_server_manifest",
+        "coreguard_scan_tool_descriptions",
+        "coreguard_diff_tool_surface",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/mcp-listing-readiness/SKILL.md",
+      "digest": "sha256:957f61f84678c2675b7ba7fb9c5bb898bd8ebf4461f023ef0fbea8b420ff260e",
+      "bytes": 1767
     },
     {
       "dir": "mcp-server-due-diligence",
@@ -545,6 +998,30 @@
       "bytes": 1406
     },
     {
+      "dir": "mt103-field-review",
+      "name": "mt103-field-review",
+      "description": "Use when an MT103-like field map needs mandatory-tag and 32A shape checks before a human reviews the transfer.",
+      "intro": "Use when an MT103-like field map needs mandatory-tag and 32A shape checks before a human reviews the transfer.",
+      "whenToUse": [
+        "use when an MT103-like field map needs mandatory-tag and 32A shape checks before a human reviews the transfer.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_mt103_fields",
+        "coreguard_verify_swift_remittance_evidence",
+        "coreguard_verify_beneficiary_change",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/mt103-field-review/SKILL.md",
+      "digest": "sha256:dc9e196ec8ce69ba9d1f1fc1f12c96072cf5d345d0fed6e741beaa39b7185630",
+      "bytes": 1661
+    },
+    {
       "dir": "multi-chain-reconciliation",
       "name": "multi-chain-reconciliation",
       "description": "Use when reconciling payment evidence across Stellar, EVM, Core DAO, or Pi-supplied evidence packets.",
@@ -566,6 +1043,54 @@
       "path": "skills/multi-chain-reconciliation/SKILL.md",
       "digest": "sha256:fa02e5a0b66c6ede18a96eb241198b20ab10b26382aabd2f5cf0d820b74a229c",
       "bytes": 1478
+    },
+    {
+      "dir": "multi-ledger-reconciliation",
+      "name": "multi-ledger-reconciliation",
+      "description": "Use when payment, invoice and internal ledger records must be reconciled and the breaks named explicitly.",
+      "intro": "Use when payment, invoice and internal ledger records must be reconciled and the breaks named explicitly.",
+      "whenToUse": [
+        "use when payment, invoice and internal ledger records must be reconciled and the breaks named explicitly.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_reconcile_multi_ledger",
+        "coreguard_verify_invoice_match",
+        "coreguard_export_evidence_pack",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/multi-ledger-reconciliation/SKILL.md",
+      "digest": "sha256:12ef318235bc0888d4d805c1c16146e441d4c6055411aec521e4b8157c593367",
+      "bytes": 1625
+    },
+    {
+      "dir": "onchain-settlement-review",
+      "name": "onchain-settlement-review",
+      "description": "Use when settlement evidence spans Stellar, EVM and Core DAO and must be checked on one deterministic surface.",
+      "intro": "Use when settlement evidence spans Stellar, EVM and Core DAO and must be checked on one deterministic surface.",
+      "whenToUse": [
+        "use when settlement evidence spans Stellar, EVM and Core DAO and must be checked on one deterministic surface.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_path_payment",
+        "coreguard_verify_evm_permit_evidence",
+        "coreguard_verify_coredao_delegation_evidence",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/onchain-settlement-review/SKILL.md",
+      "digest": "sha256:980802f1392daeb7b7c66ef0dbad051dc8b9756f0684d9b66ccf434b86b60aa0",
+      "bytes": 1598
     },
     {
       "dir": "payment-compliance-packet",
@@ -613,6 +1138,54 @@
       "bytes": 1412
     },
     {
+      "dir": "payment-intent-canonicalization",
+      "name": "payment-intent-canonicalization",
+      "description": "Use when an agent is about to approve a payment instruction and you need a canonical, digest-bound object before any consent receipt is issued.",
+      "intro": "Use when an agent is about to approve a payment instruction and you need a canonical, digest-bound object before any consent receipt is issued.",
+      "whenToUse": [
+        "use when an agent is about to approve a payment instruction and you need a canonical, digest-bound object before any consent receipt is issued.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_canonicalize_payment_instruction",
+        "coreguard_authorize",
+        "coreguard_verify_cross_border_instruction",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/payment-intent-canonicalization/SKILL.md",
+      "digest": "sha256:d0956a32e25c5259d4c5762decd6c6c5d1396ef7d3b3643bb2b1905ea984b590",
+      "bytes": 1877
+    },
+    {
+      "dir": "pi-attestation-chain",
+      "name": "pi-attestation-chain",
+      "description": "Use when a Pi payment attestation chain must be checked for digest linkage and root agreement.",
+      "intro": "Use when a Pi payment attestation chain must be checked for digest linkage and root agreement.",
+      "whenToUse": [
+        "use when a Pi payment attestation chain must be checked for digest linkage and root agreement.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_pi_attestation_chain",
+        "coreguard_verify_pi_payment_evidence",
+        "coreguard_export_evidence_pack",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/pi-attestation-chain/SKILL.md",
+      "digest": "sha256:aced2aeacbe53df33744d515302438574817eded0be391d60f1ace1724c084c5",
+      "bytes": 1566
+    },
+    {
       "dir": "pi-payment-evidence",
       "name": "pi-payment-evidence",
       "description": "Use when verifying caller-supplied Pi Network payment evidence packets. Attested/mock evidence only; no live Pi API.",
@@ -651,6 +1224,54 @@
       "path": "skills/receipt-forensics/SKILL.md",
       "digest": "sha256:ab4b3d293079af30521a1c67b5d1ef0c6ede3e455e54ac2d19c73752b44f4627",
       "bytes": 2640
+    },
+    {
+      "dir": "robot-fleet-ops",
+      "name": "robot-fleet-ops",
+      "description": "Use when a robot fleet needs mission receipts, handoff chains and SLA evidence reviewed together.",
+      "intro": "Use when a robot fleet needs mission receipts, handoff chains and SLA evidence reviewed together.",
+      "whenToUse": [
+        "use when a robot fleet needs mission receipts, handoff chains and SLA evidence reviewed together.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_create_robot_mission_receipt",
+        "coreguard_verify_robot_handoff_chain",
+        "coreguard_assess_machine_sla",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/robot-fleet-ops/SKILL.md",
+      "digest": "sha256:374ecece26957635b8a053c0328106792f3933f60be3a03faf398d86e1b2ea2d",
+      "bytes": 1554
+    },
+    {
+      "dir": "robot-handoff-chain",
+      "name": "robot-handoff-chain",
+      "description": "Use when a robot task is handed from one machine to another and you need continuity and digest-linkage checks.",
+      "intro": "Use when a robot task is handed from one machine to another and you need continuity and digest-linkage checks.",
+      "whenToUse": [
+        "use when a robot task is handed from one machine to another and you need continuity and digest-linkage checks.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_robot_handoff_chain",
+        "coreguard_verify_robot_mission_evidence",
+        "coreguard_assess_machine_sla",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/robot-handoff-chain/SKILL.md",
+      "digest": "sha256:51bd3067562e64500fcfed91bf9c62bd41760b10dc5f8fa507bd184b6067fcc5",
+      "bytes": 1614
     },
     {
       "dir": "robot-mission-evidence",
@@ -716,6 +1337,30 @@
       "bytes": 1441
     },
     {
+      "dir": "sanctions-list-version-gate",
+      "name": "sanctions-list-version-gate",
+      "description": "Use when a screening result cites a list version and you need to check the stamped version and age without downloading a list.",
+      "intro": "Use when a screening result cites a list version and you need to check the stamped version and age without downloading a list.",
+      "whenToUse": [
+        "use when a screening result cites a list version and you need to check the stamped version and age without downloading a list.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_sanctions_list_version",
+        "coreguard_assess_sanctions_screening_evidence",
+        "coreguard_export_evidence_pack",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/sanctions-list-version-gate/SKILL.md",
+      "digest": "sha256:acaa58b7b976a89d2ea30bc97301a235f63f82d9a8ce38d4d0ee36caa9ed930f",
+      "bytes": 1714
+    },
+    {
       "dir": "stablecoin-reserve-evidence",
       "name": "stablecoin-reserve-evidence",
       "description": "Use when evaluating caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy.",
@@ -735,6 +1380,30 @@
       "path": "skills/stablecoin-reserve-evidence/SKILL.md",
       "digest": "sha256:9e6d88392f6768968f362f5f1133b17f5795d52f9ccab4f3db0098db9c4ae683",
       "bytes": 1398
+    },
+    {
+      "dir": "stellar-path-payment-evidence",
+      "name": "stellar-path-payment-evidence",
+      "description": "Use when a Stellar path-payment receipt needs structural verification without a Horizon call.",
+      "intro": "Use when a Stellar path-payment receipt needs structural verification without a Horizon call.",
+      "whenToUse": [
+        "use when a Stellar path-payment receipt needs structural verification without a Horizon call.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_path_payment",
+        "coreguard_verify_stellar_settlement_evidence",
+        "coreguard_reconcile_multi_ledger",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-path-payment-evidence/SKILL.md",
+      "digest": "sha256:08df67aa336cbc59d229dceebf0a27c2c3f2c756fa4634ce1183f404a448872c",
+      "bytes": 1628
     },
     {
       "dir": "stellar-settlement-evidence",
@@ -780,6 +1449,29 @@
       "bytes": 1490
     },
     {
+      "dir": "token-allowance-revocation",
+      "name": "token-allowance-revocation",
+      "description": "Use when cleaning up token approvals and you need evidence that a previous allowance was reduced to zero.",
+      "intro": "Use when cleaning up token approvals and you need evidence that a previous allowance was reduced to zero.",
+      "whenToUse": [
+        "use when cleaning up token approvals and you need evidence that a previous allowance was reduced to zero.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_token_approval_revocation",
+        "coreguard_verify_evm_settlement_evidence",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/token-allowance-revocation/SKILL.md",
+      "digest": "sha256:c3604035dfb1d2ccdaeceebd58ad13c551091fa0929a8e94ac0c3af9db27b68a",
+      "bytes": 1674
+    },
+    {
       "dir": "tool-poisoning-triage",
       "name": "tool-poisoning-triage",
       "description": "Use when tool descriptions or prompts look off, arrive from an untrusted MCP server, or an agent starts behaving as if it received instructions the user never gave.",
@@ -818,6 +1510,78 @@
       "path": "skills/tool-surface-drift-watch/SKILL.md",
       "digest": "sha256:1c92e202ddc60aa28b6b278cb66c073731d7ca53bc9a5405a7a8817d1a793d98",
       "bytes": 2525
+    },
+    {
+      "dir": "travel-rule-packet-check",
+      "name": "travel-rule-packet-check",
+      "description": "Use when a cross-border transfer needs a travel-rule packet reviewed for completeness before any human sends it.",
+      "intro": "Use when a cross-border transfer needs a travel-rule packet reviewed for completeness before any human sends it.",
+      "whenToUse": [
+        "use when a cross-border transfer needs a travel-rule packet reviewed for completeness before any human sends it.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_travel_rule_packet",
+        "coreguard_verify_cross_border_instruction",
+        "coreguard_export_evidence_pack",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/travel-rule-packet-check/SKILL.md",
+      "digest": "sha256:2bcaba13a25e44d8c72672027788fe207991f02978b3ada363805c64d5103309",
+      "bytes": 1647
+    },
+    {
+      "dir": "ubo-packet-verification",
+      "name": "ubo-packet-verification",
+      "description": "Use when you receive a beneficial-ownership packet and need deterministic checks on ownership sums and disclosure thresholds.",
+      "intro": "Use when you receive a beneficial-ownership packet and need deterministic checks on ownership sums and disclosure thresholds.",
+      "whenToUse": [
+        "use when you receive a beneficial-ownership packet and need deterministic checks on ownership sums and disclosure thresholds.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_ubo_evidence",
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_export_evidence_pack",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/ubo-packet-verification/SKILL.md",
+      "digest": "sha256:7641ac995f505afe6e1e5ad8db1253da3f8d4bc1823e384a6dbb4331bf6b12c8",
+      "bytes": 1744
+    },
+    {
+      "dir": "web3-approval-safety",
+      "name": "web3-approval-safety",
+      "description": "Use when an agent holds token approvals and you need permit, revocation and signature evidence reviewed together.",
+      "intro": "Use when an agent holds token approvals and you need permit, revocation and signature evidence reviewed together.",
+      "whenToUse": [
+        "use when an agent holds token approvals and you need permit, revocation and signature evidence reviewed together.",
+        "When outputs must be fail-closed and auditable.",
+        "When you need evidence for a human decision, not an automatic execution.",
+        "When a claim must stay inside a caller-supplied, offline boundary."
+      ],
+      "tools": [
+        "coreguard_verify_evm_permit_evidence",
+        "coreguard_verify_token_approval_revocation",
+        "coreguard_verify_web3_signature_evidence",
+        "coreguard_create_incident_war_room",
+        "coreguard_freeze_agent",
+        "coreguard_audit_transaction"
+      ],
+      "boundaries": "",
+      "path": "skills/web3-approval-safety/SKILL.md",
+      "digest": "sha256:97bc4bbd514809935fe538a90f9f25c99489edc2ebabeea98edad3ccd1096ae0",
+      "bytes": 1599
     },
     {
       "dir": "web3-signature-evidence",
