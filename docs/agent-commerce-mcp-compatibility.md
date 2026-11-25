@@ -46,7 +46,8 @@ Add an entry only after an actual run. Include evidence (command output snippet,
 | 2026-11-22 | agent session | Clean `npm i @coreguard/agent-commerce@0.1.3` + raw stdio | npm `@coreguard/agent-commerce@0.1.3` | **CI-SMOKE PASS** | install + initialize transcript | Published artifact (not the workspace): `serverInfo.version` `0.1.3`, 10 tools listed, `control-plane*.mjs` present. |
 | 2026-11-22 | agent session | Claude Code CLI 2.1.329 | `@coreguard/agent-commerce` (user scope) | **CONFIG-REGISTERED** | `claude mcp add --scope user …` then `claude mcp list` → `✔ Connected` | The client connected to the stdio server over its own transport; no model turn or tool call ran (no signed-in session), so this is **not** a RUN-BY-HAND. |
 | 2026-11-22 | agent session | Claude Code CLI 2.1.329 | n/a | **BLOCKED** | `claude -p` → “Not logged in · Please run /login” | CLI is installed in this environment but has no account session; no client run is claimed. |
-| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.3.0` (prepared; publish pending) | PENDING |  | Needs a signed-in session to exercise the 70 tools after publication; connection alone is already recorded above. |
+| 2026-11-25 | agent session | Published npm artifact + raw stdio (`npx -y -p @coreguard/agent-commerce@0.3.0 coreguard-agent-commerce-mcp`) | npm `@coreguard/agent-commerce@0.3.0` | **ARTIFACT RE-READ** | `initialize` `0.3.0`, `tools/list` 70 tools | Published artifact, not the workspace; not a third-party client run. |
+| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.3.0` (published) | PENDING |  | Needs a signed-in session to exercise the 70 tools; connection alone is not a RUN-BY-HAND. |
 
 ## Minimum acceptance for a "RUN-BY-HAND" entry
 

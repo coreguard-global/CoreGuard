@@ -102,7 +102,7 @@ Paste-ready per-tool reference, with every example executed against the shipped 
 
 ## 7. Releases
 
-**0.3.0 is prepared in-repo (not published by this message).** The version is bumped in `package.json`, `server.json`, and lockfile; surface docs are regenerated for **70 tools / 40 skills**. Publish through the gated release workflow, confirm npm + MCP Registry report `0.3.0`, then update MCPRush Studio listing/release/tool surface/rescan as needed.
+**0.3.0 is published.** Gated release run `45688325860` completed; npm `latest` = `0.3.0`, MCP Registry `io.github.EslaM-X/coreguard-agent-commerce@0.3.0` is active and `isLatest`, and the published npm artifact re-reads at `0.3.0` / 70 tools. MCPRush Studio still requires the owner clicks in §10 — this repository cannot edit the listing.
 
 ## 8. README badge
 
@@ -131,8 +131,8 @@ Use the numbers as they are printed by those commands, and do not add a percenta
 
 ## 10. Owner-only clicks (this repository cannot perform them)
 
-- [ ] Publish `0.3.0` through the gated release workflow (run with `confirm=RELEASE`) and confirm npm + MCP Registry report `0.3.0` active/latest.
-- [ ] Confirm `npx -y @coreguard/agent-commerce@0.3.0` reports `0.3.0` and `tools/list` returns 70 tools (owner/clean environment).
+- [x] Publish `0.3.0` through the gated release workflow (run `45688325860`) and confirm npm + MCP Registry report `0.3.0` active/latest.
+- [x] Confirm the published npm artifact reports `0.3.0` and `tools/list` returns 70 tools (`npx -y -p @coreguard/agent-commerce@0.3.0 coreguard-agent-commerce-mcp`, agent-session re-read; owner may repeat in a clean environment).
 - [ ] In MCPRush Studio after 0.3.0 is live: update listing copy, add release `0.3.0`, re-read Tool surface to **70 tools**, and request rescan only if needed (once/day).
 - [ ] Tell the agent-skills pack (`skills/`) to the integration story: 40 skills, each a folder with `SKILL.md`.
 - [ ] In the studio: save the listing copy from §2, confirm sign-in/keys from §3, cut the release so the tool surface re-reads.

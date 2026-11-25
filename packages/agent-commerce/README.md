@@ -12,7 +12,7 @@ bytes approved, and for verifying any executed trace against that receipt.
 - **Fail-closed execution verification** — a consent plus an executed trace
   yields a verdict with named drift classes (AGR/1 taxonomy); incomplete or
   ambiguous evidence is never treated as a pass.
-- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing forty-six tools,
+- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing 70 tools,
   all offline, all deterministic, zero keys.
 
 MIT. Node ≥ 18. No network calls, no stored credentials, no wall clock.
@@ -349,7 +349,7 @@ License: MIT.
 
 ## Release readiness / MCPRush evidence
 
-- **Release notes:** `docs/releases/0.2.1.md` (latest) · `docs/releases/0.2.0.md`
+- **Release notes:** `docs/releases/0.3.0.md` (latest) · `docs/releases/0.2.1.md`
 - **Publish readiness checklist:** `docs/releases/0.1.3-publish-readiness.md`
 - **Security & threat model:** `docs/agent-commerce-mcp-security.md`
 - **Client compatibility matrix + run log:** `docs/agent-commerce-mcp-compatibility.md`

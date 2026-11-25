@@ -21,7 +21,7 @@ customer traction, or "downloads = active users".
 |---|---|---|---|
 | **1. Discovery** | A one-line reason to click | MCPRush listing; `server.json` (70 tools, stdio, npm identifier); package README; org profile announcement (merged) | Update listing version/metadata after npm publish |
 | **2. Trust** | Evidence they can re-run | `node examples/agent-commerce-mcp/run.mjs` (8/8); `node scripts/agent-commerce-mcp-smoke.mjs` (11/11, real stdio child); 11 MCP contract tests; security model; compatibility matrix with an honest Run Log | Paste the smoke output + release-notes link into the listing; request a runtime scan on the live server |
-| **3. Activation** | A working call in under five minutes | `npx -y @coreguard/agent-commerce`; ten tool schemas with `inputSchema`/`outputSchema`; 60-second demo (approve → refuse); client config snippets | Publish `0.1.3`, then record the first real RUN-BY-HAND in the compatibility log |
+| **3. Activation** | A working call in under five minutes | `npx -y -p @coreguard/agent-commerce@0.3.0 coreguard-agent-commerce-mcp`; 70 tool schemas with `inputSchema`/`outputSchema`; 60-second demo (approve → refuse); client config snippets | `0.3.0` published; record the first real RUN-BY-HAND in the compatibility log |
 | **4. Depth** | A reason to keep it beyond one call | Control plane: versioned policies, approvals bound to one order, rolling spend caps, revocation, hash-chained audit, HTTP API + CLI, 8/8 offline demo | Link the control-plane architecture/runbook from the listing |
 | **5. Conversion** | A bounded next step | Pilot SOW + report template; integration offer scoped by SOW; no hosted enterprise claim | Offer a design-partner pilot: bring sanitised traces/receipts, get a verification integration and a report |
 
@@ -47,9 +47,9 @@ No revenue is claimed. Pricing stays LOCKED and unpublished until an owner decis
 
 ## Launch checklist (post-publish, owner)
 
-- [ ] `npm publish` `@coreguard/agent-commerce@0.3.0` from the version-bump commit via the gated release workflow.
-- [ ] Verify `npx -y @coreguard/agent-commerce@0.1.3`: `initialize` reports `0.3.0`,
-      `tools/list` returns 70 tools with schemas.
+- [x] `@coreguard/agent-commerce@0.3.0` published from the version-bump commit via gated release run `45688325860`.
+- [x] Verify the published artifact: `npx -y -p @coreguard/agent-commerce@0.3.0 coreguard-agent-commerce-mcp` reports `0.3.0`,
+      `tools/list` returns 70 tools with schemas (agent-session re-read).
 - [ ] Update MCPRush: version, package id, 70-tool description, links to security model,
       release notes, compatibility run log, control-plane docs, 60s demo.
 - [ ] Request runtime scan on the live MCP server; keep the result as evidence, not a badge
