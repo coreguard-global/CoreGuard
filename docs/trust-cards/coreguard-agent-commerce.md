@@ -1,4 +1,4 @@
-# Trust card — io.github.EslaM-X/coreguard-agent-commerce 0.2.0
+# Trust card — io.github.EslaM-X/coreguard-agent-commerce 0.2.1
 
 > **Verdict: PASS** · manifest risk `low` · tool descriptions `CLEAN` · 46 tools
 >
@@ -7,11 +7,11 @@
 | Field | Value |
 |---|---|
 | Server | io.github.EslaM-X/coreguard-agent-commerce |
-| Version | `0.2.0` |
+| Version | `0.2.1` |
 | Transport | package |
 | Tools | 46 — `sha256:6bc58aef58e80355e3defa15754d2057ef68a9382d1f85cc7d74d210d0c70803` |
-| Manifest digest | `sha256:d319ee1f2955c59e18190a89b7c350a9c006cea033e4ac8b0790b7de40cd66d0` |
-| Card digest | `sha256:c0c8ab49202a38b1ada59aed3ee0862b822f3ebb8aebf767ba892667b9246e63` |
+| Manifest digest | `sha256:3bef86d3ec2f54ff4ba212252231474bf8d8bc31540096e3b67681fd0b1d1efc` |
+| Card digest | `sha256:0999a2984ece772bffc05eaaae806a265889e65e3eb866c460940975182eea9e` |
 | Sources | record: `packages/agent-commerce/server.json` · tools: `docs/trust-cards/sources/coreguard-tools-list.json` |
 | Card date | `2026-11-25` |
 
@@ -106,5 +106,5 @@ Same inputs and same `--date` produce the same card digest. Verify it by re-runn
 
 <!-- paste-ready summary for a listing page -->
 
-> **Trust card:** PASS · manifest risk `low` · tool descriptions `CLEAN` · 46 tools · card `sha256:c0c8ab49202a38b1ada59aed3ee0862b822f3ebb8aebf767ba892667b9246e63`
+> **Trust card:** PASS · manifest risk `low` · tool descriptions `CLEAN` · 46 tools · card `sha256:0999a2984ece772bffc05eaaae806a265889e65e3eb866c460940975182eea9e`
 > Structural audit by CoreGuard (CG-TC/1) from the server record and a live `tools/list`. PASS ≠ SAFE.

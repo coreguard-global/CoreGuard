@@ -1,6 +1,8 @@
-# MCPRush listing — copy-paste sheet (0.2.0)
+# MCPRush listing — copy-paste sheet (0.2.1)
 
 Everything below is written to be pasted into the studio at `mcprush.com/studio#manage`. Where a value is factual it is measured in this repository; where it is a choice, the choice is named. Nothing here claims installs, revenue, users, partnership or an audit.
+
+**Why 0.2.1:** a patch on 0.2.0 with no new tools. Four Wave 3 behaviours were fixed after the strict test file proved them wrong: `compile_policy` normalises selectors/currency before digesting, `scan_tool_descriptions` reports the start index of astral characters, `check_lookalike` decodes `xn--` labels (RFC 3492), and `freeze_agent` reports already-approved approvals as superseded instead of claiming a rejection the ledger cannot record. Release notes: [docs/releases/0.2.1.md](./releases/0.2.1.md). The tool surface stays **46**, offline, deterministic, zero-key.
 
 **Why 0.2.0:** the server grew from 26 to **46 tools** and now ships **10 agent skills**. Wave 3 (CG-W3/1) adds policy reasoning with counterfactuals, MCP supply-chain auditing (manifest risk cards, tool-poisoning scans, rug-pull diffs, lookalike checks), evidence tooling (redaction, Merkle batch attestation, bundle verification), and operations (freeze, runway, anomaly scan, incident timeline). Everything stays offline, deterministic, zero-key. `server.json` ships in the tarball and the description stays inside the registry's 100-character limit.
 
@@ -63,7 +65,7 @@ That is accurate and worth keeping: the server reads no environment variable at 
 ## 5. Tool surface
 
 <!-- generated: mcp-surface — run `npm run docs:surface`, do not edit -->
-**Generated from `tools/list`** — server `coreguard-agent-commerce@0.2.0`, protocol `2025-06-18`, **46 tools**, tools digest `sha256:d785db585c6ad5b9e59f53894c21f32739b01d4334fa218de697d89010bf7112`.
+**Generated from `tools/list`** — server `coreguard-agent-commerce@0.2.1`, protocol `2025-06-18`, **46 tools**, tools digest `sha256:d785db585c6ad5b9e59f53894c21f32739b01d4334fa218de697d89010bf7112`.
 
 | Group | Tools |
 |---|---|
@@ -75,14 +77,14 @@ That is accurate and worth keeping: the server reads no environment variable at 
 
 **Quoted capability card** (from `coreguard_describe_surface`; full JSON in [`docs/mcprush/CAPABILITY-CARD.md`](./mcprush/CAPABILITY-CARD.md)):
 
-> coreguard-agent-commerce 0.2.0 — 46 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
+> coreguard-agent-commerce 0.2.1 — 46 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
 
 **Badge:** ![MCP tools: 46](./assets/badges/mcp-tools.svg)
 <!-- /generated: mcp-surface -->
 
 **Trust card** (CG-TC/1) — generated from the published `server.json` and a live `tools/list`, re-runnable with `npm run trust:cards:check`:
 
-> **Trust card:** PASS · manifest risk `low` · tool descriptions `CLEAN` · 46 tools · card `sha256:c0c8ab49202a38b1ada59aed3ee0862b822f3ebb8aebf767ba892667b9246e63`
+> **Trust card:** PASS · manifest risk `low` · tool descriptions `CLEAN` · 46 tools · card `sha256:0999a2984ece772bffc05eaaae806a265889e65e3eb866c460940975182eea9e`
 > Structural audit by CoreGuard (CG-TC/1) from the server record and a live `tools/list`. PASS ≠ SAFE.
 
 Full card: [trust-cards/coreguard-agent-commerce.md](./trust-cards/coreguard-agent-commerce.md) · machine-readable sidecar: [trust-cards/coreguard-agent-commerce.json](./trust-cards/coreguard-agent-commerce.json). The same command works on any server record: see [TRUST-CARD.md](./TRUST-CARD.md), the third-party example [filesystem-mcp.md](./trust-cards/filesystem-mcp.md), and the blocked [poisoned fixture](./trust-cards/examples/poisoned-fixture.md).
@@ -100,7 +102,7 @@ Paste-ready per-tool reference, with every example executed against the shipped 
 
 ## 7. Releases
 
-0.2.0 is published (`@coreguard/agent-commerce@0.2.0`, npm tarball includes `server.json` and `wave3.mjs`, MCP Registry `0.2.0` active/latest). After the MCPRush studio refresh, the listing's release row should read `stable 0.2.0` and the tool surface **46**. Re-scan the grade only if the scan is older than the new tarball; the badge on the page is the last scan on record, not a review.
+0.2.0 is published (`@coreguard/agent-commerce@0.2.0`, npm tarball includes `server.json` and `wave3.mjs`, MCP Registry `0.2.0` active/latest). **0.2.1 is prepared, not yet published:** the version is bumped in `package.json`, `server.json` and the lockfile, release notes are in [releases/0.2.1.md](./releases/0.2.1.md), and the publish is the owner's gated workflow run. After it succeeds, the listing's release row should read `stable 0.2.1` with the tool surface **46**; re-scan the grade only if the scan is older than the new tarball, and remember the badge is the last scan on record, not a review.
 
 ## 8. README badge
 
@@ -122,6 +124,7 @@ That is the live badge code, not a screenshot of a grade. The studio's "Get the 
 | Observation family on the same set and digest | `node scripts/aer1-observation-join.mjs --check` → `docs/AER1-OBSERVATION-JOIN.md` |
 | Offline demo, approve then refuse | `node examples/agent-commerce-mcp/run.mjs` |
 | Trust card: manifest findings, poisoned-tool scan, inventory, digests | `npm run trust:cards:check` → `docs/trust-cards/*.md` |
+| 0.2.1 behaviour fixes: normalisation, astral offsets, punycode, freeze honesty | `node --test test/integrations/agent-commerce-wave3.test.mjs` → `docs/releases/0.2.1.md` |
 | 10 skills: when to use, tools each calls, per-skill install line, file digests | `npm run docs:surface:check` → `docs/SKILLS.html` + `docs/skills.json` |
 
 Use the numbers as they are printed by those commands, and do not add a percentage, a user count or a revenue figure — none of them is measured anywhere.
@@ -131,6 +134,8 @@ Use the numbers as they are printed by those commands, and do not add a percenta
 - [x] Publish `0.1.5` through the gated release workflow. npm publish succeeded and the MCP Registry was updated to `0.1.5` active/latest.
 - [ ] Publish `0.2.0` through the gated release workflow and confirm the MCP Registry reports `0.2.0` active/latest.
 - [ ] Confirm `npx -y @coreguard/agent-commerce@0.2.0` reports `0.2.0` and `tools/list` returns 46 tools (owner/clean environment).
+- [ ] Publish `0.2.1` through the gated release workflow (run with `confirm=RELEASE`) and confirm npm + the MCP Registry report `0.2.1`.
+- [ ] In the studio after 0.2.1 is live: **Releases → Add new release → MCP server**, version `0.2.1`, paste the four fixes, **Publish**; then **MCP Servers → Manage → Tool surface** to re-read the 46 tools; then **Manage → Security → Request a rescan** only if the grade should move (once a day per listing).
 - [ ] Tell the agent-skills pack (`skills/`) to the integration story: 10 skills, each a folder with `SKILL.md`.
 - [ ] In the studio: save the listing copy from §2, confirm sign-in/keys from §3, cut the release so the tool surface re-reads.
 - [ ] If the grade is stale relative to the new tarball, request the once-a-day rescan; the grade is deterministic and re-runnable, so a rescan is a measurement, not an appeal.

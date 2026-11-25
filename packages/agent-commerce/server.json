@@ -6,12 +6,12 @@
     "url": "https://github.com/coreguard-global/CoreGuard",
     "source": "github"
   },
-  "version": "0.2.0",
+  "version": "0.2.1",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@coreguard/agent-commerce",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "transport": {
         "type": "stdio"
       }

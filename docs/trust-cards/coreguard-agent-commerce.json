@@ -2,7 +2,7 @@
   "spec": "CG-TC/1",
   "server": {
     "name": "io.github.EslaM-X/coreguard-agent-commerce",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "transport": "package"
   },
   "verdict": "PASS",
@@ -12,7 +12,7 @@
     "tools": true
   },
   "manifest": {
-    "digest": "sha256:d319ee1f2955c59e18190a89b7c350a9c006cea033e4ac8b0790b7de40cd66d0",
+    "digest": "sha256:3bef86d3ec2f54ff4ba212252231474bf8d8bc31540096e3b67681fd0b1d1efc",
     "risk": "low",
     "findings": [],
     "counts": {
@@ -41,7 +41,7 @@
     "manifest": "packages/agent-commerce/server.json",
     "tools": "docs/trust-cards/sources/coreguard-tools-list.json"
   },
-  "cardDigest": "sha256:c0c8ab49202a38b1ada59aed3ee0862b822f3ebb8aebf767ba892667b9246e63",
+  "cardDigest": "sha256:0999a2984ece772bffc05eaaae806a265889e65e3eb866c460940975182eea9e",
   "date": "2026-11-25",
   "boundary": "structural audit only; executes nothing; PASS ≠ SAFE"
 }

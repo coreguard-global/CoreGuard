@@ -7,7 +7,7 @@
   ],
   "server": {
     "name": "coreguard-agent-commerce",
-    "version": "0.2.0"
+    "version": "0.2.1"
   },
   "protocolVersion": "2025-06-18",
   "toolCount": 46,
@@ -16,7 +16,7 @@
     "type": "capability_card",
     "spec": "CG-CC/1",
     "server": "coreguard-agent-commerce",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "protocolVersion": "2025-06-18",
     "transport": "stdio (newline-delimited JSON-RPC 2.0)",
     "tools": 46,
@@ -41,7 +41,7 @@
     "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment.",
     "key": "offline · deterministic · zero keys · no custody · no broadcast · VERIFIED ≠ SAFE"
   },
-  "badge": "coreguard-agent-commerce 0.2.0 · 46 tools · offline · deterministic",
+  "badge": "coreguard-agent-commerce 0.2.1 · 46 tools · offline · deterministic",
   "skills": {
     "count": 10,
     "names": [

@@ -5,11 +5,11 @@ machine-readable form of this exact call result; paste the block below into a
 listing, review or buyer package instead of typing a version or a tool count.
 
 **Call:** `tools/call coreguard_describe_surface { "format": "card" }` against
-`coreguard-agent-commerce@0.2.0`.
+`coreguard-agent-commerce@0.2.1`.
 
 **One-line quote:**
 
-> coreguard-agent-commerce 0.2.0 — 46 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
+> coreguard-agent-commerce 0.2.1 — 46 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
 
 **Badge markdown:**
 
@@ -29,7 +29,7 @@ listing, review or buyer package instead of typing a version or a tool count.
   ],
   "server": {
     "name": "coreguard-agent-commerce",
-    "version": "0.2.0"
+    "version": "0.2.1"
   },
   "protocolVersion": "2025-06-18",
   "toolCount": 46,
@@ -38,7 +38,7 @@ listing, review or buyer package instead of typing a version or a tool count.
     "type": "capability_card",
     "spec": "CG-CC/1",
     "server": "coreguard-agent-commerce",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "protocolVersion": "2025-06-18",
     "transport": "stdio (newline-delimited JSON-RPC 2.0)",
     "tools": 46,
@@ -63,7 +63,7 @@ listing, review or buyer package instead of typing a version or a tool count.
     "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment.",
     "key": "offline · deterministic · zero keys · no custody · no broadcast · VERIFIED ≠ SAFE"
   },
-  "badge": "coreguard-agent-commerce 0.2.0 · 46 tools · offline · deterministic",
+  "badge": "coreguard-agent-commerce 0.2.1 · 46 tools · offline · deterministic",
   "skills": {
     "count": 10,
     "names": [

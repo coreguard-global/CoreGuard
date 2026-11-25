@@ -1,6 +1,6 @@
 # CoreGuard Agent Commerce — MCP tool reference
 
-Paste-ready reference for the MCP directory listing. Package `@coreguard/agent-commerce@0.2.0`, server `io.github.EslaM-X/coreguard-agent-commerce`, transport **stdio**, protocol `2025-06-18`.
+Paste-ready reference for the MCP directory listing. Package `@coreguard/agent-commerce@0.2.1`, server `io.github.EslaM-X/coreguard-agent-commerce`, transport **stdio**, protocol `2025-06-18`.
 
 Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.mjs`. Every example arguments block below was executed against that server when this page was built; the shown result is the real response (long consent payloads abridged where marked).
 
@@ -392,7 +392,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
 {
   "manifest": {
     "name": "io.github.EslaM-X/coreguard-agent-commerce",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Fail-closed consent receipts and execution verification for agentic purchases. 46 MCP tools.",
     "repository": {
       "url": "https://github.com/coreguard-global/CoreGuard",
@@ -402,7 +402,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
       {
         "registryType": "npm",
         "identifier": "@coreguard/agent-commerce",
-        "version": "0.2.0",
+        "version": "0.2.1",
         "transport": {
           "type": "stdio"
         }
@@ -419,7 +419,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
   "type": "mcp_manifest_audit",
   "spec": "CG-MM/1",
   "serverName": "io.github.EslaM-X/coreguard-agent-commerce",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "transport": "package",
   "risk": "low",
   "findings": [],
@@ -430,7 +430,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
     "low": 0,
     "info": 0
   },
-  "manifestDigest": "sha256:8852e76841909b52aba7945cce2a21b155872efd364daf6c6dfb3176dedbd0cd",
+  "manifestDigest": "sha256:50e9ebeed538461bedbaeccd204a097f24f3ffc332af53480831874eef0f5571",
   "note": "structural audit of the record only — it does not execute the server or attest its behaviour",
   "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment."
 }
@@ -1760,7 +1760,7 @@ Return this server's capability card (or a one-line badge): version, transport, 
   "type": "capability_card",
   "spec": "CG-CC/1",
   "server": "coreguard-agent-commerce",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "protocolVersion": "2025-06-18",
   "transport": "stdio (newline-delimited JSON-RPC 2.0)",
   "tools": 46,
