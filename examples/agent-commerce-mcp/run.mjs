@@ -123,7 +123,7 @@ try {
   check("initialize reports the package version", /^[0-9]+\.[0-9]+\.[0-9]+/.test(init.result.serverInfo.version), init.result.serverInfo.version);
 
   const list = await request("tools/list", {});
-  check("forty-six tools, each with input and output schemas", list.result.tools.length === 46 && list.result.tools.every((t) => t.inputSchema && t.outputSchema), list.result.tools.map((t) => t.name).join(", "));
+  check("70 tools, each with input and output schemas", list.result.tools.length === 70 && list.result.tools.every((t) => t.inputSchema && t.outputSchema), list.result.tools.map((t) => t.name).join(", "));
 
   const authz = await call("coreguard_authorize", { intent: intent("47000"), policy: policy(), declaredTrace: trace("47000"), nowSeconds: NOW });
   const consent = authz.structuredContent;

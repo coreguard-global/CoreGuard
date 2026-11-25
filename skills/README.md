@@ -42,7 +42,7 @@ The skills assume the MCP server is registered:
 ```json
 {
   "mcpServers": {
-    "coreguard": { "command": "npx", "args": ["-y", "@coreguard/agent-commerce@0.2.1"] }
+    "coreguard": { "command": "npx", "args": ["-y", "@coreguard/agent-commerce@0.3.0"] }
   }
 }
 ```
