@@ -1,7 +1,7 @@
 # MCP Registry — Submission Record (post-publish truth sync)
 
 **Status:** listing published/active on **2026-11-18** (owner-authorized). This document retains the submission-pack context below and records the executed listing.  
-**Server implementation:** `packages/agent-commerce/mcp.mjs` (stdio, newline-delimited JSON-RPC 2.0). **Evidence context:** CI-pinned tests and demos on `main` (2168/2168, 1664 files/0 violations context; see `docs/state-snapshot.json`).
+**Server implementation:** `packages/agent-commerce/mcp.mjs` (stdio, newline-delimited JSON-RPC 2.0). **Evidence context:** CI-pinned tests and demos on `main` (2168/2168, 1665 files/0 violations context; see `docs/state-snapshot.json`).
 
 ## 0) Listing outcome (recorded)
 
