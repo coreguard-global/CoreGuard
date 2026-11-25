@@ -142,7 +142,7 @@ test("MCP initialize answers the pinned protocol version and server info", async
   });
 });
 
-test("tools/list exposes the 46 provider-independent tools with schemas", async () => {
+test("tools/list exposes the 70 provider-independent tools with schemas", async () => {
   await withServer(async ({ request }) => {
     await request("initialize", {});
     const res = await request("tools/list", {});
@@ -195,6 +195,30 @@ test("tools/list exposes the 46 provider-independent tools with schemas", async 
         "coreguard_translate_receipt",
         "coreguard_emit_test_vectors",
         "coreguard_describe_surface",
+        "coreguard_parse_iso20022_payment",
+        "coreguard_verify_cross_border_instruction",
+        "coreguard_assess_fx_quote_risk",
+        "coreguard_verify_swift_remittance_evidence",
+        "coreguard_verify_bank_transfer_evidence",
+        "coreguard_assess_sanctions_screening_evidence",
+        "coreguard_verify_invoice_match",
+        "coreguard_generate_payment_compliance_packet",
+        "coreguard_verify_stellar_settlement_evidence",
+        "coreguard_verify_evm_settlement_evidence",
+        "coreguard_verify_coredao_settlement_evidence",
+        "coreguard_verify_pi_payment_evidence",
+        "coreguard_assess_bridge_risk",
+        "coreguard_assess_defi_position_risk",
+        "coreguard_verify_web3_signature_evidence",
+        "coreguard_verify_stablecoin_reserve_evidence",
+        "coreguard_create_robot_mission_receipt",
+        "coreguard_verify_robot_mission_evidence",
+        "coreguard_assess_machine_sla",
+        "coreguard_assess_loan_application",
+        "coreguard_verify_collateral_packet",
+        "coreguard_assess_credit_line_utilization",
+        "coreguard_verify_escrow_milestone",
+        "coreguard_create_incident_war_room",
       ]
     );
     for (const t of res.result.tools) {
