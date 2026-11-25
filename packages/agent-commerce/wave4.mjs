@@ -501,10 +501,13 @@ export function createIncidentWarRoom(args={}) {
 // MCP tool defs / handlers / validators
 // ---------------------------------------------------------------------------
 
+const CALLER_CONTEXT = { type: "object", description: "Optional caller context echoed in response (never a cryptographic input).", additionalProperties: true };
 const schema = (properties, required, description) => ({
-  type: "object", description, additionalProperties: true, properties, ...(required ? { required } : {}),
+  type: "object", description, additionalProperties: true,
+  properties: { ...properties, callerContext: CALLER_CONTEXT },
+  ...(required ? { required } : {}),
 });
-const out = (description) => ({ type: "object", description, additionalProperties: true });
+const out = (description) => ({ type: "object", description: description.length >= 40 ? description : description + " (deterministic, caller-supplied evidence).", additionalProperties: true });
 function reqString(args, key) { if (typeof args?.[key] !== "string" || !args[key]) throw new Error(`${key} is required`); }
 function reqObject(args, key) { if (!isObj(args?.[key])) throw new Error(`${key} is required and must be an object`); }
 

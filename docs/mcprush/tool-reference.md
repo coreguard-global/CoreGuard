@@ -10,14 +10,14 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 
 | Tool | Required | Optional | Purpose |
 |---|---|---|---|
-| [`coreguard_assess_bridge_risk`](#coreguard_assess_bridge_risk) | `route`, `policy`, `nowSeconds` | — | Assess bridge transfer route risk from caller-supplied route/quote/proof/policy data. No bridge API call. |
-| [`coreguard_assess_credit_line_utilization`](#coreguard_assess_credit_line_utilization) | `line` | — | Assess credit line utilization against a max utilization threshold. Deterministic arithmetic only. |
-| [`coreguard_assess_defi_position_risk`](#coreguard_assess_defi_position_risk) | `position`, `policy`, `nowSeconds` | — | Assess DeFi position risk from caller-supplied snapshot (health factor, LTV, oracle age). No onchain/protocol call. |
-| [`coreguard_assess_fx_quote_risk`](#coreguard_assess_fx_quote_risk) | `quote`, `policy`, `nowSeconds` | — | Assess FX quote evidence for expiry, spread, provider allowlist, and rate presence at a pinned nowSeconds. Offline;… |
-| [`coreguard_assess_loan_application`](#coreguard_assess_loan_application) | `application`, `policy` | — | Assess loan application risk from caller-supplied financial fields and policy (DTI, amount, tenor). No credit… |
-| [`coreguard_assess_machine_sla`](#coreguard_assess_machine_sla) | `events` | `policy` | Assess machine/agent SLA from caller-supplied downtime/events against policy thresholds. Deterministic, offline. |
+| [`coreguard_assess_bridge_risk`](#coreguard_assess_bridge_risk) | `route`, `policy`, `nowSeconds` | `callerContext` | Assess bridge transfer route risk from caller-supplied route/quote/proof/policy data. No bridge API call. |
+| [`coreguard_assess_credit_line_utilization`](#coreguard_assess_credit_line_utilization) | `line` | `callerContext` | Assess credit line utilization against a max utilization threshold. Deterministic arithmetic only. |
+| [`coreguard_assess_defi_position_risk`](#coreguard_assess_defi_position_risk) | `position`, `policy`, `nowSeconds` | `callerContext` | Assess DeFi position risk from caller-supplied snapshot (health factor, LTV, oracle age). No onchain/protocol call. |
+| [`coreguard_assess_fx_quote_risk`](#coreguard_assess_fx_quote_risk) | `quote`, `policy`, `nowSeconds` | `callerContext` | Assess FX quote evidence for expiry, spread, provider allowlist, and rate presence at a pinned nowSeconds. Offline;… |
+| [`coreguard_assess_loan_application`](#coreguard_assess_loan_application) | `application`, `policy` | `callerContext` | Assess loan application risk from caller-supplied financial fields and policy (DTI, amount, tenor). No credit… |
+| [`coreguard_assess_machine_sla`](#coreguard_assess_machine_sla) | `events` | `policy`, `callerContext` | Assess machine/agent SLA from caller-supplied downtime/events against policy thresholds. Deterministic, offline. |
 | [`coreguard_assess_risk`](#coreguard_assess_risk) | `intent`, `policy`, `trace` | `consumed`, `callerContext` | Classify one executed order against one approved authorization with the deterministic AGR/1 taxonomy. Not a… |
-| [`coreguard_assess_sanctions_screening_evidence`](#coreguard_assess_sanctions_screening_evidence) | `evidence`, `policy`, `nowSeconds` | — | Assess a caller-supplied sanctions/screening result packet for freshness, provider allowlist, and clear/no-match… |
+| [`coreguard_assess_sanctions_screening_evidence`](#coreguard_assess_sanctions_screening_evidence) | `evidence`, `policy`, `nowSeconds` | `callerContext` | Assess a caller-supplied sanctions/screening result packet for freshness, provider allowlist, and clear/no-match… |
 | [`coreguard_attest_batch`](#coreguard_attest_batch) | `receipts` | `callerContext` | Commit many receipts with one Merkle root: domain-separated SHA-256 leaves, RFC 6962-style tree, per-item inclusion… |
 | [`coreguard_audit_server_manifest`](#coreguard_audit_server_manifest) | `manifest` | `callerContext` | Audit an MCP server manifest (server.json) before installing it: remote transports, unpinned packages, missing… |
 | [`coreguard_audit_transaction`](#coreguard_audit_transaction) | `storePath` | `txRef`, `approvalId`, `agentId`, `limit`, `callerContext` | CGCP/1 mapping: read and optionally filter the append-only hash-chained audit report from a file-backed control… |
@@ -29,10 +29,10 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_check_lookalike`](#coreguard_check_lookalike) | `candidate`, `reference` | `callerContext` | Check a merchant domain or package name for homoglyph, mixed-script and punycode impersonation of a reference:… |
 | [`coreguard_compile_policy`](#coreguard_compile_policy) | `spec` | `callerContext` | Compile a compact spending spec (limit, merchant/recipient/selector allowlists, currency) into a canonical CGEP/1… |
 | [`coreguard_consumption_status`](#coreguard_consumption_status) | `receiptId` | `action`, `storePath`, `callerContext` | Check/consume/release a receiptId in a consumption ledger. Default is process-local (this MCP process only). If… |
-| [`coreguard_create_incident_war_room`](#coreguard_create_incident_war_room) | `incident` | `events`, `actions`, `nowSeconds` | Create a deterministic incident war-room packet from incident metadata, events, and actions. Local evidence… |
+| [`coreguard_create_incident_war_room`](#coreguard_create_incident_war_room) | `incident` | `events`, `actions`, `nowSeconds`, `callerContext` | Create a deterministic incident war-room packet from incident metadata, events, and actions. Local evidence… |
 | [`coreguard_create_intent`](#coreguard_create_intent) | `storePath`, `agentId` | `intentId`, `policyId`, `merchant`, `address`, `amountMinor`, `currency`, `requestedBy`, `expiresAt`, `callerContext` | CGCP/1 mapping: create an intent/approval request in a self-hosted file-backed control plane. Not a blockchain… |
 | [`coreguard_create_machine_task`](#coreguard_create_machine_task) | `taskId`, `machineId`, `terms` | `callerContext` | Create a deterministic machine task record with terms/price/SLA conditions. No payment custody or physical execution… |
-| [`coreguard_create_robot_mission_receipt`](#coreguard_create_robot_mission_receipt) | `mission`, `policy`, `nowSeconds` | — | Create a deterministic robot/agent mission receipt binding mission, zone, budget, and time window to a policy… |
+| [`coreguard_create_robot_mission_receipt`](#coreguard_create_robot_mission_receipt) | `mission`, `policy`, `nowSeconds` | `callerContext` | Create a deterministic robot/agent mission receipt binding mission, zone, budget, and time window to a policy… |
 | [`coreguard_decide_outcome`](#coreguard_decide_outcome) | `report` | `receiptId`, `callerContext` | Map a verification report to CG-OUT/1 outcome and authorization decision. ABSENT/NOT_CHECKED never render as BLOCK;… |
 | [`coreguard_describe_surface`](#coreguard_describe_surface) | `format` | `callerContext` | Return this server's capability card (or a one-line badge): version, transport, protocol, tool count, categories and… |
 | [`coreguard_detect_spend_anomaly`](#coreguard_detect_spend_anomaly) | `events` | `sensitivity`, `callerContext` | Flag unusual spend events with a median/MAD robust score (no training data, no clock): returns the baseline, the… |
@@ -42,12 +42,12 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_explain_decision`](#coreguard_explain_decision) | `policy`, `intent`, `nowSeconds` | `callerContext` | Evaluate an intent against a policy and explain the verdict rule by rule, including the smallest single change… |
 | [`coreguard_freeze_agent`](#coreguard_freeze_agent) | `storePath`, `agentId` | `reason`, `decidedBy`, `nowSeconds`, `callerContext` | Kill switch over a CGCP/1 control plane: revoke the agent, reject every pending approval it holds in one audited… |
 | [`coreguard_generate_boundary_cases`](#coreguard_generate_boundary_cases) | `policy`, `baseIntent`, `nowSeconds` | `callerContext` | Generate the cases that break naive policy tests: at the limit, one unit below, one above, unlisted… |
-| [`coreguard_generate_payment_compliance_packet`](#coreguard_generate_payment_compliance_packet) | `payment` | `evidence`, `checks`, `redactFields`, `nowSeconds` | Bundle payment evidence into a redacted, hashed compliance packet for review/export. Local only; no regulatory… |
+| [`coreguard_generate_payment_compliance_packet`](#coreguard_generate_payment_compliance_packet) | `payment` | `evidence`, `checks`, `redactFields`, `nowSeconds`, `callerContext` | Bundle payment evidence into a redacted, hashed compliance packet for review/export. Local only; no regulatory… |
 | [`coreguard_incident_timeline`](#coreguard_incident_timeline) | `report` | `storePath`, `callerContext` | Assemble an incident timeline from a control-plane ledger (storePath or an audit report): sequence-ordered events,… |
 | [`coreguard_inspect_identity`](#coreguard_inspect_identity) | `issuer`, `scope`, `subject`, `contentDigest` | `anchor`, `other`, `callerContext` | Inspect CG-ID/1 identity split: recordId (who) vs contentDigest (what), with optional anchor facts and optional… |
 | [`coreguard_issue_receipt`](#coreguard_issue_receipt) | `storePath`, `agentId` | `receiptId`, `policyId`, `approvalId`, `merchant`, `address`, `amountMinor`, `currency`, `status`, `txRef`, `metadata`, `callerContext` | CGCP/1 mapping: record an execution receipt in a self-hosted file-backed control plane. This is a local execution… |
 | [`coreguard_meter_agent_usage`](#coreguard_meter_agent_usage) | `agentId`, `events` | `currency`, `callerContext` | Deterministically meter agent usage/cost events into an auditable total. No billing custody or external payment. |
-| [`coreguard_parse_iso20022_payment`](#coreguard_parse_iso20022_payment) | `message` | — | Parse and validate a caller-supplied ISO 20022-like payment message (pain.001/pacs.008/camt.054 etc.) into… |
+| [`coreguard_parse_iso20022_payment`](#coreguard_parse_iso20022_payment) | `message` | `callerContext` | Parse and validate a caller-supplied ISO 20022-like payment message (pain.001/pacs.008/camt.054 etc.) into… |
 | [`coreguard_parse_x402_challenge`](#coreguard_parse_x402_challenge) | `challenge` | `callerContext` | Parse and normalize an x402 payment challenge (HTTP 402 accepts). Offline deterministic validation only; no network… |
 | [`coreguard_profile_reference`](#coreguard_profile_reference) | `action` | `receiptId`, `reference`, `callerContext` | Create or parse a CG-OUT/1 profile reference. action='make' requires receiptId; action='parse' requires reference. |
 | [`coreguard_reconcile_payment`](#coreguard_reconcile_payment) | `authorization` | `challenge`, `settlement`, `receipt`, `callerContext` | Reconcile authorization, settlement evidence, and receipt. Deterministic evidence check only; no external… |
@@ -58,27 +58,27 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_simulate_spend`](#coreguard_simulate_spend) | `policy`, `intents`, `nowSeconds` | `callerContext` | Dry-run a batch of intents against a policy: allowed/denied per row, blocking rules, totals and counterfactuals. No… |
 | [`coreguard_translate_receipt`](#coreguard_translate_receipt) | `receipt`, `to` | `callerContext` | Structurally translate a receipt to ACP, x402 or CGCR/1 and list exactly what the target cannot carry. Translation… |
 | [`coreguard_verify_attestation`](#coreguard_verify_attestation) | `attestation`, `attestationId`, `consent`, `executedTrace` | `callerContext` | Verify a CGXA/1 attestation against its consent and executed trace. Offline, fail-closed; no chain/network contact. |
-| [`coreguard_verify_bank_transfer_evidence`](#coreguard_verify_bank_transfer_evidence) | `evidence`, `expected` | — | Verify bank transfer evidence against expected instruction fields. Offline evidence check; no bank API call. |
+| [`coreguard_verify_bank_transfer_evidence`](#coreguard_verify_bank_transfer_evidence) | `evidence`, `expected` | `callerContext` | Verify bank transfer evidence against expected instruction fields. Offline evidence check; no bank API call. |
 | [`coreguard_verify_batch_proof`](#coreguard_verify_batch_proof) | `leafDigest`, `root`, `proof` | `callerContext` | Verify a Merkle inclusion proof offline: recompute the root from the leaf digest and the supplied left/right path,… |
-| [`coreguard_verify_collateral_packet`](#coreguard_verify_collateral_packet) | `collateral`, `policy`, `nowSeconds` | — | Verify collateral evidence packet for valuation, expiry, owner, and evidence digest presence. No registry/custody… |
+| [`coreguard_verify_collateral_packet`](#coreguard_verify_collateral_packet) | `collateral`, `policy`, `nowSeconds` | `callerContext` | Verify collateral evidence packet for valuation, expiry, owner, and evidence digest presence. No registry/custody… |
 | [`coreguard_verify_consent`](#coreguard_verify_consent) | `consent` | `callerContext` | Verify a consent record's integrity and binding: recompute every commitment against the record's own approved bytes.… |
-| [`coreguard_verify_coredao_settlement_evidence`](#coreguard_verify_coredao_settlement_evidence) | `evidence` | `expected` | Verify caller-supplied Core DAO EVM settlement evidence with Core DAO chain-id profile checks. No RPC call; evidence… |
-| [`coreguard_verify_cross_border_instruction`](#coreguard_verify_cross_border_instruction) | `instruction`, `policy` | — | Verify a cross-border payment instruction against corridor/currency/amount/cutoff policy. Deterministic policy… |
+| [`coreguard_verify_coredao_settlement_evidence`](#coreguard_verify_coredao_settlement_evidence) | `evidence` | `expected`, `callerContext` | Verify caller-supplied Core DAO EVM settlement evidence with Core DAO chain-id profile checks. No RPC call; evidence… |
+| [`coreguard_verify_cross_border_instruction`](#coreguard_verify_cross_border_instruction) | `instruction`, `policy` | `callerContext` | Verify a cross-border payment instruction against corridor/currency/amount/cutoff policy. Deterministic policy… |
 | [`coreguard_verify_delegation_chain`](#coreguard_verify_delegation_chain) | `chain` | `trust`, `callerContext` | Verify delegation chain structure/continuity and optionally verify Ed25519 signatures when trust roots/public keys… |
-| [`coreguard_verify_escrow_milestone`](#coreguard_verify_escrow_milestone) | `escrow`, `milestone` | — | Verify escrow milestone release conditions: approvals, evidence, and release amount within remaining escrow. No… |
+| [`coreguard_verify_escrow_milestone`](#coreguard_verify_escrow_milestone) | `escrow`, `milestone` | `callerContext` | Verify escrow milestone release conditions: approvals, evidence, and release amount within remaining escrow. No… |
 | [`coreguard_verify_evidence_bundle`](#coreguard_verify_evidence_bundle) | `bundle` | `callerContext` | Verify a portable evidence bundle against its own digest and each item's digest: detects edits, dropped items and… |
-| [`coreguard_verify_evm_settlement_evidence`](#coreguard_verify_evm_settlement_evidence) | `evidence`, `expected` | — | Verify caller-supplied EVM tx/receipt evidence against expected chain, recipient, token, and amount. No RPC call;… |
+| [`coreguard_verify_evm_settlement_evidence`](#coreguard_verify_evm_settlement_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied EVM tx/receipt evidence against expected chain, recipient, token, and amount. No RPC call;… |
 | [`coreguard_verify_execution`](#coreguard_verify_execution) | `consent`, `trace` | `callerContext` | Verify an executed order against a consent record, fail-closed: exact execution -> VERIFIED; any drift -> INVALID… |
-| [`coreguard_verify_invoice_match`](#coreguard_verify_invoice_match) | `invoice`, `payment` | — | Deterministic 3-way style match between invoice and payment evidence (amount, currency, payee, reference). |
-| [`coreguard_verify_pi_payment_evidence`](#coreguard_verify_pi_payment_evidence) | `evidence`, `expected` | — | Verify caller-supplied Pi Network payment evidence packet against expected values. Explicit boundary: attested/mock… |
+| [`coreguard_verify_invoice_match`](#coreguard_verify_invoice_match) | `invoice`, `payment` | `callerContext` | Deterministic 3-way style match between invoice and payment evidence (amount, currency, payee, reference). |
+| [`coreguard_verify_pi_payment_evidence`](#coreguard_verify_pi_payment_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied Pi Network payment evidence packet against expected values. Explicit boundary: attested/mock… |
 | [`coreguard_verify_receipt`](#coreguard_verify_receipt) | `storePath` | `receiptId`, `callerContext` | CGCP/1 mapping: verify a receipt record and the audit chain in a file-backed control plane. No external… |
-| [`coreguard_verify_robot_mission_evidence`](#coreguard_verify_robot_mission_evidence) | `receipt`, `evidence` | `receiptDigest` | Verify robot/agent mission execution evidence against a mission receipt. Offline evidence check. |
-| [`coreguard_verify_stablecoin_reserve_evidence`](#coreguard_verify_stablecoin_reserve_evidence) | `evidence`, `policy`, `nowSeconds` | — | Assess caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy. No issuer API… |
-| [`coreguard_verify_stellar_settlement_evidence`](#coreguard_verify_stellar_settlement_evidence) | `evidence`, `expected` | — | Verify caller-supplied Stellar settlement evidence against expected payment fields. No Horizon/network call;… |
-| [`coreguard_verify_swift_remittance_evidence`](#coreguard_verify_swift_remittance_evidence) | `evidence`, `expected` | — | Verify caller-supplied SWIFT/remittance evidence against expected amount/currency/accounts/reference. Evidence only;… |
+| [`coreguard_verify_robot_mission_evidence`](#coreguard_verify_robot_mission_evidence) | `receipt`, `evidence` | `receiptDigest`, `callerContext` | Verify robot/agent mission execution evidence against a mission receipt. Offline evidence check. |
+| [`coreguard_verify_stablecoin_reserve_evidence`](#coreguard_verify_stablecoin_reserve_evidence) | `evidence`, `policy`, `nowSeconds` | `callerContext` | Assess caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy. No issuer API… |
+| [`coreguard_verify_stellar_settlement_evidence`](#coreguard_verify_stellar_settlement_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied Stellar settlement evidence against expected payment fields. No Horizon/network call;… |
+| [`coreguard_verify_swift_remittance_evidence`](#coreguard_verify_swift_remittance_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied SWIFT/remittance evidence against expected amount/currency/accounts/reference. Evidence only;… |
 | [`coreguard_verify_task_completion`](#coreguard_verify_task_completion) | `task`, `completion` | `telemetryVerification`, `callerContext` | Verify task completion evidence against task record. Evidence acceptance is not physical-world proof; independent… |
 | [`coreguard_verify_telemetry`](#coreguard_verify_telemetry) | `taskId`, `telemetry` | `trust`, `callerContext` | Verify caller-supplied telemetry evidence structure/digest and optionally verify Ed25519 signature when trust… |
-| [`coreguard_verify_web3_signature_evidence`](#coreguard_verify_web3_signature_evidence) | `evidence` | — | Verify caller-supplied Web3 signature evidence structure and recovered/claimed signer match. No key custody or… |
+| [`coreguard_verify_web3_signature_evidence`](#coreguard_verify_web3_signature_evidence) | `evidence` | `callerContext` | Verify caller-supplied Web3 signature evidence structure and recovered/claimed signer match. No key custody or… |
 | [`coreguard_verify_x402_settlement`](#coreguard_verify_x402_settlement) | `challenge`, `settlement` | `callerContext` | Verify caller-supplied x402 settlement evidence against a challenge. No network confirmation performed;… |
 
 ---
@@ -87,13 +87,14 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 
 Assess bridge transfer route risk from caller-supplied route/quote/proof/policy data. No bridge API call.
 
-**Required:** `route`, `policy`, `nowSeconds` · **Optional:** none
+**Required:** `route`, `policy`, `nowSeconds` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `route` | `object` | **required** | — |  |
 | `policy` | `object` | **required** | — |  |
 | `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -112,6 +113,11 @@ Assess bridge transfer route risk from caller-supplied route/quote/proof/policy 
     "nowSeconds": {
       "type": "string",
       "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -209,11 +215,12 @@ Assess bridge transfer route risk from caller-supplied route/quote/proof/policy 
 
 Assess credit line utilization against a max utilization threshold. Deterministic arithmetic only.
 
-**Required:** `line` · **Optional:** none
+**Required:** `line` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `line` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -225,6 +232,11 @@ Assess credit line utilization against a max utilization threshold. Deterministi
   "properties": {
     "line": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -298,13 +310,14 @@ Assess credit line utilization against a max utilization threshold. Deterministi
 
 Assess DeFi position risk from caller-supplied snapshot (health factor, LTV, oracle age). No onchain/protocol call.
 
-**Required:** `position`, `policy`, `nowSeconds` · **Optional:** none
+**Required:** `position`, `policy`, `nowSeconds` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `position` | `object` | **required** | — |  |
 | `policy` | `object` | **required** | — |  |
 | `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -323,6 +336,11 @@ Assess DeFi position risk from caller-supplied snapshot (health factor, LTV, ora
     "nowSeconds": {
       "type": "string",
       "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -404,13 +422,14 @@ Assess DeFi position risk from caller-supplied snapshot (health factor, LTV, ora
 
 Assess FX quote evidence for expiry, spread, provider allowlist, and rate presence at a pinned nowSeconds. Offline; no market data feed.
 
-**Required:** `quote`, `policy`, `nowSeconds` · **Optional:** none
+**Required:** `quote`, `policy`, `nowSeconds` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `quote` | `object` | **required** | — |  |
 | `policy` | `object` | **required** | — |  |
 | `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -429,6 +448,11 @@ Assess FX quote evidence for expiry, spread, provider allowlist, and rate presen
     "nowSeconds": {
       "type": "string",
       "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -528,12 +552,13 @@ Assess FX quote evidence for expiry, spread, provider allowlist, and rate presen
 
 Assess loan application risk from caller-supplied financial fields and policy (DTI, amount, tenor). No credit bureau/bank/regulatory decision.
 
-**Required:** `application`, `policy` · **Optional:** none
+**Required:** `application`, `policy` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `application` | `object` | **required** | — |  |
 | `policy` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -548,6 +573,11 @@ Assess loan application risk from caller-supplied financial fields and policy (D
     },
     "policy": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -635,12 +665,13 @@ Assess loan application risk from caller-supplied financial fields and policy (D
 
 Assess machine/agent SLA from caller-supplied downtime/events against policy thresholds. Deterministic, offline.
 
-**Required:** `events` · **Optional:** `policy`
+**Required:** `events` · **Optional:** `policy`, `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `events` | array of `object` | **required** | — |  |
 | `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -658,6 +689,11 @@ Assess machine/agent SLA from caller-supplied downtime/events against policy thr
     },
     "policy": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -885,13 +921,14 @@ Classify one executed order against one approved authorization with the determin
 
 Assess a caller-supplied sanctions/screening result packet for freshness, provider allowlist, and clear/no-match result. No live sanctions screening; evidence only.
 
-**Required:** `evidence`, `policy`, `nowSeconds` · **Optional:** none
+**Required:** `evidence`, `policy`, `nowSeconds` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `evidence` | `object` | **required** | — |  |
 | `policy` | `object` | **required** | — |  |
 | `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -910,6 +947,11 @@ Assess a caller-supplied sanctions/screening result packet for freshness, provid
     "nowSeconds": {
       "type": "string",
       "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -2212,7 +2254,7 @@ Check/consume/release a receiptId in a consumption ledger. Default is process-lo
 
 Create a deterministic incident war-room packet from incident metadata, events, and actions. Local evidence packaging only.
 
-**Required:** `incident` · **Optional:** `events`, `actions`, `nowSeconds`
+**Required:** `incident` · **Optional:** `events`, `actions`, `nowSeconds`, `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
@@ -2220,6 +2262,7 @@ Create a deterministic incident war-room packet from incident metadata, events, 
 | `events` | array of `object` | optional | — |  |
 | `actions` | array of `object` | optional | — |  |
 | `nowSeconds` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -2247,6 +2290,11 @@ Create a deterministic incident war-room packet from incident metadata, events, 
     "nowSeconds": {
       "type": "string",
       "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -2530,13 +2578,14 @@ Create a deterministic machine task record with terms/price/SLA conditions. No p
 
 Create a deterministic robot/agent mission receipt binding mission, zone, budget, and time window to a policy digest. Offline; no robot control.
 
-**Required:** `mission`, `policy`, `nowSeconds` · **Optional:** none
+**Required:** `mission`, `policy`, `nowSeconds` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `mission` | `object` | **required** | — |  |
 | `policy` | `object` | **required** | — |  |
 | `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -2555,6 +2604,11 @@ Create a deterministic robot/agent mission receipt binding mission, zone, budget
     "nowSeconds": {
       "type": "string",
       "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -3878,7 +3932,7 @@ Generate the cases that break naive policy tests: at the limit, one unit below, 
 
 Bundle payment evidence into a redacted, hashed compliance packet for review/export. Local only; no regulatory submission.
 
-**Required:** `payment` · **Optional:** `evidence`, `checks`, `redactFields`, `nowSeconds`
+**Required:** `payment` · **Optional:** `evidence`, `checks`, `redactFields`, `nowSeconds`, `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
@@ -3887,6 +3941,7 @@ Bundle payment evidence into a redacted, hashed compliance packet for review/exp
 | `checks` | array of `object` | optional | — |  |
 | `redactFields` | array of `string` | optional | — |  |
 | `nowSeconds` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -3917,6 +3972,11 @@ Bundle payment evidence into a redacted, hashed compliance packet for review/exp
     "nowSeconds": {
       "type": "string",
       "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -4345,11 +4405,12 @@ Deterministically meter agent usage/cost events into an auditable total. No bill
 
 Parse and validate a caller-supplied ISO 20022-like payment message (pain.001/pacs.008/camt.054 etc.) into deterministic checks and a digest. Offline; no SWIFT/bank network access.
 
-**Required:** `message` · **Optional:** none
+**Required:** `message` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `message` | `object` | **required** | — | ISO20022-like JSON message |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -4362,6 +4423,11 @@ Parse and validate a caller-supplied ISO 20022-like payment message (pain.001/pa
     "message": {
       "type": "object",
       "description": "ISO20022-like JSON message"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -5455,12 +5521,13 @@ Verify a CGXA/1 attestation against its consent and executed trace. Offline, fai
 
 Verify bank transfer evidence against expected instruction fields. Offline evidence check; no bank API call.
 
-**Required:** `evidence`, `expected` · **Optional:** none
+**Required:** `evidence`, `expected` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `evidence` | `object` | **required** | — |  |
 | `expected` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -5475,6 +5542,11 @@ Verify bank transfer evidence against expected instruction fields. Offline evide
     },
     "expected": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -5654,13 +5726,14 @@ Verify a Merkle inclusion proof offline: recompute the root from the leaf digest
 
 Verify collateral evidence packet for valuation, expiry, owner, and evidence digest presence. No registry/custody verification.
 
-**Required:** `collateral`, `policy`, `nowSeconds` · **Optional:** none
+**Required:** `collateral`, `policy`, `nowSeconds` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `collateral` | `object` | **required** | — |  |
 | `policy` | `object` | **required** | — |  |
 | `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -5679,6 +5752,11 @@ Verify collateral evidence packet for valuation, expiry, owner, and evidence dig
     "nowSeconds": {
       "type": "string",
       "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -5881,12 +5959,13 @@ Verify a consent record's integrity and binding: recompute every commitment agai
 
 Verify caller-supplied Core DAO EVM settlement evidence with Core DAO chain-id profile checks. No RPC call; evidence only.
 
-**Required:** `evidence` · **Optional:** `expected`
+**Required:** `evidence` · **Optional:** `expected`, `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `evidence` | `object` | **required** | — |  |
 | `expected` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -5901,6 +5980,11 @@ Verify caller-supplied Core DAO EVM settlement evidence with Core DAO chain-id p
     },
     "expected": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -6000,12 +6084,13 @@ Verify caller-supplied Core DAO EVM settlement evidence with Core DAO chain-id p
 
 Verify a cross-border payment instruction against corridor/currency/amount/cutoff policy. Deterministic policy evidence only; no live compliance or sanctions screening.
 
-**Required:** `instruction`, `policy` · **Optional:** none
+**Required:** `instruction`, `policy` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `instruction` | `object` | **required** | — |  |
 | `policy` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -6020,6 +6105,11 @@ Verify a cross-border payment instruction against corridor/currency/amount/cutof
     },
     "policy": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -6194,12 +6284,13 @@ Verify delegation chain structure/continuity and optionally verify Ed25519 signa
 
 Verify escrow milestone release conditions: approvals, evidence, and release amount within remaining escrow. No custody/broadcast.
 
-**Required:** `escrow`, `milestone` · **Optional:** none
+**Required:** `escrow`, `milestone` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `escrow` | `object` | **required** | — |  |
 | `milestone` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -6214,6 +6305,11 @@ Verify escrow milestone release conditions: approvals, evidence, and release amo
     },
     "milestone": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -6385,12 +6481,13 @@ Verify a portable evidence bundle against its own digest and each item's digest:
 
 Verify caller-supplied EVM tx/receipt evidence against expected chain, recipient, token, and amount. No RPC call; evidence only.
 
-**Required:** `evidence`, `expected` · **Optional:** none
+**Required:** `evidence`, `expected` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `evidence` | `object` | **required** | — |  |
 | `expected` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -6405,6 +6502,11 @@ Verify caller-supplied EVM tx/receipt evidence against expected chain, recipient
     },
     "expected": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -6634,12 +6736,13 @@ Verify an executed order against a consent record, fail-closed: exact execution 
 
 Deterministic 3-way style match between invoice and payment evidence (amount, currency, payee, reference).
 
-**Required:** `invoice`, `payment` · **Optional:** none
+**Required:** `invoice`, `payment` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `invoice` | `object` | **required** | — |  |
 | `payment` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -6654,6 +6757,11 @@ Deterministic 3-way style match between invoice and payment evidence (amount, cu
     },
     "payment": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -6741,12 +6849,13 @@ Deterministic 3-way style match between invoice and payment evidence (amount, cu
 
 Verify caller-supplied Pi Network payment evidence packet against expected values. Explicit boundary: attested/mock evidence only, no live Pi API/mainnet verification.
 
-**Required:** `evidence`, `expected` · **Optional:** none
+**Required:** `evidence`, `expected` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `evidence` | `object` | **required** | — |  |
 | `expected` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -6761,6 +6870,11 @@ Verify caller-supplied Pi Network payment evidence packet against expected value
     },
     "expected": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -6929,13 +7043,14 @@ CGCP/1 mapping: verify a receipt record and the audit chain in a file-backed con
 
 Verify robot/agent mission execution evidence against a mission receipt. Offline evidence check.
 
-**Required:** `receipt`, `evidence` · **Optional:** `receiptDigest`
+**Required:** `receipt`, `evidence` · **Optional:** `receiptDigest`, `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `receipt` | `object` | **required** | — |  |
 | `evidence` | `object` | **required** | — |  |
 | `receiptDigest` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -6953,6 +7068,11 @@ Verify robot/agent mission execution evidence against a mission receipt. Offline
     },
     "receiptDigest": {
       "type": "string"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -7055,13 +7175,14 @@ Verify robot/agent mission execution evidence against a mission receipt. Offline
 
 Assess caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy. No issuer API call; evidence only.
 
-**Required:** `evidence`, `policy`, `nowSeconds` · **Optional:** none
+**Required:** `evidence`, `policy`, `nowSeconds` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `evidence` | `object` | **required** | — |  |
 | `policy` | `object` | **required** | — |  |
 | `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -7080,6 +7201,11 @@ Assess caller-supplied stablecoin reserve/attestation evidence for freshness and
     "nowSeconds": {
       "type": "string",
       "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -7168,12 +7294,13 @@ Assess caller-supplied stablecoin reserve/attestation evidence for freshness and
 
 Verify caller-supplied Stellar settlement evidence against expected payment fields. No Horizon/network call; evidence only.
 
-**Required:** `evidence`, `expected` · **Optional:** none
+**Required:** `evidence`, `expected` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `evidence` | `object` | **required** | — |  |
 | `expected` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -7188,6 +7315,11 @@ Verify caller-supplied Stellar settlement evidence against expected payment fiel
     },
     "expected": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -7292,12 +7424,13 @@ Verify caller-supplied Stellar settlement evidence against expected payment fiel
 
 Verify caller-supplied SWIFT/remittance evidence against expected amount/currency/accounts/reference. Evidence only; no SWIFT network access or settlement finality claim.
 
-**Required:** `evidence`, `expected` · **Optional:** none
+**Required:** `evidence`, `expected` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `evidence` | `object` | **required** | — |  |
 | `expected` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -7312,6 +7445,11 @@ Verify caller-supplied SWIFT/remittance evidence against expected amount/currenc
     },
     "expected": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [
@@ -7571,11 +7709,12 @@ Verify caller-supplied telemetry evidence structure/digest and optionally verify
 
 Verify caller-supplied Web3 signature evidence structure and recovered/claimed signer match. No key custody or onchain call.
 
-**Required:** `evidence` · **Optional:** none
+**Required:** `evidence` · **Optional:** `callerContext`
 
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `evidence` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed in response (never a cryptographic input). |
 
 <details><summary>Input schema (from tools/list)</summary>
 
@@ -7587,6 +7726,11 @@ Verify caller-supplied Web3 signature evidence structure and recovered/claimed s
   "properties": {
     "evidence": {
       "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed in response (never a cryptographic input).",
+      "additionalProperties": true
     }
   },
   "required": [

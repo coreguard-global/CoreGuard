@@ -121,7 +121,7 @@ test("wave 3 adds exactly twenty tools and describe_surface agrees with tools/li
     "coreguard_translate_receipt", "coreguard_emit_test_vectors", "coreguard_describe_surface",
   ];
   assert.equal(wave3.length, 20);
-  assert.deepEqual(TOOL_NAMES.slice(26), wave3, "Wave 3 names must be appended after the 26 core tools");
+  assert.deepEqual(TOOL_NAMES.slice(26, 46), wave3, "Wave 3 names must be appended after the 26 core tools");
   assert.equal(new Set(TOOL_NAMES).size, TOOL_NAMES.length, "tool names are unique");
   for (const name of wave3) {
     const tool = TOOLS.find((t) => t.name === name);

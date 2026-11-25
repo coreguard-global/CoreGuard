@@ -44,10 +44,12 @@
     "coreguard-trust-card": "./bin/trust-card.mjs"
   },
   "files": [
+    "README.md",
     "aer1.mjs",
     "anchor.mjs",
     "attest.mjs",
     "bin/mcp.mjs",
+    "bin/trust-card.mjs",
     "cgcp-mcp-tools.mjs",
     "client.mjs",
     "composition.mjs",
@@ -74,17 +76,16 @@
     "prod/schema.mjs",
     "prod/sqlite-storage.mjs",
     "profile-ref.mjs",
-    "README.md",
     "reference.mjs",
     "risk-cli.mjs",
     "risk.mjs",
     "server.json",
     "spend.mjs",
-    "trust.mjs",
     "trust-card-cli.mjs",
     "trust-card.mjs",
-    "bin/trust-card.mjs",
-    "wave3.mjs"
+    "trust.mjs",
+    "wave3.mjs",
+    "wave4.mjs"
   ],
   "engines": {
     "node": ">=18"
