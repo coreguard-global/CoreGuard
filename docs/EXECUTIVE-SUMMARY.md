@@ -25,10 +25,10 @@ CoreGuard is a fail-closed execution-truth layer for agent-to-agent jobs. Money 
 
 | Item / العنصر | Value / القيمة | Source / المصدر |
 |---|---|---|
-| **Test suite / مجموعة الاختبارات** | **2103 / 2103 PASS (measured)** | [`npm test`](../package.json) · [`state-snapshot.json`](state-snapshot.json) |
-| **Boundary audit / تدقيق الحدود** | **1312 files · 0 violations** | [`npm run boundary:audit`](../package.json) |
+| **Test suite / مجموعة الاختبارات** | **2106 / 2106 PASS (measured)** | [`npm test`](../package.json) · [`state-snapshot.json`](state-snapshot.json) |
+| **Boundary audit / تدقيق الحدود** | **1629 files · 0 violations** | [`npm run boundary:audit`](../package.json) |
 | **Claims audit / تدقيق الادعاءات** | **28 claims · VERIFIED 16 · 0 violations** | [`npm run claims:audit`](../package.json) · [`claims-registry.json`](claims-registry.json) |
-| **Docs-node contract / عقود التوثيق القابلة للتنفيذ** | **133 executed · 82 skip-listed · 30 docs covered** | [`../test/ci/docs-node-contract.test.js`](../test/ci/docs-node-contract.test.js) |
+| **Docs-node contract / عقود التوثيق القابلة للتنفيذ** | **141 executed · 89 skip-listed · 34 docs covered** | [`../test/ci/docs-node-contract.test.js`](../test/ci/docs-node-contract.test.js) |
 | **Release gate / بوابة الإصدار** | **18/18 legs · GATE_PASS · independence PASS** | [`npm run release:gate:independence`](../package.json) · [`release-gate.json`](release-gate.json) |
 | **Measured state check / فحص الحالة المقاسة** | **CHECK OK** | `node scripts/current-state.mjs --check` |
 
@@ -66,7 +66,7 @@ node demo.mjs
 ```
 
 **Expected / المتوقع:**
-- `npm test` → **2103 / 2103 pass, fail 0**
+- `npm test` → **2106 / 2106 pass, fail 0**
 - `node demo.mjs` → shows **`UNKNOWN → HELD`**
 - `npm run claims:audit` → **CLAIM-AUDIT: PASS**
 - `npm run release:gate:independence` → **GATE_PASS**
