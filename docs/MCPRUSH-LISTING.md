@@ -133,6 +133,109 @@ That is the live badge code, not a screenshot of a grade. The studio's "Get the 
 
 Use the numbers as they are printed by those commands, and do not add a percentage, a user count or a revenue figure — none of them is measured anywhere.
 
+## 9b. All skills — paste block for the studio (owner)
+
+Paste this into the studio's skills field. 92 entries, one line each: skill name linked to its anchor on the public skills page, the situation it is for, and the number of tools the procedure calls. It carries no adoption number, no install count, no review and no endorsement — only what each skill does.
+
+**If the field caps at a few hundred characters, paste this instead:**
+
+> 92 loadable procedures: session-key policy, consent and execution verification, x402 settlement, anchor evidence, bank and cross-border checks, lending and collateral, robotics and machine leases. Each names when to use it and the tools it calls: https://coreguard-global.github.io/CoreGuard/SKILLS.html
+
+**Full block (92 lines):**
+
+- **[acp-interop-mapping](https://coreguard-global.github.io/CoreGuard/SKILLS.html#acp-interop-mapping)** — A partner (agent commerce platform, gateway, marketplace) asks for receipts in their shape. · 5 tools
+- **[agent-authority-scope-check](https://coreguard-global.github.io/CoreGuard/SKILLS.html#agent-authority-scope-check)** — use when an agent or subagent requests a new capability and you need to prove its authority is inherited, scoped and un… · 6 tools
+- **[agent-purchase-guard](https://coreguard-global.github.io/CoreGuard/SKILLS.html#agent-purchase-guard)** — An agent is about to place an order, pay an invoice, settle an x402 challenge, or call a merchant API that moves value. · 10 tools
+- **[agent-spend-control](https://coreguard-global.github.io/CoreGuard/SKILLS.html#agent-spend-control)** — Use when setting, reviewing, or explaining an agent's spending limits — compile the policy, simulate the month, prove t… · 7 tools
+- **[agent-treasury-ops](https://coreguard-global.github.io/CoreGuard/SKILLS.html#agent-treasury-ops)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[ai-agent-procurement](https://coreguard-global.github.io/CoreGuard/SKILLS.html#ai-agent-procurement)** — When you need a deterministic, evidence-first workflow for this scenario. · 6 tools
+- **[aml-alert-disposition-review](https://coreguard-global.github.io/CoreGuard/SKILLS.html#aml-alert-disposition-review)** — use when reviewing a caller-supplied AML alert disposition packet for reviewer, rationale, timing and case linkage. · 5 tools
+- **[bank-payment-ops](https://coreguard-global.github.io/CoreGuard/SKILLS.html#bank-payment-ops)** — use when a bank payment notification and transfer evidence must be checked together before an operator posts it. · 6 tools
+- **[bank-transfer-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#bank-transfer-evidence)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[beneficiary-change-defense](https://coreguard-global.github.io/CoreGuard/SKILLS.html#beneficiary-change-defense)** — use when an executed payment shows a different beneficiary, account or bank than the approved instruction. · 5 tools
+- **[bridge-transfer-risk](https://coreguard-global.github.io/CoreGuard/SKILLS.html#bridge-transfer-risk)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[camt054-notification-check](https://coreguard-global.github.io/CoreGuard/SKILLS.html#camt054-notification-check)** — use when a camt.054-like credit notification arrives and you need deterministic entry and balance checks before posting. · 6 tools
+- **[collateral-packet-verification](https://coreguard-global.github.io/CoreGuard/SKILLS.html#collateral-packet-verification)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[compliance-review-desk](https://coreguard-global.github.io/CoreGuard/SKILLS.html#compliance-review-desk)** — use when assembling a human compliance review packet from travel-rule, AML and evidence-pack checks. · 6 tools
+- **[coredao-delegation-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#coredao-delegation-evidence)** — use when a Core DAO delegation or staking packet needs chain-id, validator and unbonding checks without RPC. · 6 tools
+- **[coredao-settlement-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#coredao-settlement-evidence)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[credit-line-utilization](https://coreguard-global.github.io/CoreGuard/SKILLS.html#credit-line-utilization)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[cross-border-payment-guard](https://coreguard-global.github.io/CoreGuard/SKILLS.html#cross-border-payment-guard)** — When you need a deterministic, evidence-first workflow for this scenario. · 5 tools
+- **[cross-border-payment-review](https://coreguard-global.github.io/CoreGuard/SKILLS.html#cross-border-payment-review)** — use when reviewing a cross-border payment end to end from canonical intent through corridor policy to reconciliation. · 6 tools
+- **[defi-position-risk](https://coreguard-global.github.io/CoreGuard/SKILLS.html#defi-position-risk)** — When you need a deterministic, evidence-first workflow for this scenario. · 5 tools
+- **[erc4337-userop-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#erc4337-userop-evidence)** — use when an ERC-4337 UserOperation packet needs sender, nonce, gas and paymaster checks before bundling by a human. · 6 tools
+- **[escrow-milestone-release](https://coreguard-global.github.io/CoreGuard/SKILLS.html#escrow-milestone-release)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[evidence-pack-export](https://coreguard-global.github.io/CoreGuard/SKILLS.html#evidence-pack-export)** — use when a reviewer needs a redacted, digest-rooted pack of evidence items and nothing should be submitted automaticall… · 6 tools
+- **[evm-permit-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#evm-permit-evidence)** — use when an EVM permit/allowance packet must be checked for spender, value, deadline and nonce before an agent signs an… · 6 tools
+- **[evm-settlement-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#evm-settlement-evidence)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[fx-quote-risk-gate](https://coreguard-global.github.io/CoreGuard/SKILLS.html#fx-quote-risk-gate)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[fx-rate-lock-verification](https://coreguard-global.github.io/CoreGuard/SKILLS.html#fx-rate-lock-verification)** — use when an agent holds an FX quote and must prove the locked rate was still valid for the exact intent amount at a pin… · 6 tools
+- **[incident-escalation-packet](https://coreguard-global.github.io/CoreGuard/SKILLS.html#incident-escalation-packet)** — use when a verification break must be escalated with a local war-room packet and exportable evidence. · 4 tools
+- **[incident-freeze-drill](https://coreguard-global.github.io/CoreGuard/SKILLS.html#incident-freeze-drill)** — A verification failed, a receipt was replayed, or a tool description was poisoned. · 6 tools
+- **[incident-war-room](https://coreguard-global.github.io/CoreGuard/SKILLS.html#incident-war-room)** — When you need a deterministic, evidence-first workflow for this scenario. · 5 tools
+- **[inference-receipt](https://coreguard-global.github.io/CoreGuard/SKILLS.html#inference-receipt)** — use when an agent makes a model call and you need a deterministic receipt binding prompt, output, policy, cost and late… · 6 tools
+- **[invoice-payment-reconciliation](https://coreguard-global.github.io/CoreGuard/SKILLS.html#invoice-payment-reconciliation)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[iso20022-payment-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#iso20022-payment-evidence)** — When you need a deterministic, evidence-first workflow for this scenario. · 5 tools
+- **[kyc-evidence-gate](https://coreguard-global.github.io/CoreGuard/SKILLS.html#kyc-evidence-gate)** — use when a counterparty supplies KYC evidence and you need a freshness/document gate without claiming a live KYC decisi… · 6 tools
+- **[loan-application-risk](https://coreguard-global.github.io/CoreGuard/SKILLS.html#loan-application-risk)** — When you need a deterministic, evidence-first workflow for this scenario. · 5 tools
+- **[loan-file-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#loan-file-evidence)** — use when a loan file needs deterministic checks on application metrics, collateral and ownership packets. · 6 tools
+- **[machine-budget-lease](https://coreguard-global.github.io/CoreGuard/SKILLS.html#machine-budget-lease)** — use when a robot or machine needs a scoped, time-bounded spending lease before it performs work. · 6 tools
+- **[machine-economy-treasury](https://coreguard-global.github.io/CoreGuard/SKILLS.html#machine-economy-treasury)** — use when metering agent usage, budgeting machine spend and checking runway for a machine-economy deployment. · 6 tools
+- **[machine-sla-assessment](https://coreguard-global.github.io/CoreGuard/SKILLS.html#machine-sla-assessment)** — When you need a deterministic, evidence-first workflow for this scenario. · 5 tools
+- **[machine-to-machine-micropayments](https://coreguard-global.github.io/CoreGuard/SKILLS.html#machine-to-machine-micropayments)** — When you need a deterministic, evidence-first workflow for this scenario. · 6 tools
+- **[mcp-listing-readiness](https://coreguard-global.github.io/CoreGuard/SKILLS.html#mcp-listing-readiness)** — use before publishing or listing an MCP server version to confirm the live tool surface, manifest and descriptions are… · 7 tools
+- **[mcp-server-due-diligence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#mcp-server-due-diligence)** — An MCP client, marketplace, or platform is about to list or install a server. · 4 tools
+- **[merchant-impersonation-check](https://coreguard-global.github.io/CoreGuard/SKILLS.html#merchant-impersonation-check)** — Use when an agent is about to pay a merchant, domain, or package whose name resembles a known brand, or when a payment… · 2 tools
+- **[merchant-onboarding-verification](https://coreguard-global.github.io/CoreGuard/SKILLS.html#merchant-onboarding-verification)** — When you need a deterministic, evidence-first workflow for this scenario. · 5 tools
+- **[mt103-field-review](https://coreguard-global.github.io/CoreGuard/SKILLS.html#mt103-field-review)** — use when an MT103-like field map needs mandatory-tag and 32A shape checks before a human reviews the transfer. · 6 tools
+- **[multi-chain-reconciliation](https://coreguard-global.github.io/CoreGuard/SKILLS.html#multi-chain-reconciliation)** — When you need a deterministic, evidence-first workflow for this scenario. · 6 tools
+- **[multi-ledger-reconciliation](https://coreguard-global.github.io/CoreGuard/SKILLS.html#multi-ledger-reconciliation)** — use when payment, invoice and internal ledger records must be reconciled and the breaks named explicitly. · 6 tools
+- **[onchain-settlement-review](https://coreguard-global.github.io/CoreGuard/SKILLS.html#onchain-settlement-review)** — use when settlement evidence spans Stellar, EVM and Core DAO and must be checked on one deterministic surface. · 6 tools
+- **[payment-compliance-packet](https://coreguard-global.github.io/CoreGuard/SKILLS.html#payment-compliance-packet)** — When you need a deterministic, evidence-first workflow for this scenario. · 5 tools
+- **[payment-dispute-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#payment-dispute-evidence)** — When you need a deterministic, evidence-first workflow for this scenario. · 6 tools
+- **[payment-intent-canonicalization](https://coreguard-global.github.io/CoreGuard/SKILLS.html#payment-intent-canonicalization)** — use when an agent is about to approve a payment instruction and you need a canonical, digest-bound object before any co… · 6 tools
+- **[pi-attestation-chain](https://coreguard-global.github.io/CoreGuard/SKILLS.html#pi-attestation-chain)** — use when a Pi payment attestation chain must be checked for digest linkage and root agreement. · 6 tools
+- **[pi-payment-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#pi-payment-evidence)** — When you need a deterministic, evidence-first workflow for this scenario. · 5 tools
+- **[receipt-forensics](https://coreguard-global.github.io/CoreGuard/SKILLS.html#receipt-forensics)** — Use when reconstructing what happened to a payment or approval — redact a receipt for sharing, verify an evidence bundl… · 5 tools
+- **[robot-fleet-ops](https://coreguard-global.github.io/CoreGuard/SKILLS.html#robot-fleet-ops)** — use when a robot fleet needs mission receipts, handoff chains and SLA evidence reviewed together. · 6 tools
+- **[robot-handoff-chain](https://coreguard-global.github.io/CoreGuard/SKILLS.html#robot-handoff-chain)** — use when a robot task is handed from one machine to another and you need continuity and digest-linkage checks. · 6 tools
+- **[robot-mission-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#robot-mission-evidence)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[robot-mission-receipt](https://coreguard-global.github.io/CoreGuard/SKILLS.html#robot-mission-receipt)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[sanctions-evidence-gate](https://coreguard-global.github.io/CoreGuard/SKILLS.html#sanctions-evidence-gate)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[sanctions-list-version-gate](https://coreguard-global.github.io/CoreGuard/SKILLS.html#sanctions-list-version-gate)** — use when a screening result cites a list version and you need to check the stamped version and age without downloading… · 6 tools
+- **[stablecoin-reserve-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stablecoin-reserve-evidence)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[stellar-agent-authority-audit](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-agent-authority-audit)** — A security review asks what an agent can actually authorize on Stellar. · 4 tools
+- **[stellar-agent-spend-ledger](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-agent-spend-ledger)** — An agent runs a long task with a fixed budget. · 4 tools
+- **[stellar-anchor-deposit-verify](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-anchor-deposit-verify)** — A customer's fiat deposit is reported complete by a SEP-24 anchor. · 4 tools
+- **[stellar-anchor-withdrawal-reconciliation](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-anchor-withdrawal-reconciliation)** — A withdrawal is marked complete by an anchor but the bank credit is missing. · 4 tools
+- **[stellar-asset-trust-preflight](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-asset-trust-preflight)** — A payment or DEX swap names an asset code supplied by a counterparty or a model. · 4 tools
+- **[stellar-claimable-balance-claim](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-claimable-balance-claim)** — A counterparty funds a claimable balance as escrow or a delayed payout. · 4 tools
+- **[stellar-dex-slippage-guard](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-dex-slippage-guard)** — An agent swaps between two Stellar assets on behalf of a user. · 4 tools
+- **[stellar-envelope-window-guard](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-envelope-window-guard)** — An envelope was built earlier (or by another service) and is now about to be submitted. · 4 tools
+- **[stellar-fee-sponsor-check](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-fee-sponsor-check)** — A fee-bump envelope arrives from a relayer or sponsor service. · 4 tools
+- **[stellar-mainnet-preflight-rehearsal](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-mainnet-preflight-rehearsal)** — An owner has authorized a Mainnet payment and wants the gate exercised first. · 5 tools
+- **[stellar-multisig-recovery-drill](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-multisig-recovery-drill)** — A smart account holds value and its recovery path has never been tested. · 5 tools
+- **[stellar-operation-drift-forensics](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-operation-drift-forensics)** — A dispute or incident review needs the exact difference between approved and executed operations. · 4 tools
+- **[stellar-path-payment-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-path-payment-evidence)** — use when a Stellar path-payment receipt needs structural verification without a Horizon call. · 6 tools
+- **[stellar-replay-defense](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-replay-defense)** — A submission timed out and the agent wants to retry. · 4 tools
+- **[stellar-sep10-signin-check](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-sep10-signin-check)** — An agent signs in to a Stellar anchor or wallet service. · 4 tools
+- **[stellar-session-key-guard](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-session-key-guard)** — An agent's Stellar session key is about to be used for a payment, a Soroban invoke, or a path payment. · 4 tools
+- **[stellar-settlement-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-settlement-evidence)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[stellar-smart-account-incident-freeze](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-smart-account-incident-freeze)** — A session key leaked, or a signer set changed unexpectedly. · 5 tools
+- **[stellar-smart-account-signer-policy](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-smart-account-signer-policy)** — A smart account is being created for an agent and the owner must approve the signer set first. · 4 tools
+- **[stellar-soroban-auth-review](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-soroban-auth-review)** — An agent is about to authorize a Soroban invocation with a session key. · 4 tools
+- **[stellar-trustline-cleanup-audit](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-trustline-cleanup-audit)** — An account has accumulated trustlines from many integrations. · 5 tools
+- **[stellar-x402-to-stellar-settlement](https://coreguard-global.github.io/CoreGuard/SKILLS.html#stellar-x402-to-stellar-settlement)** — An agent receives an HTTP 402 challenge and pays it with a Stellar asset. · 5 tools
+- **[swift-remittance-verification](https://coreguard-global.github.io/CoreGuard/SKILLS.html#swift-remittance-verification)** — When you need a deterministic, evidence-first workflow for this scenario. · 5 tools
+- **[token-allowance-revocation](https://coreguard-global.github.io/CoreGuard/SKILLS.html#token-allowance-revocation)** — use when cleaning up token approvals and you need evidence that a previous allowance was reduced to zero. · 5 tools
+- **[tool-poisoning-triage](https://coreguard-global.github.io/CoreGuard/SKILLS.html#tool-poisoning-triage)** — Use when tool descriptions or prompts look off, arrive from an untrusted MCP server, or an agent starts behaving as if… · 6 tools
+- **[tool-surface-drift-watch](https://coreguard-global.github.io/CoreGuard/SKILLS.html#tool-surface-drift-watch)** — A dependency bump changes an MCP server version. · 4 tools
+- **[travel-rule-packet-check](https://coreguard-global.github.io/CoreGuard/SKILLS.html#travel-rule-packet-check)** — use when a cross-border transfer needs a travel-rule packet reviewed for completeness before any human sends it. · 6 tools
+- **[ubo-packet-verification](https://coreguard-global.github.io/CoreGuard/SKILLS.html#ubo-packet-verification)** — use when you receive a beneficial-ownership packet and need deterministic checks on ownership sums and disclosure thres… · 6 tools
+- **[web3-approval-safety](https://coreguard-global.github.io/CoreGuard/SKILLS.html#web3-approval-safety)** — use when an agent holds token approvals and you need permit, revocation and signature evidence reviewed together. · 6 tools
+- **[web3-signature-evidence](https://coreguard-global.github.io/CoreGuard/SKILLS.html#web3-signature-evidence)** — When you need a deterministic, evidence-first workflow for this scenario. · 4 tools
+- **[x402-payment-gate](https://coreguard-global.github.io/CoreGuard/SKILLS.html#x402-payment-gate)** — Use when an agent answers an HTTP 402 payment challenge — parse the challenge, authorize against policy, verify settlem… · 6 tools
+
 ## 10. Owner-only clicks (this repository cannot perform them)
 
 - [x] Publish `0.3.0` through the gated release workflow (run `45688325860`) and confirm npm + MCP Registry report `0.3.0` active/latest.
