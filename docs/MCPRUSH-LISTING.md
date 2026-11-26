@@ -1,10 +1,10 @@
-# MCPRush listing — copy-paste sheet (0.4.0)
+# MCPRush listing — copy-paste sheet (0.5.0)
 
 Everything below is written to be pasted into the studio at `mcprush.com/studio#manage`. Where a value is factual it is measured in this repository; where it is a choice, the choice is named. Nothing here claims installs, revenue, users, partnership or an audit.
 
-**Why 0.4.0:** Wave 5 (CG-W5/1) adds 24 deterministic, offline evidence tools for payment-authority chains, KYC/UBO/travel-rule/AML/sanctions-version packets, FX locks, multi-ledger reconciliation, camt.054/MT103/beneficiary-change checks, Stellar/EVM/Core DAO/Pi/ERC-4337/approval-revocation evidence, machine budget leases, robot handoffs, inference receipts, and redacted evidence packs. The skill library grows to **72 skills**. All new tools are caller-supplied-evidence only; no live bank/chain/PI/compliance network calls. `VERIFIED ≠ SAFE`.
+**Why 0.5.0:** Wave 5 (CG-W5/1) adds 24 deterministic, offline evidence tools for payment-authority chains, KYC/UBO/travel-rule/AML/sanctions-version packets, FX locks, multi-ledger reconciliation, camt.054/MT103/beneficiary-change checks, Stellar/EVM/Core DAO/Pi/ERC-4337/approval-revocation evidence, machine budget leases, robot handoffs, inference receipts, and redacted evidence packs. CG-SG/1 adds 5 offline Stellar Agent Gate tools for preflight refusal, exact-XDR authorization binding, submission-evidence verification and redacted evidence packs. The skill library stays at **72 skills**. All tools are caller-supplied-evidence only; no live bank/chain/PI/compliance network calls. `VERIFIED ≠ SAFE`.
 
-**Cumulative:** the server now ships **94 tools** and **72 skills**. Wave 3 added policy reasoning, MCP supply-chain audit, evidence, and operations; Wave 4 added cross-border/chain/machine/loan evidence; Wave 5 adds authority, financial-compliance evidence, chain-specific packets and machine-economy operations. Everything stays offline, deterministic, zero-key.
+**Cumulative:** the published server ships **99 tools** and **72 skills**. Wave 3 added policy reasoning, MCP supply-chain audit, evidence, and operations; Wave 4 added cross-border/chain/machine/loan evidence; Wave 5 adds authority, financial-compliance evidence, chain-specific packets and machine-economy operations; CG-SG/1 adds the offline Stellar Agent Gate. Everything stays offline, deterministic, zero-key.
 
 ---
 
@@ -38,7 +38,7 @@ Fail-closed consent receipts and execution verification for agentic purchases. 9
 **What it does** (the section that opens the listing page):
 
 ```
-Bind a buyer's approval to the exact order bytes, then verify any executed trace against that receipt — offline, deterministic, fail-closed. 94 MCP tools: consent receipts (CGCR/1), execution verification (AGR/1), x402/machine-economy evidence, CGCP/1 control plane, Wave 3 policy/supply-chain/evidence/ops/interop, Wave 4 cross-border/bank/chain settlement evidence, bridge/DeFi/Web3 risk, robot mission receipts, SLA/loan/collateral/credit-line checks, escrow milestones and incident war rooms, and Wave 5 authority, KYC/AML, reconciliation, chain-specific evidence and machine-economy operations.
+Bind a buyer's approval to the exact order bytes, then verify any executed trace against that receipt — offline, deterministic, fail-closed. 99 MCP tools: consent receipts (CGCR/1), execution verification (AGR/1), x402/machine-economy evidence, CGCP/1 control plane, Wave 3 policy/supply-chain/evidence/ops/interop, Wave 4 cross-border/bank/chain settlement evidence, bridge/DeFi/Web3 risk, robot mission receipts, SLA/loan/collateral/credit-line checks, escrow milestones and incident war rooms, Wave 5 authority, KYC/AML, reconciliation, chain-specific evidence and machine-economy operations, plus CG-SG/1 Stellar Agent Gate preflight, exact-byte binding, submission-evidence verification and redacted evidence packs.
 
 VERIFIED means the executed bytes matched the approved bytes. It is not a safety, fraud or settlement guarantee, and the server contacts no payment network, chain or provider. No sign-in, no keys, no wall clock: every call is reproducible from its inputs.
 ```
@@ -105,7 +105,7 @@ Paste-ready per-tool reference, with every example executed against the shipped 
 
 ## 7. Releases
 
-**Published:** 0.4.0. Gated release run `45717671413` completed; npm `latest` = `0.4.0`, MCP Registry `io.github.EslaM-X/coreguard-agent-commerce@0.4.0` is active and `isLatest`, and the published npm artifact re-reads at `0.4.0` / 94 tools. The prior 0.3.0 release (run `45688325860`, 70 tools) remains published as the previous version. MCPRush Studio still requires the owner clicks in §10 — this repository cannot edit the listing.
+**Published:** 0.5.0. Gated release run `45838608694` completed; npm `latest` = `0.5.0`, MCP Registry `io.github.EslaM-X/coreguard-agent-commerce@0.5.0` is active and `isLatest` (published `2026-11-26T14:28:06.968555Z`), and the published npm artifact re-reads at `0.5.0` / 99 tools with schemas. The prior 0.4.0 release (run `45717671413`, 94 tools) and 0.3.0 release (run `45688325860`, 70 tools) remain published. MCPRush Studio still requires the owner clicks in §10 — this repository cannot edit the listing.
 
 ## 8. README badge
 
@@ -136,8 +136,9 @@ Use the numbers as they are printed by those commands, and do not add a percenta
 
 - [x] Publish `0.3.0` through the gated release workflow (run `45688325860`) and confirm npm + MCP Registry report `0.3.0` active/latest.
 - [x] Confirm the published npm artifact reports `0.3.0` and `tools/list` returns 70 tools (`npx -y -p @coreguard/agent-commerce@0.3.0 coreguard-agent-commerce-mcp`, agent-session re-read; owner may repeat in a clean environment).
-- [x] Publish `0.4.0` through gated release run `45717671413`; npm `latest` = `0.4.0`, MCP Registry `0.4.0` active/latest, and the published artifact re-reads at **94 tools** (agent-session re-read).
-- [ ] In MCPRush Studio after 0.4.0 is live: update listing copy, add release `0.4.0`, re-read Tool surface to **94 tools**, and request rescan only if needed (once/day).
+- [x] Publish `0.4.0` through gated release run `45717671413`; npm `latest` was `0.4.0`, MCP Registry `0.4.0` active/latest, and the published artifact re-read at **94 tools** (agent-session re-read).
+- [x] Publish `0.5.0` through gated release run `45838608694`; npm `latest` = `0.5.0`, MCP Registry `0.5.0` active/latest, and the published artifact re-reads at **99 tools** (agent-session re-read).
+- [ ] In MCPRush Studio after 0.5.0 is live: update listing copy, add release `0.5.0`, re-read Tool surface to **99 tools**, and request rescan only if needed (once/day).
 - [ ] Tell the agent-skills pack (`skills/`) to the integration story: 72 skills, each a folder with `SKILL.md`.
 - [ ] In the studio: save the listing copy from §2, confirm sign-in/keys from §3, cut the release so the tool surface re-reads.
 - [ ] If the grade is stale relative to the new tarball, request the once-a-day rescan; the grade is deterministic and re-runnable, so a rescan is a measurement, not an appeal.

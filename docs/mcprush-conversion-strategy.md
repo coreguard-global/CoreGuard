@@ -19,9 +19,9 @@ customer traction, or "downloads = active users".
 
 | Stage | What the visitor needs | Asset that exists today | Owner action |
 |---|---|---|---|
-| **1. Discovery** | A one-line reason to click | MCPRush listing; `server.json` (94 tools, stdio, npm identifier); package README; org profile announcement (merged) | Update listing version/metadata after npm publish |
+| **1. Discovery** | A one-line reason to click | MCPRush listing; `server.json` (99 tools, stdio, npm identifier); package README; org profile announcement (merged) | Update listing version/metadata in MCPRush Studio (owner-only) |
 | **2. Trust** | Evidence they can re-run | `node examples/agent-commerce-mcp/run.mjs` (8/8); `node scripts/agent-commerce-mcp-smoke.mjs` (11/11, real stdio child); 11 MCP contract tests; security model; compatibility matrix with an honest Run Log | Paste the smoke output + release-notes link into the listing; request a runtime scan on the live server |
-| **3. Activation** | A working call in under five minutes | `npx -y -p @coreguard/agent-commerce@0.4.0 coreguard-agent-commerce-mcp`; 94 tool schemas with `inputSchema`/`outputSchema`; 60-second demo (approve → refuse); client config snippets | `0.4.0` published; record the first real RUN-BY-HAND in the compatibility log |
+| **3. Activation** | A working call in under five minutes | `npx -y -p @coreguard/agent-commerce@0.5.0 coreguard-agent-commerce-mcp`; 99 tool schemas with `inputSchema`/`outputSchema`; 60-second demo (approve → refuse); client config snippets | `0.5.0` published; record the first real RUN-BY-HAND in the compatibility log |
 | **4. Depth** | A reason to keep it beyond one call | Control plane: versioned policies, approvals bound to one order, rolling spend caps, revocation, hash-chained audit, HTTP API + CLI, 8/8 offline demo | Link the control-plane architecture/runbook from the listing |
 | **5. Conversion** | A bounded next step | Pilot SOW + report template; integration offer scoped by SOW; no hosted enterprise claim | Offer a design-partner pilot: bring sanitised traces/receipts, get a verification integration and a report |
 
@@ -50,9 +50,11 @@ No revenue is claimed. Pricing stays LOCKED and unpublished until an owner decis
 - [x] `@coreguard/agent-commerce@0.3.0` published from the version-bump commit via gated release run `45688325860`.
 - [x] Verify the published artifact: `npx -y -p @coreguard/agent-commerce@0.3.0 coreguard-agent-commerce-mcp` reports `0.3.0`,
       `tools/list` returns 70 tools with schemas (agent-session re-read).
-- [x] Publish `0.4.0` (94 tools / 72 skills) through gated release run `45717671413`; npm `latest` = `0.4.0`,
+- [x] Publish `0.4.0` (94 tools / 72 skills) through gated release run `45717671413`; npm `latest` was `0.4.0`,
       MCP Registry `0.4.0` active/latest, published artifact re-read at 94 tools (agent session).
-- [ ] Update MCPRush: version, package id, 94-tool description, links to security model,
+- [x] Publish `0.5.0` (99 tools / 72 skills, CG-SG/1) through gated release run `45838608694`; npm `latest` = `0.5.0`,
+      MCP Registry `0.5.0` active/latest, published artifact re-read at 99 tools (agent session).
+- [ ] Update MCPRush: version, package id, 99-tool description, links to security model,
       release notes, compatibility run log, control-plane docs, 60s demo.
 - [ ] Request runtime scan on the live MCP server; keep the result as evidence, not a badge
       claim of audit.
