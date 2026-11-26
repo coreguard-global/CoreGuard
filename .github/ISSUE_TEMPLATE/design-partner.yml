@@ -1,0 +1,48 @@
+name: Design partner seat
+description: Apply for one of the three scoped design-partner seats (wallet, anchor, DEX/lending).
+title: "design partner: <team> — <seat>"
+labels: ["design-partner", "pilot", "partnership-ready", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Three seats, two weeks each, one measurable artifact. No payment, no exclusivity, no logo requirement.
+        A pilot that finds nothing is reported as finding nothing.
+  - type: input
+    id: team
+    attributes:
+      label: Team
+      description: Who you are and what you ship.
+    validations:
+      required: true
+  - type: dropdown
+    id: seat
+    attributes:
+      label: Seat
+      options:
+        - Wallet (signing gate)
+        - Anchor (SEP-10 / SEP-24 evidence)
+        - DEX or lending (pre-trade guard)
+    validations:
+      required: true
+  - type: textarea
+    id: payload
+    attributes:
+      label: One redacted payload you can share
+      description: Without a payload we can still talk, but the seat cannot be counted as done.
+  - type: textarea
+    id: success
+    attributes:
+      label: What a useful outcome looks like for you
+      placeholder: "e.g. a named gap list for our deposit flow, or a refusal we can ship in the wallet"
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Confirm
+      options:
+        - label: We understand there is no payment, no endorsement and no exclusivity in this programme.
+          required: true
+        - label: We allow the finding (not our name, unless we opt in) to be published with evidence.
+          required: true

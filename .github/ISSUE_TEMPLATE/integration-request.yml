@@ -1,0 +1,61 @@
+name: Integration request
+description: Ask for a CoreGuard gate in your product (wallet, anchor, DEX, lending, agent platform, bank rail).
+title: "integration: <product> — <flow>"
+labels: ["integration", "integration-request", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for a concrete integration, not a general question (Discussions → Q&A is better for that).
+        CoreGuard is offline and never signs, broadcasts or custodies. If your flow needs those, say so explicitly so we can tell you where the boundary is.
+  - type: input
+    id: product
+    attributes:
+      label: Product and stack
+      description: What you run, and the language/runtime of the integration point.
+      placeholder: "e.g. Stellar wallet (TypeScript), anchor backend (Python), Soroban contract + indexer"
+    validations:
+      required: true
+  - type: textarea
+    id: flow
+    attributes:
+      label: The flow you want gated
+      description: Steps from user intent to submission, and where a decision or an evidence pack would help.
+      placeholder: "1. user approves ... 2. wallet builds envelope ... 3. ??? 4. submit"
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Which surface fits
+      options:
+        - Session-key policy (CG-W6/1)
+        - Exact-XDR binding (CG-SG/1)
+        - Consent + execution verification (CGCR/1 / AGR/1)
+        - x402 settlement evidence
+        - Cross-border / bank / reconciliation evidence
+        - Loan, collateral or credit-line evidence
+        - Machine, robot or lease authority
+        - Other / not sure
+    validations:
+      required: true
+  - type: textarea
+    id: payload
+    attributes:
+      label: Payload availability
+      description: Can you share one redacted payload (challenge, envelope, settlement record)? A payload turns a request into a test.
+      placeholder: "Yes — SEP-24 deposit record with amounts redacted / not yet"
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Latency, offline requirements, compliance boundaries, deployment shape.
+  - type: checkboxes
+    id: honesty
+    attributes:
+      label: Confirm
+      options:
+        - label: I understand a PASS means "supplied evidence matched the supplied policy", not safety or settlement finality.
+          required: true
+        - label: I am not asking CoreGuard to custody keys, sign, or broadcast.
+          required: true

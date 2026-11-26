@@ -1,0 +1,65 @@
+name: Bug report
+description: A tool returned the wrong verdict, crashed, or its schema disagrees with the docs.
+title: "bug: <tool> — <one-line symptom>"
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The server must never crash on bad input; it must refuse with a named code. A crash is always a bug.
+        Redact secrets, seed phrases and private keys. Never paste a secret into an issue.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of the initialize call (serverInfo.version), or the npm version.
+      placeholder: "0.5.1"
+    validations:
+      required: true
+  - type: input
+    id: tool
+    attributes:
+      label: Tool
+      description: Exact tool name.
+      placeholder: "coreguard_evaluate_stellar_session_key"
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Input shape (redacted)
+      description: The arguments object, with secrets and identifying addresses removed.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected verdict and check id
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: The verdict, the refusal code, or the error text.
+    validations:
+      required: true
+  - type: dropdown
+    id: transport
+    attributes:
+      label: How you ran it
+      options:
+        - npx @coreguard/agent-commerce (stdio)
+        - Installed package via bin/mcp.mjs
+        - Imported the module directly
+        - REST surface (http.mjs)
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirm
+      options:
+        - label: I removed all secrets and private keys from this report.
+          required: true
