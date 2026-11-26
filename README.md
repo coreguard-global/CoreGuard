@@ -34,8 +34,8 @@
 
 **Discover the open-source consent and execution-verification tools.**
 CoreGuard Agent Commerce appears in the [MCPRush directory](https://mcprush.com/eslam-x/coreguard-agent-commerce-mcp).
-This is a publicly indexed marketplace listing, checked on 21 November 2026; it is **not** a partnership, endorsement, funding award or independent security audit.
-The observed listing is unclaimed and free, runs locally from its publisher's package, and is not hosted or billed by the marketplace.
+This is a publicly indexed marketplace listing, indexed 21 November 2026 and edited from the publisher's MCPRush studio; it is **not** a partnership, endorsement, funding award or independent security audit.
+The listing is free, runs locally from the publisher's package, and is not hosted or billed by the marketplace. Its tool count is whatever MCPRush last read, so the badge can lag the npm release; the measured surface is always `docs/mcprush/CAPABILITY-CARD.md`.
 
 [**Explore the package**](https://www.npmjs.com/package/@coreguard/agent-commerce) · [**Documentation**](https://coreguard-global.github.io/CoreGuard/DOCS.html) · [**Agent skills**](https://coreguard-global.github.io/CoreGuard/SKILLS.html) · [**Announcement & film**](https://coreguard-trust-and-defense.lovable.app/developments#mcprush)
 
@@ -219,6 +219,8 @@ Every hash above is re-derivable offline from `docs/evidence/`. Full detail is i
 | **2 · Execution Firewall** | Is what is about to be signed still that thing? | `PASS` or `BLOCK` with a named code — never a score |
 | **3 · Verifiable Execution** | Did what ran match what was authorized? | a comparison against the signed envelope and the result |
 | **4 · Immutable Evidence** | Can a third party check this without trusting us? | an artifact + an offline verifier: no secret, no network |
+
+**Stellar's own developer portal** now documents MCP servers, agent skills and x402 payments for agents ([developers.stellar.org](https://developers.stellar.org) · [docs](https://developers.stellar.org/docs) · [building with AI](https://developers.stellar.org/docs/build/building-with-ai)). That is an ecosystem signal, **not** a CoreGuard–Stellar integration: CoreGuard's Stellar surface is the offline CG-SG/1 Agent Gate, and the portal is read, never called, by our tools. Design record: [blueprint v0.1](docs/COREGUARD-STELLAR-AGENTIC-INFRASTRUCTURE-BLUEPRINT-v0.1.md) · [CG-SG/1 spec v0.2](docs/COREGUARD-STELLAR-AGENT-SECURITY-SPEC-v0.2.md).
 
 **See it in one command — offline, no keys:** `npm install` → `npm run trust:demo` — four pillars, three refusals by name, one receipt digest.
 

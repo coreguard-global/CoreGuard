@@ -403,6 +403,14 @@ const main = async () => {
   if (surface.tools.length !== surface.card.tools) {
     throw new Error(`tools/list says ${surface.tools.length} tools but the capability card says ${surface.card.tools}`);
   }
+  // The npm description is metadata a directory reads before it ever calls us.
+  // It said "94 tools" while the surface served 99, so a stale count could ship
+  // in the tarball and in every listing that quotes it. Bind it to tools/list.
+  const described = String(pkg.description ?? "").match(/\((\d+)\s+tools?\b/);
+  if (described && Number(described[1]) !== surface.tools.length) {
+    throw new Error(`package.json description says ${described[1]} tools but tools/list returns ${surface.tools.length} — update the description`);
+  }
+
   const skills = loadSkills();
   const card = renderCardJson(surface, skills);
 

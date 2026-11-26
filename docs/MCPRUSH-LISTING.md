@@ -87,7 +87,7 @@ That is accurate and worth keeping: the server reads no environment variable at 
 
 **Trust card** (CG-TC/1) — generated from the published `server.json` and a live `tools/list`, re-runnable with `npm run trust:cards:check`:
 
-> **Trust card:** PASS · manifest risk `low` · tool descriptions `CLEAN` · 94 tools · card `sha256:ee7cae0d637d6bca0476240520ca8872847c0bc5a3a2051b1f2ff0610e434665`
+> **Trust card:** PASS · manifest risk `low` · tool descriptions `CLEAN` · 99 tools · card `sha256:0bb32d8b2b0ad09e411cc21cb5fe0ef5ff7e44fb8d4b1914d71b8b898d211ec5`
 > Structural audit by CoreGuard (CG-TC/1) from the server record and a live `tools/list`. PASS ≠ SAFE.
 
 Full card: [trust-cards/coreguard-agent-commerce.md](./trust-cards/coreguard-agent-commerce.md) · machine-readable sidecar: [trust-cards/coreguard-agent-commerce.json](./trust-cards/coreguard-agent-commerce.json). The same command works on any server record: see [TRUST-CARD.md](./TRUST-CARD.md), the third-party example [filesystem-mcp.md](./trust-cards/filesystem-mcp.md), and the blocked [poisoned fixture](./trust-cards/examples/poisoned-fixture.md).
@@ -121,7 +121,7 @@ That is the live badge code, not a screenshot of a grade. The studio's "Get the 
 
 | Claim | Where it is re-runnable |
 |---|---|
-| 94 tools, schemas, executed examples | `node scripts/mcprush-tool-reference.mjs --check` → `docs/mcprush/tool-reference.md` |
+| 99 tools, schemas, executed examples | `node scripts/mcprush-tool-reference.mjs --check` → `docs/mcprush/tool-reference.md` |
 | MCP contract: initialize, tools/list, tools/call | `node --test test/integrations/agent-commerce-mcp.test.mjs` |
 | Interop: 143 pinned vectors, 0 false accepts, 0 divergences | `node scripts/aer1-interop.mjs --check` → `docs/AER1-INTEROP-TABLE.md` |
 | Observation family on the same set and digest | `node scripts/aer1-observation-join.mjs --check` → `docs/AER1-OBSERVATION-JOIN.md` |
@@ -138,7 +138,7 @@ Use the numbers as they are printed by those commands, and do not add a percenta
 - [x] Confirm the published npm artifact reports `0.3.0` and `tools/list` returns 70 tools (`npx -y -p @coreguard/agent-commerce@0.3.0 coreguard-agent-commerce-mcp`, agent-session re-read; owner may repeat in a clean environment).
 - [x] Publish `0.4.0` through gated release run `45717671413`; npm `latest` was `0.4.0`, MCP Registry `0.4.0` active/latest, and the published artifact re-read at **94 tools** (agent-session re-read).
 - [x] Publish `0.5.0` through gated release run `45838608694`; npm `latest` = `0.5.0`, MCP Registry `0.5.0` active/latest, and the published artifact re-reads at **99 tools** (agent-session re-read).
-- [ ] In MCPRush Studio after 0.5.0 is live: update listing copy, add release `0.5.0`, re-read Tool surface to **99 tools**, and request rescan only if needed (once/day).
+- [ ] In MCPRush Studio after 0.5.0 is live: update listing copy, add release `0.5.0`, re-read Tool surface to **99 tools**, and request rescan only if needed (once/day). Step-by-step, with the measured current gap and verification commands: [mcprush/STUDIO-REFRESH-0.5.0.md](./mcprush/STUDIO-REFRESH-0.5.0.md).
 - [ ] Tell the agent-skills pack (`skills/`) to the integration story: 72 skills, each a folder with `SKILL.md`.
 - [ ] In the studio: save the listing copy from §2, confirm sign-in/keys from §3, cut the release so the tool surface re-reads.
 - [ ] If the grade is stale relative to the new tarball, request the once-a-day rescan; the grade is deterministic and re-runnable, so a rescan is a measurement, not an appeal.
