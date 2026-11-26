@@ -29,7 +29,7 @@ Optional longer variant, still under 200 characters, if you want the offline gua
 
 <!-- generated: listing-short — run `npm run docs:surface`, do not edit -->
 ```
-Fail-closed consent receipts and execution verification for agentic purchases. 94 offline MCP tools, zero keys, no network.
+Fail-closed consent receipts and execution verification for agentic purchases. 99 offline MCP tools, zero keys, no network.
 ```
 
 <sub>123/200 characters · tool count read from `tools/list` at generation time.</sub>
@@ -65,7 +65,7 @@ That is accurate and worth keeping: the server reads no environment variable at 
 ## 5. Tool surface
 
 <!-- generated: mcp-surface — run `npm run docs:surface`, do not edit -->
-**Generated from `tools/list`** — server `coreguard-agent-commerce@0.4.0`, protocol `2025-06-18`, **94 tools**, tools digest `sha256:c4f42eec7a678dafea80f75c80b1bb1936d978af21d8dacb948bc8fabfaa1389`.
+**Generated from `tools/list`** — server `coreguard-agent-commerce@0.5.0`, protocol `2025-06-18`, **99 tools**, tools digest `sha256:4ac1f9e809b498add62023eb027c52ffba89fd8a30dfc36ad633346a8b0d9ee6`.
 
 | Group | Tools |
 |---|---|
@@ -76,12 +76,13 @@ That is accurate and worth keeping: the server reads no environment variable at 
 | Wave 3 · evidence + operations + interop (10) | `coreguard_redact_receipt`, `coreguard_attest_batch`, `coreguard_verify_batch_proof`, `coreguard_freeze_agent`, `coreguard_budget_runway`, `coreguard_detect_spend_anomaly`, `coreguard_incident_timeline`, `coreguard_translate_receipt`, `coreguard_emit_test_vectors`, `coreguard_describe_surface` |
 | Wave 4 · cross-border/bank/chain/machine/loan evidence (24) | `coreguard_parse_iso20022_payment`, `coreguard_verify_cross_border_instruction`, `coreguard_assess_fx_quote_risk`, `coreguard_verify_swift_remittance_evidence`, `coreguard_verify_bank_transfer_evidence`, `coreguard_assess_sanctions_screening_evidence`, `coreguard_verify_invoice_match`, `coreguard_generate_payment_compliance_packet`, `coreguard_verify_stellar_settlement_evidence`, `coreguard_verify_evm_settlement_evidence`, `coreguard_verify_coredao_settlement_evidence`, `coreguard_verify_pi_payment_evidence`, `coreguard_assess_bridge_risk`, `coreguard_assess_defi_position_risk`, `coreguard_verify_web3_signature_evidence`, `coreguard_verify_stablecoin_reserve_evidence`, `coreguard_create_robot_mission_receipt`, `coreguard_verify_robot_mission_evidence`, `coreguard_assess_machine_sla`, `coreguard_assess_loan_application`, `coreguard_verify_collateral_packet`, `coreguard_assess_credit_line_utilization`, `coreguard_verify_escrow_milestone`, `coreguard_create_incident_war_room` |
 | Wave 5 · authority/KYC-AML/reconciliation/chain evidence/machine economy (24) | `coreguard_canonicalize_payment_instruction`, `coreguard_verify_payment_authorization_chain`, `coreguard_verify_kyc_evidence`, `coreguard_verify_ubo_evidence`, `coreguard_verify_travel_rule_packet`, `coreguard_verify_aml_alert_disposition`, `coreguard_verify_sanctions_list_version`, `coreguard_verify_fx_rate_lock`, `coreguard_reconcile_multi_ledger`, `coreguard_verify_camt054_notification`, `coreguard_verify_mt103_fields`, `coreguard_verify_beneficiary_change`, `coreguard_verify_stellar_path_payment`, `coreguard_verify_evm_permit_evidence`, `coreguard_verify_coredao_delegation_evidence`, `coreguard_verify_pi_attestation_chain`, `coreguard_verify_erc4337_userop_evidence`, `coreguard_verify_token_approval_revocation`, `coreguard_create_machine_budget_lease`, `coreguard_verify_machine_budget_consumption`, `coreguard_verify_robot_handoff_chain`, `coreguard_verify_agent_authority_intersection`, `coreguard_create_inference_receipt`, `coreguard_export_evidence_pack` |
+| Stellar Agent Gate · exact XDR binding and submission evidence (5) | `coreguard_preflight_stellar_agent_payment`, `coreguard_bind_stellar_authorization`, `coreguard_verify_stellar_submission_evidence`, `coreguard_export_stellar_evidence_pack`, `coreguard_stellar_adversarial_vectors` |
 
 **Quoted capability card** (from `coreguard_describe_surface`; full JSON in [`docs/mcprush/CAPABILITY-CARD.md`](./mcprush/CAPABILITY-CARD.md)):
 
-> coreguard-agent-commerce 0.4.0 — 94 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
+> coreguard-agent-commerce 0.5.0 — 99 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
 
-**Badge:** ![MCP tools: 94](./assets/badges/mcp-tools.svg)
+**Badge:** ![MCP tools: 99](./assets/badges/mcp-tools.svg)
 <!-- /generated: mcp-surface -->
 
 **Trust card** (CG-TC/1) — generated from the published `server.json` and a live `tools/list`, re-runnable with `npm run trust:cards:check`:

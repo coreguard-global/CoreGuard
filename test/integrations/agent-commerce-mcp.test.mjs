@@ -16,6 +16,7 @@ import { tmpdir } from "node:os";
 const here = dirname(fileURLToPath(import.meta.url));
 const MCP_PATH = resolve(here, "../../packages/agent-commerce/mcp.mjs");
 import { WAVE5_TOOLS } from "../../packages/agent-commerce/wave5.mjs";
+import { STELLAR_GATE_TOOLS } from "../../packages/agent-commerce/stellar-gate.mjs";
 
 const MERCHANT = "0x0000000000000000000000000000000000000042";
 const AGENT = "0x000000000000000000000000000000000000000d";
@@ -143,7 +144,7 @@ test("MCP initialize answers the pinned protocol version and server info", async
   });
 });
 
-test("tools/list exposes the 94 provider-independent tools with schemas", async () => {
+test("tools/list exposes the 99 provider-independent tools with schemas", async () => {
   await withServer(async ({ request }) => {
     await request("initialize", {});
     const res = await request("tools/list", {});
@@ -221,6 +222,7 @@ test("tools/list exposes the 94 provider-independent tools with schemas", async 
         "coreguard_verify_escrow_milestone",
         "coreguard_create_incident_war_room",
         ...WAVE5_TOOLS.map((t) => t.name),
+        ...STELLAR_GATE_TOOLS.map((t) => t.name),
       ]
     );
     for (const t of res.result.tools) {

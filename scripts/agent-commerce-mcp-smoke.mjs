@@ -4,7 +4,7 @@
  *
  * Proves, with a live JSON-RPC 2.0 stdio process:
  *   - initialize responds with the expected protocol/version identity
- *   - tools/list exposes the 94 tools with inputSchema + outputSchema
+ *   - tools/list exposes the 99 tools with inputSchema + outputSchema
  *   - coreguard_authorize returns a CGCR/1 receipt (structuredContent)
  *   - coreguard_verify_execution returns VERIFIED on exact execution
  *   - coreguard_verify_execution returns INVALID with named drift on escalation
@@ -18,6 +18,7 @@ import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { WAVE5_TOOLS } from '../packages/agent-commerce/wave5.mjs';
+import { STELLAR_GATE_TOOLS } from '../packages/agent-commerce/stellar-gate.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const MCP_PATH = resolve(here, '../packages/agent-commerce/mcp.mjs');
@@ -105,7 +106,7 @@ async function main() {
     });
 
     let listed;
-    await run('tools/list exposes 94 tools with inputSchema+outputSchema', async () => {
+    await run('tools/list exposes 99 tools with inputSchema+outputSchema', async () => {
       listed = await request('tools/list', {});
       const tools = listed.result?.tools || [];
       const names = tools.map(t => t.name).sort();
@@ -129,6 +130,7 @@ async function main() {
         "coreguard_verify_stellar_settlement_evidence","coreguard_verify_swift_remittance_evidence","coreguard_verify_task_completion","coreguard_verify_telemetry",
         "coreguard_verify_web3_signature_evidence","coreguard_verify_x402_settlement",
         ...WAVE5_TOOLS.map((t) => t.name),
+        ...STELLAR_GATE_TOOLS.map((t) => t.name),
       ].sort();
       assert(JSON.stringify(names) === JSON.stringify(expected), `unexpected tool names: ${names.join(',')}`);
       for (const t of tools) {
@@ -211,6 +213,31 @@ async function main() {
       assert(!ver.result?.isError, `verify failed: ${ver.result?.content?.[0]?.text}`);
       const decision = ver.result.structuredContent.decision || ver.result.structuredContent.verdict || ver.result.structuredContent.status;
       assert(typeof decision === 'string', 'missing decision/verdict/status');
+    });
+
+    await run('Stellar gate preflight → bind → verify → export → vectors', async () => {
+      const S = 'G' + 'A'.repeat(55);
+      const D = 'G' + 'B'.repeat(55);
+      const env = 'AAAAAgAAA' + 'Q'.repeat(120);
+      const proj = { network: 'testnet', sourceAccount: S, destination: D, asset: 'native', amount: '5', memo: 'cg-sg-smoke', sequence: '1' };
+      const proposal = { ...proj, envelopeXdr: env, envelopeProjection: proj, nonce: 'nonce-smoke', scopes: ['pay'], agentScopes: ['pay', 'read'], timeBounds: { minTime: NOW, maxTime: '1794661200' } };
+      const policy = { allowedNetworks: ['testnet'], allowedAssets: ['native'], allowedDestinations: [D], maxAmount: '100', requireMemo: true, requireNonce: true, requireTimeBounds: true, requiredScopes: ['pay'], usedNonces: [] };
+      const pre = await request('tools/call', { name: 'coreguard_preflight_stellar_agent_payment', arguments: { proposal, policy, nowSeconds: NOW } });
+      assert(!pre.result?.isError, `preflight failed: ${pre.result?.content?.[0]?.text}`);
+      const auth = pre.result.structuredContent;
+      assert(auth.verdict === 'ALLOW', `expected ALLOW, got ${auth.verdict}`);
+      const bound = await request('tools/call', { name: 'coreguard_bind_stellar_authorization', arguments: { authorization: auth, envelopeXdr: env, observed: proj } });
+      assert(!bound.result?.isError, `bind failed: ${bound.result?.content?.[0]?.text}`);
+      const binding = bound.result.structuredContent;
+      assert(binding.statusValue === 'BOUND', `expected BOUND, got ${binding.statusValue}`);
+      const ev = { network: 'testnet', envelopeXdr: env, txHash: 'ab'.repeat(32), successful: true, ledger: 123, resultXdr: 'AAAAAAAAAAAAAA==', operation: proj };
+      const ver = await request('tools/call', { name: 'coreguard_verify_stellar_submission_evidence', arguments: { binding, evidence: ev } });
+      assert(!ver.result?.isError, `verify failed: ${ver.result?.content?.[0]?.text}`);
+      assert(ver.result.structuredContent.verdict === 'VERIFIED', 'expected VERIFIED');
+      const pack = await request('tools/call', { name: 'coreguard_export_stellar_evidence_pack', arguments: { items: [auth, binding, ver.result.structuredContent] } });
+      assert(!pack.result?.isError && pack.result.structuredContent.root, 'evidence pack failed');
+      const vectors = await request('tools/call', { name: 'coreguard_stellar_adversarial_vectors', arguments: { family: 'stellar-agent-gate' } });
+      assert(!vectors.result?.isError && vectors.result.structuredContent.count === 16, 'vectors failed');
     });
 
     await run('malformed input returns stable structured error and server survives', async () => {

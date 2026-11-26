@@ -1,0 +1,28 @@
+{
+  "status": "PROOF_RECORDED",
+  "network": "testnet",
+  "endpoint": "https://horizon-testnet.stellar.org",
+  "friendbot": "https://friendbot.stellar.org",
+  "networkPassphrase": "Test SDF Network ; September 2015",
+  "publicKey": "GAVFNXCGJLHAIPCRFEARR5DBTMJWJORY6J2GYY4GVZ45TFJTTH36HMJR",
+  "keys": "Ephemeral agent-generated keypair; secret used in memory only, never written or logged; not owner-held keys.",
+  "transaction": {
+    "hash": "ab879a1a06e8fc2e4eb4f7bf96908dd688a6b06a0e9921f97038196ea87b5b09",
+    "ledger": 5925850,
+    "successful": true,
+    "resultXdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=",
+    "createdAt": "2026-11-26T00:28:13Z"
+  },
+  "gate": {
+    "authorizationVerdict": "ALLOW",
+    "authorizationDigest": "sha256:6eacf250442d35e33744b4a4531ff807442165bfecde8b5a15e9060ab1ea90cc",
+    "bindingStatus": "BOUND",
+    "evidenceDigest": "sha256:9b6ffff1d1a04df3003c854883719e921482332fda5046de39257021e15e8329",
+    "verificationVerdict": "VERIFIED",
+    "breaks": []
+  },
+  "replay": "node scripts/stellar-testnet-proof.mjs is a live script; offline replay uses packages/agent-commerce/stellar-gate.mjs with the saved envelopeXdr, binding and evidence fields.",
+  "boundary": "CG-SG/1 is deterministic and offline. It binds caller-supplied intent bytes to caller-supplied Stellar XDR envelope bytes and verifies caller-supplied submission evidence; it makes no Stellar RPC, Horizon, Friendbot, wallet, network or external call, never signs or submits, and proves no settlement finality, sanctions clearance, KYC/AML approval, balance, asset truth or safety. VERIFIED ≠ SAFE.",
+  "claim": "Synthetic technical proof only. Not a customer, pilot, sponsor, audit, funding, production compatibility, owner-held-key run or signing-authority claim. No Mainnet or production action is implied.",
+  "recordedAtUtc": "2026-11-26T00:28:13.657Z"
+}

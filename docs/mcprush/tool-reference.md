@@ -1,12 +1,12 @@
 # CoreGuard Agent Commerce — MCP tool reference
 
-Paste-ready reference for the MCP directory listing. Package `@coreguard/agent-commerce@0.4.0`, server `io.github.EslaM-X/coreguard-agent-commerce`, transport **stdio**, protocol `2025-06-18`.
+Paste-ready reference for the MCP directory listing. Package `@coreguard/agent-commerce@0.5.0`, server `io.github.EslaM-X/coreguard-agent-commerce`, transport **stdio**, protocol `2025-06-18`.
 
 Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.mjs`. Every example arguments block below was executed against that server when this page was built; the shown result is the real response (long consent payloads abridged where marked).
 
 **Boundary:** this is an offline, deterministic verification engine. `VERIFIED` means the executed bytes matched the approved bytes — it is not a safety, fraud or settlement guarantee, and no payment, chain or provider is contacted.
 
-## Tools (94)
+## Tools (99)
 
 | Tool | Required | Optional | Purpose |
 |---|---|---|---|
@@ -23,6 +23,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_audit_transaction`](#coreguard_audit_transaction) | `storePath` | `txRef`, `approvalId`, `agentId`, `limit`, `callerContext` | CGCP/1 mapping: read and optionally filter the append-only hash-chained audit report from a file-backed control… |
 | [`coreguard_authorize`](#coreguard_authorize) | `intent`, `policy`, `declaredTrace`, `nowSeconds` | `callerContext` | Bind a user's approval as a CoreGuard Consent Receipt (CGCR/1): the exact approved order bytes (intent + policy +… |
 | [`coreguard_authorize_x402_payment`](#coreguard_authorize_x402_payment) | `challenge`, `policy` | `selectedIndex`, `callerContext` | Evaluate an x402 challenge against a local policy and produce an authorization decision. No custody, no broadcast,… |
+| [`coreguard_bind_stellar_authorization`](#coreguard_bind_stellar_authorization) | `authorization`, `envelopeXdr`, `observed` | `callerContext` | Bind an ALLOW decision to the exact XDR envelope bytes and the observed operation projection. Refuses on byte drift… |
 | [`coreguard_budget_runway`](#coreguard_budget_runway) | `asOfSeconds`, `policyLimitMinor`, `spentMinor`, `windowSeconds` | `events`, `callerContext` | Project budget runway from pinned inputs: limit, spend to date, a pinned asOf and a spend window. Straight-line… |
 | [`coreguard_build_attestation`](#coreguard_build_attestation) | `consent`, `executedTrace`, `adapterId`, `nowSeconds` | `callerContext` | Build a CGXA/1 offline execution attestation from a consent record and executed trace. No broadcast; no… |
 | [`coreguard_canonicalize_payment_instruction`](#coreguard_canonicalize_payment_instruction) | `instruction` | `callerContext` | Normalize a caller-supplied payment instruction into a canonical, digest-bound object ready for approval. Offline;… |
@@ -44,6 +45,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_emit_test_vectors`](#coreguard_emit_test_vectors) | `policy`, `baseIntent` | `nowSeconds`, `callerContext` | Emit deterministic integration test vectors for an SDK or gateway: baseline allow, amount drift, recipient swap,… |
 | [`coreguard_explain_decision`](#coreguard_explain_decision) | `policy`, `intent`, `nowSeconds` | `callerContext` | Evaluate an intent against a policy and explain the verdict rule by rule, including the smallest single change… |
 | [`coreguard_export_evidence_pack`](#coreguard_export_evidence_pack) | `items` | `policy`, `nowSeconds`, `callerContext` | Export a redacted, digest-rooted evidence pack from caller-supplied items for human review. Nothing is submitted to… |
+| [`coreguard_export_stellar_evidence_pack`](#coreguard_export_stellar_evidence_pack) | `items` | `redactFields`, `callerContext` | Export a redacted, digest-rooted evidence pack from caller-supplied Stellar gate artifacts for human review. Nothing… |
 | [`coreguard_freeze_agent`](#coreguard_freeze_agent) | `storePath`, `agentId` | `reason`, `decidedBy`, `nowSeconds`, `callerContext` | Kill switch over a CGCP/1 control plane: revoke the agent, reject every pending approval it holds in one audited… |
 | [`coreguard_generate_boundary_cases`](#coreguard_generate_boundary_cases) | `policy`, `baseIntent`, `nowSeconds` | `callerContext` | Generate the cases that break naive policy tests: at the limit, one unit below, one above, unlisted… |
 | [`coreguard_generate_payment_compliance_packet`](#coreguard_generate_payment_compliance_packet) | `payment` | `evidence`, `checks`, `redactFields`, `nowSeconds`, `callerContext` | Bundle payment evidence into a redacted, hashed compliance packet for review/export. Local only; no regulatory… |
@@ -53,6 +55,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_meter_agent_usage`](#coreguard_meter_agent_usage) | `agentId`, `events` | `currency`, `callerContext` | Deterministically meter agent usage/cost events into an auditable total. No billing custody or external payment. |
 | [`coreguard_parse_iso20022_payment`](#coreguard_parse_iso20022_payment) | `message` | `callerContext` | Parse and validate a caller-supplied ISO 20022-like payment message (pain.001/pacs.008/camt.054 etc.) into… |
 | [`coreguard_parse_x402_challenge`](#coreguard_parse_x402_challenge) | `challenge` | `callerContext` | Parse and normalize an x402 payment challenge (HTTP 402 accepts). Offline deterministic validation only; no network… |
+| [`coreguard_preflight_stellar_agent_payment`](#coreguard_preflight_stellar_agent_payment) | `proposal`, `policy` | `nowSeconds`, `callerContext` | Pre-execution gate for an agent-proposed Stellar action. Checks policy, replay, authority scopes, time bounds and… |
 | [`coreguard_profile_reference`](#coreguard_profile_reference) | `action` | `receiptId`, `reference`, `callerContext` | Create or parse a CG-OUT/1 profile reference. action='make' requires receiptId; action='parse' requires reference. |
 | [`coreguard_reconcile_multi_ledger`](#coreguard_reconcile_multi_ledger) | `sources` | `expected`, `callerContext` | Reconcile caller-supplied ledger sources against an expected amount/currency and emit named breaks. No ledger API is… |
 | [`coreguard_reconcile_payment`](#coreguard_reconcile_payment) | `authorization` | `challenge`, `settlement`, `receipt`, `callerContext` | Reconcile authorization, settlement evidence, and receipt. Deterministic evidence check only; no external… |
@@ -61,6 +64,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_revoke_consent`](#coreguard_revoke_consent) | `storePath`, `targetType`, `targetId` | `reason`, `decidedBy`, `callerContext` | CGCP/1 mapping: revoke an approval, agent, or policy in a file-backed control plane. Local single-host revocation;… |
 | [`coreguard_scan_tool_descriptions`](#coreguard_scan_tool_descriptions) | `tools` | `callerContext` | Scan MCP tool descriptions for hidden-instruction and spoofing payloads: bidi overrides, Unicode tag characters,… |
 | [`coreguard_simulate_spend`](#coreguard_simulate_spend) | `policy`, `intents`, `nowSeconds` | `callerContext` | Dry-run a batch of intents against a policy: allowed/denied per row, blocking rules, totals and counterfactuals. No… |
+| [`coreguard_stellar_adversarial_vectors`](#coreguard_stellar_adversarial_vectors) | `family` | `callerContext` | List the named deterministic adversarial cases covered by the Stellar agent gate: amount escalation,… |
 | [`coreguard_translate_receipt`](#coreguard_translate_receipt) | `receipt`, `to` | `callerContext` | Structurally translate a receipt to ACP, x402 or CGCR/1 and list exactly what the target cannot carry. Translation… |
 | [`coreguard_verify_agent_authority_intersection`](#coreguard_verify_agent_authority_intersection) | `principalScope`, `agentScope` | `requested`, `callerContext` | Intersect principal, agent and requested authority scopes and name any overreach. Deterministic set arithmetic; no… |
 | [`coreguard_verify_aml_alert_disposition`](#coreguard_verify_aml_alert_disposition) | `alert` | `callerContext` | Verify a caller-supplied AML alert disposition for reviewer, rationale, sequence and case id. No alert is generated… |
@@ -96,6 +100,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_verify_stablecoin_reserve_evidence`](#coreguard_verify_stablecoin_reserve_evidence) | `evidence`, `policy`, `nowSeconds` | `callerContext` | Assess caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy. No issuer API… |
 | [`coreguard_verify_stellar_path_payment`](#coreguard_verify_stellar_path_payment) | `evidence` | `expected`, `callerContext` | Verify caller-supplied Stellar path-payment evidence for status, assets, amounts, destination and path digest. No… |
 | [`coreguard_verify_stellar_settlement_evidence`](#coreguard_verify_stellar_settlement_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied Stellar settlement evidence against expected payment fields. No Horizon/network call;… |
+| [`coreguard_verify_stellar_submission_evidence`](#coreguard_verify_stellar_submission_evidence) | `binding`, `evidence` | `callerContext` | Verify caller-supplied Stellar submission evidence against a BOUND authorization: envelope bytes, tx hash shape,… |
 | [`coreguard_verify_swift_remittance_evidence`](#coreguard_verify_swift_remittance_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied SWIFT/remittance evidence against expected amount/currency/accounts/reference. Evidence only;… |
 | [`coreguard_verify_task_completion`](#coreguard_verify_task_completion) | `task`, `completion` | `telemetryVerification`, `callerContext` | Verify task completion evidence against task record. Evidence acceptance is not physical-world proof; independent… |
 | [`coreguard_verify_telemetry`](#coreguard_verify_telemetry) | `taskId`, `telemetry` | `trust`, `callerContext` | Verify caller-supplied telemetry evidence structure/digest and optionally verify Ed25519 signature when trust… |
@@ -1217,8 +1222,8 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
 {
   "manifest": {
     "name": "io.github.EslaM-X/coreguard-agent-commerce",
-    "version": "0.4.0",
-    "description": "Fail-closed consent receipts and execution verification for agentic purchases. 94 MCP tools.",
+    "version": "0.5.0",
+    "description": "Fail-closed consent receipts and execution verification for agentic purchases. 99 MCP tools.",
     "repository": {
       "url": "https://github.com/coreguard-global/CoreGuard",
       "source": "github"
@@ -1227,7 +1232,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
       {
         "registryType": "npm",
         "identifier": "@coreguard/agent-commerce",
-        "version": "0.4.0",
+        "version": "0.5.0",
         "transport": {
           "type": "stdio"
         }
@@ -1244,7 +1249,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
   "type": "mcp_manifest_audit",
   "spec": "CG-MM/1",
   "serverName": "io.github.EslaM-X/coreguard-agent-commerce",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "transport": "package",
   "risk": "low",
   "findings": [],
@@ -1255,7 +1260,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
     "low": 0,
     "info": 0
   },
-  "manifestDigest": "sha256:5450f8cb9d8667bb180413bb40dabb8d120d5524db2a3ba5115f962d3c349c91",
+  "manifestDigest": "sha256:b17cb3a4e911062ba1fdd903f92e47658a72a0d336343065855f363e00340dc8",
   "note": "structural audit of the record only — it does not execute the server or attest its behaviour",
   "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment."
 }
@@ -1663,6 +1668,247 @@ Evaluate an x402 challenge against a local policy and produce an authorization d
   "policyDigest": "65b99bcdc73303b62248408d5a84a335b39fae2a4d5218ab70511131f54bbf7e",
   "authorizationId": "021c9338da4c286f33a659c90bc8656b49b4470e260b1bf48ff0d852a89bcad8",
   "boundary": "deterministic offline verification/planning surface; no payment custody, no broadcast, no network calls; x402 settlement/telemetry/physical completion verified only from caller-supplied evidence; VERIFIED != SAFE. No payment executed; authorization is a policy decision only."
+}
+```
+
+### `coreguard_bind_stellar_authorization`
+
+Bind an ALLOW decision to the exact XDR envelope bytes and the observed operation projection. Refuses on byte drift or named field drift; never signs, submits or contacts Stellar.
+
+**Required:** `authorization`, `envelopeXdr`, `observed` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `authorization` | `object` | **required** | — | ALLOW authorization from coreguard_preflight_stellar_agent_payment. |
+| `envelopeXdr` | `string` | **required** | — | Exact base64 envelope bytes to bind. |
+| `observed` | `object` | **required** | — | Caller-supplied projected operation fields observed before signing. |
+| `callerContext` | `object` | optional | — | Optional caller-supplied metadata echoed back; never used as a cryptographic input. |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "authorization": {
+      "type": "object",
+      "description": "ALLOW authorization from coreguard_preflight_stellar_agent_payment."
+    },
+    "envelopeXdr": {
+      "type": "string",
+      "description": "Exact base64 envelope bytes to bind."
+    },
+    "observed": {
+      "type": "object",
+      "description": "Caller-supplied projected operation fields observed before signing."
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller-supplied metadata echoed back; never used as a cryptographic input."
+    }
+  },
+  "required": [
+    "authorization",
+    "envelopeXdr",
+    "observed"
+  ],
+  "description": "Bind authorization to exact Stellar envelope bytes."
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "authorization": {
+    "type": "stellar_authorization",
+    "spec": "CG-SG/1",
+    "status": "OK",
+    "verdict": "ALLOW",
+    "intentDigest": "sha256:ebcaf4ff9b0bdefc52fb51d8ab7321358986bb168751e24126a046c47c0e322f",
+    "envelopeDigest": "sha256:bac07cd7e45eed718c83042ca75f5c523b7f2990dd558cb26ed08883fe973fe2",
+    "policyDigest": "sha256:7f3a5a5d09439b50c2a70d0622e1c3f3049f12f2378490954922ebe8abb46d7b",
+    "boundDigest": "sha256:18739248a3a7d2141e7518f3a9c63fcffe42320d3cfc6a78713f08347487d5f1",
+    "intent": {
+      "network": "testnet",
+      "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "asset": "native",
+      "amount": "5",
+      "memo": "cg-sg-reference",
+      "sequence": "1",
+      "nonce": "nonce-reference",
+      "agentId": "",
+      "scopes": [
+        "pay"
+      ],
+      "agentScopes": [
+        "pay",
+        "read"
+      ],
+      "timeBounds": {
+        "minTime": "1794657600",
+        "maxTime": "1794661200"
+      },
+      "purpose": ""
+    },
+    "summary": {
+      "checks": [
+        {
+          "id": "policy:networks",
+          "ok": true,
+          "detail": "policy must name allowedNetworks including the proposal network",
+          "evidence": {}
+        },
+        {
+          "id": "policy:assets",
+          "ok": true,
+          "detail": "policy must name allowedAssets including the proposal asset",
+          "evidence": {}
+        },
+        {
+          "id": "policy:destinations",
+          "ok": true,
+          "detail": "policy must name allowedDestinations including the proposal destination",
+          "evidence": {}
+        },
+        {
+          "id": "policy:maxAmount",
+          "ok": true,
+          "detail": "policy.maxAmount must be a positive decimal ceiling and cover the proposed amount",
+          "evidence": {}
+        },
+        {
+          "id": "policy:memo",
+          "ok": true,
+          "detail": "policy requires a memo",
+          "evidence": {}
+        },
+        {
+          "id": "policy:nonce",
+          "ok": true,
+          "detail": "policy requires a replay nonce",
+          "evidence": {}
+        },
+        {
+          "id": "replay:nonce",
+          "ok": true,
+          "detail": "replay nonce is already used",
+          "evidence": {}
+        },
+        {
+          "id": "authority:requiredScopes",
+          "ok": true,
+          "detail": "agent lacks required scopes: none",
+          "evidence": {
+            "missingScopes": []
+          }
+        },
+        {
+          "id": "authority:overreach",
+          "ok": true,
+          "detail": "requested scopes outside agent authority: none",
+          "evidence": {
+            "overreach": []
+          }
+        },
+        {
+          "id": "time:bounds",
+          "ok": true,
+          "detail": "policy requires pinned timeBounds",
+          "evidence": {}
+        },
+        {
+          "id": "time:pinned",
+          "ok": true,
+          "detail": "pinned nowSeconds must fall inside timeBounds",
+          "evidence": {}
+        },
+        {
+          "id": "envelope:projection",
+          "ok": true,
+          "detail": "envelope projection drift: none",
+          "evidence": {
+            "drift": []
+          }
+        },
+        {
+          "id": "envelope:digest",
+          "ok": true,
+          "detail": "declared envelopeDigest does not match envelopeXdr bytes",
+          "evidence": {}
+        }
+      ],
+      "passed": 13,
+      "failed": 0,
+      "breaks": []
+    },
+    "pinnedNowSeconds": "1794657600",
+    "boundary": "CG-SG/1 is deterministic and offline. It binds caller-supplied intent bytes to caller-supplied Stellar XDR envelope bytes and verifies caller-supplied submission evidence; it makes no Stellar RPC, Horizon, Friendbot, wallet, network or external call, never signs or submits, and proves no settlement finality, sanctions clearance, KYC/AML approval, balance, asset truth or safety. VERIFIED ≠ SAFE."
+  },
+  "envelopeXdr": "AAAAAgAAAQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ",
+  "observed": {
+    "network": "testnet",
+    "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "asset": "native",
+    "amount": "5",
+    "memo": "cg-sg-reference",
+    "sequence": "1"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "stellar_binding",
+  "spec": "CG-SG/1",
+  "status": "OK",
+  "statusValue": "BOUND",
+  "boundDigest": "sha256:18739248a3a7d2141e7518f3a9c63fcffe42320d3cfc6a78713f08347487d5f1",
+  "intentDigest": "sha256:ebcaf4ff9b0bdefc52fb51d8ab7321358986bb168751e24126a046c47c0e322f",
+  "envelopeDigest": "sha256:bac07cd7e45eed718c83042ca75f5c523b7f2990dd558cb26ed08883fe973fe2",
+  "observed": {
+    "network": "testnet",
+    "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "asset": "native",
+    "amount": "5",
+    "memo": "cg-sg-reference",
+    "sequence": "1"
+  },
+  "summary": {
+    "checks": [
+      {
+        "id": "binding:bytes",
+        "ok": true,
+        "detail": "envelopeXdr bytes drifted from the authorization",
+        "evidence": {}
+      },
+      {
+        "id": "binding:projection",
+        "ok": true,
+        "detail": "observed projection drift: none",
+        "evidence": {
+          "drift": []
+        }
+      },
+      {
+        "id": "binding:digest",
+        "ok": true,
+        "detail": "authorization has no valid boundDigest",
+        "evidence": {}
+      }
+    ],
+    "passed": 3,
+    "failed": 0,
+    "breaks": []
+  },
+  "boundary": "CG-SG/1 is deterministic and offline. It binds caller-supplied intent bytes to caller-supplied Stellar XDR envelope bytes and verifies caller-supplied submission evidence; it makes no Stellar RPC, Horizon, Friendbot, wallet, network or external call, never signs or submits, and proves no settlement finality, sanctions clearance, KYC/AML approval, balance, asset truth or safety. VERIFIED ≠ SAFE."
 }
 ```
 
@@ -2313,7 +2559,6 @@ Compile a compact spending spec (limit, merchant/recipient/selector allowlists, 
       "severity": "CRITICAL"
     },
     {
-     
 … (abridged — full object is returned by the server)
 ```
 
@@ -3249,10 +3494,10 @@ Return this server's capability card (or a one-line badge): version, transport, 
   "type": "capability_card",
   "spec": "CG-CC/1",
   "server": "coreguard-agent-commerce",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "protocolVersion": "2025-06-18",
   "transport": "stdio (newline-delimited JSON-RPC 2.0)",
-  "tools": 94,
+  "tools": 99,
   "categories": [
     "consent receipts (CGCR/1)",
     "execution verification (AGR/1)",
@@ -3877,7 +4122,6 @@ Emit deterministic integration test vectors for an SDK or gateway: baseline allo
         "validUntil": "9999999999",
         "merchantName": "synthetic-store.example"
       },
-     
 … (abridged — full object is returned by the server)
 ```
 
@@ -4189,6 +4433,355 @@ Export a redacted, digest-rooted evidence pack from caller-supplied items for hu
   "failed": [],
   "critical": [],
   "boundary": "Wave 5 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar Horizon, Ethereum RPC, Core DAO, DeFi protocols, credit bureaus, regulators, KYC providers or sanctions lists. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no set
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_export_stellar_evidence_pack`
+
+Export a redacted, digest-rooted evidence pack from caller-supplied Stellar gate artifacts for human review. Nothing is submitted to any external party.
+
+**Required:** `items` · **Optional:** `redactFields`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `items` | array of `object` | **required** | — | Authorization, binding and verification artifacts to package. |
+| `redactFields` | array of `string` | optional | — | Additional nested field names to redact. |
+| `callerContext` | `object` | optional | — | Optional caller-supplied metadata echoed back; never used as a cryptographic input. |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Authorization, binding and verification artifacts to package."
+    },
+    "redactFields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional nested field names to redact."
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller-supplied metadata echoed back; never used as a cryptographic input."
+    }
+  },
+  "required": [
+    "items"
+  ],
+  "description": "Export a redacted Stellar gate evidence pack."
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "items": [
+    {
+      "type": "stellar_authorization",
+      "spec": "CG-SG/1",
+      "status": "OK",
+      "verdict": "ALLOW",
+      "intentDigest": "sha256:ebcaf4ff9b0bdefc52fb51d8ab7321358986bb168751e24126a046c47c0e322f",
+      "envelopeDigest": "sha256:bac07cd7e45eed718c83042ca75f5c523b7f2990dd558cb26ed08883fe973fe2",
+      "policyDigest": "sha256:7f3a5a5d09439b50c2a70d0622e1c3f3049f12f2378490954922ebe8abb46d7b",
+      "boundDigest": "sha256:18739248a3a7d2141e7518f3a9c63fcffe42320d3cfc6a78713f08347487d5f1",
+      "intent": {
+        "network": "testnet",
+        "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "asset": "native",
+        "amount": "5",
+        "memo": "cg-sg-reference",
+        "sequence": "1",
+        "nonce": "nonce-reference",
+        "agentId": "",
+        "scopes": [
+          "pay"
+        ],
+        "agentScopes": [
+          "pay",
+          "read"
+        ],
+        "timeBounds": {
+          "minTime": "1794657600",
+          "maxTime": "1794661200"
+        },
+        "purpose": ""
+      },
+      "summary": {
+        "checks": [
+          {
+            "id": "policy:networks",
+            "ok": true,
+            "detail": "policy must name allowedNetworks including the proposal network",
+            "evidence": {}
+          },
+          {
+            "id": "policy:assets",
+            "ok": true,
+            "detail": "policy must name allowedAssets including the proposal asset",
+            "evidence": {}
+          },
+          {
+            "id": "policy:destinations",
+            "ok": true,
+            "detail": "policy must name allowedDestinations including the proposal destination",
+            "evidence": {}
+          },
+          {
+            "id": "policy:maxAmount",
+            "ok": true,
+            "detail": "policy.maxAmount must be a positive decimal ceiling and cover the proposed amount",
+            "evidence": {}
+          },
+          {
+            "id": "policy:memo",
+            "ok": true,
+            "detail": "policy requires a memo",
+            "evidence": {}
+          },
+          {
+            "id": "policy:nonce",
+            "ok": true,
+            "detail": "policy requires a replay nonce",
+            "evidence": {}
+          },
+          {
+            "id": "replay:nonce",
+            "ok": true,
+            "detail": "replay nonce is already used",
+            "evidence": {}
+          },
+          {
+            "id": "authority:requiredScopes",
+            "ok": true,
+            "detail": "agent lacks required scopes: none",
+            "evidence": {
+              "missingScopes": []
+            }
+          },
+          {
+            "id": "authority:overreach",
+            "ok": true,
+            "detail": "requested scopes outside agent authority: none",
+            "evidence": {
+              "overreach": []
+            }
+          },
+          {
+            "id": "time:bounds",
+            "ok": true,
+            "detail": "policy requires pinned timeBounds",
+            "evidence": {}
+          },
+          {
+            "id": "time:pinned",
+            "ok": true,
+            "detail": "pinned nowSeconds must fall inside timeBounds",
+            "evidence": {}
+          },
+          {
+            "id": "envelope:projection",
+            "ok": true,
+            "detail": "envelope projection drift: none",
+            "evidence": {
+              "drift": []
+            }
+          },
+          {
+            "id": "envelope:digest",
+            "ok": true,
+            "detail": "declared envelopeDigest does not match envelopeXdr bytes",
+            "evidence": {}
+          }
+        ],
+        "passed": 13,
+        "failed": 0,
+        "breaks": []
+      },
+      "pinnedNowSeconds": "1794657600",
+      "boundary": "CG-SG/1 is deterministic and offline. It binds caller-supplied intent bytes to caller-supplied Stellar XDR envelope bytes and verifies caller-supplied submission evidence; it makes no Stellar RPC, Horizon, Friendbot, wallet, network or external call, never signs or submits, and proves no settlement finality, sanctions clearance, KYC/AML approval, balance, asset truth or safety. VERIFIED ≠ SAFE."
+    },
+    {
+      "type": "stellar_binding",
+      "spec": "CG-SG/1",
+      "status": "OK",
+      "statusValue": "BOUND",
+      "boundDigest": "sha256:18739248a3a7d2141e7518f3a9c63fcffe42320d3cfc6a78713f08347487d5f1",
+      "intentDigest": "sha256:ebcaf4ff9b0bdefc52fb51d8ab7321358986bb168751e24126a046c47c0e322f",
+      "envelopeDigest": "sha256:bac07cd7e45eed718c83042ca75f5c523b7f2990dd558cb26ed08883fe973fe2",
+      "observed": {
+        "network": "testnet",
+        "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "asset": "native",
+        "amount": "5",
+        "memo": "cg-sg-reference",
+        "sequence": "1"
+      },
+      "summary": {
+        "checks": [
+          {
+            "id": "binding:bytes",
+            "ok": true,
+            "detail": "envelopeXdr bytes drifted from the authorization",
+            "evidence": {}
+          },
+          {
+            "id": "binding:projection",
+            "ok": true,
+            "detail": "observed projection drift: none",
+            "evidence": {
+              "drift": []
+            }
+          },
+          {
+            "id": "binding:digest",
+            "ok": true,
+            "detail": "authorization has no valid boundDigest",
+            "evidence": {}
+          }
+        ],
+        "passed": 3,
+        "failed": 0,
+        "breaks": []
+      },
+      "boundary": "CG-SG/1 is deterministic and offline. It binds caller-supplied intent bytes to caller-supplied Stellar XDR envelope bytes and verifies caller-supplied submission evidence; it makes no Stellar RPC, Horizon, Friendbot, wallet, network or external call, never signs or submits, and proves no settlement finality, sanctions clearance, KYC/AML approval, balance, asset truth or safety. VERIFIED ≠ SAFE."
+    },
+    {
+      "type": "stellar_submission",
+      "spec": "CG-SG/1",
+      "status": "OK",
+      "verdict": "VERIFIED",
+      "evidenceDigest": "sha256:7a99b2f7f31dfce849d988c96c6d01eb7f717a232659a3d65abd0300b8af7b36",
+      "boundDigest": "sha256:18739248a3a7d2141e7518f3a9c63fcffe42320d3cfc6a78713f08347487d5f1",
+      "txHash": "abababababababababababababababababababababababababababababababab",
+      "summary": {
+        "checks": [
+          {
+            "id": "submission:bytes",
+            "ok": true,
+            "detail": "submitted envelope bytes drifted from the bound envelope",
+            "evidence": {}
+          },
+          {
+            "id": "submission:txHash",
+            "ok": true,
+            "detail": "txHash must be 64 lowercase hex characters",
+            "evidence": {}
+          },
+          {
+            "id": "submission:success",
+            "ok": true,
+            "detail": "submission evidence does not report success",
+            "evidence": {}
+          },
+          {
+            "id": "submission:ledger",
+            "ok": true,
+            "detail": "ledger must be a positive integer",
+            "evidence": {}
+          },
+          {
+            "id": "submission:network",
+            "ok": true,
+            "detail": "network is required",
+            "evidence": {}
+          },
+          {
+            "id": "submission:resultXdr",
+            "ok": true,
+            "detail": "resultXdr is required",
+            "evidence": {}
+          },
+          {
+            "id": "submission:operation",
+            "ok": true,
+            "detail": "submitted operation drift: none",
+            "evidence": {
+              "drift": []
+            }
+          }
+        ],
+        "passed": 7,
+        "failed": 0,
+        "breaks": []
+      },
+      "boundary": "CG-SG/1 is deterministic and offline. It binds caller-supplied intent bytes to caller-supplied Stellar XDR envelope bytes and verifies caller-supplied submission evidence; it makes no Stellar RPC, Horizon, Friendbot, wallet, network or external call, never signs or submits, and proves no settlement finality, sanctions clearance, KYC/AML approval, balance, asset truth or safety. VERIFIED ≠ SAFE."
+    }
+  ],
+  "redactFields": [
+    "callerContext"
+  ]
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "stellar_evidence_pack",
+  "spec": "CG-SG/1",
+  "status": "OK",
+  "itemCount": 3,
+  "root": "sha256:e9087e7c66b4387c8f295ca98131e1e7071c19d918ce030aa289fd9addbeca61",
+  "packDigest": "sha256:62a6e1c2a6715cbe0cb930317cc31849558a3fcedf88e2e3b0ea29ff4af01a6d",
+  "items": [
+    {
+      "type": "stellar_authorization",
+      "spec": "CG-SG/1",
+      "status": "OK",
+      "verdict": "ALLOW",
+      "intentDigest": "sha256:ebcaf4ff9b0bdefc52fb51d8ab7321358986bb168751e24126a046c47c0e322f",
+      "envelopeDigest": "sha256:bac07cd7e45eed718c83042ca75f5c523b7f2990dd558cb26ed08883fe973fe2",
+      "policyDigest": "sha256:7f3a5a5d09439b50c2a70d0622e1c3f3049f12f2378490954922ebe8abb46d7b",
+      "boundDigest": "sha256:18739248a3a7d2141e7518f3a9c63fcffe42320d3cfc6a78713f08347487d5f1",
+      "intent": {
+        "network": "testnet",
+        "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "asset": "native",
+        "amount": "5",
+        "memo": "cg-sg-reference",
+        "sequence": "1",
+        "nonce": "nonce-reference",
+        "agentId": "",
+        "scopes": [
+          "pay"
+        ],
+        "agentScopes": [
+          "pay",
+          "read"
+        ],
+        "timeBounds": {
+          "minTime": "1794657600",
+          "maxTime": "1794661200"
+        },
+        "purpose": ""
+      },
+      "summary": {
+        "checks": [
+          {
+            "id": "policy:networks",
+            "ok": true,
+            "detail": "policy must name allowedNetworks including the proposal network",
+            "evidence": {}
+          },
+          {
+            "id": "policy:assets",
+            "ok": true,
+            "detail": "policy must name allowedAssets includi
 … (abridged — full object is returned by the server)
 ```
 
@@ -5144,6 +5737,176 @@ Parse and normalize an x402 payment challenge (HTTP 402 accepts). Offline determ
 }
 ```
 
+### `coreguard_preflight_stellar_agent_payment`
+
+Pre-execution gate for an agent-proposed Stellar action. Checks policy, replay, authority scopes, time bounds and exact envelope-byte binding. Makes no Stellar RPC, Horizon, wallet or network call; fail closed with named refusals.
+
+**Required:** `proposal`, `policy` · **Optional:** `nowSeconds`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `proposal` | `object` | **required** | — | Caller-supplied proposal including XDR envelope bytes and projected operation fields. |
+| `policy` | `object` | **required** | — | Caller-supplied allowlists, ceiling, scopes and replay policy. |
+| `nowSeconds` | `string` | optional | — | Pinned unix-seconds string; never the wall clock. |
+| `callerContext` | `object` | optional | — | Optional caller-supplied metadata echoed back; never used as a cryptographic input. |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "proposal": {
+      "type": "object",
+      "description": "Caller-supplied proposal including XDR envelope bytes and projected operation fields."
+    },
+    "policy": {
+      "type": "object",
+      "description": "Caller-supplied allowlists, ceiling, scopes and replay policy."
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Pinned unix-seconds string; never the wall clock."
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller-supplied metadata echoed back; never used as a cryptographic input."
+    }
+  },
+  "required": [
+    "proposal",
+    "policy"
+  ],
+  "description": "Preflight a Stellar agent payment against a named policy."
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "proposal": {
+    "network": "testnet",
+    "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "asset": "native",
+    "amount": "5",
+    "memo": "cg-sg-reference",
+    "sequence": "1",
+    "envelopeXdr": "AAAAAgAAAQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ",
+    "envelopeProjection": {
+      "network": "testnet",
+      "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "asset": "native",
+      "amount": "5",
+      "memo": "cg-sg-reference",
+      "sequence": "1"
+    },
+    "nonce": "nonce-reference",
+    "scopes": [
+      "pay"
+    ],
+    "agentScopes": [
+      "pay",
+      "read"
+    ],
+    "timeBounds": {
+      "minTime": "1794657600",
+      "maxTime": "1794661200"
+    }
+  },
+  "policy": {
+    "allowedNetworks": [
+      "testnet"
+    ],
+    "allowedAssets": [
+      "native"
+    ],
+    "allowedDestinations": [
+      "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+    ],
+    "maxAmount": "100",
+    "requireMemo": true,
+    "requireNonce": true,
+    "requireTimeBounds": true,
+    "requiredScopes": [
+      "pay"
+    ],
+    "usedNonces": []
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "stellar_authorization",
+  "spec": "CG-SG/1",
+  "status": "OK",
+  "verdict": "ALLOW",
+  "intentDigest": "sha256:ebcaf4ff9b0bdefc52fb51d8ab7321358986bb168751e24126a046c47c0e322f",
+  "envelopeDigest": "sha256:bac07cd7e45eed718c83042ca75f5c523b7f2990dd558cb26ed08883fe973fe2",
+  "policyDigest": "sha256:7f3a5a5d09439b50c2a70d0622e1c3f3049f12f2378490954922ebe8abb46d7b",
+  "boundDigest": "sha256:18739248a3a7d2141e7518f3a9c63fcffe42320d3cfc6a78713f08347487d5f1",
+  "intent": {
+    "network": "testnet",
+    "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "asset": "native",
+    "amount": "5",
+    "memo": "cg-sg-reference",
+    "sequence": "1",
+    "nonce": "nonce-reference",
+    "agentId": "",
+    "scopes": [
+      "pay"
+    ],
+    "agentScopes": [
+      "pay",
+      "read"
+    ],
+    "timeBounds": {
+      "minTime": "1794657600",
+      "maxTime": "1794661200"
+    },
+    "purpose": ""
+  },
+  "summary": {
+    "checks": [
+      {
+        "id": "policy:networks",
+        "ok": true,
+        "detail": "policy must name allowedNetworks including the proposal network",
+        "evidence": {}
+      },
+      {
+        "id": "policy:assets",
+        "ok": true,
+        "detail": "policy must name allowedAssets including the proposal asset",
+        "evidence": {}
+      },
+      {
+        "id": "policy:destinations",
+        "ok": true,
+        "detail": "policy must name allowedDestinations including the proposal destination",
+        "evidence": {}
+      },
+      {
+        "id": "policy:maxAmount",
+        "ok": true,
+        "detail": "policy.maxAmount must be a positive decimal ceiling and cover the proposed amount",
+        "evidence": {}
+      },
+      {
+… (abridged — full object is returned by the server)
+```
+
 ### `coreguard_profile_reference`
 
 Create or parse a CG-OUT/1 profile reference. action='make' requires receiptId; action='parse' requires reference.
@@ -5966,6 +6729,118 @@ Dry-run a batch of intents against a policy: allowed/denied per row, blocking ru
     }
   ],
   "boundary": "dry run only — no approval, spend counter, ledger or control-plane state is written. Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys,
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_stellar_adversarial_vectors`
+
+List the named deterministic adversarial cases covered by the Stellar agent gate: amount escalation, destination/asset/network substitution, replay, overreach, byte drift, failed result and missing evidence. Cases are metadata, not live exploits.
+
+**Required:** `family` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `family` | `stellar-agent-gate` | **required** | — | Vector family selector. |
+| `callerContext` | `object` | optional | — | Optional caller-supplied metadata echoed back; never used as a cryptographic input. |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "family": {
+      "type": "string",
+      "enum": [
+        "stellar-agent-gate"
+      ],
+      "description": "Vector family selector."
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller-supplied metadata echoed back; never used as a cryptographic input."
+    }
+  },
+  "required": [
+    "family"
+  ],
+  "description": "List named Stellar gate adversarial vectors."
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "family": "stellar-agent-gate"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "stellar_vectors",
+  "spec": "CG-SG/1",
+  "status": "OK",
+  "family": "stellar-agent-gate",
+  "count": 16,
+  "vectors": [
+    {
+      "id": "AMOUNT_ESCALATION",
+      "mutation": "proposal.amount exceeds policy.maxAmount",
+      "expectedStatus": "PREFLIGHT_REFUSED"
+    },
+    {
+      "id": "DESTINATION_SUBSTITUTION",
+      "mutation": "envelope projection destination differs from approved destination",
+      "expectedStatus": "PREFLIGHT_REFUSED"
+    },
+    {
+      "id": "ASSET_SUBSTITUTION",
+      "mutation": "proposal asset is outside allowedAssets",
+      "expectedStatus": "PREFLIGHT_REFUSED"
+    },
+    {
+      "id": "NETWORK_SUBSTITUTION",
+      "mutation": "proposal network is outside allowedNetworks",
+      "expectedStatus": "PREFLIGHT_REFUSED"
+    },
+    {
+      "id": "MEMO_DROP",
+      "mutation": "policy requires a memo but proposal omits it",
+      "expectedStatus": "PREFLIGHT_REFUSED"
+    },
+    {
+      "id": "REPLAY_NONCE",
+      "mutation": "nonce already appears in policy.usedNonces",
+      "expectedStatus": "PREFLIGHT_REFUSED"
+    },
+    {
+      "id": "SCOPE_OVERREACH",
+      "mutation": "requested scope is outside agentScopes",
+      "expectedStatus": "PREFLIGHT_REFUSED"
+    },
+    {
+      "id": "TIMEBOUND_EXPIRY",
+      "mutation": "pinned nowSeconds falls outside timeBounds",
+      "expectedStatus": "PREFLIGHT_REFUSED"
+    },
+    {
+      "id": "ENVELOPE_BYTE_DRIFT",
+      "mutation": "bound envelopeXdr bytes are changed by one character",
+      "expectedStatus": "BINDING_REFUSED"
+    },
+    {
+      "id": "PROJECTED_FIELD_DRIFT",
+      "mutation": "observed amount differs from the approved projection",
+      "expectedStatus": "BINDING_REFUSED"
+    },
+    {
+      "id": "TX_HASH_MISMATCH",
+      "mutation": "submitted txHash does not match the
 … (abridged — full object is returned by the server)
 ```
 
@@ -10036,6 +10911,183 @@ Verify caller-supplied Stellar settlement evidence against expected payment fiel
   "critical": [],
   "boundary": "Wave 4 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar, Ethereum, Core DAO, DeFi protocols, credit bureaus, or regulators. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, or compliance certification is claimed."
 }
+```
+
+### `coreguard_verify_stellar_submission_evidence`
+
+Verify caller-supplied Stellar submission evidence against a BOUND authorization: envelope bytes, tx hash shape, success, ledger and projected operation. No RPC lookup; VERIFIED means supplied bytes agreed, not settlement finality.
+
+**Required:** `binding`, `evidence` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `binding` | `object` | **required** | — | BOUND binding from coreguard_bind_stellar_authorization. |
+| `evidence` | `object` | **required** | — | Caller-supplied submission evidence packet. |
+| `callerContext` | `object` | optional | — | Optional caller-supplied metadata echoed back; never used as a cryptographic input. |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "binding": {
+      "type": "object",
+      "description": "BOUND binding from coreguard_bind_stellar_authorization."
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Caller-supplied submission evidence packet."
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller-supplied metadata echoed back; never used as a cryptographic input."
+    }
+  },
+  "required": [
+    "binding",
+    "evidence"
+  ],
+  "description": "Verify a Stellar submission evidence packet against a binding."
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "binding": {
+    "type": "stellar_binding",
+    "spec": "CG-SG/1",
+    "status": "OK",
+    "statusValue": "BOUND",
+    "boundDigest": "sha256:18739248a3a7d2141e7518f3a9c63fcffe42320d3cfc6a78713f08347487d5f1",
+    "intentDigest": "sha256:ebcaf4ff9b0bdefc52fb51d8ab7321358986bb168751e24126a046c47c0e322f",
+    "envelopeDigest": "sha256:bac07cd7e45eed718c83042ca75f5c523b7f2990dd558cb26ed08883fe973fe2",
+    "observed": {
+      "network": "testnet",
+      "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "asset": "native",
+      "amount": "5",
+      "memo": "cg-sg-reference",
+      "sequence": "1"
+    },
+    "summary": {
+      "checks": [
+        {
+          "id": "binding:bytes",
+          "ok": true,
+          "detail": "envelopeXdr bytes drifted from the authorization",
+          "evidence": {}
+        },
+        {
+          "id": "binding:projection",
+          "ok": true,
+          "detail": "observed projection drift: none",
+          "evidence": {
+            "drift": []
+          }
+        },
+        {
+          "id": "binding:digest",
+          "ok": true,
+          "detail": "authorization has no valid boundDigest",
+          "evidence": {}
+        }
+      ],
+      "passed": 3,
+      "failed": 0,
+      "breaks": []
+    },
+    "boundary": "CG-SG/1 is deterministic and offline. It binds caller-supplied intent bytes to caller-supplied Stellar XDR envelope bytes and verifies caller-supplied submission evidence; it makes no Stellar RPC, Horizon, Friendbot, wallet, network or external call, never signs or submits, and proves no settlement finality, sanctions clearance, KYC/AML approval, balance, asset truth or safety. VERIFIED ≠ SAFE."
+  },
+  "evidence": {
+    "network": "testnet",
+    "envelopeXdr": "AAAAAgAAAQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ",
+    "txHash": "abababababababababababababababababababababababababababababababab",
+    "successful": true,
+    "ledger": 123456,
+    "resultXdr": "AAAAAAAAAAAAAA==",
+    "operation": {
+      "network": "testnet",
+      "sourceAccount": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "asset": "native",
+      "amount": "5",
+      "memo": "cg-sg-reference",
+      "sequence": "1"
+    }
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "stellar_submission",
+  "spec": "CG-SG/1",
+  "status": "OK",
+  "verdict": "VERIFIED",
+  "evidenceDigest": "sha256:7a99b2f7f31dfce849d988c96c6d01eb7f717a232659a3d65abd0300b8af7b36",
+  "boundDigest": "sha256:18739248a3a7d2141e7518f3a9c63fcffe42320d3cfc6a78713f08347487d5f1",
+  "txHash": "abababababababababababababababababababababababababababababababab",
+  "summary": {
+    "checks": [
+      {
+        "id": "submission:bytes",
+        "ok": true,
+        "detail": "submitted envelope bytes drifted from the bound envelope",
+        "evidence": {}
+      },
+      {
+        "id": "submission:txHash",
+        "ok": true,
+        "detail": "txHash must be 64 lowercase hex characters",
+        "evidence": {}
+      },
+      {
+        "id": "submission:success",
+        "ok": true,
+        "detail": "submission evidence does not report success",
+        "evidence": {}
+      },
+      {
+        "id": "submission:ledger",
+        "ok": true,
+        "detail": "ledger must be a positive integer",
+        "evidence": {}
+      },
+      {
+        "id": "submission:network",
+        "ok": true,
+        "detail": "network is required",
+        "evidence": {}
+      },
+      {
+        "id": "submission:resultXdr",
+        "ok": true,
+        "detail": "resultXdr is required",
+        "evidence": {}
+      },
+      {
+        "id": "submission:operation",
+        "ok": true,
+        "detail": "submitted operation drift: none",
+        "evidence": {
+          "drift": []
+        }
+      }
+    ],
+    "passed": 7,
+    "failed": 0,
+    "breaks": []
+  },
+  "boundary": "CG-SG/1 is deterministic and offline. It binds caller-supplied intent bytes to caller-supplied Stellar XDR envelope bytes and verifies caller-supplied submission evidence; it makes no Stellar RPC, Horizon, Friendbot, wallet,
+… (abridged — full object is returned by the server)
 ```
 
 ### `coreguard_verify_swift_remittance_evidence`
