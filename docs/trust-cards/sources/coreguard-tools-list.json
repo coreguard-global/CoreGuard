@@ -4764,6 +4764,1691 @@
     }
   },
   {
+    "name": "coreguard_compile_stellar_session_policy",
+    "description": "Compile a Stellar agent session-key policy (scopes, assets, per-action and daily caps, validity window) into a canonical digest-bound policy. Offline; no RPC.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Session policy to canonicalize.",
+      "additionalProperties": true,
+      "properties": {
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "policy"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Canonical session policy, digest and checks.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_evaluate_stellar_session_key",
+    "description": "Evaluate one proposed Stellar action against a session policy at a pinned time and cumulative spend, failing closed with named reasons and one counterfactual. No RPC, no signing.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Session policy, proposed action, pinned time and spend.",
+      "additionalProperties": true,
+      "properties": {
+        "policy": {
+          "type": "object"
+        },
+        "action": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "spentTodayMinor": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "policy",
+        "action",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "ALLOW/DENY decision, blocking reasons and counterfactual.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_session_key_scope",
+    "description": "Intersect principal, session-key and requested Stellar scopes and name any overreach before an agent action is authorized. Deterministic set arithmetic.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Principal, session and requested scopes.",
+      "additionalProperties": true,
+      "properties": {
+        "principalScope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sessionScope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requested": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "principalScope",
+        "sessionScope"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Scope intersection and overreach lists. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_smart_account_signers",
+    "description": "Verify a caller-supplied Stellar smart-account signer set (weights, thresholds, signer kinds, master weight) against an owner policy. No account state is read.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Account signer configuration and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "account": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "account"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Signer-set verdict, thresholds and digest.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_multisig_thresholds",
+    "description": "Check whether the supplied signer weights can reach the declared low/medium/high Stellar multisig threshold. Offline arithmetic; no network.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Present signers, weights and thresholds.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "level": {
+          "type": "string",
+          "enum": [
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Threshold verdict with present and required weights.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_time_bounds",
+    "description": "Verify Stellar envelope time bounds and optional ledger bounds against a pinned clock and ledger, including a maximum duration policy. Offline.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Time/ledger bounds and pinned values.",
+      "additionalProperties": true,
+      "properties": {
+        "timeBounds": {
+          "type": "object"
+        },
+        "ledgerBounds": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "currentLedger": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "maxDurationSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "timeBounds",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Time-bounds and ledger-window verdict. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_memo_binding",
+    "description": "Bind a Stellar envelope memo (text/id/hash/return) to the approved invoice or receipt value, detecting type confusion and prefix drift. No chain call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Memo and the approved binding.",
+      "additionalProperties": true,
+      "properties": {
+        "memo": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "memo",
+        "expected"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Memo binding verdict and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_asset_allowlist",
+    "description": "Check a Stellar asset (code + issuer) against an allowlist and flag confusable/homoglyph codes that imitate an allowed asset. Offline.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Asset, allowlist and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "asset": {
+          "type": "object",
+          "description": "Asset reference: native XLM, or a code plus issuer.",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "issuer": {
+              "type": "string"
+            }
+          }
+        },
+        "allowlist": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "Asset reference: native XLM, or a code plus issuer.",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "issuer": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "asset",
+        "allowlist"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Asset allowlist verdict and confusable matches.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_trustline_policy",
+    "description": "Verify caller-supplied Stellar trustlines can carry the planned spend (limit, authorization, missing lines) before an agent pays. No Horizon call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Trustlines, planned spend and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "trustlines": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "plannedSpend": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "trustlines",
+        "plannedSpend"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Trustline coverage verdict and named problems.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_soroban_auth_entry",
+    "description": "Verify a caller-supplied Soroban authorization entry (contract, function, args digest, root flag, signature expiration ledger) matches the approved invocation. No Soroban RPC.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Auth entry, approved invocation and pinned ledger.",
+      "additionalProperties": true,
+      "properties": {
+        "entry": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "currentLedger": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "entry",
+        "expected",
+        "currentLedger"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Soroban auth-entry verdict and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_sac_allowance",
+    "description": "Verify Stellar Asset Contract allowance evidence (owner, spender, amount, expiration ledger) against policy. No contract call; no allowance is created.",
+    "inputSchema": {
+      "type": "object",
+      "description": "SAC allowance evidence and pinned ledger.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "currentLedger": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence",
+        "currentLedger"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "SAC allowance verdict and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_assess_stellar_fee_bump",
+    "description": "Assess a Stellar fee-bump envelope for inner-transaction binding, sponsor allowlist and fee ceiling. Offline; nothing is signed or submitted.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Fee-bump evidence and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "feeBump": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "feeBump"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Fee-bump verdict, binding and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_claimable_balance",
+    "description": "Verify caller-supplied Stellar claimable-balance terms (claimants, predicate window, amount, asset, sponsor) against expectations at a pinned time. No Horizon call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Claimable balance and expectations.",
+      "additionalProperties": true,
+      "properties": {
+        "balance": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "balance",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Claimability verdict and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_sponsored_reserve",
+    "description": "Verify Stellar sponsored-reserve evidence (sponsor allowlist, sponsored account, entry count, reserve ceiling). No account is created or funded.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Sponsorship evidence and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "sponsorship": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "sponsorship"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Sponsored-reserve verdict and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_sequence_guard",
+    "description": "Guard against Stellar replay: verify a submission sequence and transaction hash are unseen, strictly forward and within a policy gap. Offline.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Submission and previously seen sequences.",
+      "additionalProperties": true,
+      "properties": {
+        "submission": {
+          "type": "object"
+        },
+        "seen": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "submission"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Sequence-guard verdict with replay and gap state.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_operation_set",
+    "description": "Compare an approved Stellar operation set with the executed one and name count, order, type, destination, asset, amount and memo drift. No chain call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Approved and executed operation lists.",
+      "additionalProperties": true,
+      "properties": {
+        "approved": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "executed": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "approved",
+        "executed"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Exact operation-set drift report. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_dex_path",
+    "description": "Verify a caller-supplied Stellar DEX path payment against a quote and a slippage bound, naming hop count and effective basis points. No DEX call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Path payment, quote and optional policy.",
+      "additionalProperties": true,
+      "properties": {
+        "pathPayment": {
+          "type": "object"
+        },
+        "quote": {
+          "type": "object"
+        },
+        "policy": {
+          "type": "object"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "pathPayment"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Path-payment slippage verdict and digest.",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_sep10_challenge",
+    "description": "Verify SEP-10 challenge evidence (home domain, web-auth domain, server key, nonce, network passphrase, time bounds) at a pinned time. No anchor call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Challenge evidence and expectations.",
+      "additionalProperties": true,
+      "properties": {
+        "challenge": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "challenge",
+        "nowSeconds"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "SEP-10 challenge verdict and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_sep24_anchor_evidence",
+    "description": "Verify SEP-24/SEP-31 anchor transaction evidence (kind, status, amounts, fee, quote expiry, Stellar transaction id) against expectations. No anchor call.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Anchor transaction evidence and expectations.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Anchor evidence verdict and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "coreguard_issue_stellar_session_receipt",
+    "description": "Issue a digest-bound Stellar session receipt chaining policy digest, action digest, decision and cumulative spend for later owner review. Nothing is broadcast.",
+    "inputSchema": {
+      "type": "object",
+      "description": "Session receipt evidence.",
+      "additionalProperties": true,
+      "properties": {
+        "evidence": {
+          "type": "object"
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller context echoed back in response (never a cryptographic input).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "evidence"
+      ]
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Session receipt record and digest. (deterministic, caller-supplied evidence).",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "REFUSED"
+          ]
+        },
+        "refusal": {
+          "type": "object",
+          "description": "Present only when status is REFUSED."
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "critical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
     "name": "coreguard_preflight_stellar_agent_payment",
     "description": "Pre-execution gate for an agent-proposed Stellar action. Checks policy, replay, authority scopes, time bounds and exact envelope-byte binding. Makes no Stellar RPC, Horizon, wallet or network call; fail closed with named refusals.",
     "inputSchema": {

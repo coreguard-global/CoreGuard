@@ -2,9 +2,9 @@
   "schema": "CG-SK/1",
   "server": {
     "name": "coreguard-agent-commerce",
-    "version": "0.5.0"
+    "version": "0.5.1"
   },
-  "toolCount": 99,
+  "toolCount": 119,
   "skills": [
     {
       "dir": "acp-interop-mapping",
@@ -1382,6 +1382,272 @@
       "bytes": 1398
     },
     {
+      "dir": "stellar-agent-authority-audit",
+      "name": "stellar-agent-authority-audit",
+      "description": "Use when auditing whether an AI agent's Stellar authority is genuinely derived from its principal, including delegation chains, session scopes and smart-account signer policy.",
+      "intro": "Authority is a chain, not a claim. Walk from principal to session key to signer policy and name every scope that is not inherited.",
+      "whenToUse": [
+        "A security review asks what an agent can actually authorize on Stellar.",
+        "A delegation chain crosses two or three services.",
+        "A session key's scope list looks broader than the owner's intent.",
+        "A signer policy change must be justified against the principal's authority."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_session_key_scope",
+        "coreguard_verify_agent_authority_intersection",
+        "coreguard_verify_payment_authorization_chain",
+        "coreguard_verify_stellar_smart_account_signers"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-agent-authority-audit/SKILL.md",
+      "digest": "sha256:de2e61411f2b9c111b65ce985499f4e4121eb6e950a3de3283555f471baae246",
+      "bytes": 2394
+    },
+    {
+      "dir": "stellar-agent-spend-ledger",
+      "name": "stellar-agent-spend-ledger",
+      "description": "Use when an autonomous agent spends XLM or Stellar assets across many actions and you need a lease, a cumulative ledger and per-action receipts that prove the budget was never exceeded.",
+      "intro": "Budgets fail at the seams: two workers, a retry, a second asset. Combine a time-boxed lease, exact consumption checks and per-action receipts.",
+      "whenToUse": [
+        "An agent runs a long task with a fixed budget.",
+        "Several workers share one Stellar account and must not double-spend a lease.",
+        "A finance owner asks for the remaining budget at a point in time.",
+        "A replay or duplicate reference could consume budget twice."
+      ],
+      "tools": [
+        "coreguard_create_machine_budget_lease",
+        "coreguard_evaluate_stellar_session_key",
+        "coreguard_verify_machine_budget_consumption",
+        "coreguard_issue_stellar_session_receipt"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-agent-spend-ledger/SKILL.md",
+      "digest": "sha256:f32dc59b11cd3eda0eff23d5310e811f7b8aebe5dfe2d3401d54028d2abb1336",
+      "bytes": 2209
+    },
+    {
+      "dir": "stellar-anchor-deposit-verify",
+      "name": "stellar-anchor-deposit-verify",
+      "description": "Use when an agent deposits fiat through a Stellar anchor (SEP-24/SEP-31) and must verify the authenticated anchor, the transaction status, amounts, fee and quote expiry before crediting an order.",
+      "intro": "Anchor flows cross three systems: the fiat rail, the anchor's API and Stellar. Verify the anchor identity and the transaction evidence, then reconcile the amounts.",
+      "whenToUse": [
+        "A customer's fiat deposit is reported complete by a SEP-24 anchor.",
+        "An agent credits an order only after an anchor says `completed`.",
+        "A withdrawal must reconcile against the Stellar transaction that paid out.",
+        "A fee or quote looks different from what the customer approved."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_sep10_challenge",
+        "coreguard_verify_stellar_sep24_anchor_evidence",
+        "coreguard_verify_stellar_memo_binding",
+        "coreguard_export_evidence_pack"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-anchor-deposit-verify/SKILL.md",
+      "digest": "sha256:e8fa9ddd69c0db0b633b4b42a4d42de1d5172880ebbaf2f05710f83f74c82013",
+      "bytes": 2372
+    },
+    {
+      "dir": "stellar-anchor-withdrawal-reconciliation",
+      "name": "stellar-anchor-withdrawal-reconciliation",
+      "description": "Use when an agent withdraws from a Stellar anchor to fiat and the payout, the Stellar payment and the internal ledger must reconcile into one evidence-backed verdict.",
+      "intro": "Withdrawals fail quietly: the Stellar leg succeeds, the fiat leg stalls, and the ledger disagrees with both. Reconcile all three before closing a case.",
+      "whenToUse": [
+        "A withdrawal is marked complete by an anchor but the bank credit is missing.",
+        "A customer disputes the amount received after fees.",
+        "The internal ledger shows a different amount than the Stellar transaction.",
+        "Month-end reconciliation needs one verdict per withdrawal."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_sep24_anchor_evidence",
+        "coreguard_verify_stellar_submission_evidence",
+        "coreguard_reconcile_multi_ledger",
+        "coreguard_export_evidence_pack"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-anchor-withdrawal-reconciliation/SKILL.md",
+      "digest": "sha256:374fc2875bee1a946b8e42d2801ccefb12ffe0f374b2f3afb23547ddc051ff82",
+      "bytes": 2215
+    },
+    {
+      "dir": "stellar-asset-trust-preflight",
+      "name": "stellar-asset-trust-preflight",
+      "description": "Use before an agent pays with a Stellar asset to confirm the code and issuer are the approved ones (no lookalike), the trustline can carry the amount, and any sponsorship is allowed.",
+      "intro": "The cheapest way to lose money on Stellar is to pay the right amount in the wrong asset. This procedure checks the asset identity, the trustline capacity and sponsored reserves before anything is signed.",
+      "whenToUse": [
+        "A payment or DEX swap names an asset code supplied by a counterparty or a model.",
+        "A new issuer appears in a corridor and the allowlist must be enforced.",
+        "A trustline must carry a planned spend without hitting its limit.",
+        "A sponsor offers to fund reserves for an agent account."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_asset_allowlist",
+        "coreguard_verify_stellar_trustline_policy",
+        "coreguard_verify_stellar_sponsored_reserve",
+        "coreguard_evaluate_stellar_session_key"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-asset-trust-preflight/SKILL.md",
+      "digest": "sha256:294a414ac1ea1b9d89e0400ebd9ab7b3d4e2a259c12faba3942ca92e8277a1a0",
+      "bytes": 2489
+    },
+    {
+      "dir": "stellar-claimable-balance-claim",
+      "name": "stellar-claimable-balance-claim",
+      "description": "Use when an agent is offered a Stellar claimable balance (escrow, payout, refund) and must verify the claimants, amount, asset and time predicate before claiming.",
+      "intro": "A claimable balance is only as good as its predicate and its claimant list. Verify both before the agent spends a claim.",
+      "whenToUse": [
+        "A counterparty funds a claimable balance as escrow or a delayed payout.",
+        "An agent must decide whether it can claim now, later, or never.",
+        "A refund arrives as a claimable balance instead of a payment.",
+        "A reviewer needs the exact balance id and predicate that was accepted."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_claimable_balance",
+        "coreguard_verify_stellar_asset_allowlist",
+        "coreguard_verify_stellar_memo_binding",
+        "coreguard_issue_stellar_session_receipt"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-claimable-balance-claim/SKILL.md",
+      "digest": "sha256:e8dce8f215d810e3c87c363fbfc9f6c57d4430e2d5dd49b0882f8425642d8fe9",
+      "bytes": 2220
+    },
+    {
+      "dir": "stellar-dex-slippage-guard",
+      "name": "stellar-dex-slippage-guard",
+      "description": "Use when an agent executes a Stellar DEX path payment or swap and the owner needs the effective slippage in basis points checked against a quote before signing.",
+      "intro": "Path payments hide slippage in the path and the amounts. Compare the executed destination amount to the quote and enforce a basis-point ceiling.",
+      "whenToUse": [
+        "An agent swaps between two Stellar assets on behalf of a user.",
+        "A path payment is proposed with several hops and a `sendMax`.",
+        "A quote is stale and the destination amount moved.",
+        "An operator asks why a swap executed at a worse rate than quoted."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_dex_path",
+        "coreguard_verify_stellar_asset_allowlist",
+        "coreguard_verify_stellar_trustline_policy",
+        "coreguard_verify_stellar_path_payment"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-dex-slippage-guard/SKILL.md",
+      "digest": "sha256:78952022f8eb4a95b3ce036ce1df2d0948cac72883c2948bae0da275dbabc8bf",
+      "bytes": 2151
+    },
+    {
+      "dir": "stellar-envelope-window-guard",
+      "name": "stellar-envelope-window-guard",
+      "description": "Use before submitting a Stellar transaction envelope to confirm its time bounds, ledger bounds, memo binding and sequence are all valid and non-replayed at a pinned clock.",
+      "intro": "Four cheap offline checks that catch the most common agent-submission failures: a stale envelope, a memo that does not match the invoice, and a replayed sequence.",
+      "whenToUse": [
+        "An envelope was built earlier (or by another service) and is now about to be submitted.",
+        "A payment must carry an invoice-bound memo and you need proof it does.",
+        "A retry loop might resubmit a transaction hash that already landed.",
+        "An operator asks \"is this envelope still valid right now?\"."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_time_bounds",
+        "coreguard_verify_stellar_memo_binding",
+        "coreguard_verify_stellar_sequence_guard",
+        "coreguard_verify_stellar_operation_set"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-envelope-window-guard/SKILL.md",
+      "digest": "sha256:b420997260e0943dc6c85fd587a54e2ed263bd12404f80820905e3b66d1dc309",
+      "bytes": 2370
+    },
+    {
+      "dir": "stellar-fee-sponsor-check",
+      "name": "stellar-fee-sponsor-check",
+      "description": "Use when a third party pays Stellar fees for an agent (fee bump or sponsored reserve) and the owner must confirm the sponsor is allowed and the inner transaction is the one that was approved.",
+      "intro": "A sponsored fee is a counterparty relationship. Bind the fee bump to the approved inner transaction, check the sponsor against policy, and cap the fee.",
+      "whenToUse": [
+        "A fee-bump envelope arrives from a relayer or sponsor service.",
+        "An agent account is created or maintained with sponsored reserves.",
+        "A sponsor asks to raise the fee to prioritize a transaction.",
+        "An auditor asks who paid for a transaction and whether that was approved."
+      ],
+      "tools": [
+        "coreguard_assess_stellar_fee_bump",
+        "coreguard_verify_stellar_sponsored_reserve",
+        "coreguard_verify_stellar_asset_allowlist",
+        "coreguard_export_evidence_pack"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-fee-sponsor-check/SKILL.md",
+      "digest": "sha256:3b7fb3fecbff397bee366cd3477948d0d85663420f8b2717767e6e929a16a5de",
+      "bytes": 2308
+    },
+    {
+      "dir": "stellar-mainnet-preflight-rehearsal",
+      "name": "stellar-mainnet-preflight-rehearsal",
+      "description": "Use before an owner-authorized Stellar Mainnet payment to rehearse the full gate offline — policy preflight, exact-XDR binding, submission evidence and a redacted pack — with no signing and no broadcast.",
+      "intro": "Mainnet is where rehearsal matters. Run the same gate that will judge the real submission, on the exact envelope bytes, before the owner signs anything.",
+      "whenToUse": [
+        "An owner has authorized a Mainnet payment and wants the gate exercised first.",
+        "A Testnet rehearsal passed and the same flow is being promoted.",
+        "A reviewer asks what would have been refused, and why.",
+        "You need the evidence pack structure before an incident, not during one."
+      ],
+      "tools": [
+        "coreguard_preflight_stellar_agent_payment",
+        "coreguard_bind_stellar_authorization",
+        "coreguard_verify_stellar_submission_evidence",
+        "coreguard_export_stellar_evidence_pack",
+        "coreguard_verify_stellar_sequence_guard"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-mainnet-preflight-rehearsal/SKILL.md",
+      "digest": "sha256:95c90c162e417ce0299231f28bee94123ce01fa421e4b67c3602f03181212edc",
+      "bytes": 2434
+    },
+    {
+      "dir": "stellar-multisig-recovery-drill",
+      "name": "stellar-multisig-recovery-drill",
+      "description": "Use to rehearse recovery of a Stellar smart account — prove the backup signer set still meets thresholds, that the auth entry matches, and that the drill is documented before a real key is lost.",
+      "intro": "Recovery plans are unverified until exercised. Drill the signer set, the threshold reachability and the authorization path against the current policy.",
+      "whenToUse": [
+        "A smart account holds value and its recovery path has never been tested.",
+        "A signer is being retired and the remaining set must still reach `HIGH`.",
+        "An incident requires using backup signers under time pressure.",
+        "An auditor asks for evidence that recovery was rehearsed."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_smart_account_signers",
+        "coreguard_verify_stellar_multisig_thresholds",
+        "coreguard_verify_stellar_soroban_auth_entry",
+        "coreguard_incident_timeline",
+        "coreguard_export_evidence_pack"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-multisig-recovery-drill/SKILL.md",
+      "digest": "sha256:a267a4b994093a36df5bb806ad36f810a1572e4771e474f149b8521b123b1f28",
+      "bytes": 2339
+    },
+    {
+      "dir": "stellar-operation-drift-forensics",
+      "name": "stellar-operation-drift-forensics",
+      "description": "Use after a Stellar transaction differs from what was approved, to name the exact drift class (count, order, type, destination, asset, amount, memo) and produce a reviewable evidence pack.",
+      "intro": "When a payment goes wrong, the useful answer is not \"it drifted\" but which field, at which index, from what to what. Produce that, then package it.",
+      "whenToUse": [
+        "A dispute or incident review needs the exact difference between approved and executed operations.",
+        "An agent reports success but the merchant reports a different amount or destination.",
+        "A batch shows more operations than were approved.",
+        "An auditor asks for reproducible evidence rather than screenshots."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_operation_set",
+        "coreguard_verify_stellar_memo_binding",
+        "coreguard_verify_stellar_time_bounds",
+        "coreguard_export_evidence_pack"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-operation-drift-forensics/SKILL.md",
+      "digest": "sha256:05f1ed90cc73626efea5f7a2a215470f0d6f0c0bbb66a9681308219eda0c8bec",
+      "bytes": 2265
+    },
+    {
       "dir": "stellar-path-payment-evidence",
       "name": "stellar-path-payment-evidence",
       "description": "Use when a Stellar path-payment receipt needs structural verification without a Horizon call.",
@@ -1406,6 +1672,72 @@
       "bytes": 1628
     },
     {
+      "dir": "stellar-replay-defense",
+      "name": "stellar-replay-defense",
+      "description": "Use when an agent retries Stellar submissions or processes a batch of payments, to prove no sequence or transaction hash is replayed and that each operation set matches what was approved.",
+      "intro": "Retries are where agents double-pay. Keep a seen set, enforce strict forward sequences, and compare every operation set to the approved one.",
+      "whenToUse": [
+        "A submission timed out and the agent wants to retry.",
+        "A batch of payments is processed by several workers.",
+        "An operator needs evidence that a duplicate was blocked.",
+        "A post-incident review asks how many times a transaction hash appeared."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_sequence_guard",
+        "coreguard_verify_stellar_operation_set",
+        "coreguard_verify_execution",
+        "coreguard_issue_stellar_session_receipt"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-replay-defense/SKILL.md",
+      "digest": "sha256:a5568baae77c6ed137c90e4a6eb5a466517385191aaece4f9fd191db1339fe48",
+      "bytes": 2120
+    },
+    {
+      "dir": "stellar-sep10-signin-check",
+      "name": "stellar-sep10-signin-check",
+      "description": "Use when an agent authenticates to a Stellar anchor with SEP-10 and the deployment must prove the challenge belongs to the expected home domain, server key and network before signing.",
+      "intro": "A SEP-10 challenge is a signed login. Verify whose challenge it is, which network it is for, and that the nonce and window are the ones your client requested.",
+      "whenToUse": [
+        "An agent signs in to a Stellar anchor or wallet service.",
+        "A challenge transaction is received and must be checked before the client key signs it.",
+        "A test environment accidentally points at mainnet.",
+        "An incident review needs the exact home domain and server key that were trusted."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_sep10_challenge",
+        "coreguard_verify_stellar_session_key_scope",
+        "coreguard_verify_stellar_time_bounds",
+        "coreguard_issue_stellar_session_receipt"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-sep10-signin-check/SKILL.md",
+      "digest": "sha256:8355cf171fc69c57889d9155e41530aea86ee2c08cb14947a0fbfa800e454240",
+      "bytes": 2266
+    },
+    {
+      "dir": "stellar-session-key-guard",
+      "name": "stellar-session-key-guard",
+      "description": "Use when an AI agent holds a scoped Stellar session key and is about to sign or submit a payment, Soroban call, or DEX swap, and the owner needs a fail-closed ALLOW/DENY before any bytes are signed.",
+      "intro": "Turn an owner-approved session policy into a deterministic decision for one concrete action, then emit a receipt the owner can audit later. Offline, exact-integer, no RPC.",
+      "whenToUse": [
+        "An agent's Stellar session key is about to be used for a payment, a Soroban invoke, or a path payment.",
+        "The owner needs to know *which* rule blocked an action, not just that it was blocked.",
+        "A spend must be checked against both a per-action cap and a rolling daily budget.",
+        "A reviewer asks \"was this action inside the session the owner approved?\"."
+      ],
+      "tools": [
+        "coreguard_compile_stellar_session_policy",
+        "coreguard_evaluate_stellar_session_key",
+        "coreguard_verify_stellar_session_key_scope",
+        "coreguard_issue_stellar_session_receipt"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-session-key-guard/SKILL.md",
+      "digest": "sha256:6cec1441ae4e5c99d3cd00fb2430fea606aa6d69fbebce46840ab74e48093800",
+      "bytes": 2771
+    },
+    {
       "dir": "stellar-settlement-evidence",
       "name": "stellar-settlement-evidence",
       "description": "Use when verifying caller-supplied Stellar settlement evidence against expected payment intent. No Horizon/network call.",
@@ -1425,6 +1757,119 @@
       "path": "skills/stellar-settlement-evidence/SKILL.md",
       "digest": "sha256:8ccac40a3c8c186aba23d2b19385dbde8c4b76d0dc7c85f1f72232ff8bd8fc6c",
       "bytes": 1398
+    },
+    {
+      "dir": "stellar-smart-account-incident-freeze",
+      "name": "stellar-smart-account-incident-freeze",
+      "description": "Use when a Stellar agent session key may be compromised, to freeze the agent, block replay, and build a timestamped incident timeline from evidence instead of memory.",
+      "intro": "Freeze first, explain second. Stop new actions, prove what could still replay, then assemble a timeline that a reviewer can re-derive.",
+      "whenToUse": [
+        "A session key leaked, or a signer set changed unexpectedly.",
+        "An out-of-policy action was reported by a monitor.",
+        "A sponsor or anchor reports activity the owner did not authorize.",
+        "An incident review needs an ordered timeline with evidence digests."
+      ],
+      "tools": [
+        "coreguard_freeze_agent",
+        "coreguard_verify_stellar_sequence_guard",
+        "coreguard_verify_stellar_smart_account_signers",
+        "coreguard_incident_timeline",
+        "coreguard_export_evidence_pack"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-smart-account-incident-freeze/SKILL.md",
+      "digest": "sha256:f3d5e2d70b427606ca3a74d35a5cc11660a34d7e20a65b78973ec842a2124615",
+      "bytes": 2295
+    },
+    {
+      "dir": "stellar-smart-account-signer-policy",
+      "name": "stellar-smart-account-signer-policy",
+      "description": "Use when reviewing or changing the signer set of a Stellar smart account (Soroban custom account or multisig) so an agent session key can never exceed the owner's threshold policy.",
+      "intro": "Check a caller-supplied signer configuration against an owner policy before it is deployed or rotated. Offline set arithmetic over weights and thresholds.",
+      "whenToUse": [
+        "A smart account is being created for an agent and the owner must approve the signer set first.",
+        "A session key is added, rotated or removed and the thresholds must still be reachable.",
+        "A recovery drill needs proof that the master key cannot act alone.",
+        "An auditor asks whether the declared threshold can actually be met by the declared weights."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_smart_account_signers",
+        "coreguard_verify_stellar_multisig_thresholds",
+        "coreguard_verify_stellar_session_key_scope",
+        "coreguard_verify_stellar_soroban_auth_entry"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-smart-account-signer-policy/SKILL.md",
+      "digest": "sha256:91b9820306241b903e297f94d2b7273ae47a2391aaa302b5b04e68d0f25ec890",
+      "bytes": 2595
+    },
+    {
+      "dir": "stellar-soroban-auth-review",
+      "name": "stellar-soroban-auth-review",
+      "description": "Use when an agent submits a Soroban contract invocation and the owner must confirm the authorization entry, the Stellar Asset Contract allowance and the exact operation set before signing.",
+      "intro": "Soroban auth entries are where an agent's intent and its actual authority diverge. Review the entry, the SAC allowance and the operation set as three separate facts.",
+      "whenToUse": [
+        "An agent is about to authorize a Soroban invocation with a session key.",
+        "A Stellar Asset Contract `approve` / `transfer_from` allowance is part of the flow.",
+        "A reviewer needs proof the args digest matches what the owner approved.",
+        "A sub-invocation could reach a contract the policy never allowed."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_soroban_auth_entry",
+        "coreguard_verify_stellar_sac_allowance",
+        "coreguard_verify_stellar_operation_set",
+        "coreguard_issue_stellar_session_receipt"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-soroban-auth-review/SKILL.md",
+      "digest": "sha256:a34e2e30a85c4297d1f37bec5f16a981a1b478b5eff42cc5941b4413c5a82564",
+      "bytes": 2369
+    },
+    {
+      "dir": "stellar-trustline-cleanup-audit",
+      "name": "stellar-trustline-cleanup-audit",
+      "description": "Use to audit a Stellar account's trustlines, Stellar Asset Contract allowances and sponsored reserves so dormant or over-broad authority is found and removed deliberately.",
+      "intro": "Every trustline and allowance is standing authority. Audit them together, rank by risk, and remove only what the owner confirms.",
+      "whenToUse": [
+        "An account has accumulated trustlines from many integrations.",
+        "An SAC allowance is far larger than any payment the agent makes.",
+        "A sponsor is paying reserves for entries nobody uses.",
+        "A quarterly access review needs an evidence-backed list."
+      ],
+      "tools": [
+        "coreguard_verify_stellar_trustline_policy",
+        "coreguard_verify_stellar_sac_allowance",
+        "coreguard_verify_stellar_asset_allowlist",
+        "coreguard_verify_stellar_sponsored_reserve",
+        "coreguard_export_evidence_pack"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-trustline-cleanup-audit/SKILL.md",
+      "digest": "sha256:7203424c6acf711a8d1432f7c767913d22af0404c2de2e2efa7b4c4e64c2f3ab",
+      "bytes": 2290
+    },
+    {
+      "dir": "stellar-x402-to-stellar-settlement",
+      "name": "stellar-x402-to-stellar-settlement",
+      "description": "Use when an agent pays an x402 challenge and settles on Stellar, to authorize the challenge against policy and then verify the Stellar settlement evidence against the same approval.",
+      "intro": "Two protocols, one approval. Parse the challenge, authorize it against policy, and require the Stellar settlement to match the authorization you issued.",
+      "whenToUse": [
+        "An agent receives an HTTP 402 challenge and pays it with a Stellar asset.",
+        "A facilitator reports settlement and the agent must not trust the report alone.",
+        "A retry could pay the same challenge twice.",
+        "Finance needs the challenge, the authorization and the settlement in one trace."
+      ],
+      "tools": [
+        "coreguard_parse_x402_challenge",
+        "coreguard_authorize_x402_payment",
+        "coreguard_verify_x402_settlement",
+        "coreguard_verify_stellar_submission_evidence",
+        "coreguard_reconcile_payment"
+      ],
+      "boundaries": "",
+      "path": "skills/stellar-x402-to-stellar-settlement/SKILL.md",
+      "digest": "sha256:a5188f94834bb8317609fdb38fcd4557c60b58f3cf3c543926b3f07817e21389",
+      "bytes": 2268
     },
     {
       "dir": "swift-remittance-verification",

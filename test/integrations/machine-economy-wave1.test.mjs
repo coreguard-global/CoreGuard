@@ -91,8 +91,11 @@ test("verifyDelegationChain detects breaks and missing signatures", () => {
   assert.ok(r.issues.includes("DELEGATION_0_MISSING_SIGNATURE"));
 });
 
-test("MCP exposes 99 tools and Wave 1 tool call works", async () => {
+test("MCP exposes 119 tools and Wave 1 tool call works", async (t) => {
   const child = spawn(process.execPath, ["packages/agent-commerce/bin/mcp.mjs"], { cwd: process.cwd(), stdio: ["pipe", "pipe", "pipe"] });
+  // A failed assertion must not leave the stdio child holding the event loop:
+  // the suite would hang instead of reporting the failure.
+  t.after(() => child.kill());
   const rl = createInterface({ input: child.stdout });
   const pending = [];
   rl.on("line", (line) => { if (!line.trim()) return; const msg = JSON.parse(line); const i = pending.findIndex(p => p.id === msg.id); if (i >= 0) { pending.splice(i,1)[0].resolve(msg); } });
@@ -100,7 +103,7 @@ test("MCP exposes 99 tools and Wave 1 tool call works", async () => {
   const init = await req(1, "initialize", { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "t", version: "0" } });
   assert.equal(init.result.serverInfo.name, "coreguard-agent-commerce");
   const list = await req(2, "tools/list", {});
-  assert.equal(list.result.tools.length, 99);
+  assert.equal(list.result.tools.length, 119);
   const call = await req(3, "tools/call", { name: "coreguard_parse_x402_challenge", arguments: { challenge: { accepts: [{ network: "base", asset: "USDC", amount: "1", payTo: "0xabc" }] } } });
   assert.equal(call.result.structuredContent.verdict, "PARSED");
   child.stdin.end();

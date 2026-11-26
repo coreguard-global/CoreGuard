@@ -427,6 +427,45 @@ async function buildExamples(rpc) {
   const sgPack = await call("coreguard_export_stellar_evidence_pack", { items: [sgAuth, sgBinding, sgVerified], redactFields: ["callerContext"] });
   const sgVectors = await call("coreguard_stellar_adversarial_vectors", { family: "stellar-agent-gate" });
 
+  // Wave 6 examples (CG-W6/1) — Stellar smart accounts and session keys.
+  const W6_SHA = "sha256:" + "a1".repeat(32);
+  const W6_HASH = "ab".repeat(32);
+  const W6_CONTRACT = "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC";
+  const w6Compiled = await call("coreguard_compile_stellar_session_policy", { policy: {
+    sessionId: "session-1", principal: "GPRINCIPAL", agent: "GAGENT", network: "testnet",
+    allowedContracts: [W6_CONTRACT], allowedOperations: ["invoke_host_function", "payment"],
+    allowedAssets: [{ code: "native" }, { code: "USDC", issuer: "GISSUER" }],
+    maxPerActionMinor: "5000000", dailyLimitMinor: "20000000",
+    validFromSeconds: String(BigInt(NOW) - 100n), expiresAtSeconds: String(BigInt(NOW) + 86400n),
+    requireMemo: true, memoPrefix: "cg-",
+  } });
+  const w6Decision = await call("coreguard_evaluate_stellar_session_key", {
+    policy: w6Compiled.policy,
+    action: { network: "testnet", contract: W6_CONTRACT, operation: "invoke_host_function", assetCode: "native", amountMinor: "1000", destination: SG_DEST, memo: "cg-42", atSeconds: NOW },
+    nowSeconds: NOW, spentTodayMinor: "0",
+  });
+  const w6Scope = await call("coreguard_verify_stellar_session_key_scope", { principalScope: ["pay", "read"], sessionScope: ["pay"], requested: ["pay"] });
+  const w6Signers = await call("coreguard_verify_stellar_smart_account_signers", {
+    account: { accountId: "CACCOUNT", masterWeight: "0", thresholds: { low: "1", medium: "2", high: "3" }, signers: [{ key: "GSESSION", kind: "ed25519", weight: "3" }] },
+    policy: { requireMasterDisabled: true, maxSigners: "4", allowedKinds: ["ed25519", "passkey"] },
+  });
+  const w6Threshold = await call("coreguard_verify_stellar_multisig_thresholds", { evidence: { presentSigners: [{ key: "GA", weight: "2" }, { key: "GB", weight: "2" }], thresholds: { low: "1", medium: "2", high: "3" } }, level: "HIGH" });
+  const w6Bounds = await call("coreguard_verify_stellar_time_bounds", { timeBounds: { minTime: String(BigInt(NOW) - 10n), maxTime: String(BigInt(NOW) + 600n) }, ledgerBounds: { minLedger: "100", maxLedger: "200" }, nowSeconds: NOW, currentLedger: "150", maxDurationSeconds: "3600" });
+  const w6Memo = await call("coreguard_verify_stellar_memo_binding", { memo: { type: "text", value: "cg-invoice-42" }, expected: { type: "text", value: "cg-invoice-42", prefix: "cg-" } });
+  const w6Asset = await call("coreguard_verify_stellar_asset_allowlist", { asset: { code: "USDC", issuer: "GISSUER" }, allowlist: [{ code: "USDC", issuer: "GISSUER" }, { code: "native" }], policy: { requireIssuerAllowlist: true } });
+  const w6Trustlines = await call("coreguard_verify_stellar_trustline_policy", { trustlines: [{ assetCode: "USDC", assetIssuer: "GISSUER", limit: "100.00", authorized: true }], plannedSpend: [{ assetCode: "USDC", amount: "40.50" }], policy: { requireAuthorized: true } });
+  const w6Soroban = await call("coreguard_verify_stellar_soroban_auth_entry", { entry: { contractId: W6_CONTRACT, functionName: "transfer", argsDigest: W6_SHA, signatureExpirationLedger: "200", rootInvocation: true }, expected: { contractId: W6_CONTRACT, functionName: "transfer", argsDigest: W6_SHA }, currentLedger: "150", policy: { allowedContracts: [W6_CONTRACT], requireRoot: true } });
+  const w6Sac = await call("coreguard_verify_stellar_sac_allowance", { evidence: { contractId: "CUSDC", from: "GOWNER", spender: "GSPENDER", amount: "500", expirationLedger: "900" }, expected: { maxAmount: "1000" }, currentLedger: "800", policy: { allowedSpenders: ["GSPENDER"] } });
+  const w6FeeBump = await call("coreguard_assess_stellar_fee_bump", { feeBump: { outerSource: "GSPONSOR", innerTxHash: W6_HASH, innerSource: "GAGENT", feeChargedMinor: "1000" }, policy: { allowedFeeSponsors: ["GSPONSOR"], maxFeeMinor: "2000", expectedInnerTxHash: W6_HASH } });
+  const w6Claimable = await call("coreguard_verify_stellar_claimable_balance", { balance: { balanceId: "BAL1", assetCode: "USDC", amount: "25.00", sponsor: "GSPONSOR", claimants: [{ destination: SG_DEST, predicate: { notBeforeAbsoluteTime: String(BigInt(NOW) - 10n), notAfterAbsoluteTime: String(BigInt(NOW) + 600n) } }] }, expected: { destination: SG_DEST, amount: "25.00", assetCode: "USDC" }, nowSeconds: NOW });
+  const w6Sponsored = await call("coreguard_verify_stellar_sponsored_reserve", { sponsorship: { sponsor: "GSPONSOR", sponsored: "GAGENT", numEntries: "2", reserveXlm: "1.0" }, policy: { allowedSponsors: ["GSPONSOR"], maxSponsoredEntries: "4", maxReserveXlm: "2" } });
+  const w6Sequence = await call("coreguard_verify_stellar_sequence_guard", { submission: { accountId: "GACCOUNT", sequence: "105", txHash: W6_HASH }, seen: [{ sequence: "104", txHash: "cd".repeat(32) }], policy: { maxGap: "2" } });
+  const w6OpSet = await call("coreguard_verify_stellar_operation_set", { approved: [{ type: "payment", destination: SG_DEST, asset: "USDC", amount: "10.00", memo: "cg-1" }], executed: [{ type: "payment", destination: SG_DEST, asset: "USDC", amount: "10.00", memo: "cg-1" }] });
+  const w6Dex = await call("coreguard_verify_stellar_dex_path", { pathPayment: { mode: "strict_send", sendAsset: "USDC", sendAmount: "100", destAsset: "XLM", destAmount: "99", destination: SG_DEST, path: ["XLM"] }, quote: { destAmount: "100" }, policy: { maxSlippageBps: 100 } });
+  const w6Sep10 = await call("coreguard_verify_stellar_sep10_challenge", { challenge: { homeDomain: "anchor.example", webAuthDomain: "anchor.example", serverSigningKey: "GSEP10", nonce: "nonce-123", networkPassphrase: "testnet", clientDomain: "agent.example", timeBounds: { minTime: String(BigInt(NOW) - 10n), maxTime: String(BigInt(NOW) + 300n) }, operations: [{ type: "manage_data", name: "nonce-123" }] }, expected: { homeDomain: "anchor.example", webAuthDomain: "anchor.example", serverSigningKey: "GSEP10", networkPassphrase: "testnet", clientDomain: "agent.example", nonce: "nonce-123" }, nowSeconds: NOW });
+  const w6Sep24 = await call("coreguard_verify_stellar_sep24_anchor_evidence", { evidence: { transactionId: "anchor-tx-1", kind: "deposit", status: "completed", assetCode: "USDC", amountIn: "100", amountOut: "99.5", fee: "0.5", expiresAtSeconds: String(BigInt(NOW) + 60n), stellarTransactionId: W6_HASH }, expected: { assetCode: "USDC", minAmountOut: "99" }, nowSeconds: NOW });
+  const w6Receipt = await call("coreguard_issue_stellar_session_receipt", { evidence: { sessionId: "session-1", network: "testnet", policyDigest: w6Compiled.policyDigest, actionDigest: w6Decision.actionDigest, decision: "ALLOW", spentMinorBefore: "100", spentMinorAfter: "200", atSeconds: NOW, stellarTxHash: W6_HASH } });
+
   const use = (what) => ({ $ref: what });
 
   return {
@@ -752,6 +791,26 @@ async function buildExamples(rpc) {
     coreguard_bind_stellar_authorization: { args: { authorization: sgAuth, envelopeXdr: SG_ENV, observed: sgProjection }, out: sgBinding },
     coreguard_verify_stellar_submission_evidence: { args: { binding: sgBinding, evidence: sgEvidence }, out: sgVerified },
     coreguard_stellar_adversarial_vectors: { args: { family: "stellar-agent-gate" }, out: sgVectors },
+    coreguard_compile_stellar_session_policy: { args: { policy: { sessionId: "session-1", principal: "GPRINCIPAL", agent: "GAGENT", network: "testnet", allowedContracts: [W6_CONTRACT], allowedOperations: ["invoke_host_function", "payment"], allowedAssets: [{ code: "native" }, { code: "USDC", issuer: "GISSUER" }], maxPerActionMinor: "5000000", dailyLimitMinor: "20000000", validFromSeconds: String(BigInt(NOW) - 100n), expiresAtSeconds: String(BigInt(NOW) + 86400n), requireMemo: true, memoPrefix: "cg-" } }, out: w6Compiled },
+    coreguard_evaluate_stellar_session_key: { args: { policy: w6Compiled.policy, action: { network: "testnet", contract: W6_CONTRACT, operation: "invoke_host_function", assetCode: "native", amountMinor: "1000", destination: SG_DEST, memo: "cg-42", atSeconds: NOW }, nowSeconds: NOW, spentTodayMinor: "0" }, display: { policy: use("canonical session policy returned by coreguard_compile_stellar_session_policy"), action: { network: "testnet", contract: W6_CONTRACT, operation: "invoke_host_function", assetCode: "native", amountMinor: "1000", destination: SG_DEST, memo: "cg-42", atSeconds: NOW }, nowSeconds: NOW, spentTodayMinor: "0" }, out: w6Decision },
+    coreguard_verify_stellar_session_key_scope: { args: { principalScope: ["pay", "read"], sessionScope: ["pay"], requested: ["pay"] }, out: w6Scope },
+    coreguard_verify_stellar_smart_account_signers: { args: { account: { accountId: "CACCOUNT", masterWeight: "0", thresholds: { low: "1", medium: "2", high: "3" }, signers: [{ key: "GSESSION", kind: "ed25519", weight: "3" }] }, policy: { requireMasterDisabled: true, maxSigners: "4", allowedKinds: ["ed25519", "passkey"] } }, out: w6Signers },
+    coreguard_verify_stellar_multisig_thresholds: { args: { evidence: { presentSigners: [{ key: "GA", weight: "2" }, { key: "GB", weight: "2" }], thresholds: { low: "1", medium: "2", high: "3" } }, level: "HIGH" }, out: w6Threshold },
+    coreguard_verify_stellar_time_bounds: { args: { timeBounds: { minTime: String(BigInt(NOW) - 10n), maxTime: String(BigInt(NOW) + 600n) }, ledgerBounds: { minLedger: "100", maxLedger: "200" }, nowSeconds: NOW, currentLedger: "150", maxDurationSeconds: "3600" }, out: w6Bounds },
+    coreguard_verify_stellar_memo_binding: { args: { memo: { type: "text", value: "cg-invoice-42" }, expected: { type: "text", value: "cg-invoice-42", prefix: "cg-" } }, out: w6Memo },
+    coreguard_verify_stellar_asset_allowlist: { args: { asset: { code: "USDC", issuer: "GISSUER" }, allowlist: [{ code: "USDC", issuer: "GISSUER" }, { code: "native" }], policy: { requireIssuerAllowlist: true } }, out: w6Asset },
+    coreguard_verify_stellar_trustline_policy: { args: { trustlines: [{ assetCode: "USDC", assetIssuer: "GISSUER", limit: "100.00", authorized: true }], plannedSpend: [{ assetCode: "USDC", amount: "40.50" }], policy: { requireAuthorized: true } }, out: w6Trustlines },
+    coreguard_verify_stellar_soroban_auth_entry: { args: { entry: { contractId: W6_CONTRACT, functionName: "transfer", argsDigest: W6_SHA, signatureExpirationLedger: "200", rootInvocation: true }, expected: { contractId: W6_CONTRACT, functionName: "transfer", argsDigest: W6_SHA }, currentLedger: "150", policy: { allowedContracts: [W6_CONTRACT], requireRoot: true } }, out: w6Soroban },
+    coreguard_verify_stellar_sac_allowance: { args: { evidence: { contractId: "CUSDC", from: "GOWNER", spender: "GSPENDER", amount: "500", expirationLedger: "900" }, expected: { maxAmount: "1000" }, currentLedger: "800", policy: { allowedSpenders: ["GSPENDER"] } }, out: w6Sac },
+    coreguard_assess_stellar_fee_bump: { args: { feeBump: { outerSource: "GSPONSOR", innerTxHash: W6_HASH, innerSource: "GAGENT", feeChargedMinor: "1000" }, policy: { allowedFeeSponsors: ["GSPONSOR"], maxFeeMinor: "2000", expectedInnerTxHash: W6_HASH } }, out: w6FeeBump },
+    coreguard_verify_stellar_claimable_balance: { args: { balance: { balanceId: "BAL1", assetCode: "USDC", amount: "25.00", sponsor: "GSPONSOR", claimants: [{ destination: SG_DEST, predicate: { notBeforeAbsoluteTime: String(BigInt(NOW) - 10n), notAfterAbsoluteTime: String(BigInt(NOW) + 600n) } }] }, expected: { destination: SG_DEST, amount: "25.00", assetCode: "USDC" }, nowSeconds: NOW }, out: w6Claimable },
+    coreguard_verify_stellar_sponsored_reserve: { args: { sponsorship: { sponsor: "GSPONSOR", sponsored: "GAGENT", numEntries: "2", reserveXlm: "1.0" }, policy: { allowedSponsors: ["GSPONSOR"], maxSponsoredEntries: "4", maxReserveXlm: "2" } }, out: w6Sponsored },
+    coreguard_verify_stellar_sequence_guard: { args: { submission: { accountId: "GACCOUNT", sequence: "105", txHash: W6_HASH }, seen: [{ sequence: "104", txHash: "cd".repeat(32) }], policy: { maxGap: "2" } }, out: w6Sequence },
+    coreguard_verify_stellar_operation_set: { args: { approved: [{ type: "payment", destination: SG_DEST, asset: "USDC", amount: "10.00", memo: "cg-1" }], executed: [{ type: "payment", destination: SG_DEST, asset: "USDC", amount: "10.00", memo: "cg-1" }] }, out: w6OpSet },
+    coreguard_verify_stellar_dex_path: { args: { pathPayment: { mode: "strict_send", sendAsset: "USDC", sendAmount: "100", destAsset: "XLM", destAmount: "99", destination: SG_DEST, path: ["XLM"] }, quote: { destAmount: "100" }, policy: { maxSlippageBps: 100 } }, out: w6Dex },
+    coreguard_verify_stellar_sep10_challenge: { args: { challenge: { homeDomain: "anchor.example", webAuthDomain: "anchor.example", serverSigningKey: "GSEP10", nonce: "nonce-123", networkPassphrase: "testnet", clientDomain: "agent.example", timeBounds: { minTime: String(BigInt(NOW) - 10n), maxTime: String(BigInt(NOW) + 300n) }, operations: [{ type: "manage_data", name: "nonce-123" }] }, expected: { homeDomain: "anchor.example", webAuthDomain: "anchor.example", serverSigningKey: "GSEP10", networkPassphrase: "testnet", clientDomain: "agent.example", nonce: "nonce-123" }, nowSeconds: NOW }, out: w6Sep10 },
+    coreguard_verify_stellar_sep24_anchor_evidence: { args: { evidence: { transactionId: "anchor-tx-1", kind: "deposit", status: "completed", assetCode: "USDC", amountIn: "100", amountOut: "99.5", fee: "0.5", expiresAtSeconds: String(BigInt(NOW) + 60n), stellarTransactionId: W6_HASH }, expected: { assetCode: "USDC", minAmountOut: "99" }, nowSeconds: NOW }, out: w6Sep24 },
+    coreguard_issue_stellar_session_receipt: { args: { evidence: { sessionId: "session-1", network: "testnet", policyDigest: w6Compiled.policyDigest, actionDigest: w6Decision.actionDigest, decision: "ALLOW", spentMinorBefore: "100", spentMinorAfter: "200", atSeconds: NOW, stellarTxHash: W6_HASH } }, display: { evidence: { sessionId: "session-1", network: "testnet", policyDigest: use("policyDigest returned by coreguard_compile_stellar_session_policy"), actionDigest: use("actionDigest returned by coreguard_evaluate_stellar_session_key"), decision: "ALLOW", spentMinorBefore: "100", spentMinorAfter: "200", atSeconds: NOW, stellarTxHash: W6_HASH } }, out: w6Receipt },
   };
 }
 

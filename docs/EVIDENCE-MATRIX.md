@@ -96,7 +96,7 @@ today and cannot adopt the latter today.
 
 ## Totals
 
-Suite total: **2218 / 2218 pass**, machine-pinned in
+Suite total: **2246 / 2246 pass**, machine-pinned in
 `docs/state-snapshot.json` (the only authoritative count in the repo).
 Boundary audit: **0 violations**; file count lives in the same snapshot.
 

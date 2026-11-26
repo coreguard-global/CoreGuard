@@ -5,16 +5,16 @@ machine-readable form of this exact call result; paste the block below into a
 listing, review or buyer package instead of typing a version or a tool count.
 
 **Call:** `tools/call coreguard_describe_surface { "format": "card" }` against
-`coreguard-agent-commerce@0.5.0`.
+`coreguard-agent-commerce@0.5.1`.
 
 **One-line quote:**
 
-> coreguard-agent-commerce 0.5.0 — 99 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
+> coreguard-agent-commerce 0.5.1 — 119 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
 
 **Badge markdown:**
 
 ```markdown
-![MCP tools: 99](https://coreguard-global.github.io/CoreGuard/assets/badges/mcp-tools.svg)
+![MCP tools: 119](https://coreguard-global.github.io/CoreGuard/assets/badges/mcp-tools.svg)
 ```
 
 **Verbatim call result (as returned by the server):**
@@ -29,19 +29,19 @@ listing, review or buyer package instead of typing a version or a tool count.
   ],
   "server": {
     "name": "coreguard-agent-commerce",
-    "version": "0.5.0"
+    "version": "0.5.1"
   },
   "protocolVersion": "2025-06-18",
-  "toolCount": 99,
-  "toolsDigest": "sha256:4ac1f9e809b498add62023eb027c52ffba89fd8a30dfc36ad633346a8b0d9ee6",
+  "toolCount": 119,
+  "toolsDigest": "sha256:e00bc3076afa3892224f3a58a6c122c9252fbe40f806a4c4c4fb8609c209078e",
   "capabilities": {
     "type": "capability_card",
     "spec": "CG-CC/1",
     "server": "coreguard-agent-commerce",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "protocolVersion": "2025-06-18",
     "transport": "stdio (newline-delimited JSON-RPC 2.0)",
-    "tools": 99,
+    "tools": 119,
     "categories": [
       "consent receipts (CGCR/1)",
       "execution verification (AGR/1)",
@@ -63,9 +63,9 @@ listing, review or buyer package instead of typing a version or a tool count.
     "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment.",
     "key": "offline · deterministic · zero keys · no custody · no broadcast · VERIFIED ≠ SAFE"
   },
-  "badge": "coreguard-agent-commerce 0.5.0 · 99 tools · offline · deterministic",
+  "badge": "coreguard-agent-commerce 0.5.1 · 119 tools · offline · deterministic",
   "skills": {
-    "count": 72,
+    "count": 92,
     "names": [
       "acp-interop-mapping",
       "agent-authority-scope-check",
@@ -128,8 +128,28 @@ listing, review or buyer package instead of typing a version or a tool count.
       "sanctions-evidence-gate",
       "sanctions-list-version-gate",
       "stablecoin-reserve-evidence",
+      "stellar-agent-authority-audit",
+      "stellar-agent-spend-ledger",
+      "stellar-anchor-deposit-verify",
+      "stellar-anchor-withdrawal-reconciliation",
+      "stellar-asset-trust-preflight",
+      "stellar-claimable-balance-claim",
+      "stellar-dex-slippage-guard",
+      "stellar-envelope-window-guard",
+      "stellar-fee-sponsor-check",
+      "stellar-mainnet-preflight-rehearsal",
+      "stellar-multisig-recovery-drill",
+      "stellar-operation-drift-forensics",
       "stellar-path-payment-evidence",
+      "stellar-replay-defense",
+      "stellar-sep10-signin-check",
+      "stellar-session-key-guard",
       "stellar-settlement-evidence",
+      "stellar-smart-account-incident-freeze",
+      "stellar-smart-account-signer-policy",
+      "stellar-soroban-auth-review",
+      "stellar-trustline-cleanup-audit",
+      "stellar-x402-to-stellar-settlement",
       "swift-remittance-verification",
       "token-allowance-revocation",
       "tool-poisoning-triage",
@@ -140,7 +160,7 @@ listing, review or buyer package instead of typing a version or a tool count.
       "web3-signature-evidence",
       "x402-payment-gate"
     ],
-    "digest": "sha256:209cf0ee7825a098f33e0d7d6ebd949fc8231ab3603fedbbfc8c92d1642a1410"
+    "digest": "sha256:9598d0b70c915581056c9bf27701a1ccfd577f522abaa1f4fa3f3194ae41a4d9"
   },
   "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment."
 }

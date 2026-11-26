@@ -1,12 +1,12 @@
 # CoreGuard Agent Commerce — MCP tool reference
 
-Paste-ready reference for the MCP directory listing. Package `@coreguard/agent-commerce@0.5.0`, server `io.github.EslaM-X/coreguard-agent-commerce`, transport **stdio**, protocol `2025-06-18`.
+Paste-ready reference for the MCP directory listing. Package `@coreguard/agent-commerce@0.5.1`, server `io.github.EslaM-X/coreguard-agent-commerce`, transport **stdio**, protocol `2025-06-18`.
 
 Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.mjs`. Every example arguments block below was executed against that server when this page was built; the shown result is the real response (long consent payloads abridged where marked).
 
 **Boundary:** this is an offline, deterministic verification engine. `VERIFIED` means the executed bytes matched the approved bytes — it is not a safety, fraud or settlement guarantee, and no payment, chain or provider is contacted.
 
-## Tools (99)
+## Tools (119)
 
 | Tool | Required | Optional | Purpose |
 |---|---|---|---|
@@ -18,6 +18,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_assess_machine_sla`](#coreguard_assess_machine_sla) | `events` | `policy`, `callerContext` | Assess machine/agent SLA from caller-supplied downtime/events against policy thresholds. Deterministic, offline. |
 | [`coreguard_assess_risk`](#coreguard_assess_risk) | `intent`, `policy`, `trace` | `consumed`, `callerContext` | Classify one executed order against one approved authorization with the deterministic AGR/1 taxonomy. Not a… |
 | [`coreguard_assess_sanctions_screening_evidence`](#coreguard_assess_sanctions_screening_evidence) | `evidence`, `policy`, `nowSeconds` | `callerContext` | Assess a caller-supplied sanctions/screening result packet for freshness, provider allowlist, and clear/no-match… |
+| [`coreguard_assess_stellar_fee_bump`](#coreguard_assess_stellar_fee_bump) | `feeBump` | `policy`, `callerContext` | Assess a Stellar fee-bump envelope for inner-transaction binding, sponsor allowlist and fee ceiling. Offline;… |
 | [`coreguard_attest_batch`](#coreguard_attest_batch) | `receipts` | `callerContext` | Commit many receipts with one Merkle root: domain-separated SHA-256 leaves, RFC 6962-style tree, per-item inclusion… |
 | [`coreguard_audit_server_manifest`](#coreguard_audit_server_manifest) | `manifest` | `callerContext` | Audit an MCP server manifest (server.json) before installing it: remote transports, unpinned packages, missing… |
 | [`coreguard_audit_transaction`](#coreguard_audit_transaction) | `storePath` | `txRef`, `approvalId`, `agentId`, `limit`, `callerContext` | CGCP/1 mapping: read and optionally filter the append-only hash-chained audit report from a file-backed control… |
@@ -30,6 +31,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_check_limits`](#coreguard_check_limits) | `storePath`, `agentId` | `policyId`, `merchant`, `address`, `amountMinor`, `currency`, `approvalId`, `callerContext` | CGCP/1 mapping: evaluate policy/limit decision for an agent request in a file-backed control plane. No funds moved… |
 | [`coreguard_check_lookalike`](#coreguard_check_lookalike) | `candidate`, `reference` | `callerContext` | Check a merchant domain or package name for homoglyph, mixed-script and punycode impersonation of a reference:… |
 | [`coreguard_compile_policy`](#coreguard_compile_policy) | `spec` | `callerContext` | Compile a compact spending spec (limit, merchant/recipient/selector allowlists, currency) into a canonical CGEP/1… |
+| [`coreguard_compile_stellar_session_policy`](#coreguard_compile_stellar_session_policy) | `policy` | `callerContext` | Compile a Stellar agent session-key policy (scopes, assets, per-action and daily caps, validity window) into a… |
 | [`coreguard_consumption_status`](#coreguard_consumption_status) | `receiptId` | `action`, `storePath`, `callerContext` | Check/consume/release a receiptId in a consumption ledger. Default is process-local (this MCP process only). If… |
 | [`coreguard_create_incident_war_room`](#coreguard_create_incident_war_room) | `incident` | `events`, `actions`, `nowSeconds`, `callerContext` | Create a deterministic incident war-room packet from incident metadata, events, and actions. Local evidence… |
 | [`coreguard_create_inference_receipt`](#coreguard_create_inference_receipt) | `evidence` | `nowSeconds`, `callerContext` | Create a deterministic receipt binding caller-supplied model, prompt, output and policy digests with cost and… |
@@ -43,6 +45,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_diff_policies`](#coreguard_diff_policies) | `before`, `after` | `callerContext` | Semantic diff of two CGEP/1 policies by rule id: added, removed, changed rules, value-limit delta, strictness trend,… |
 | [`coreguard_diff_tool_surface`](#coreguard_diff_tool_surface) | `before`, `after` | `callerContext` | Diff two tools/list snapshots (before/after an upgrade) to catch rug pulls: added, removed and re-described tools,… |
 | [`coreguard_emit_test_vectors`](#coreguard_emit_test_vectors) | `policy`, `baseIntent` | `nowSeconds`, `callerContext` | Emit deterministic integration test vectors for an SDK or gateway: baseline allow, amount drift, recipient swap,… |
+| [`coreguard_evaluate_stellar_session_key`](#coreguard_evaluate_stellar_session_key) | `policy`, `action`, `nowSeconds` | `spentTodayMinor`, `callerContext` | Evaluate one proposed Stellar action against a session policy at a pinned time and cumulative spend, failing closed… |
 | [`coreguard_explain_decision`](#coreguard_explain_decision) | `policy`, `intent`, `nowSeconds` | `callerContext` | Evaluate an intent against a policy and explain the verdict rule by rule, including the smallest single change… |
 | [`coreguard_export_evidence_pack`](#coreguard_export_evidence_pack) | `items` | `policy`, `nowSeconds`, `callerContext` | Export a redacted, digest-rooted evidence pack from caller-supplied items for human review. Nothing is submitted to… |
 | [`coreguard_export_stellar_evidence_pack`](#coreguard_export_stellar_evidence_pack) | `items` | `redactFields`, `callerContext` | Export a redacted, digest-rooted evidence pack from caller-supplied Stellar gate artifacts for human review. Nothing… |
@@ -52,6 +55,7 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_incident_timeline`](#coreguard_incident_timeline) | `report` | `storePath`, `callerContext` | Assemble an incident timeline from a control-plane ledger (storePath or an audit report): sequence-ordered events,… |
 | [`coreguard_inspect_identity`](#coreguard_inspect_identity) | `issuer`, `scope`, `subject`, `contentDigest` | `anchor`, `other`, `callerContext` | Inspect CG-ID/1 identity split: recordId (who) vs contentDigest (what), with optional anchor facts and optional… |
 | [`coreguard_issue_receipt`](#coreguard_issue_receipt) | `storePath`, `agentId` | `receiptId`, `policyId`, `approvalId`, `merchant`, `address`, `amountMinor`, `currency`, `status`, `txRef`, `metadata`, `callerContext` | CGCP/1 mapping: record an execution receipt in a self-hosted file-backed control plane. This is a local execution… |
+| [`coreguard_issue_stellar_session_receipt`](#coreguard_issue_stellar_session_receipt) | `evidence` | `nowSeconds`, `callerContext` | Issue a digest-bound Stellar session receipt chaining policy digest, action digest, decision and cumulative spend… |
 | [`coreguard_meter_agent_usage`](#coreguard_meter_agent_usage) | `agentId`, `events` | `currency`, `callerContext` | Deterministically meter agent usage/cost events into an auditable total. No billing custody or external payment. |
 | [`coreguard_parse_iso20022_payment`](#coreguard_parse_iso20022_payment) | `message` | `callerContext` | Parse and validate a caller-supplied ISO 20022-like payment message (pain.001/pacs.008/camt.054 etc.) into… |
 | [`coreguard_parse_x402_challenge`](#coreguard_parse_x402_challenge) | `challenge` | `callerContext` | Parse and normalize an x402 payment challenge (HTTP 402 accepts). Offline deterministic validation only; no network… |
@@ -98,9 +102,25 @@ Generated from `initialize` + `tools/list` against `packages/agent-commerce/mcp.
 | [`coreguard_verify_robot_mission_evidence`](#coreguard_verify_robot_mission_evidence) | `receipt`, `evidence` | `receiptDigest`, `callerContext` | Verify robot/agent mission execution evidence against a mission receipt. Offline evidence check. |
 | [`coreguard_verify_sanctions_list_version`](#coreguard_verify_sanctions_list_version) | `evidence`, `policy`, `nowSeconds` | `callerContext` | Check a caller-supplied sanctions-list version stamp against a pinned policy minimum and freshness window. No list… |
 | [`coreguard_verify_stablecoin_reserve_evidence`](#coreguard_verify_stablecoin_reserve_evidence) | `evidence`, `policy`, `nowSeconds` | `callerContext` | Assess caller-supplied stablecoin reserve/attestation evidence for freshness and reserve ratio policy. No issuer API… |
+| [`coreguard_verify_stellar_asset_allowlist`](#coreguard_verify_stellar_asset_allowlist) | `asset`, `allowlist` | `policy`, `callerContext` | Check a Stellar asset (code + issuer) against an allowlist and flag confusable/homoglyph codes that imitate an… |
+| [`coreguard_verify_stellar_claimable_balance`](#coreguard_verify_stellar_claimable_balance) | `balance`, `nowSeconds` | `expected`, `callerContext` | Verify caller-supplied Stellar claimable-balance terms (claimants, predicate window, amount, asset, sponsor) against… |
+| [`coreguard_verify_stellar_dex_path`](#coreguard_verify_stellar_dex_path) | `pathPayment` | `quote`, `policy`, `callerContext` | Verify a caller-supplied Stellar DEX path payment against a quote and a slippage bound, naming hop count and… |
+| [`coreguard_verify_stellar_memo_binding`](#coreguard_verify_stellar_memo_binding) | `memo`, `expected` | `callerContext` | Bind a Stellar envelope memo (text/id/hash/return) to the approved invoice or receipt value, detecting type… |
+| [`coreguard_verify_stellar_multisig_thresholds`](#coreguard_verify_stellar_multisig_thresholds) | `evidence` | `level`, `callerContext` | Check whether the supplied signer weights can reach the declared low/medium/high Stellar multisig threshold. Offline… |
+| [`coreguard_verify_stellar_operation_set`](#coreguard_verify_stellar_operation_set) | `approved`, `executed` | `callerContext` | Compare an approved Stellar operation set with the executed one and name count, order, type, destination, asset,… |
 | [`coreguard_verify_stellar_path_payment`](#coreguard_verify_stellar_path_payment) | `evidence` | `expected`, `callerContext` | Verify caller-supplied Stellar path-payment evidence for status, assets, amounts, destination and path digest. No… |
+| [`coreguard_verify_stellar_sac_allowance`](#coreguard_verify_stellar_sac_allowance) | `evidence`, `currentLedger` | `expected`, `policy`, `callerContext` | Verify Stellar Asset Contract allowance evidence (owner, spender, amount, expiration ledger) against policy. No… |
+| [`coreguard_verify_stellar_sep10_challenge`](#coreguard_verify_stellar_sep10_challenge) | `challenge`, `nowSeconds` | `expected`, `callerContext` | Verify SEP-10 challenge evidence (home domain, web-auth domain, server key, nonce, network passphrase, time bounds)… |
+| [`coreguard_verify_stellar_sep24_anchor_evidence`](#coreguard_verify_stellar_sep24_anchor_evidence) | `evidence` | `expected`, `nowSeconds`, `callerContext` | Verify SEP-24/SEP-31 anchor transaction evidence (kind, status, amounts, fee, quote expiry, Stellar transaction id)… |
+| [`coreguard_verify_stellar_sequence_guard`](#coreguard_verify_stellar_sequence_guard) | `submission` | `seen`, `policy`, `callerContext` | Guard against Stellar replay: verify a submission sequence and transaction hash are unseen, strictly forward and… |
+| [`coreguard_verify_stellar_session_key_scope`](#coreguard_verify_stellar_session_key_scope) | `principalScope`, `sessionScope` | `requested`, `callerContext` | Intersect principal, session-key and requested Stellar scopes and name any overreach before an agent action is… |
 | [`coreguard_verify_stellar_settlement_evidence`](#coreguard_verify_stellar_settlement_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied Stellar settlement evidence against expected payment fields. No Horizon/network call;… |
+| [`coreguard_verify_stellar_smart_account_signers`](#coreguard_verify_stellar_smart_account_signers) | `account` | `policy`, `callerContext` | Verify a caller-supplied Stellar smart-account signer set (weights, thresholds, signer kinds, master weight) against… |
+| [`coreguard_verify_stellar_soroban_auth_entry`](#coreguard_verify_stellar_soroban_auth_entry) | `entry`, `expected`, `currentLedger` | `policy`, `callerContext` | Verify a caller-supplied Soroban authorization entry (contract, function, args digest, root flag, signature… |
+| [`coreguard_verify_stellar_sponsored_reserve`](#coreguard_verify_stellar_sponsored_reserve) | `sponsorship` | `policy`, `callerContext` | Verify Stellar sponsored-reserve evidence (sponsor allowlist, sponsored account, entry count, reserve ceiling). No… |
 | [`coreguard_verify_stellar_submission_evidence`](#coreguard_verify_stellar_submission_evidence) | `binding`, `evidence` | `callerContext` | Verify caller-supplied Stellar submission evidence against a BOUND authorization: envelope bytes, tx hash shape,… |
+| [`coreguard_verify_stellar_time_bounds`](#coreguard_verify_stellar_time_bounds) | `timeBounds`, `nowSeconds` | `ledgerBounds`, `currentLedger`, `maxDurationSeconds`, `callerContext` | Verify Stellar envelope time bounds and optional ledger bounds against a pinned clock and ledger, including a… |
+| [`coreguard_verify_stellar_trustline_policy`](#coreguard_verify_stellar_trustline_policy) | `trustlines`, `plannedSpend` | `policy`, `callerContext` | Verify caller-supplied Stellar trustlines can carry the planned spend (limit, authorization, missing lines) before… |
 | [`coreguard_verify_swift_remittance_evidence`](#coreguard_verify_swift_remittance_evidence) | `evidence`, `expected` | `callerContext` | Verify caller-supplied SWIFT/remittance evidence against expected amount/currency/accounts/reference. Evidence only;… |
 | [`coreguard_verify_task_completion`](#coreguard_verify_task_completion) | `task`, `completion` | `telemetryVerification`, `callerContext` | Verify task completion evidence against task record. Evidence acceptance is not physical-world proof; independent… |
 | [`coreguard_verify_telemetry`](#coreguard_verify_telemetry) | `taskId`, `telemetry` | `trust`, `callerContext` | Verify caller-supplied telemetry evidence structure/digest and optionally verify Ed25519 signature when trust… |
@@ -1066,6 +1086,134 @@ Assess a caller-supplied sanctions/screening result packet for freshness, provid
 }
 ```
 
+### `coreguard_assess_stellar_fee_bump`
+
+Assess a Stellar fee-bump envelope for inner-transaction binding, sponsor allowlist and fee ceiling. Offline; nothing is signed or submitted.
+
+**Required:** `feeBump` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `feeBump` | `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Fee-bump evidence and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "feeBump": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "feeBump"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "feeBump": {
+    "outerSource": "GSPONSOR",
+    "innerTxHash": "abababababababababababababababababababababababababababababababab",
+    "innerSource": "GAGENT",
+    "feeChargedMinor": "1000"
+  },
+  "policy": {
+    "allowedFeeSponsors": [
+      "GSPONSOR"
+    ],
+    "maxFeeMinor": "2000",
+    "expectedInnerTxHash": "abababababababababababababababababababababababababababababababab"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "assess_stellar_fee_bump",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "innerTxHash": "abababababababababababababababababababababababababababababababab",
+  "outerSource": "GSPONSOR",
+  "feeBumpDigest": "sha256:c2b7628ab0a5a89cfbe2c961db0ea98dc1f2a2b9187d97acaed08e43bed9274b",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "OUTER_SOURCE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "fee-bump source present",
+      "evidence": {}
+    },
+    {
+      "id": "INNER_HASH",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "inner transaction hash is 32-byte hex",
+      "evidence": {}
+    },
+    {
+      "id": "HASH_MATCH",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "inner hash matches the approved transaction",
+      "evidence": {}
+    },
+    {
+      "id": "INNER_SOURCE",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "inner source present",
+      "evidence": {}
+    },
+    {
+      "id": "SPONSOR_ALLOWED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "fee sponsor is on the policy allowlist",
+      "evidence": {}
+    },
+    {
+      "id": "FEE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "fee 1000 <= cap 2000",
+      "evidence": {}
+    },
+    {
+      "id": "SEPARATION",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "fee sponsor differs from the inner source (sponsorship is explicit)",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no set
+… (abridged — full object is returned by the server)
+```
+
 ### `coreguard_attest_batch`
 
 Commit many receipts with one Merkle root: domain-separated SHA-256 leaves, RFC 6962-style tree, per-item inclusion proof. Publish only the root; each holder keeps a verifiable proof.
@@ -1222,8 +1370,8 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
 {
   "manifest": {
     "name": "io.github.EslaM-X/coreguard-agent-commerce",
-    "version": "0.5.0",
-    "description": "Fail-closed consent receipts and execution verification for agentic purchases. 99 MCP tools.",
+    "version": "0.5.1",
+    "description": "Fail-closed consent receipts and execution verification for agentic purchases. 119 MCP tools.",
     "repository": {
       "url": "https://github.com/coreguard-global/CoreGuard",
       "source": "github"
@@ -1232,7 +1380,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
       {
         "registryType": "npm",
         "identifier": "@coreguard/agent-commerce",
-        "version": "0.5.0",
+        "version": "0.5.1",
         "transport": {
           "type": "stdio"
         }
@@ -1249,7 +1397,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
   "type": "mcp_manifest_audit",
   "spec": "CG-MM/1",
   "serverName": "io.github.EslaM-X/coreguard-agent-commerce",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "transport": "package",
   "risk": "low",
   "findings": [],
@@ -1260,7 +1408,7 @@ Audit an MCP server manifest (server.json) before installing it: remote transpor
     "low": 0,
     "info": 0
   },
-  "manifestDigest": "sha256:b17cb3a4e911062ba1fdd903f92e47658a72a0d336343065855f363e00340dc8",
+  "manifestDigest": "sha256:160792117581167415c56a2733acbffdb703b10b6581fdf05f1f22e49265da71",
   "note": "structural audit of the record only — it does not execute the server or attest its behaviour",
   "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment."
 }
@@ -2562,6 +2710,162 @@ Compile a compact spending spec (limit, merchant/recipient/selector allowlists, 
 … (abridged — full object is returned by the server)
 ```
 
+### `coreguard_compile_stellar_session_policy`
+
+Compile a Stellar agent session-key policy (scopes, assets, per-action and daily caps, validity window) into a canonical digest-bound policy. Offline; no RPC.
+
+**Required:** `policy` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `policy` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Session policy to canonicalize.",
+  "additionalProperties": true,
+  "properties": {
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "policy"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "policy": {
+    "sessionId": "session-1",
+    "principal": "GPRINCIPAL",
+    "agent": "GAGENT",
+    "network": "testnet",
+    "allowedContracts": [
+      "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+    ],
+    "allowedOperations": [
+      "invoke_host_function",
+      "payment"
+    ],
+    "allowedAssets": [
+      {
+        "code": "native"
+      },
+      {
+        "code": "USDC",
+        "issuer": "GISSUER"
+      }
+    ],
+    "maxPerActionMinor": "5000000",
+    "dailyLimitMinor": "20000000",
+    "validFromSeconds": "1794657500",
+    "expiresAtSeconds": "1794744000",
+    "requireMemo": true,
+    "memoPrefix": "cg-"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "compile_stellar_session_policy",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "policy": {
+    "spec": "CG-W6/1",
+    "sessionId": "session-1",
+    "principal": "GPRINCIPAL",
+    "agent": "GAGENT",
+    "network": "testnet",
+    "allowedContracts": [
+      "cdlzfc3syjydzt7k67vz75hpjvieuvnixf47zg2fb2rmqqvu2hhgcysc"
+    ],
+    "allowedOperations": [
+      "INVOKE_HOST_FUNCTION",
+      "PAYMENT"
+    ],
+    "allowedAssets": [
+      {
+        "code": "native",
+        "issuer": null
+      },
+      {
+        "code": "USDC",
+        "issuer": "GISSUER"
+      }
+    ],
+    "maxPerActionMinor": "5000000",
+    "dailyLimitMinor": "20000000",
+    "validFromSeconds": "1794657500",
+    "expiresAtSeconds": "1794744000",
+    "requireMemo": true,
+    "memoPrefix": "cg-",
+    "requireSorobanAuth": false
+  },
+  "policyDigest": "sha256:d2f54d30fd47ca77150810132d9e5ac1fb0469dbda41522623e8b45338b79071",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "SESSION_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "sessionId present",
+      "evidence": {}
+    },
+    {
+      "id": "PRINCIPAL",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "principal present",
+      "evidence": {}
+    },
+    {
+      "id": "AGENT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "agent present",
+      "evidence": {}
+    },
+    {
+      "id": "NETWORK",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "network=testnet",
+      "evidence": {}
+    },
+    {
+      "id": "SCOPES",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "2 allowed operation(s)",
+      "evidence": {}
+    },
+    {
+      "id": "CAPS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "per-action cap > 0 and <= daily limit",
+      "evidence": {}
+… (abridged — full object is returned by the server)
+```
+
 ### `coreguard_consumption_status`
 
 Check/consume/release a receiptId in a consumption ledger. Default is process-local (this MCP process only). If storePath is supplied (or COREGUARD_CONSUMPTION_STORE is set), uses the AC-CS/1 lock-guarded file store, which is atomic across processes on the same host. Cross-host reconciliation is CG-SPEND/1 merge; on-chain anchoring is NOT_BUILT.
@@ -3494,10 +3798,10 @@ Return this server's capability card (or a one-line badge): version, transport, 
   "type": "capability_card",
   "spec": "CG-CC/1",
   "server": "coreguard-agent-commerce",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "protocolVersion": "2025-06-18",
   "transport": "stdio (newline-delimited JSON-RPC 2.0)",
-  "tools": 99,
+  "tools": 119,
   "categories": [
     "consent receipts (CGCR/1)",
     "execution verification (AGR/1)",
@@ -4123,6 +4427,118 @@ Emit deterministic integration test vectors for an SDK or gateway: baseline allo
         "merchantName": "synthetic-store.example"
       },
 … (abridged — full object is returned by the server)
+```
+
+### `coreguard_evaluate_stellar_session_key`
+
+Evaluate one proposed Stellar action against a session policy at a pinned time and cumulative spend, failing closed with named reasons and one counterfactual. No RPC, no signing.
+
+**Required:** `policy`, `action`, `nowSeconds` · **Optional:** `spentTodayMinor`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `policy` | `object` | **required** | — |  |
+| `action` | `object` | **required** | — |  |
+| `nowSeconds` | `string` | **required** | — |  |
+| `spentTodayMinor` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Session policy, proposed action, pinned time and spend.",
+  "additionalProperties": true,
+  "properties": {
+    "policy": {
+      "type": "object"
+    },
+    "action": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "spentTodayMinor": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "policy",
+    "action",
+    "nowSeconds"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server; the `$ref` items are the exact objects returned by the earlier steps — paste those instead of the placeholder):
+
+```json
+{
+  "policy": {
+    "$ref": "canonical session policy returned by coreguard_compile_stellar_session_policy"
+  },
+  "action": {
+    "network": "testnet",
+    "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "operation": "invoke_host_function",
+    "assetCode": "native",
+    "amountMinor": "1000",
+    "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "memo": "cg-42",
+    "atSeconds": "1794657600"
+  },
+  "nowSeconds": "1794657600",
+  "spentTodayMinor": "0"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "evaluate_stellar_session_key",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "decision": "ALLOW",
+  "sessionId": "session-1",
+  "actionDigest": "sha256:9a14caf3e61e75232f5683afbee2bea32d416f966b98651bc00dbff88b7a5aa8",
+  "policyDigest": "sha256:d2f54d30fd47ca77150810132d9e5ac1fb0469dbda41522623e8b45338b79071",
+  "reasons": [],
+  "counterfactual": null,
+  "spentTodayMinor": "0",
+  "remainingDailyMinor": "20000000",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "DECISION",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "action satisfies the session policy",
+      "evidence": {}
+    },
+    {
+      "id": "SCOPE",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "policy declares at least one operation",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed."
+}
 ```
 
 ### `coreguard_explain_decision`
@@ -5453,6 +5869,143 @@ CGCP/1 mapping: record an execution receipt in a self-hosted file-backed control
   },
   "mapping": "coreguard_issue_receipt -> CGCP recordExecution (execution receipt record)"
 }
+```
+
+### `coreguard_issue_stellar_session_receipt`
+
+Issue a digest-bound Stellar session receipt chaining policy digest, action digest, decision and cumulative spend for later owner review. Nothing is broadcast.
+
+**Required:** `evidence` · **Optional:** `nowSeconds`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `nowSeconds` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Session receipt evidence.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server; the `$ref` items are the exact objects returned by the earlier steps — paste those instead of the placeholder):
+
+```json
+{
+  "evidence": {
+    "sessionId": "session-1",
+    "network": "testnet",
+    "policyDigest": {
+      "$ref": "policyDigest returned by coreguard_compile_stellar_session_policy"
+    },
+    "actionDigest": {
+      "$ref": "actionDigest returned by coreguard_evaluate_stellar_session_key"
+    },
+    "decision": "ALLOW",
+    "spentMinorBefore": "100",
+    "spentMinorAfter": "200",
+    "atSeconds": "1794657600",
+    "stellarTxHash": "abababababababababababababababababababababababababababababababab"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "issue_stellar_session_receipt",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "receipt": {
+    "spec": "CG-W6/1",
+    "type": "stellar_session_receipt",
+    "sessionId": "session-1",
+    "network": "testnet",
+    "policyDigest": "sha256:d2f54d30fd47ca77150810132d9e5ac1fb0469dbda41522623e8b45338b79071",
+    "actionDigest": "sha256:9a14caf3e61e75232f5683afbee2bea32d416f966b98651bc00dbff88b7a5aa8",
+    "decision": "ALLOW",
+    "spentMinorBefore": "100",
+    "spentMinorAfter": "200",
+    "previousReceiptDigest": null,
+    "atSeconds": "1794657600",
+    "stellarTxHash": "abababababababababababababababababababababababababababababababab"
+  },
+  "receiptDigest": "sha256:00722e706fe7b696f7d3e0fce7471feaf0a56a0f3adf8bb91c72ce87fafbb9e3",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "SESSION",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "sessionId present",
+      "evidence": {}
+    },
+    {
+      "id": "POLICY_DIGEST",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "policyDigest is a sha256 digest",
+      "evidence": {}
+    },
+    {
+      "id": "ACTION_DIGEST",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "actionDigest is a sha256 digest",
+      "evidence": {}
+    },
+    {
+      "id": "NETWORK",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "network=testnet",
+      "evidence": {}
+    },
+    {
+      "id": "DECISION",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "decision=ALLOW",
+      "evidence": {}
+    },
+    {
+      "id": "SPEND_MONOTONIC",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "after 200 >= before 100",
+      "evidence": {}
+    },
+    {
+      "id": "TIME_PINNED",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "receipt time is pinned",
+… (abridged — full object is returned by the server)
 ```
 
 ### `coreguard_meter_agent_usage`
@@ -10653,6 +11206,826 @@ Assess caller-supplied stablecoin reserve/attestation evidence for freshness and
 }
 ```
 
+### `coreguard_verify_stellar_asset_allowlist`
+
+Check a Stellar asset (code + issuer) against an allowlist and flag confusable/homoglyph codes that imitate an allowed asset. Offline.
+
+**Required:** `asset`, `allowlist` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `asset` | `object` | **required** | — | Asset reference: native XLM, or a code plus issuer. |
+| `allowlist` | array of `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Asset, allowlist and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "asset": {
+      "type": "object",
+      "description": "Asset reference: native XLM, or a code plus issuer.",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "issuer": {
+          "type": "string"
+        }
+      }
+    },
+    "allowlist": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Asset reference: native XLM, or a code plus issuer.",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "asset",
+    "allowlist"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "asset": {
+    "code": "USDC",
+    "issuer": "GISSUER"
+  },
+  "allowlist": [
+    {
+      "code": "USDC",
+      "issuer": "GISSUER"
+    },
+    {
+      "code": "native"
+    }
+  ],
+  "policy": {
+    "requireIssuerAllowlist": true
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_asset_allowlist",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "asset": {
+    "code": "USDC",
+    "issuer": "GISSUER"
+  },
+  "matched": true,
+  "confusableWith": [],
+  "assetDigest": "sha256:e543ad78cb6c83b3040db9dc59425a5bf4264f25f984f2be676980d705bf3f68",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "CODE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "code=USDC",
+      "evidence": {}
+    },
+    {
+      "id": "ISSUER",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "non-native asset carries an issuer",
+      "evidence": {}
+    },
+    {
+      "id": "ALLOWLIST",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "2 allowed asset(s)",
+      "evidence": {}
+    },
+    {
+      "id": "EXACT_MATCH",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "asset code and issuer match an allowlist entry exactly",
+      "evidence": {}
+    },
+    {
+      "id": "NATIVE_POLICY",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "native asset allowed when the policy permits it",
+      "evidence": {}
+    },
+    {
+      "id": "ISSUER_ALLOWLIST",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "issuer is explicitly allowed",
+      "evidence": {}
+    },
+    {
+      "id": "NO_CONFUSABLE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "confusable with allowed codes: none",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_verify_stellar_claimable_balance`
+
+Verify caller-supplied Stellar claimable-balance terms (claimants, predicate window, amount, asset, sponsor) against expectations at a pinned time. No Horizon call.
+
+**Required:** `balance`, `nowSeconds` · **Optional:** `expected`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `balance` | `object` | **required** | — |  |
+| `expected` | `object` | optional | — |  |
+| `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Claimable balance and expectations.",
+  "additionalProperties": true,
+  "properties": {
+    "balance": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "balance",
+    "nowSeconds"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "balance": {
+    "balanceId": "BAL1",
+    "assetCode": "USDC",
+    "amount": "25.00",
+    "sponsor": "GSPONSOR",
+    "claimants": [
+      {
+        "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "predicate": {
+          "notBeforeAbsoluteTime": "1794657590",
+          "notAfterAbsoluteTime": "1794658200"
+        }
+      }
+    ]
+  },
+  "expected": {
+    "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "amount": "25.00",
+    "assetCode": "USDC"
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_claimable_balance",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "balanceId": "BAL1",
+  "claimants": [
+    "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+  ],
+  "claimable": true,
+  "balanceDigest": "sha256:508cc2ec7917d95a422398c8d2f518ceaab583f7243eb423d99fb5fbf97b8260",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "BALANCE_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "balanceId present",
+      "evidence": {}
+    },
+    {
+      "id": "AMOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "amount=25.00",
+      "evidence": {}
+    },
+    {
+      "id": "ASSET",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "asset=USDC",
+      "evidence": {}
+    },
+    {
+      "id": "CLAIMANT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "expected claimant is present",
+      "evidence": {}
+    },
+    {
+      "id": "PREDICATE_FROM",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "absolute not-before has been reached",
+      "evidence": {}
+    },
+    {
+      "id": "PREDICATE_TO",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "absolute not-after has not passed at the pinned nowSeconds",
+      "evidence": {}
+    },
+    {
+      "id": "SPONSOR",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "sponsor matches when expected",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_verify_stellar_dex_path`
+
+Verify a caller-supplied Stellar DEX path payment against a quote and a slippage bound, naming hop count and effective basis points. No DEX call.
+
+**Required:** `pathPayment` · **Optional:** `quote`, `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `pathPayment` | `object` | **required** | — |  |
+| `quote` | `object` | optional | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Path payment, quote and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "pathPayment": {
+      "type": "object"
+    },
+    "quote": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "pathPayment"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "pathPayment": {
+    "mode": "strict_send",
+    "sendAsset": "USDC",
+    "sendAmount": "100",
+    "destAsset": "XLM",
+    "destAmount": "99",
+    "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "path": [
+      "XLM"
+    ]
+  },
+  "quote": {
+    "destAmount": "100"
+  },
+  "policy": {
+    "maxSlippageBps": 100
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_dex_path",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "mode": "strict_send",
+  "slippageBps": 100,
+  "pathLength": 1,
+  "pathDigest": "sha256:aff3cf331934a5579dd18934402ab8d1a91def77fa17893bb475b38355b7e427",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "MODE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "mode=strict_send",
+      "evidence": {}
+    },
+    {
+      "id": "SEND_ASSET",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "send asset present",
+      "evidence": {}
+    },
+    {
+      "id": "DEST_ASSET",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "destination asset present",
+      "evidence": {}
+    },
+    {
+      "id": "DESTINATION",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "destination account present",
+      "evidence": {}
+    },
+    {
+      "id": "PATH",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "1 hop(s)",
+      "evidence": {}
+    },
+    {
+      "id": "AMOUNTS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "send and destination amounts parseable",
+      "evidence": {}
+    },
+    {
+      "id": "SLIPPAGE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "slippage 100bps within 100bps",
+      "evidence": {}
+    },
+    {
+      "id": "SEND_MAX",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "sendMax is not below the send amount",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_verify_stellar_memo_binding`
+
+Bind a Stellar envelope memo (text/id/hash/return) to the approved invoice or receipt value, detecting type confusion and prefix drift. No chain call.
+
+**Required:** `memo`, `expected` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `memo` | `object` | **required** | — |  |
+| `expected` | `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Memo and the approved binding.",
+  "additionalProperties": true,
+  "properties": {
+    "memo": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "memo",
+    "expected"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "memo": {
+    "type": "text",
+    "value": "cg-invoice-42"
+  },
+  "expected": {
+    "type": "text",
+    "value": "cg-invoice-42",
+    "prefix": "cg-"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_memo_binding",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "memo": {
+    "type": "TEXT",
+    "valueDigest": "sha256:347f6704953f21203e48750acaf44f7406da40ce1effcc40785fdbd5c6f14678"
+  },
+  "memoDigest": "sha256:427a8e327417ed67924644ced15baca0d195a6e90cea7ef6f87460c4e619a94d",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "MEMO_PRESENT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "memo value present",
+      "evidence": {}
+    },
+    {
+      "id": "TYPE_VALID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "type=TEXT",
+      "evidence": {}
+    },
+    {
+      "id": "TYPE_MATCH",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "expected type TEXT",
+      "evidence": {}
+    },
+    {
+      "id": "VALUE_MATCH",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "memo value matches the approved binding",
+      "evidence": {}
+    },
+    {
+      "id": "PREFIX",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "prefix cg-",
+      "evidence": {}
+    },
+    {
+      "id": "HASH_SHAPE",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "HASH memo is 64 hex characters",
+      "evidence": {}
+    },
+    {
+      "id": "ID_RANGE",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "ID memo is an unsigned 64-bit integer",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or complianc
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_verify_stellar_multisig_thresholds`
+
+Check whether the supplied signer weights can reach the declared low/medium/high Stellar multisig threshold. Offline arithmetic; no network.
+
+**Required:** `evidence` · **Optional:** `level`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `level` | `LOW` \| `MEDIUM` \| `HIGH` \| `low` \| `medium` \| `high` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Present signers, weights and thresholds.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "evidence": {
+    "presentSigners": [
+      {
+        "key": "GA",
+        "weight": "2"
+      },
+      {
+        "key": "GB",
+        "weight": "2"
+      }
+    ],
+    "thresholds": {
+      "low": "1",
+      "medium": "2",
+      "high": "3"
+    }
+  },
+  "level": "HIGH"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_multisig_thresholds",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "level": "HIGH",
+  "requiredWeight": "3",
+  "presentWeight": "4",
+  "presentSigners": [
+    "GA",
+    "GB"
+  ],
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "SIGNERS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "2 present signer(s)",
+      "evidence": {}
+    },
+    {
+      "id": "WEIGHTS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "every present signer has a positive weight",
+      "evidence": {}
+    },
+    {
+      "id": "THRESHOLD_DECLARED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "HIGH threshold declared",
+      "evidence": {}
+    },
+    {
+      "id": "THRESHOLD_MET",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "weight 4 >= threshold 3",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_stellar_operation_set`
+
+Compare an approved Stellar operation set with the executed one and name count, order, type, destination, asset, amount and memo drift. No chain call.
+
+**Required:** `approved`, `executed` · **Optional:** `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `approved` | array of `object` | **required** | — |  |
+| `executed` | array of `object` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Approved and executed operation lists.",
+  "additionalProperties": true,
+  "properties": {
+    "approved": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "executed": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "approved",
+    "executed"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "approved": [
+    {
+      "type": "payment",
+      "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "asset": "USDC",
+      "amount": "10.00",
+      "memo": "cg-1"
+    }
+  ],
+  "executed": [
+    {
+      "type": "payment",
+      "destination": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "asset": "USDC",
+      "amount": "10.00",
+      "memo": "cg-1"
+    }
+  ]
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_operation_set",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "drift": [],
+  "approvedDigest": "sha256:f2c01d303da0af0fbe5c07770892c76c96a540f9280a8370188d75d3439e0c23",
+  "executedDigest": "sha256:f2c01d303da0af0fbe5c07770892c76c96a540f9280a8370188d75d3439e0c23",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "APPROVED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "1 approved operation(s)",
+      "evidence": {}
+    },
+    {
+      "id": "EXECUTED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "1 executed operation(s)",
+      "evidence": {}
+    },
+    {
+      "id": "NO_DRIFT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "0 drift(s)",
+      "evidence": {}
+    },
+    {
+      "id": "ORDER",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "operation order is compared positionally",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed."
+}
+```
+
 ### `coreguard_verify_stellar_path_payment`
 
 Verify caller-supplied Stellar path-payment evidence for status, assets, amounts, destination and path digest. No Horizon call.
@@ -10783,6 +12156,705 @@ Verify caller-supplied Stellar path-payment evidence for status, assets, amounts
 }
 ```
 
+### `coreguard_verify_stellar_sac_allowance`
+
+Verify Stellar Asset Contract allowance evidence (owner, spender, amount, expiration ledger) against policy. No contract call; no allowance is created.
+
+**Required:** `evidence`, `currentLedger` · **Optional:** `expected`, `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `expected` | `object` | optional | — |  |
+| `currentLedger` | `string` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "SAC allowance evidence and pinned ledger.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object"
+    },
+    "currentLedger": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence",
+    "currentLedger"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "evidence": {
+    "contractId": "CUSDC",
+    "from": "GOWNER",
+    "spender": "GSPENDER",
+    "amount": "500",
+    "expirationLedger": "900"
+  },
+  "expected": {
+    "maxAmount": "1000"
+  },
+  "currentLedger": "800",
+  "policy": {
+    "allowedSpenders": [
+      "GSPENDER"
+    ]
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_sac_allowance",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "contractId": "CUSDC",
+  "spender": "GSPENDER",
+  "allowanceDigest": "sha256:758647a4d13fabcbaa71bf4ff1c23f8a7699ba510b1fc6a8742d307a0a6eac1d",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "CONTRACT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "SAC contractId present",
+      "evidence": {}
+    },
+    {
+      "id": "FROM",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "owner account present",
+      "evidence": {}
+    },
+    {
+      "id": "SPENDER",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "spender present",
+      "evidence": {}
+    },
+    {
+      "id": "SPENDER_ALLOWED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "spender is on the policy allowlist",
+      "evidence": {}
+    },
+    {
+      "id": "AMOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "amount=500 max=1000",
+      "evidence": {}
+    },
+    {
+      "id": "EXPIRATION",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "allowance has not expired at the pinned ledger",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_stellar_sep10_challenge`
+
+Verify SEP-10 challenge evidence (home domain, web-auth domain, server key, nonce, network passphrase, time bounds) at a pinned time. No anchor call.
+
+**Required:** `challenge`, `nowSeconds` · **Optional:** `expected`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `challenge` | `object` | **required** | — |  |
+| `expected` | `object` | optional | — |  |
+| `nowSeconds` | `string` | **required** | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Challenge evidence and expectations.",
+  "additionalProperties": true,
+  "properties": {
+    "challenge": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "challenge",
+    "nowSeconds"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "challenge": {
+    "homeDomain": "anchor.example",
+    "webAuthDomain": "anchor.example",
+    "serverSigningKey": "GSEP10",
+    "nonce": "nonce-123",
+    "networkPassphrase": "testnet",
+    "clientDomain": "agent.example",
+    "timeBounds": {
+      "minTime": "1794657590",
+      "maxTime": "1794657900"
+    },
+    "operations": [
+      {
+        "type": "manage_data",
+        "name": "nonce-123"
+      }
+    ]
+  },
+  "expected": {
+    "homeDomain": "anchor.example",
+    "webAuthDomain": "anchor.example",
+    "serverSigningKey": "GSEP10",
+    "networkPassphrase": "testnet",
+    "clientDomain": "agent.example",
+    "nonce": "nonce-123"
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_sep10_challenge",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "homeDomain": "anchor.example",
+  "noncePresent": true,
+  "challengeDigest": "sha256:ffd08611bfee2b0619197a813368dbf46ad4af580df336c49a9d7182b67494f9",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "HOME_DOMAIN",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "homeDomain=anchor.example",
+      "evidence": {}
+    },
+    {
+      "id": "WEB_AUTH_DOMAIN",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "webAuthDomain matches the expected anchor domain",
+      "evidence": {}
+    },
+    {
+      "id": "SERVER_KEY",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "server signing key matches",
+      "evidence": {}
+    },
+    {
+      "id": "NETWORK",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "network passphrase matches the expected network",
+      "evidence": {}
+    },
+    {
+      "id": "NONCE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "challenge carries the expected nonce",
+      "evidence": {}
+    },
+    {
+      "id": "TIME_BOUNDS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "challenge window is valid at the pinned nowSeconds",
+      "evidence": {}
+    },
+    {
+      "id": "CLIENT_DOMAIN",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "client domain matches when expected",
+      "evidence": {}
+    },
+    {
+      "id": "OPERATIONS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "challenge includes manage-data operations",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wal
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_verify_stellar_sep24_anchor_evidence`
+
+Verify SEP-24/SEP-31 anchor transaction evidence (kind, status, amounts, fee, quote expiry, Stellar transaction id) against expectations. No anchor call.
+
+**Required:** `evidence` · **Optional:** `expected`, `nowSeconds`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `evidence` | `object` | **required** | — |  |
+| `expected` | `object` | optional | — |  |
+| `nowSeconds` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Anchor transaction evidence and expectations.",
+  "additionalProperties": true,
+  "properties": {
+    "evidence": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "evidence"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "evidence": {
+    "transactionId": "anchor-tx-1",
+    "kind": "deposit",
+    "status": "completed",
+    "assetCode": "USDC",
+    "amountIn": "100",
+    "amountOut": "99.5",
+    "fee": "0.5",
+    "expiresAtSeconds": "1794657660",
+    "stellarTransactionId": "abababababababababababababababababababababababababababababababab"
+  },
+  "expected": {
+    "assetCode": "USDC",
+    "minAmountOut": "99"
+  },
+  "nowSeconds": "1794657600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_sep24_anchor_evidence",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "transactionId": "anchor-tx-1",
+  "kind": "deposit",
+  "anchorStatus": "COMPLETED",
+  "stellarTransactionId": "abababababababababababababababababababababababababababababababab",
+  "evidenceDigest": "sha256:08f0fe6ee3a005672591948e2c4c980bd11d9d9f5deceea958b95d7a1d0f929e",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "TRANSACTION_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "anchor transactionId present",
+      "evidence": {}
+    },
+    {
+      "id": "KIND",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "kind=deposit",
+      "evidence": {}
+    },
+    {
+      "id": "STATUS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "status=COMPLETED",
+      "evidence": {}
+    },
+    {
+      "id": "FINAL",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "a completed anchor transaction names its Stellar transaction",
+      "evidence": {}
+    },
+    {
+      "id": "ASSET",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "asset=USDC",
+      "evidence": {}
+    },
+    {
+      "id": "AMOUNTS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "amountIn and amountOut parseable",
+      "evidence": {}
+    },
+    {
+      "id": "MIN_OUT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "amountOut 99.5 >= 99",
+      "evidence": {}
+    },
+    {
+      "id": "FEE",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "fee 0.5",
+      "evidence": {}
+    },
+    {
+      "id": "QUOTE",
+      "ok": true,
+      "severity": "MEDIUM",
+      "detail": "quote id matches when expected",
+      "evidence": {}
+    },
+    {
+      "id": "EXPIRY",
+      "ok": true,
+      "severity": "HIGH",
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_verify_stellar_sequence_guard`
+
+Guard against Stellar replay: verify a submission sequence and transaction hash are unseen, strictly forward and within a policy gap. Offline.
+
+**Required:** `submission` · **Optional:** `seen`, `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `submission` | `object` | **required** | — |  |
+| `seen` | array of `object` | optional | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Submission and previously seen sequences.",
+  "additionalProperties": true,
+  "properties": {
+    "submission": {
+      "type": "object"
+    },
+    "seen": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "submission"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "submission": {
+    "accountId": "GACCOUNT",
+    "sequence": "105",
+    "txHash": "abababababababababababababababababababababababababababababababab"
+  },
+  "seen": [
+    {
+      "sequence": "104",
+      "txHash": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+    }
+  ],
+  "policy": {
+    "maxGap": "2"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_sequence_guard",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "accountId": "GACCOUNT",
+  "sequence": "105",
+  "duplicate": false,
+  "gap": "1",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "ACCOUNT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "accountId present",
+      "evidence": {}
+    },
+    {
+      "id": "SEQUENCE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "sequence is a digit string",
+      "evidence": {}
+    },
+    {
+      "id": "TX_HASH",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "txHash is 32-byte hex",
+      "evidence": {}
+    },
+    {
+      "id": "NOT_REPLAYED_SEQ",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "sequence has not been submitted before",
+      "evidence": {}
+    },
+    {
+      "id": "NOT_REPLAYED_HASH",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "tx hash has not been submitted before",
+      "evidence": {}
+    },
+    {
+      "id": "FORWARD_ONLY",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "sequence is strictly ahead of the observed maximum",
+      "evidence": {}
+    },
+    {
+      "id": "GAP",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "gap 1 within 2",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_stellar_session_key_scope`
+
+Intersect principal, session-key and requested Stellar scopes and name any overreach before an agent action is authorized. Deterministic set arithmetic.
+
+**Required:** `principalScope`, `sessionScope` · **Optional:** `requested`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `principalScope` | array of `string` | **required** | — |  |
+| `sessionScope` | array of `string` | **required** | — |  |
+| `requested` | array of `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Principal, session and requested scopes.",
+  "additionalProperties": true,
+  "properties": {
+    "principalScope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sessionScope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requested": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "principalScope",
+    "sessionScope"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "principalScope": [
+    "pay",
+    "read"
+  ],
+  "sessionScope": [
+    "pay"
+  ],
+  "requested": [
+    "pay"
+  ]
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_session_key_scope",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "intersection": [
+    "pay"
+  ],
+  "sessionOverreach": [],
+  "requestOverreach": [],
+  "scopeDigest": "sha256:b9d79035aa5acaec696f13ea856d153c7d4587456564789290b35159a9e7605a",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "PRINCIPAL_SCOPE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "principal scope is non-empty",
+      "evidence": {}
+    },
+    {
+      "id": "SESSION_SCOPE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "session scope is non-empty",
+      "evidence": {}
+    },
+    {
+      "id": "SESSION_WITHIN_PRINCIPAL",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "session-only scopes: none",
+      "evidence": {}
+    },
+    {
+      "id": "REQUEST_WITHIN_SESSION",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "requested outside session: none",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed."
+}
+```
+
 ### `coreguard_verify_stellar_settlement_evidence`
 
 Verify caller-supplied Stellar settlement evidence against expected payment fields. No Horizon/network call; evidence only.
@@ -10910,6 +12982,432 @@ Verify caller-supplied Stellar settlement evidence against expected payment fiel
   "failed": [],
   "critical": [],
   "boundary": "Wave 4 is deterministic, offline verification over caller-supplied evidence. It does not contact SWIFT, banks, card networks, PI Network, Stellar, Ethereum, Core DAO, DeFi protocols, credit bureaus, or regulators. Outputs are evidence/risk signals only; VERIFIED ≠ SAFE; no settlement finality, sanctions clearance, KYC/AML approval, or compliance certification is claimed."
+}
+```
+
+### `coreguard_verify_stellar_smart_account_signers`
+
+Verify a caller-supplied Stellar smart-account signer set (weights, thresholds, signer kinds, master weight) against an owner policy. No account state is read.
+
+**Required:** `account` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `account` | `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Account signer configuration and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "account": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "account"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "account": {
+    "accountId": "CACCOUNT",
+    "masterWeight": "0",
+    "thresholds": {
+      "low": "1",
+      "medium": "2",
+      "high": "3"
+    },
+    "signers": [
+      {
+        "key": "GSESSION",
+        "kind": "ed25519",
+        "weight": "3"
+      }
+    ]
+  },
+  "policy": {
+    "requireMasterDisabled": true,
+    "maxSigners": "4",
+    "allowedKinds": [
+      "ed25519",
+      "passkey"
+    ]
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_smart_account_signers",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "accountId": "CACCOUNT",
+  "signerCount": 1,
+  "thresholds": {
+    "low": "1",
+    "medium": "2",
+    "high": "3"
+  },
+  "masterWeight": "0",
+  "signersDigest": "sha256:f516e7f726934c2cea01bb32330911affe592b99850ea67659a98165fefced75",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "ACCOUNT_ID",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "accountId present",
+      "evidence": {}
+    },
+    {
+      "id": "SIGNERS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "1 signer(s), each with a key",
+      "evidence": {}
+    },
+    {
+      "id": "UNIQUE_KEYS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "signer keys are unique",
+      "evidence": {}
+    },
+    {
+      "id": "THRESHOLDS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "low=1 medium=2 high=3",
+      "evidence": {}
+    },
+    {
+      "id": "MAX_SIGNERS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "signer count within policy",
+      "evidence": {}
+    },
+    {
+      "id": "SIGNER_KINDS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "allowed kinds: ED25519, PASSKEY",
+      "evidence": {}
+    },
+    {
+      "id": "MASTER",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "masterWeight supplied",
+      "evidence": {}
+    },
+    {
+      "id": "MASTER_DISABLED",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "master key disabled when the policy requires it",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or a
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_verify_stellar_soroban_auth_entry`
+
+Verify a caller-supplied Soroban authorization entry (contract, function, args digest, root flag, signature expiration ledger) matches the approved invocation. No Soroban RPC.
+
+**Required:** `entry`, `expected`, `currentLedger` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `entry` | `object` | **required** | — |  |
+| `expected` | `object` | **required** | — |  |
+| `currentLedger` | `string` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Auth entry, approved invocation and pinned ledger.",
+  "additionalProperties": true,
+  "properties": {
+    "entry": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object"
+    },
+    "currentLedger": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "entry",
+    "expected",
+    "currentLedger"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "entry": {
+    "contractId": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "functionName": "transfer",
+    "argsDigest": "sha256:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+    "signatureExpirationLedger": "200",
+    "rootInvocation": true
+  },
+  "expected": {
+    "contractId": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "functionName": "transfer",
+    "argsDigest": "sha256:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+  },
+  "currentLedger": "150",
+  "policy": {
+    "allowedContracts": [
+      "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+    ],
+    "requireRoot": true
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_soroban_auth_entry",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "contractId": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+  "functionName": "transfer",
+  "subInvocations": 0,
+  "entryDigest": "sha256:91ce844380af94ce7af6a189aedb7e3fa046204d6d4d65734d0d23168ff1b9e8",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "CONTRACT",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "contractId present",
+      "evidence": {}
+    },
+    {
+      "id": "CONTRACT_MATCH",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "contract matches the approved invocation",
+      "evidence": {}
+    },
+    {
+      "id": "CONTRACT_ALLOWED",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "contract is on the policy allowlist",
+      "evidence": {}
+    },
+    {
+      "id": "FUNCTION",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "function=transfer",
+      "evidence": {}
+    },
+    {
+      "id": "ARGS_DIGEST",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "argument digest matches the approved bytes",
+      "evidence": {}
+    },
+    {
+      "id": "ROOT",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "entry is the root invocation when required",
+      "evidence": {}
+    },
+    {
+      "id": "EXPIRATION",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "signature expiration ledger is in the future",
+      "evidence": {}
+    },
+    {
+      "id": "SUB_INVOCATIONS",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "every sub-invocation is named",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Hor
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_verify_stellar_sponsored_reserve`
+
+Verify Stellar sponsored-reserve evidence (sponsor allowlist, sponsored account, entry count, reserve ceiling). No account is created or funded.
+
+**Required:** `sponsorship` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `sponsorship` | `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Sponsorship evidence and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "sponsorship": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "sponsorship"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "sponsorship": {
+    "sponsor": "GSPONSOR",
+    "sponsored": "GAGENT",
+    "numEntries": "2",
+    "reserveXlm": "1.0"
+  },
+  "policy": {
+    "allowedSponsors": [
+      "GSPONSOR"
+    ],
+    "maxSponsoredEntries": "4",
+    "maxReserveXlm": "2"
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_sponsored_reserve",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "sponsor": "GSPONSOR",
+  "sponsored": "GAGENT",
+  "sponsorshipDigest": "sha256:f03ad15e6ad4bc4fee9112a8b9ffb8fe4f2569061980fa441604fad9d7a7c6bb",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "SPONSOR",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "sponsor present",
+      "evidence": {}
+    },
+    {
+      "id": "SPONSORED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "sponsored account present",
+      "evidence": {}
+    },
+    {
+      "id": "SEPARATION",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "sponsor and sponsored account differ",
+      "evidence": {}
+    },
+    {
+      "id": "SPONSOR_ALLOWED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "sponsor is on the policy allowlist",
+      "evidence": {}
+    },
+    {
+      "id": "ENTRIES",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "2 entry(ies) within 4",
+      "evidence": {}
+    },
+    {
+      "id": "RESERVE",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "reserve 1.0 within 2",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed."
 }
 ```
 
@@ -11088,6 +13586,282 @@ Verify caller-supplied Stellar submission evidence against a BOUND authorization
   },
   "boundary": "CG-SG/1 is deterministic and offline. It binds caller-supplied intent bytes to caller-supplied Stellar XDR envelope bytes and verifies caller-supplied submission evidence; it makes no Stellar RPC, Horizon, Friendbot, wallet,
 … (abridged — full object is returned by the server)
+```
+
+### `coreguard_verify_stellar_time_bounds`
+
+Verify Stellar envelope time bounds and optional ledger bounds against a pinned clock and ledger, including a maximum duration policy. Offline.
+
+**Required:** `timeBounds`, `nowSeconds` · **Optional:** `ledgerBounds`, `currentLedger`, `maxDurationSeconds`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `timeBounds` | `object` | **required** | — |  |
+| `ledgerBounds` | `object` | optional | — |  |
+| `nowSeconds` | `string` | **required** | — |  |
+| `currentLedger` | `string` | optional | — |  |
+| `maxDurationSeconds` | `string` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Time/ledger bounds and pinned values.",
+  "additionalProperties": true,
+  "properties": {
+    "timeBounds": {
+      "type": "object"
+    },
+    "ledgerBounds": {
+      "type": "object"
+    },
+    "nowSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "currentLedger": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "maxDurationSeconds": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "timeBounds",
+    "nowSeconds"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "timeBounds": {
+    "minTime": "1794657590",
+    "maxTime": "1794658200"
+  },
+  "ledgerBounds": {
+    "minLedger": "100",
+    "maxLedger": "200"
+  },
+  "nowSeconds": "1794657600",
+  "currentLedger": "150",
+  "maxDurationSeconds": "3600"
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_time_bounds",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "timeBounds": {
+    "minTime": "1794657590",
+    "maxTime": "1794658200"
+  },
+  "ledgerBounds": {
+    "minLedger": "100",
+    "maxLedger": "200"
+  },
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "MIN_TIME",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "minTime parseable",
+      "evidence": {}
+    },
+    {
+      "id": "MAX_TIME",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "maxTime parseable",
+      "evidence": {}
+    },
+    {
+      "id": "ORDERED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "maxTime 1794658200 > minTime 1794657590",
+      "evidence": {}
+    },
+    {
+      "id": "NOT_EXPIRED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "maxTime is in the future at the pinned nowSeconds",
+      "evidence": {}
+    },
+    {
+      "id": "NOT_BEFORE",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "minTime has been reached at the pinned nowSeconds",
+      "evidence": {}
+    },
+    {
+      "id": "DURATION",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "duration within 3600s",
+      "evidence": {}
+    },
+    {
+      "id": "LEDGER_ORDERED",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "maxLedger > minLedger",
+      "evidence": {}
+    },
+    {
+      "id": "LEDGER_WINDOW",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "pinned ledger is inside the declared ledger bounds",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits o
+… (abridged — full object is returned by the server)
+```
+
+### `coreguard_verify_stellar_trustline_policy`
+
+Verify caller-supplied Stellar trustlines can carry the planned spend (limit, authorization, missing lines) before an agent pays. No Horizon call.
+
+**Required:** `trustlines`, `plannedSpend` · **Optional:** `policy`, `callerContext`
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `trustlines` | array of `object` | **required** | — |  |
+| `plannedSpend` | array of `object` | **required** | — |  |
+| `policy` | `object` | optional | — |  |
+| `callerContext` | `object` | optional | — | Optional caller context echoed back in response (never a cryptographic input). |
+
+<details><summary>Input schema (from tools/list)</summary>
+
+```json
+{
+  "type": "object",
+  "description": "Trustlines, planned spend and optional policy.",
+  "additionalProperties": true,
+  "properties": {
+    "trustlines": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "plannedSpend": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "policy": {
+      "type": "object"
+    },
+    "callerContext": {
+      "type": "object",
+      "description": "Optional caller context echoed back in response (never a cryptographic input).",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "trustlines",
+    "plannedSpend"
+  ]
+}
+```
+
+</details>
+
+**Example arguments** (executed against the shipped server, paste as-is):
+
+```json
+{
+  "trustlines": [
+    {
+      "assetCode": "USDC",
+      "assetIssuer": "GISSUER",
+      "limit": "100.00",
+      "authorized": true
+    }
+  ],
+  "plannedSpend": [
+    {
+      "assetCode": "USDC",
+      "amount": "40.50"
+    }
+  ],
+  "policy": {
+    "requireAuthorized": true
+  }
+}
+```
+
+**Result of that exact call:**
+
+```json
+{
+  "type": "verify_stellar_trustline_policy",
+  "spec": "CG-W6/1",
+  "status": "OK",
+  "trustlineCount": 1,
+  "problems": [],
+  "trustlinesDigest": "sha256:82a5bb724fcec163ec0241d890bb02a294dff3c6180028523dbc79fb6f39bb5c",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "TRUSTLINES",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "1 trustline(s)",
+      "evidence": {}
+    },
+    {
+      "id": "LIMITS",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "every trustline carries a parseable limit",
+      "evidence": {}
+    },
+    {
+      "id": "PLANNED_SPEND",
+      "ok": true,
+      "severity": "HIGH",
+      "detail": "1 planned spend(s)",
+      "evidence": {}
+    },
+    {
+      "id": "COVERAGE",
+      "ok": true,
+      "severity": "CRITICAL",
+      "detail": "0 trustline problem(s)",
+      "evidence": {}
+    }
+  ],
+  "failed": [],
+  "critical": [],
+  "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed."
+}
 ```
 
 ### `coreguard_verify_swift_remittance_evidence`

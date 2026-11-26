@@ -49,11 +49,11 @@ Add an entry only after an actual run. Include evidence (command output snippet,
 | 2026-11-25 | agent session | Published npm artifact + raw stdio (`npx -y -p @coreguard/agent-commerce@0.3.0 coreguard-agent-commerce-mcp`) | npm `@coreguard/agent-commerce@0.3.0` | **ARTIFACT RE-READ** | `initialize` `0.3.0`, `tools/list` 70 tools | Published artifact, not the workspace; not a third-party client run. |
 | 2026-11-25 | agent session | Published npm artifact + raw stdio (`npx -y -p @coreguard/agent-commerce@0.4.0 coreguard-agent-commerce-mcp`) | npm `@coreguard/agent-commerce@0.4.0` | **ARTIFACT RE-READ** | `initialize` `0.4.0`, `tools/list` 94 tools | Published artifact, not the workspace; not a third-party client run. |
 | 2026-11-26 | agent session | Published npm artifact + raw stdio (`npx -y -p @coreguard/agent-commerce@0.5.0 coreguard-agent-commerce-mcp`) | npm `@coreguard/agent-commerce@0.5.0` | **ARTIFACT RE-READ** | `initialize` `0.5.0`, `tools/list` 99 tools with input/output schemas; 5 CG-SG/1 tools included | Published artifact, not the workspace; not a third-party client run. Registry `active` + `isLatest`; tarball `sha256:b7dc09ea43390aa8188023df1028df753e6cf6be13df21bae2f4d807498980a0`. |
-| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.5.0` | PENDING |  | Needs a signed-in session to exercise the 99 tools; connection alone is not a RUN-BY-HAND. |
+| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.5.0` | PENDING |  | Needs a signed-in session to exercise the 119 tools; connection alone is not a RUN-BY-HAND. |
 
 ## Minimum acceptance for a "RUN-BY-HAND" entry
 
-- [ ] Client discovers 99 tools (26 core + 10 Wave 1 + 10 CGCP/1 + 10 Wave 3 policy + 10 Wave 3 evidence/ops + 24 Wave 4 + 24 Wave 5 + 5 CG-SG/1 Stellar Agent Gate; full inventory in `docs/mcprush/tool-reference.md`).
+- [ ] Client discovers 119 tools (26 core + 10 Wave 1 + 10 CGCP/1 + 10 Wave 3 policy + 10 Wave 3 evidence/ops + 24 Wave 4 + 24 Wave 5 + 5 CG-SG/1 Stellar Agent Gate + 20 CG-W6/1 Stellar smart accounts; full inventory in `docs/mcprush/tool-reference.md`).
 - [ ] Tool schemas/parameters visible in client UI (or inspectable).
 - [ ] `coreguard_authorize` returns CGCR/1 record with `structuredContent`.
 - [ ] `coreguard_verify_execution` exact trace returns `VERIFIED`.

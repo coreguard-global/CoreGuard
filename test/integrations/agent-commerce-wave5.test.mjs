@@ -393,9 +393,9 @@ test("evidence pack rejects a tampered item digest", () => {
   assert.ok(r.failed.includes("INTEGRITY"));
 });
 
-test("MCP exposes the 99-tool surface with wave 5 included", () => {
-  assert.equal(TOOL_NAMES.length, 99);
-  assert.equal(TOOLS.length, 99);
+test("MCP exposes the 119-tool surface with wave 5 included", () => {
+  assert.equal(TOOL_NAMES.length, 119);
+  assert.equal(TOOLS.length, 119);
   for (const t of WAVE5_TOOLS) assert.ok(TOOL_NAMES.includes(t.name));
   assert.equal(TOOL_NAMES[93], "coreguard_export_evidence_pack");
 });

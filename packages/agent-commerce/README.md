@@ -12,8 +12,16 @@ bytes approved, and for verifying any executed trace against that receipt.
 - **Fail-closed execution verification** — a consent plus an executed trace
   yields a verdict with named drift classes (AGR/1 taxonomy); incomplete or
   ambiguous evidence is never treated as a pass.
-- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing 99 tools,
+- **stdio MCP server** (JSON-RPC 2.0, protocol `2025-06-18`) exposing 119 tools,
   all offline, all deterministic, zero keys.
+- **CG-W6/1 Stellar smart accounts** — 20 of those tools reason about agent
+  session keys: policy compile/evaluate with a counterfactual, signer and
+  threshold policy, envelope time/ledger bounds, memo and asset binding with
+  confusable-code detection, trustline capacity, Soroban authorization entries,
+  Stellar Asset Contract allowances, fee bumps, claimable balances, sponsored
+  reserves, sequence/replay guards, operation-set drift, DEX slippage, SEP-10
+  and SEP-24 evidence, and session-scoped receipts. Offline: no RPC, no
+  signing, no broadcast.
 
 MIT. Node ≥ 18. No network calls, no stored credentials, no wall clock.
 

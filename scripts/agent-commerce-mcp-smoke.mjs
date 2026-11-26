@@ -4,7 +4,7 @@
  *
  * Proves, with a live JSON-RPC 2.0 stdio process:
  *   - initialize responds with the expected protocol/version identity
- *   - tools/list exposes the 99 tools with inputSchema + outputSchema
+ *   - tools/list exposes the 119 tools with inputSchema + outputSchema
  *   - coreguard_authorize returns a CGCR/1 receipt (structuredContent)
  *   - coreguard_verify_execution returns VERIFIED on exact execution
  *   - coreguard_verify_execution returns INVALID with named drift on escalation
@@ -18,6 +18,7 @@ import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { WAVE5_TOOLS } from '../packages/agent-commerce/wave5.mjs';
+import { WAVE6_TOOLS } from '../packages/agent-commerce/wave6.mjs';
 import { STELLAR_GATE_TOOLS } from '../packages/agent-commerce/stellar-gate.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -106,7 +107,7 @@ async function main() {
     });
 
     let listed;
-    await run('tools/list exposes 99 tools with inputSchema+outputSchema', async () => {
+    await run('tools/list exposes 119 tools with inputSchema+outputSchema', async () => {
       listed = await request('tools/list', {});
       const tools = listed.result?.tools || [];
       const names = tools.map(t => t.name).sort();
@@ -130,6 +131,7 @@ async function main() {
         "coreguard_verify_stellar_settlement_evidence","coreguard_verify_swift_remittance_evidence","coreguard_verify_task_completion","coreguard_verify_telemetry",
         "coreguard_verify_web3_signature_evidence","coreguard_verify_x402_settlement",
         ...WAVE5_TOOLS.map((t) => t.name),
+        ...WAVE6_TOOLS.map((t) => t.name),
         ...STELLAR_GATE_TOOLS.map((t) => t.name),
       ].sort();
       assert(JSON.stringify(names) === JSON.stringify(expected), `unexpected tool names: ${names.join(',')}`);
