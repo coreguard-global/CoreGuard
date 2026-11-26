@@ -2,11 +2,13 @@
 
 **Title:** Off-chain evidence from a smart-account snapshot: would this mapping be useful, or is it better as a docs snippet?
 
-**Where:** https://github.com/OpenZeppelin/stellar-contracts/issues (open an issue first; do not open a PR without an invitation — CONTRIBUTING.md governs this).
+**Status: POSTED 2026-11-26** → https://github.com/OpenZeppelin/stellar-contracts/issues/997 (open, unlabelled).
+
+**Template adaptation:** `CONTRIBUTING.md` requires an issue before any PR, and the repository offers three forms. This went through the *Feature Request* shape: one required field (`What is the feature you would like to see?`), title prefix `🎁 [Feature Request]:`, and no labels, because the repo defines neither `enhancement` nor `needs triage` (its label set is `question`, `documentation`, `good first issue`, severity labels and audit labels). The text below is the local draft; the posted body is the same argument trimmed to that single field.
 
 ---
 
-## Body (paste as-is)
+## Body (local draft — the posted version is #997)
 
 Hi — I maintain [CoreGuard](https://github.com/coreguard-global/CoreGuard), an offline verification toolkit. This is a question about whether a small, read-only mapping would be useful to smart-account users, not a request to change your contracts.
 
