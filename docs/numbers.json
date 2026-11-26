@@ -2,8 +2,8 @@
   "schema": "CG-NUMBERS/1",
   "generatedBy": "scripts/public-numbers.mjs",
   "generatedFrom": "docs/state-snapshot.json",
-  "measuredAtUtc": "2026-11-26T00:44:19Z",
-  "measuredOnCommit": "02ead9e96f1c7e70a048c1cb5114770710814df2",
+  "measuredAtUtc": "2026-11-26T14:40:32Z",
+  "measuredOnCommit": "a4be51d81d7297697525bf14391362496620dbd9",
   "metrics": [
     {
       "id": "tests",
@@ -56,7 +56,7 @@
     {
       "id": "commits-ahead",
       "label": "Commits ahead of v0.6.0",
-      "value": 607,
+      "value": 609,
       "unit": "commits",
       "source": "docs/state-snapshot.json#commitsAheadOfV060",
       "note": "History depth, not a quality signal."
