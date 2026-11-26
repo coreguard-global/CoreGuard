@@ -12,6 +12,52 @@
  * never decides authorization. It only reshapes evidence the caller already
  * has, sorts it deterministically and digests it so a tamper is visible.
  * VERIFIED ≠ SAFE.
+ *
+ * Snapshot fields (all caller-supplied):
+ *   network                "testnet" | "mainnet" | "futurenet"
+ *   accountId               string, required
+ *   masterWeight            non-negative integer; 0 means the master key is disabled
+ *   thresholds              { low, medium, high }, non-negative integers,
+ *                           low <= medium <= high and high > 0
+ *   signers[]               non-empty; each { key | publicKey | address,
+ *                           kind? (defaults to ed25519), weight }
+ *   presentedSigners[]      optional; each { key | publicKey | address, weight? },
+ *                           defaults to the full signer set with its weights.
+ *                           An unknown key is a refusal, never a silent drop.
+ *   soroban                 optional; { entry { contractId, functionName,
+ *                           argsDigest, signatureExpirationLedger,
+ *                           rootInvocation?, subInvocations? },
+ *                           expected { contractId, functionName, argsDigest },
+ *                           currentLedger, allowedContracts? }
+ *   options.level           optional "low" | "medium" | "high" (default: high)
+ *
+ * Result: { ok: true, spec, boundary, network, accountId, snapshotDigest,
+ *           inputs: { signers, thresholds, sorobanAuth }, toolCalls[] }
+ * snapshotDigest covers network, account, the presented set and soroban, so a
+ * changed weight, signer kind, presented weight or expiration ledger changes it.
+ * toolCalls holds 2 entries, or 3 when `soroban` is supplied.
+ *
+ * Refusal codes (returned as { ok: false, spec, error: { code, detail, field? } },
+ * with no toolCalls produced):
+ *   INVALID_SNAPSHOT           snapshot is not an object
+ *   UNSUPPORTED_NETWORK        network is not testnet/mainnet/futurenet
+ *   MISSING_ACCOUNT_ID         accountId is empty
+ *   INVALID_MASTER_WEIGHT      masterWeight is not a non-negative integer
+ *   INVALID_THRESHOLDS         a threshold is not a non-negative integer
+ *   THRESHOLD_ORDER            thresholds violate low <= medium <= high, or high <= 0
+ *   NO_SIGNERS                 signers is missing or empty
+ *   INVALID_SIGNER             a signers[] entry is not an object
+ *   MISSING_SIGNER_KEY         a signer has no key/publicKey/address
+ *   INVALID_WEIGHT             a weight is not a non-negative integer
+ *   DUPLICATE_SIGNER           the same key appears twice
+ *   INVALID_PRESENTED_SIGNERS  presentedSigners is not an array
+ *   INVALID_PRESENTED_SIGNER   a presentedSigners[] entry is not an object
+ *   UNKNOWN_PRESENTED_SIGNER   a presented key is absent from the signer set
+ *   INVALID_LEVEL              level is not low/medium/high
+ *   INVALID_SOROBAN            soroban is present but not an object
+ *   SOROBAN_ENTRY_MISSING      soroban.entry is missing
+ *   SOROBAN_EXPECTED_MISSING   soroban.expected is missing
+ *   CURRENT_LEDGER_MISSING     soroban.currentLedger is not a non-negative integer
  */
 
 import { canonicalJson, digestOf } from "./wave6.mjs";

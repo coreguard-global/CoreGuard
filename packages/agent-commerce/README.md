@@ -336,6 +336,42 @@ import { createConsent, verifyExecution } from "@coreguard/agent-commerce";
 The MCP tools are thin wrappers over these functions; nothing is added or hidden
 by going through MCP.
 
+## Smart-account adapter (CG-W6/1)
+
+Maps one caller-supplied snapshot to the arguments of the signer-set, threshold
+and Soroban-authorization checks. It does not read the network, sign or decide
+authorization; it re-sorts the evidence and digests it so a tamper is visible.
+
+```js
+import { fromSmartAccountSnapshot } from "@coreguard/agent-commerce/smart-account-adapter.mjs";
+
+const mapped = fromSmartAccountSnapshot({
+  network: "testnet",
+  accountId: "C...",
+  masterWeight: 0,
+  thresholds: { low: 1, medium: 2, high: 3 },
+  signers: [{ key: "G...", kind: "passkey", weight: 2 }],
+});
+// mapped.toolCalls -> 2 calls (3 when `soroban` is supplied)
+// mapped.snapshotDigest -> changes if a weight, kind or ledger changes
+```
+
+Snapshot fields: `network` (`testnet` | `mainnet` | `futurenet`), `accountId`,
+`masterWeight`, `thresholds { low, medium, high }`, `signers[]` with
+`key` (or `publicKey` / `address`), optional `kind` and `weight`, optional
+`presentedSigners[]` (defaults to all signers), and optional `soroban` with
+`entry { contractId, functionName, argsDigest, signatureExpirationLedger,
+rootInvocation?, subInvocations? }`, `expected { contractId, functionName,
+argsDigest }`, `currentLedger` and optional `allowedContracts`.
+
+Refusal codes (returned as `{ ok: false, error: { code, detail, field? } }`, with
+no `toolCalls`): `INVALID_SNAPSHOT`, `UNSUPPORTED_NETWORK`, `MISSING_ACCOUNT_ID`,
+`INVALID_MASTER_WEIGHT`, `INVALID_THRESHOLDS`, `THRESHOLD_ORDER`, `NO_SIGNERS`,
+`INVALID_SIGNER`, `MISSING_SIGNER_KEY`, `INVALID_WEIGHT`, `DUPLICATE_SIGNER`,
+`INVALID_PRESENTED_SIGNERS`, `INVALID_PRESENTED_SIGNER`,
+`UNKNOWN_PRESENTED_SIGNER`, `INVALID_LEVEL`, `INVALID_SOROBAN`,
+`SOROBAN_ENTRY_MISSING`, `SOROBAN_EXPECTED_MISSING`, `CURRENT_LEDGER_MISSING`.
+
 ## Boundaries (standing)
 
 - Synthetic demo data is the caller's; nothing here contacts any commerce
