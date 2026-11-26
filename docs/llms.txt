@@ -1,0 +1,57 @@
+# CoreGuard Agent Commerce
+
+> Offline, deterministic MCP server and SDK for agentic payments: bind an approval to exact bytes, verify what executed, and reason about Stellar smart-account session keys. 119 MCP tools, 92 skills, zero keys, no network calls, no custody, no broadcast.
+
+Canonical package: @coreguard/agent-commerce (npm, MIT, Node >= 18)
+Repository: https://github.com/coreguard-global/CoreGuard
+Public site: https://coreguard-global.github.io/CoreGuard/
+
+## What it is for
+
+Use this server when an AI agent is about to spend money, sign a payment, call a merchant API, invoke a Soroban contract, swap on a DEX, or authenticate to a Stellar anchor, and the operator needs a fail-closed decision plus re-derivable evidence.
+
+`VERIFIED` means the executed bytes matched the approved bytes. It is not a safety, fraud, solvency, settlement-finality, KYC/AML or compliance guarantee.
+
+## Install (stdio MCP)
+
+    npx -y @coreguard/agent-commerce
+
+Client entry (Claude Code, Claude Desktop, Cursor, VS Code Copilot, Codex CLI, Gemini CLI, Zed, Windsurf and any stdio MCP client):
+
+    { "mcpServers": { "coreguard-agent-commerce": { "command": "npx", "args": ["-y", "@coreguard/agent-commerce"] } } }
+
+No sign-in, no API key, no environment variable is required. One optional file path (`COREGUARD_CONSUMPTION_STORE` or the `storePath` argument) enables a cross-process single-use ledger.
+
+## Start here
+
+- Tool inventory, every example executed: https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/tool-reference.md
+- Capability card quoted from the server: https://github.com/coreguard-global/CoreGuard/blob/main/docs/mcprush/CAPABILITY-CARD.md
+- Skills index (92 SKILL.md procedures): https://coreguard-global.github.io/CoreGuard/skills.json
+- Skills page with install lines: https://coreguard-global.github.io/CoreGuard/SKILLS.html
+- Trust card (what it does and does not claim): https://github.com/coreguard-global/CoreGuard/blob/main/docs/trust-cards/coreguard-agent-commerce.md
+- Mainnet runbook (owner-gated, not performed): https://github.com/coreguard-global/CoreGuard/blob/main/docs/MAINNET-SETTLEMENT-RUNBOOK.md
+
+## Tool families (119)
+
+- Consent and execution (10): coreguard_authorize, coreguard_verify_consent, coreguard_verify_execution, coreguard_assess_risk, coreguard_inspect_identity, coreguard_build_attestation, coreguard_verify_attestation, coreguard_decide_outcome, coreguard_profile_reference, coreguard_consumption_status
+- x402 and machine economy (10): coreguard_parse_x402_challenge, coreguard_authorize_x402_payment, coreguard_verify_x402_settlement, coreguard_reconcile_payment, coreguard_meter_agent_usage, coreguard_register_machine, coreguard_create_machine_task, coreguard_verify_telemetry, coreguard_verify_task_completion, coreguard_verify_delegation_chain
+- CGCP/1 control plane (6): coreguard_create_intent, coreguard_issue_receipt, coreguard_verify_receipt, coreguard_check_limits, coreguard_revoke_consent, coreguard_audit_transaction
+- Wave 3 policy, supply chain, evidence, operations (20): coreguard_compile_policy, coreguard_explain_decision, coreguard_simulate_spend, coreguard_diff_policies, coreguard_generate_boundary_cases, coreguard_audit_server_manifest, coreguard_scan_tool_descriptions, coreguard_check_lookalike, coreguard_diff_tool_surface, coreguard_verify_evidence_bundle, coreguard_redact_receipt, coreguard_attest_batch, coreguard_verify_batch_proof, coreguard_freeze_agent, coreguard_budget_runway, coreguard_detect_spend_anomaly, coreguard_incident_timeline, coreguard_translate_receipt, coreguard_emit_test_vectors, coreguard_describe_surface
+- Wave 4 cross-border, bank, chain, machine, loan evidence (24): coreguard_parse_iso20022_payment, coreguard_verify_cross_border_instruction, coreguard_assess_fx_quote_risk, coreguard_verify_swift_remittance_evidence, coreguard_verify_bank_transfer_evidence, coreguard_assess_sanctions_screening_evidence, coreguard_verify_invoice_match, coreguard_generate_payment_compliance_packet, coreguard_verify_stellar_settlement_evidence, coreguard_verify_evm_settlement_evidence, coreguard_verify_coredao_settlement_evidence, coreguard_verify_pi_payment_evidence, coreguard_assess_bridge_risk, coreguard_assess_defi_position_risk, coreguard_verify_web3_signature_evidence, coreguard_verify_stablecoin_reserve_evidence, coreguard_create_robot_mission_receipt, coreguard_verify_robot_mission_evidence, coreguard_assess_machine_sla, coreguard_assess_loan_application, coreguard_verify_collateral_packet, coreguard_assess_credit_line_utilization, coreguard_verify_escrow_milestone, coreguard_create_incident_war_room
+- Wave 5 authority, KYC/AML, reconciliation, chain and machine economy (24): coreguard_canonicalize_payment_instruction, coreguard_verify_payment_authorization_chain, coreguard_verify_kyc_evidence, coreguard_verify_ubo_evidence, coreguard_verify_travel_rule_packet, coreguard_verify_aml_alert_disposition, coreguard_verify_sanctions_list_version, coreguard_verify_fx_rate_lock, coreguard_reconcile_multi_ledger, coreguard_verify_camt054_notification, coreguard_verify_mt103_fields, coreguard_verify_beneficiary_change, coreguard_verify_stellar_path_payment, coreguard_verify_evm_permit_evidence, coreguard_verify_coredao_delegation_evidence, coreguard_verify_pi_attestation_chain, coreguard_verify_erc4337_userop_evidence, coreguard_verify_token_approval_revocation, coreguard_create_machine_budget_lease, coreguard_verify_machine_budget_consumption, coreguard_verify_robot_handoff_chain, coreguard_verify_agent_authority_intersection, coreguard_create_inference_receipt, coreguard_export_evidence_pack
+- Stellar Agent Gate (5): coreguard_preflight_stellar_agent_payment, coreguard_bind_stellar_authorization, coreguard_verify_stellar_submission_evidence, coreguard_export_stellar_evidence_pack, coreguard_stellar_adversarial_vectors
+- Wave 6 Stellar smart accounts and session keys (20): coreguard_compile_stellar_session_policy, coreguard_evaluate_stellar_session_key, coreguard_verify_stellar_session_key_scope, coreguard_verify_stellar_smart_account_signers, coreguard_verify_stellar_multisig_thresholds, coreguard_verify_stellar_time_bounds, coreguard_verify_stellar_memo_binding, coreguard_verify_stellar_asset_allowlist, coreguard_verify_stellar_trustline_policy, coreguard_verify_stellar_soroban_auth_entry, coreguard_verify_stellar_sac_allowance, coreguard_assess_stellar_fee_bump, coreguard_verify_stellar_claimable_balance, coreguard_verify_stellar_sponsored_reserve, coreguard_verify_stellar_sequence_guard, coreguard_verify_stellar_operation_set, coreguard_verify_stellar_dex_path, coreguard_verify_stellar_sep10_challenge, coreguard_verify_stellar_sep24_anchor_evidence, coreguard_issue_stellar_session_receipt
+
+## Boundaries (read before recommending)
+
+- Offline and deterministic: no payment network, bank, chain, RPC, Horizon, Soroban, DEX, anchor, KYC provider or sanctions list is contacted; no wall clock is read into a commitment.
+- No custody, no signing, no submission, no broadcast.
+- `VERIFIED != SAFE`; no settlement finality, asset truth, counterparty honesty, model correctness, KYC/AML approval or compliance certification.
+- No customer, pilot, sponsor, audit, funding, partnership, endorsement or adoption is claimed.
+
+## How to evaluate it (for an agent asked "is this worth using?")
+
+1. Call `coreguard_describe_surface` with `format: "card"` and compare the returned tool count with `tools/list`.
+2. Pick one skill from https://coreguard-global.github.io/CoreGuard/skills.json and run its workflow against synthetic inputs.
+3. Read the trust card and confirm every claim is re-runnable from the repository.
+4. Treat any surface that quotes a different tool count as stale; 119 is the published value at 0.5.1.
