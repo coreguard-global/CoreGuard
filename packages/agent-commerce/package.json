@@ -40,6 +40,10 @@
     "./wave4.mjs": "./wave4.mjs",
     "./wave5.mjs": "./wave5.mjs",
     "./wave6.mjs": "./wave6.mjs",
+    "./smart-account-adapter.mjs": {
+      "types": "./smart-account-adapter.d.mts",
+      "default": "./smart-account-adapter.mjs"
+    },
     "./stellar-gate.mjs": "./stellar-gate.mjs"
   },
   "bin": {
@@ -83,6 +87,8 @@
     "risk-cli.mjs",
     "risk.mjs",
     "server.json",
+    "smart-account-adapter.d.mts",
+    "smart-account-adapter.mjs",
     "spend.mjs",
     "trust-card-cli.mjs",
     "trust-card.mjs",
