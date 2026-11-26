@@ -31,8 +31,8 @@ authorized step appends a milestone; they are never invented upward.
 
 | Surface | Value |
 |---|---|
-| Claims tracked | 32 |
-| Claims by status | VERIFIED 20 · UNKNOWN 6 · HYPOTHESIS 0 · RESEARCH 1 · GATED 3 · NOT_PERFORMED 2 |
+| Claims tracked | 33 |
+| Claims by status | VERIFIED 21 · UNKNOWN 6 · HYPOTHESIS 0 · RESEARCH 1 · GATED 3 · NOT_PERFORMED 2 |
 | Claims depending on an external outcome | undefined |
 | Claim-ceiling violations | 0 |
 | Badges issued to anyone | 0 |
@@ -52,8 +52,8 @@ default.
 
 | Metric | Value |
 |---|---|
-| Test suite | 2218 |
-| Boundary audit | 1677 files / 0 violations |
+| Test suite | 2227 |
+| Boundary audit | 1679 files / 0 violations |
 | Docs-node contract | 140 executed · 90 skip-listed · 34 covered |
 | Live-submission harness | PEOPLES_COURT_HARNESS_READY |
 
