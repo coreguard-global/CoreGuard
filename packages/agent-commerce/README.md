@@ -328,6 +328,50 @@ import { createConsent, verifyExecution } from "@coreguard/agent-commerce";
 The MCP tools are thin wrappers over these functions; nothing is added or hidden
 by going through MCP.
 
+### Smart-account snapshot adapter (CG-SA/1)
+
+Standalone SDK helper, not an MCP tool. It reads only the fields you supply and
+emits argument objects for three deterministic checks; it never fetches, signs,
+deploys, or decides authorization.
+
+```js
+import { fromSmartAccountSnapshot } from "@coreguard/agent-commerce/smart-account-adapter.mjs";
+
+const mapped = fromSmartAccountSnapshot({
+  network: "testnet",
+  accountId: "C...",
+  masterWeight: 0,
+  thresholds: { low: 1, medium: 2, high: 3 },
+  signers: [
+    { key: "G...", kind: "passkey", weight: 2 },
+    { key: "G...", kind: "session_key", weight: 1 },
+  ],
+  soroban: {
+    entry: { contractId: "C...", functionName: "transfer", argsDigest: "sha256:…",
+             signatureExpirationLedger: 2000, rootInvocation: true },
+    expected: { contractId: "C...", functionName: "transfer", argsDigest: "sha256:…" },
+    currentLedger: 1000,
+  },
+});
+
+// mapped.status is MAPPED or REFUSED; mapped.snapshotDigest changes if a
+// weight, signer kind, or ledger changes. The three toolCalls carry the exact
+// signer-set, threshold and Soroban-entry argument objects.
+```
+
+Exact snapshot fields: `network`, `accountId`, `masterWeight`,
+`thresholds.low`, `thresholds.medium`, `thresholds.high`, `signers[].key`,
+`signers[].kind`, `signers[].weight`, `soroban.entry.contractId`,
+`soroban.entry.functionName`, `soroban.entry.argsDigest`,
+`soroban.entry.signatureExpirationLedger`, `soroban.entry.rootInvocation`,
+`soroban.expected.contractId`, `soroban.expected.functionName`,
+`soroban.expected.argsDigest`, `soroban.currentLedger`.
+
+Named refusal codes: `ACCOUNT_ID`, `SIGNERS`, `UNIQUE_KEYS`, `THRESHOLDS`,
+`MASTER_DISABLED`, `THRESHOLD_MET`, `EXPIRATION`. `VERIFIED ≠ SAFE` — a mapped
+snapshot means the supplied evidence cohere with the supplied rules, not that
+a payment is safe, settled, or authorized.
+
 ## Boundaries (standing)
 
 - Synthetic demo data is the caller's; nothing here contacts any commerce

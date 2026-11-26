@@ -272,6 +272,27 @@ export const CLAIMS = Object.freeze([
     }),
   },
   {
+    id: "CL-SMART-ACCOUNT-SNAPSHOT",
+    area: "integration",
+    claim: "CG-SA/1 maps a caller-supplied smart-account snapshot offline into three named check argument sets, sorts signers before digesting, and refuses malformed account/signers/keys/thresholds/master weight/unreachable threshold/expired or mismatched Soroban entry by code. It does not fetch, sign, authorize, or claim OpenZeppelin compatibility or settlement finality.",
+    status: "VERIFIED",
+    verificationLevel: "L1",
+    external: false,
+    evidence: [
+      "packages/agent-commerce/smart-account-adapter.mjs",
+      "test/integrations/smart-account-adapter.test.mjs",
+      "packages/agent-commerce/README.md",
+    ],
+    recheck: "node --test --test-concurrency=1 test/integrations/smart-account-adapter.test.mjs",
+    derive: () => ({
+      spec: "CG-SA/1",
+      toolCalls: 3,
+      refusalCodes: ["ACCOUNT_ID", "SIGNERS", "UNIQUE_KEYS", "THRESHOLDS", "MASTER_DISABLED", "THRESHOLD_MET", "EXPIRATION"],
+      networkCalls: 0,
+      authorizationDecision: false,
+    }),
+  },
+  {
     id: "CL-STELLAR-OWNER-SETTLEMENT",
     area: "integration",
     claim: "A recorded owner-delegated Testnet signing and settlement proof exists: the saved artifact re-derives the Ed25519 signature, exact-byte CG-SG/1 binding, closed-ledger re-read and exact native balance deltas offline. It is not owner-held-key use, Mainnet settlement, legal finality, KYC/AML clearance or production readiness.",

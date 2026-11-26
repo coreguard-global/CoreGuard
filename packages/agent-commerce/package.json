@@ -39,7 +39,8 @@
     "./cgcp-mcp-tools.mjs": "./cgcp-mcp-tools.mjs",
     "./wave4.mjs": "./wave4.mjs",
     "./wave5.mjs": "./wave5.mjs",
-    "./stellar-gate.mjs": "./stellar-gate.mjs"
+    "./stellar-gate.mjs": "./stellar-gate.mjs",
+    "./smart-account-adapter.mjs": "./smart-account-adapter.mjs"
   },
   "bin": {
     "coreguard-agent-commerce-mcp": "./bin/mcp.mjs",
@@ -89,7 +90,8 @@
     "wave3.mjs",
     "wave4.mjs",
     "wave5.mjs",
-    "stellar-gate.mjs"
+    "stellar-gate.mjs",
+    "smart-account-adapter.mjs"
   ],
   "engines": {
     "node": ">=18"
