@@ -106,7 +106,7 @@ Paste-ready per-tool reference, with every example executed against the shipped 
 
 ## 7. Releases
 
-**Published:** 0.5.0. Gated release run `45838608694` completed; npm `latest` = `0.5.0`, MCP Registry `io.github.EslaM-X/coreguard-agent-commerce@0.5.0` is active and `isLatest` (published `2026-11-26T14:28:06.968555Z`), and the published npm artifact re-reads at `0.5.0` / 99 tools with schemas. The prior 0.4.0 release (run `45717671413`, 94 tools) and 0.3.0 release (run `45688325860`, 70 tools) remain published. MCPRush Studio still requires the owner clicks in §10 — this repository cannot edit the listing.
+**Published:** 0.5.1. Gated release run `45875511065` completed `success` on `379fa7a`; npm `latest` = `0.5.1`, MCP Registry `io.github.EslaM-X/coreguard-agent-commerce@0.5.1` is `active` and `isLatest`, and the published npm artifact re-reads at `0.5.1` / **119 tools** with schemas (tarball `sha256:350d9dcb71bbf5c416afc88f72e17e903188a390ac84d0537f43d45c7a726543`). The prior 0.5.0 release (run `45838608694`, 99 tools), 0.4.0 (run `45717671413`, 94 tools) and 0.3.0 (run `45688325860`, 70 tools) remain published. MCPRush Studio still requires the owner clicks in §10 — this repository cannot edit the listing.
 
 ## 8. README badge
 
@@ -140,7 +140,8 @@ Use the numbers as they are printed by those commands, and do not add a percenta
 - [x] Publish `0.4.0` through gated release run `45717671413`; npm `latest` was `0.4.0`, MCP Registry `0.4.0` active/latest, and the published artifact re-read at **94 tools** (agent-session re-read).
 - [x] Publish `0.5.0` through gated release run `45838608694`; npm `latest` = `0.5.0`, MCP Registry `0.5.0` active/latest, and the published artifact re-reads at **99 tools** (agent-session re-read).
 - [x] In MCPRush Studio after 0.5.0 was live: the 0.5.0 release + tool-surface re-read steps are recorded in [mcprush/STUDIO-REFRESH-0.5.0.md](./mcprush/STUDIO-REFRESH-0.5.0.md).
-- [ ] **0.5.1 (119 tools / 92 skills):** cut release `0.5.1` in the studio, re-read Tool surface, then request the once-a-day rescan only if the grade is stale. Exact click path and verification: [mcprush/STUDIO-REFRESH-0.5.1.md](./mcprush/STUDIO-REFRESH-0.5.1.md).
+- [x] Publish `0.5.1` through the gated release workflow (run `45875511065`); npm `latest` = `0.5.1`, MCP Registry `0.5.1` active/latest, and the published artifact re-reads at **119 tools** (agent-session re-read).
+- [ ] **0.5.1 studio (119 tools / 92 skills):** cut release `0.5.1` in the studio, re-read Tool surface, then request the once-a-day rescan only if the grade is stale. Exact click path and verification: [mcprush/STUDIO-REFRESH-0.5.1.md](./mcprush/STUDIO-REFRESH-0.5.1.md).
 - [ ] Tell the agent-skills pack (`skills/`) to the integration story: 92 skills, each a folder with `SKILL.md`.
 - [ ] In the studio: save the listing copy from §2, confirm sign-in/keys from §3, cut the release so the tool surface re-reads.
 - [ ] If the grade is stale relative to the new tarball, request the once-a-day rescan; the grade is deterministic and re-runnable, so a rescan is a measurement, not an appeal.

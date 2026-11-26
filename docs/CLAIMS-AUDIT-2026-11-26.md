@@ -24,8 +24,8 @@ Scope: every surface in this repository that quotes a tool count, a skill count,
 
 | Claim | Status | Why |
 |---|---|---|
-| npm `latest` = `0.5.1` | **NOT CLAIMED** | publishing requires the gated workflow and `NPM_TOKEN`; nothing in this branch publishes outside it |
-| MCP Registry `0.5.1` active/latest | **NOT CLAIMED** | the registry record updates only from the release workflow |
+| npm `latest` = `0.5.1` | **VERIFIED** (published after this audit) | gated release run `45875511065` on `379fa7a`; `npm view` → `0.5.1`/latest; tarball `sha256:350d9dcb…`; artifact re-read at 119 tools |
+| MCP Registry `0.5.1` active/latest | **VERIFIED** (published after this audit) | registry API returns `0.5.1` with `isLatest: true`, `status: active` |
 | MCPRush badge = 119 tools | **NOT CLAIMED** | the badge is the listing's cached value; owner-only studio clicks + rescan change it |
 | Mainnet settlement | **NOT PERFORMED** | no key material, funded account or broadcast exists here; the runbook is the deliverable |
 | Customers, pilots, sponsors, audits, funding, endorsements, adoption | **NOT CLAIMED** | external parties; inventing them would be the one claim that invalidates every other number |

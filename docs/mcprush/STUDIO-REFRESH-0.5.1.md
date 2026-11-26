@@ -8,7 +8,7 @@ The studio is owner-only (`mcprush.com/studio#servers`); the listing page return
 
 | Surface | Value in this commit | Where it is measured |
 |---|---|---|
-| npm `latest` (until 0.5.1 publishes) | `0.5.0`, 99 tools | `npm view @coreguard/agent-commerce version` |
+| npm `latest` | `0.5.1`, **119 tools** (verified 2026-11-26, release run `45875511065`) | `npm view @coreguard/agent-commerce version` + artifact re-read |
 | Server in this commit | `0.5.1`, **119 tools** | `node scripts/mcp-surface.mjs --check` |
 | Skills | **92** | `docs/skills.json` |
 | Public badge (last observed) | 26 tools | MCPRush badge `aria-label` |
