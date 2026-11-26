@@ -357,7 +357,7 @@ Run the offline arc: `npm run stellar:presign` — no signing, no wallet, no net
 
 ### Recent developments — Nov 10–14 2026 (by network, measured & evidenced)
 
-> Canonical measured state for this cycle: **2218 / 2218 tests**, **1665 files scanned / 0 violations**, **docs-node 140 executed · 90 skip-listed · 34 covered**, **Foundry 43/43 pass** — [docs/state-snapshot.json](docs/state-snapshot.json) · [docs/STATUS.md](docs/STATUS.md). Every item below is labeled by its committed evidence; nothing implies revenue, customers, partnerships, external adoption, or a third-party audit.
+> Canonical measured state for this cycle: **2218 / 2218 tests**, **1678 files scanned / 0 violations**, **docs-node 140 executed · 90 skip-listed · 34 covered**, **Foundry 43/43 pass** — [docs/state-snapshot.json](docs/state-snapshot.json) · [docs/STATUS.md](docs/STATUS.md). Every item below is labeled by its committed evidence; nothing implies revenue, customers, partnerships, external adoption, or a third-party audit.
 
 #### Stellar — pre-sign receipts, agent-gate envelope path, Freighter evaluation, DEX integration
 
