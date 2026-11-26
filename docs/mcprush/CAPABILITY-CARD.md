@@ -5,16 +5,16 @@ machine-readable form of this exact call result; paste the block below into a
 listing, review or buyer package instead of typing a version or a tool count.
 
 **Call:** `tools/call coreguard_describe_surface { "format": "card" }` against
-`coreguard-agent-commerce@0.4.0`.
+`coreguard-agent-commerce@0.5.0`.
 
 **One-line quote:**
 
-> coreguard-agent-commerce 0.4.0 — 94 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
+> coreguard-agent-commerce 0.5.0 — 99 MCP tools, stdio, protocol 2025-06-18. Offline · deterministic · zero keys · no custody · no broadcast · `VERIFIED ≠ SAFE`.
 
 **Badge markdown:**
 
 ```markdown
-![MCP tools: 94](https://coreguard-global.github.io/CoreGuard/assets/badges/mcp-tools.svg)
+![MCP tools: 99](https://coreguard-global.github.io/CoreGuard/assets/badges/mcp-tools.svg)
 ```
 
 **Verbatim call result (as returned by the server):**
@@ -29,19 +29,19 @@ listing, review or buyer package instead of typing a version or a tool count.
   ],
   "server": {
     "name": "coreguard-agent-commerce",
-    "version": "0.4.0"
+    "version": "0.5.0"
   },
   "protocolVersion": "2025-06-18",
-  "toolCount": 94,
-  "toolsDigest": "sha256:c4f42eec7a678dafea80f75c80b1bb1936d978af21d8dacb948bc8fabfaa1389",
+  "toolCount": 99,
+  "toolsDigest": "sha256:4ac1f9e809b498add62023eb027c52ffba89fd8a30dfc36ad633346a8b0d9ee6",
   "capabilities": {
     "type": "capability_card",
     "spec": "CG-CC/1",
     "server": "coreguard-agent-commerce",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "protocolVersion": "2025-06-18",
     "transport": "stdio (newline-delimited JSON-RPC 2.0)",
-    "tools": 94,
+    "tools": 99,
     "categories": [
       "consent receipts (CGCR/1)",
       "execution verification (AGR/1)",
@@ -63,7 +63,7 @@ listing, review or buyer package instead of typing a version or a tool count.
     "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment.",
     "key": "offline · deterministic · zero keys · no custody · no broadcast · VERIFIED ≠ SAFE"
   },
-  "badge": "coreguard-agent-commerce 0.4.0 · 94 tools · offline · deterministic",
+  "badge": "coreguard-agent-commerce 0.5.0 · 99 tools · offline · deterministic",
   "skills": {
     "count": 72,
     "names": [

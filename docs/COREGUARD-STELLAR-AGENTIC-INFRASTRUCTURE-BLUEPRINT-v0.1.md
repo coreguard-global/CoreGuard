@@ -1,6 +1,6 @@
 # CoreGuard × Stellar Agentic Infrastructure Blueprint v0.1
 
-**Status:** `RESEARCH / BLUEPRINT / NOT_BUILT`
+**Status:** `RESEARCH / BLUEPRINT / NOT_BUILT` — historical v0.1 plan. Implementation status is now tracked in `docs/COREGUARD-STELLAR-AGENT-SECURITY-SPEC-v0.2.md` (P1–P4 offline implementation; P5 owner-gated; P6 not built).
 **Date:** 2026-11-25
 **Owner gate:** no production deployment, signing authority, live Stellar RPC, live x402 settlement, customer pilot or security claim is authorized by this document.
 
@@ -127,3 +127,7 @@ CoreGuard should not hold settlement authority by default. Signing or submitting
 - Adoption/ladder honesty boundary: `docs/live-integration-and-adoption-ladder-2026-09-25.md`
 
 No part of this blueprint changes the published `0.4.0` artifact or claims that any proposed module exists.
+
+## 10. Addendum — 2026-11-26
+
+The owner subsequently authorized implementation of the P1–P4 technical roadmap. `docs/COREGUARD-STELLAR-AGENT-SECURITY-SPEC-v0.2.md` is the current contract: five deterministic, offline CG-SG/1 MCP tools (99-tool surface in an unpublished `0.5.0` preparation), 39 named adversarial tests, and a manual P5 proof script were prepared. P5 now has a recorded `SYNTHETIC` Testnet proof with ephemeral agent-generated keys (`docs/STELLAR-TESTNET-PROOF-2026-11-26.md`), not an owner-held-key or production run; P6 remains `NOT_BUILT / OWNER-GATED`. The published npm/MCP Registry artifact remains `0.4.0` until a separate gated release succeeds. No claim of adoption, live integration, signing authority, funding, partnership or signed-in client `RUN-BY-HAND` is made by this addendum.

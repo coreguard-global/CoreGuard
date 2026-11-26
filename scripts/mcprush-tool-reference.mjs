@@ -413,6 +413,20 @@ async function buildExamples(rpc) {
   const w5Inference = await call("coreguard_create_inference_receipt", { evidence: { modelId: "model-x", promptDigest: "sha256:" + "4b".repeat(32), outputDigest: "sha256:" + "5c".repeat(32), policyDigest: "sha256:" + "6d".repeat(32), costMinor: "10", latencyMs: 42 }, nowSeconds: NOW });
   const w5Pack = await call("coreguard_export_evidence_pack", { items: [{ id: "evidence-1", body: { amountMinor: "10000", email: "buyer@example.test" } }], policy: { redactFields: ["email"], maxItems: "10" }, nowSeconds: NOW });
 
+  // Stellar Agent Gate (CG-SG/1) — deterministic offline XDR binding drill.
+  const SG_SOURCE = "G" + "A".repeat(55);
+  const SG_DEST = "G" + "B".repeat(55);
+  const SG_ENV = "AAAAAgAAA" + "Q".repeat(120);
+  const sgProjection = { network: "testnet", sourceAccount: SG_SOURCE, destination: SG_DEST, asset: "native", amount: "5", memo: "cg-sg-reference", sequence: "1" };
+  const sgProposal = { ...sgProjection, envelopeXdr: SG_ENV, envelopeProjection: sgProjection, nonce: "nonce-reference", scopes: ["pay"], agentScopes: ["pay", "read"], timeBounds: { minTime: NOW, maxTime: String(BigInt(NOW) + 3600n) } };
+  const sgPolicy = { allowedNetworks: ["testnet"], allowedAssets: ["native"], allowedDestinations: [SG_DEST], maxAmount: "100", requireMemo: true, requireNonce: true, requireTimeBounds: true, requiredScopes: ["pay"], usedNonces: [] };
+  const sgAuth = await call("coreguard_preflight_stellar_agent_payment", { proposal: sgProposal, policy: sgPolicy, nowSeconds: NOW });
+  const sgBinding = await call("coreguard_bind_stellar_authorization", { authorization: sgAuth, envelopeXdr: SG_ENV, observed: sgProjection });
+  const sgEvidence = { network: "testnet", envelopeXdr: SG_ENV, txHash: "ab".repeat(32), successful: true, ledger: 123456, resultXdr: "AAAAAAAAAAAAAA==", operation: sgProjection };
+  const sgVerified = await call("coreguard_verify_stellar_submission_evidence", { binding: sgBinding, evidence: sgEvidence });
+  const sgPack = await call("coreguard_export_stellar_evidence_pack", { items: [sgAuth, sgBinding, sgVerified], redactFields: ["callerContext"] });
+  const sgVectors = await call("coreguard_stellar_adversarial_vectors", { family: "stellar-agent-gate" });
+
   const use = (what) => ({ $ref: what });
 
   return {
@@ -733,6 +747,11 @@ async function buildExamples(rpc) {
     coreguard_verify_agent_authority_intersection: { args: { principalScope: ["pay", "read"], agentScope: ["pay", "trade"], requested: ["pay"] }, out: w5AuthorityIntersect },
     coreguard_create_inference_receipt: { args: { evidence: { modelId: "model-x", promptDigest: "sha256:" + "4b".repeat(32), outputDigest: "sha256:" + "5c".repeat(32), policyDigest: "sha256:" + "6d".repeat(32), costMinor: "10", latencyMs: 42 }, nowSeconds: NOW }, out: w5Inference },
     coreguard_export_evidence_pack: { args: { items: [{ id: "evidence-1", body: { amountMinor: "10000", email: "buyer@example.test" } }], policy: { redactFields: ["email"], maxItems: "10" }, nowSeconds: NOW }, out: w5Pack },
+    coreguard_export_stellar_evidence_pack: { args: { items: [sgAuth, sgBinding, sgVerified], redactFields: ["callerContext"] }, out: sgPack },
+    coreguard_preflight_stellar_agent_payment: { args: { proposal: sgProposal, policy: sgPolicy, nowSeconds: NOW }, out: sgAuth },
+    coreguard_bind_stellar_authorization: { args: { authorization: sgAuth, envelopeXdr: SG_ENV, observed: sgProjection }, out: sgBinding },
+    coreguard_verify_stellar_submission_evidence: { args: { binding: sgBinding, evidence: sgEvidence }, out: sgVerified },
+    coreguard_stellar_adversarial_vectors: { args: { family: "stellar-agent-gate" }, out: sgVectors },
   };
 }
 
@@ -844,7 +863,7 @@ function section(tool, example) {
   );
   lines.push("");
   lines.push("```json");
-  lines.push(outBody.length > 1800 ? outBody.slice(0, 1800) + "\n… (abridged — full object is returned by the server)" : outBody);
+  lines.push(outBody.length > 1800 ? outBody.slice(0, 1800).trimEnd() + "\n… (abridged — full object is returned by the server)" : outBody);
   lines.push("```");
   if (volatileHits.n > 0) {
     lines.push("");

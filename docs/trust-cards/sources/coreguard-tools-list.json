@@ -4762,5 +4762,243 @@
         }
       }
     }
+  },
+  {
+    "name": "coreguard_preflight_stellar_agent_payment",
+    "description": "Pre-execution gate for an agent-proposed Stellar action. Checks policy, replay, authority scopes, time bounds and exact envelope-byte binding. Makes no Stellar RPC, Horizon, wallet or network call; fail closed with named refusals.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "proposal": {
+          "type": "object",
+          "description": "Caller-supplied proposal including XDR envelope bytes and projected operation fields."
+        },
+        "policy": {
+          "type": "object",
+          "description": "Caller-supplied allowlists, ceiling, scopes and replay policy."
+        },
+        "nowSeconds": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "Pinned unix-seconds string; never the wall clock."
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-supplied metadata echoed back; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "proposal",
+        "policy"
+      ],
+      "description": "Preflight a Stellar agent payment against a named policy."
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Stellar authorization verdict, bound digest and named checks, with boundary.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "boundary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_bind_stellar_authorization",
+    "description": "Bind an ALLOW decision to the exact XDR envelope bytes and the observed operation projection. Refuses on byte drift or named field drift; never signs, submits or contacts Stellar.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "authorization": {
+          "type": "object",
+          "description": "ALLOW authorization from coreguard_preflight_stellar_agent_payment."
+        },
+        "envelopeXdr": {
+          "type": "string",
+          "description": "Exact base64 envelope bytes to bind."
+        },
+        "observed": {
+          "type": "object",
+          "description": "Caller-supplied projected operation fields observed before signing."
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-supplied metadata echoed back; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "authorization",
+        "envelopeXdr",
+        "observed"
+      ],
+      "description": "Bind authorization to exact Stellar envelope bytes."
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Binding verdict with bound digest and named drift fields.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "boundary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_verify_stellar_submission_evidence",
+    "description": "Verify caller-supplied Stellar submission evidence against a BOUND authorization: envelope bytes, tx hash shape, success, ledger and projected operation. No RPC lookup; VERIFIED means supplied bytes agreed, not settlement finality.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "binding": {
+          "type": "object",
+          "description": "BOUND binding from coreguard_bind_stellar_authorization."
+        },
+        "evidence": {
+          "type": "object",
+          "description": "Caller-supplied submission evidence packet."
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-supplied metadata echoed back; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "binding",
+        "evidence"
+      ],
+      "description": "Verify a Stellar submission evidence packet against a binding."
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Submission verdict with named breaks and evidence digest.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "boundary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_export_stellar_evidence_pack",
+    "description": "Export a redacted, digest-rooted evidence pack from caller-supplied Stellar gate artifacts for human review. Nothing is submitted to any external party.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Authorization, binding and verification artifacts to package."
+        },
+        "redactFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional nested field names to redact."
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-supplied metadata echoed back; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "description": "Export a redacted Stellar gate evidence pack."
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Evidence pack, root digest and redaction boundary.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "boundary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "coreguard_stellar_adversarial_vectors",
+    "description": "List the named deterministic adversarial cases covered by the Stellar agent gate: amount escalation, destination/asset/network substitution, replay, overreach, byte drift, failed result and missing evidence. Cases are metadata, not live exploits.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "family": {
+          "type": "string",
+          "enum": [
+            "stellar-agent-gate"
+          ],
+          "description": "Vector family selector."
+        },
+        "callerContext": {
+          "type": "object",
+          "description": "Optional caller-supplied metadata echoed back; never used as a cryptographic input."
+        }
+      },
+      "required": [
+        "family"
+      ],
+      "description": "List named Stellar gate adversarial vectors."
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Vector list with mutations and expected refusal statuses.",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "boundary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
   }
 ]

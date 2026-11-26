@@ -7,7 +7,7 @@
  * (one JSON object per line, both directions) — the same shape MCP clients
  * speak for stdio servers.
  *
- * Tools (all offline/self-hosted, deterministic, zero network keys): 10 core consent/verification tools + 10 Wave 1 Machine Economy tools + 6 Wave 2 CGCP/1 mapping tools (intent/receipt/limits/revoke/audit) + 20 Wave 3 tools (policy reasoning, MCP supply-chain audit, evidence, operations, interop) + 24 Wave 4 tools (cross-border/bank/chain/machine/loan evidence) + 24 Wave 5 tools (authority, KYC/AML, reconciliation, chain evidence, machine economy, evidence packs) = 94 total. Optional trust roots enable Ed25519 signature verification for telemetry/delegation; no custody, no broadcast, no network calls; external settlement/physical truth/device identity beyond supplied key material NOT proven.
+ * Tools (all offline/self-hosted, deterministic, zero network keys): 10 core consent/verification tools + 10 Wave 1 Machine Economy tools + 6 Wave 2 CGCP/1 mapping tools (intent/receipt/limits/revoke/audit) + 20 Wave 3 tools (policy reasoning, MCP supply-chain audit, evidence, operations, interop) + 24 Wave 4 tools (cross-border/bank/chain/machine/loan evidence) + 24 Wave 5 tools (authority, KYC/AML, reconciliation, chain evidence, machine economy, evidence packs) + 5 CG-SG/1 Stellar agent-gate tools (preflight, exact XDR binding, submission evidence, evidence pack, adversarial vectors) = 99 total. Optional trust roots enable Ed25519 signature verification for telemetry/delegation; no custody, no broadcast, no network calls; external settlement/physical truth/device identity beyond supplied key material NOT proven.
  *
  * BOUNDARIES (standing): synthetic demo data is the caller's; nothing here
  * contacts any platform or payment network (no contact/integration/endorsement
@@ -60,6 +60,7 @@ import { createIntent, issueReceipt, verifyReceipt as verifyCgcpReceipt, checkLi
 import { WAVE3_TOOLS, WAVE3_HANDLERS, WAVE3_VALIDATORS, WAVE3_BOUNDARY } from "./wave3.mjs";
 import { WAVE4_TOOLS, WAVE4_HANDLERS, WAVE4_VALIDATORS, WAVE4_BOUNDARY } from "./wave4.mjs";
 import { WAVE5_TOOLS, WAVE5_HANDLERS, WAVE5_VALIDATORS, WAVE5_BOUNDARY } from "./wave5.mjs";
+import { STELLAR_GATE_TOOLS, STELLAR_GATE_HANDLERS, STELLAR_GATE_VALIDATORS, STELLAR_GATE_BOUNDARY } from "./stellar-gate.mjs";
 
 const PROTOCOL_VERSION = "2025-06-18";
 
@@ -179,6 +180,13 @@ const TOOL_NAMES = Object.freeze([
   "coreguard_verify_agent_authority_intersection",
   "coreguard_create_inference_receipt",
   "coreguard_export_evidence_pack",
+  // Stellar Agent Gate (CG-SG/1) — binds an approved agent action to exact XDR
+  // bytes and verifies caller-supplied submission evidence. Offline, no RPC.
+  "coreguard_preflight_stellar_agent_payment",
+  "coreguard_bind_stellar_authorization",
+  "coreguard_verify_stellar_submission_evidence",
+  "coreguard_export_stellar_evidence_pack",
+  "coreguard_stellar_adversarial_vectors",
 ]);
 
 /**
@@ -235,6 +243,7 @@ const VALIDATORS = Object.freeze({
   ...WAVE3_VALIDATORS,
   ...WAVE4_VALIDATORS,
   ...WAVE5_VALIDATORS,
+  ...STELLAR_GATE_VALIDATORS,
   coreguard_authorize(args) {
     const missing = requireObjects(args, ["intent", "policy", "declaredTrace"]);
     if (missing) return missing;
@@ -741,6 +750,7 @@ const TOOLS = Object.freeze([
   ...WAVE3_TOOLS,
   ...WAVE4_TOOLS,
   ...WAVE5_TOOLS,
+  ...STELLAR_GATE_TOOLS,
 ]);
 
 function withCallerContext(value, args) {
@@ -840,6 +850,10 @@ async function callTool(name, args, { consumedSet } = {}) {
       const ctx = { toolNames: TOOL_NAMES, version: PACKAGE.version, serverName: SERVER_INFO.name, protocolVersion: PROTOCOL_VERSION };
       return success(withCallerContext(WAVE5_HANDLERS[name](a, ctx), a));
     }
+    if (STELLAR_GATE_HANDLERS[name]) {
+      const ctx = { toolNames: TOOL_NAMES, version: PACKAGE.version, serverName: SERVER_INFO.name, protocolVersion: PROTOCOL_VERSION };
+      return success(withCallerContext(STELLAR_GATE_HANDLERS[name](a, ctx), a));
+    }
     return failure(ERROR_CODES.UNKNOWN_TOOL, `unknown tool: ${String(name)}`);
   } catch (err) {
     return failure(ERROR_CODES.TOOL_ERROR, err?.message ?? String(err));
@@ -904,12 +918,14 @@ export function createMcpHandler({ write } = {}) {
 
 export function selfCheck() {
   return [
-    ["tools exposed", TOOL_NAMES.length === 94 && TOOL_NAMES[0] === "coreguard_authorize" && TOOL_NAMES[9] === "coreguard_consumption_status" && TOOL_NAMES[19] === "coreguard_verify_delegation_chain" && TOOL_NAMES[25] === "coreguard_audit_transaction" && TOOL_NAMES[45] === "coreguard_describe_surface" && TOOL_NAMES[69] === "coreguard_create_incident_war_room" && TOOL_NAMES[93] === "coreguard_export_evidence_pack"],
+    ["tools exposed", TOOL_NAMES.length === 99 && TOOL_NAMES[0] === "coreguard_authorize" && TOOL_NAMES[9] === "coreguard_consumption_status" && TOOL_NAMES[19] === "coreguard_verify_delegation_chain" && TOOL_NAMES[25] === "coreguard_audit_transaction" && TOOL_NAMES[45] === "coreguard_describe_surface" && TOOL_NAMES[69] === "coreguard_create_incident_war_room" && TOOL_NAMES[93] === "coreguard_export_evidence_pack" && TOOL_NAMES[98] === "coreguard_stellar_adversarial_vectors"],
     ["wave 3 declares schemas for every tool", WAVE3_TOOLS.length === 20 && WAVE3_TOOLS.every((t) => t.name.startsWith("coreguard_") && t.inputSchema?.required?.length > 0 && t.outputSchema?.type === "object" && WAVE3_HANDLERS[t.name])],
     ["wave 4 declares schemas for every tool", WAVE4_TOOLS.length === 24 && WAVE4_TOOLS.every((t) => t.name.startsWith("coreguard_") && t.inputSchema && t.outputSchema?.type === "object" && WAVE4_HANDLERS[t.name])],
     ["wave 4 boundary travels", WAVE4_BOUNDARY.includes("VERIFIED ≠ SAFE")],
     ["wave 5 declares schemas for every tool", WAVE5_TOOLS.length === 24 && WAVE5_TOOLS.every((t) => t.name.startsWith("coreguard_") && t.inputSchema?.required?.length > 0 && t.outputSchema?.type === "object" && WAVE5_HANDLERS[t.name])],
     ["wave 5 boundary travels", WAVE5_BOUNDARY.includes("VERIFIED ≠ SAFE") && WAVE5_BOUNDARY.includes("no settlement finality")],
+    ["stellar gate declares schemas for every tool", STELLAR_GATE_TOOLS.length === 5 && STELLAR_GATE_TOOLS.every((t) => t.name.startsWith("coreguard_") && t.inputSchema?.required?.length > 0 && t.outputSchema?.type === "object" && STELLAR_GATE_HANDLERS[t.name])],
+    ["stellar gate boundary travels", STELLAR_GATE_BOUNDARY.includes("VERIFIED ≠ SAFE") && STELLAR_GATE_BOUNDARY.includes("no Stellar RPC") && STELLAR_GATE_BOUNDARY.includes("never signs or submits")],
     ["wave 3 boundary travels", WAVE3_BOUNDARY.includes("VERIFIED ≠ SAFE")],
     ["protocol version pinned", PROTOCOL_VERSION === "2025-06-18"],
     ["spec surfaced", CONSENT_SPEC === "CGCR/1" && AGENT_COMMERCE_VERSION === "AC-SDK/1"],

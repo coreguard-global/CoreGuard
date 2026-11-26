@@ -48,6 +48,7 @@ Add an entry only after an actual run. Include evidence (command output snippet,
 | 2026-11-22 | agent session | Claude Code CLI 2.1.329 | n/a | **BLOCKED** | `claude -p` → “Not logged in · Please run /login” | CLI is installed in this environment but has no account session; no client run is claimed. |
 | 2026-11-25 | agent session | Published npm artifact + raw stdio (`npx -y -p @coreguard/agent-commerce@0.3.0 coreguard-agent-commerce-mcp`) | npm `@coreguard/agent-commerce@0.3.0` | **ARTIFACT RE-READ** | `initialize` `0.3.0`, `tools/list` 70 tools | Published artifact, not the workspace; not a third-party client run. |
 | 2026-11-25 | agent session | Published npm artifact + raw stdio (`npx -y -p @coreguard/agent-commerce@0.4.0 coreguard-agent-commerce-mcp`) | npm `@coreguard/agent-commerce@0.4.0` | **ARTIFACT RE-READ** | `initialize` `0.4.0`, `tools/list` 94 tools | Published artifact, not the workspace; not a third-party client run. |
+| 2026-11-26 | agent session | Local stdio child against the unpublished 0.5.0 preparation | `@coreguard/agent-commerce@0.5.0` (PREPARED, NOT PUBLISHED) | PREPARED / NOT PUBLISHED | `initialize` `0.5.0`, `tools/list` 99 tools, 5 CG-SG/1 tools exercised | Workspace only; no npm/MCP Registry publication is claimed here. |
 | _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.4.0` | PENDING |  | Needs a signed-in session to exercise the 94 tools; connection alone is not a RUN-BY-HAND. |
 
 ## Minimum acceptance for a "RUN-BY-HAND" entry

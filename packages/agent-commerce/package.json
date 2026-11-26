@@ -1,6 +1,6 @@
 {
   "name": "@coreguard/agent-commerce",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "CoreGuard Agent Commerce: consent receipts (CGCR/1) and fail-closed execution verification (AGR/1) for agentic purchases — SDK, REST surface, and a stdio MCP server (94 tools, JSON-RPC 2.0, offline, zero keys)",
   "type": "module",
   "main": "./index.mjs",
@@ -38,7 +38,8 @@
     "./machine-economy.mjs": "./machine-economy.mjs",
     "./cgcp-mcp-tools.mjs": "./cgcp-mcp-tools.mjs",
     "./wave4.mjs": "./wave4.mjs",
-    "./wave5.mjs": "./wave5.mjs"
+    "./wave5.mjs": "./wave5.mjs",
+    "./stellar-gate.mjs": "./stellar-gate.mjs"
   },
   "bin": {
     "coreguard-agent-commerce-mcp": "./bin/mcp.mjs",
@@ -87,7 +88,8 @@
     "trust.mjs",
     "wave3.mjs",
     "wave4.mjs",
-    "wave5.mjs"
+    "wave5.mjs",
+    "stellar-gate.mjs"
   ],
   "engines": {
     "node": ">=18"
