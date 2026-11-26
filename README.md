@@ -28,14 +28,14 @@
 <!-- COREGUARD:MCPRUSH:BEGIN -->
 ## CoreGuard Agent Commerce — Now listed on MCPRush
 
-<p align="center"><a href="https://mcprush.com/to/coreguard-agent-commerce-mcp?ref=badge"><img width="380" height="200" src="https://mcprush.com/badge/coreguard-agent-commerce-mcp/card.svg" alt="Coreguard Agent Commerce MCP server — MCPRush grade badge" loading="lazy" /></a></p>
+<p align="center"><a href="https://mcprush.com/to/coreguard-agent-commerce-mcp?ref=badge"><img width="380" height="200" src="https://mcprush.com/badge/coreguard-agent-commerce-mcp/card.svg?v=119" alt="Coreguard Agent Commerce MCP server — MCPRush grade badge" loading="lazy" /></a></p>
 
 **Graded A on MCPRush — before anyone installs.** A live badge that updates itself. It is MCPRush's automated directory grade, not an independent security audit.
 
 **Discover the open-source consent and execution-verification tools.**
 CoreGuard Agent Commerce appears in the [MCPRush directory](https://mcprush.com/eslam-x/coreguard-agent-commerce-mcp).
 This is a publicly indexed marketplace listing, indexed 21 November 2026 and edited from the publisher's MCPRush studio; it is **not** a partnership, endorsement, funding award or independent security audit.
-The listing is free, runs locally from the publisher's package, and is not hosted or billed by the marketplace. Its tool count is whatever MCPRush last read, so the badge can lag the npm release; the measured surface is always `docs/mcprush/CAPABILITY-CARD.md`.
+The listing is free, runs locally from the publisher's package, and is not hosted or billed by the marketplace. Its tool count is whatever MCPRush last read, so the badge can lag the npm release; the measured surface is always `docs/mcprush/CAPABILITY-CARD.md`. The badge's version label follows the studio release, so it can read an older version while the tool count is already 119 — cutting the 0.5.1 release in the studio updates it.
 
 [**Explore the package**](https://www.npmjs.com/package/@coreguard/agent-commerce) · [**Documentation**](https://coreguard-global.github.io/CoreGuard/DOCS.html) · [**Agent skills**](https://coreguard-global.github.io/CoreGuard/SKILLS.html) · [**Announcement & film**](https://coreguard-trust-and-defense.lovable.app/developments#mcprush)
 
