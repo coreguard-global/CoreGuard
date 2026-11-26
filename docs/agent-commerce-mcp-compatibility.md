@@ -23,6 +23,7 @@
 | Runtime smoke check (real stdio child, success + drift + malformed) | **CI-SMOKE** | `node scripts/agent-commerce-mcp-smoke.mjs` |
 | Runnable example | **CI-SMOKE** | `node examples/agent-commerce-mcp/run.mjs` |
 | Control-plane HTTP arc (real server, ephemeral port) | **CI-SMOKE** | `node --test test/integrations/agent-commerce-control-plane-http.test.mjs` |
+| External MCP client run (official SDK 1.32.2, stdio, published 0.5.1) | **RUN-BY-HAND** | `docs/evidence/mcp-client-run-0.5.1.json` |
 
 ## Client matrix
 
@@ -50,7 +51,10 @@ Add an entry only after an actual run. Include evidence (command output snippet,
 | 2026-11-25 | agent session | Published npm artifact + raw stdio (`npx -y -p @coreguard/agent-commerce@0.4.0 coreguard-agent-commerce-mcp`) | npm `@coreguard/agent-commerce@0.4.0` | **ARTIFACT RE-READ** | `initialize` `0.4.0`, `tools/list` 94 tools | Published artifact, not the workspace; not a third-party client run. |
 | 2026-11-26 | agent session | Published npm artifact + raw stdio (`npx -y -p @coreguard/agent-commerce@0.5.0 coreguard-agent-commerce-mcp`) | npm `@coreguard/agent-commerce@0.5.0` | **ARTIFACT RE-READ** | `initialize` `0.5.0`, `tools/list` 99 tools with input/output schemas; 5 CG-SG/1 tools included | Published artifact, not the workspace; not a third-party client run. Registry `active` + `isLatest`; tarball `sha256:b7dc09ea43390aa8188023df1028df753e6cf6be13df21bae2f4d807498980a0`. |
 | 2026-11-26 | agent session | Published npm artifact + raw stdio (`@coreguard/agent-commerce@0.5.1` installed in a scratch dir, run through `bin/mcp.mjs`) | npm `@coreguard/agent-commerce@0.5.1` | **ARTIFACT RE-READ** | `initialize` `0.5.1`, `tools/list` **119 tools** with input/output schemas; 20 CG-W6/1 tools included | Published artifact, not the workspace; not a third-party client run. Registry `0.5.1` `active` + `isLatest`; tarball `sha256:350d9dcb71bbf5c416afc88f72e17e903188a390ac84d0537f43d45c7a726543`. |
-| _TBD_ | _TBD_ | Claude Code | `@coreguard/agent-commerce@0.5.1` | PENDING |  | Needs a signed-in session to exercise the 119 tools; connection alone is not a RUN-BY-HAND. |
+| 2026-11-26 | agent session (Codebuff, isolated cloud workspace) | Official MCP SDK client `@modelcontextprotocol/sdk` 1.32.2 (`Client` + `StdioClientTransport`, Node 24.22.1) | npm `@coreguard/agent-commerce@0.5.1` | **RUN-BY-HAND PASS** | `docs/evidence/mcp-client-run-0.5.1.json` (per-call transcript, 12 calls) | 119 tools discovered; `initialize` version `0.5.1`; `coreguard_describe_surface` card reports 119; `coreguard_authorize` returned a CGCR/1 record; exact trace -> `VERIFIED` (CLEAN); 57000-vs-47000 trace -> `INVALID` / VIOLATIONS with named `VALUE_ESCALATION`; `U5DC` against a `USDC` allowlist -> `FAIL` with `NO_CONFUSABLE`; malformed input returned a structured `MISSING_ARGUMENT` error and the next call succeeded. This is the official SDK client over stdio, **not** the Claude Code or VS Code UI, and no model turn was involved. |
+| 2026-11-26 | agent session | Claude Code CLI | `@coreguard/agent-commerce@0.5.1` | **PENDING** | — | The CLI binary is not installed in this cloud workspace and no signed-in session exists, so no model-driven tool call was attempted. Config stays `CONFIG-REGISTERED`; this row is not a run. |
+| 2026-11-26 | agent session | VS Code + GitHub Copilot (MCP) | `@coreguard/agent-commerce@0.5.1` | **PENDING** | — | No GUI and no Copilot sign-in in this workspace. The `.vscode/mcp.json` shape stays `CONFIG-DOCUMENTED`; no run is claimed. |
+| 2026-11-26 | agent session | Cursor | `@coreguard/agent-commerce@0.5.1` | **PENDING** | — | No GUI or account session in this workspace; `.cursor/mcp.json` shape stays `CONFIG-DOCUMENTED`. |
 
 ## Minimum acceptance for a "RUN-BY-HAND" entry
 

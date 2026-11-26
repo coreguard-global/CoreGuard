@@ -1,0 +1,245 @@
+{
+  "run": "external MCP client compatibility run",
+  "dateUtc": "2026-11-26",
+  "operator": "agent session (Codebuff) in an isolated cloud workspace",
+  "client": "official @modelcontextprotocol/sdk Client (stdio)",
+  "sdkVersion": "1.32.2",
+  "serverCommand": "node node_modules/@coreguard/agent-commerce/bin/mcp.mjs (npm tarball)",
+  "package": "@coreguard/agent-commerce",
+  "packageVersion": "0.5.1",
+  "serverInfo": {
+    "name": "coreguard-agent-commerce",
+    "version": "0.5.1"
+  },
+  "toolCount": 119,
+  "wave6Tools": [
+    "coreguard_verify_stellar_settlement_evidence",
+    "coreguard_verify_stellar_path_payment",
+    "coreguard_compile_stellar_session_policy",
+    "coreguard_evaluate_stellar_session_key",
+    "coreguard_verify_stellar_session_key_scope",
+    "coreguard_verify_stellar_smart_account_signers",
+    "coreguard_verify_stellar_multisig_thresholds",
+    "coreguard_verify_stellar_time_bounds",
+    "coreguard_verify_stellar_memo_binding",
+    "coreguard_verify_stellar_asset_allowlist",
+    "coreguard_verify_stellar_trustline_policy",
+    "coreguard_verify_stellar_soroban_auth_entry",
+    "coreguard_verify_stellar_sac_allowance",
+    "coreguard_assess_stellar_fee_bump",
+    "coreguard_verify_stellar_claimable_balance",
+    "coreguard_verify_stellar_sponsored_reserve",
+    "coreguard_verify_stellar_sequence_guard",
+    "coreguard_verify_stellar_operation_set",
+    "coreguard_verify_stellar_dex_path",
+    "coreguard_verify_stellar_sep10_challenge",
+    "coreguard_verify_stellar_sep24_anchor_evidence",
+    "coreguard_issue_stellar_session_receipt",
+    "coreguard_preflight_stellar_agent_payment",
+    "coreguard_bind_stellar_authorization",
+    "coreguard_verify_stellar_submission_evidence",
+    "coreguard_export_stellar_evidence_pack",
+    "coreguard_stellar_adversarial_vectors"
+  ],
+  "calls": [
+    {
+      "tool": "coreguard_describe_surface",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "type": "capability_card",
+        "spec": "CG-CC/1",
+        "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment."
+      }
+    },
+    {
+      "tool": "coreguard_compile_stellar_session_policy",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "type": "compile_stellar_session_policy",
+        "spec": "CG-W6/1",
+        "status": "OK",
+        "verdict": "PASS",
+        "policyDigest": "sha256:7e5888f42f7a49b43af10e60267fee66e6b7fc82bc42137a81324a08a0cd542f",
+        "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed.",
+        "critical": [],
+        "failed": []
+      }
+    },
+    {
+      "tool": "coreguard_evaluate_stellar_session_key",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "type": "evaluate_stellar_session_key",
+        "spec": "CG-W6/1",
+        "status": "OK",
+        "verdict": "PASS",
+        "decision": "ALLOW",
+        "sessionId": "compat-session-1",
+        "policyDigest": "sha256:7e5888f42f7a49b43af10e60267fee66e6b7fc82bc42137a81324a08a0cd542f",
+        "actionDigest": "sha256:9788dfa1d9bc916ca042003a6d44fd9f4bb34a96518848b05b3ceff348005b11",
+        "remainingDailyMinor": "20000000",
+        "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed.",
+        "reasons": [],
+        "critical": [],
+        "failed": []
+      }
+    },
+    {
+      "tool": "coreguard_evaluate_stellar_session_key",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "type": "evaluate_stellar_session_key",
+        "spec": "CG-W6/1",
+        "status": "OK",
+        "verdict": "FAIL",
+        "decision": "DENY",
+        "sessionId": "compat-session-1",
+        "policyDigest": "sha256:7e5888f42f7a49b43af10e60267fee66e6b7fc82bc42137a81324a08a0cd542f",
+        "actionDigest": "sha256:4ffe1f2484b1b5a4c774bc3378fa965fa8c278d37dc5b0d8d36982747512a35e",
+        "remainingDailyMinor": "20000000",
+        "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed.",
+        "reasons": [
+          {
+            "code": "PER_ACTION_CAP_EXCEEDED",
+            "detail": "9000000 > 5000000"
+          }
+        ],
+        "critical": [
+          "DECISION"
+        ],
+        "failed": [
+          "DECISION"
+        ]
+      }
+    },
+    {
+      "tool": "coreguard_evaluate_stellar_session_key",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "type": "evaluate_stellar_session_key",
+        "spec": "CG-W6/1",
+        "status": "OK",
+        "verdict": "FAIL",
+        "decision": "DENY",
+        "sessionId": "compat-session-1",
+        "policyDigest": "sha256:7e5888f42f7a49b43af10e60267fee66e6b7fc82bc42137a81324a08a0cd542f",
+        "actionDigest": "sha256:6ecf14a4408412e1aaedac81a951770336736ca1e0dd796b870cbc7afd8790b2",
+        "remainingDailyMinor": "20000000",
+        "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed.",
+        "reasons": [
+          {
+            "code": "SESSION_EXPIRED",
+            "detail": "1794747600 >= 1794744000"
+          }
+        ],
+        "critical": [
+          "DECISION"
+        ],
+        "failed": [
+          "DECISION"
+        ]
+      }
+    },
+    {
+      "tool": "coreguard_verify_stellar_asset_allowlist",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "type": "verify_stellar_asset_allowlist",
+        "spec": "CG-W6/1",
+        "status": "OK",
+        "verdict": "FAIL",
+        "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed.",
+        "critical": [
+          "EXACT_MATCH",
+          "NO_CONFUSABLE"
+        ],
+        "failed": [
+          "EXACT_MATCH",
+          "NO_CONFUSABLE"
+        ]
+      }
+    },
+    {
+      "tool": "coreguard_issue_stellar_session_receipt",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "type": "issue_stellar_session_receipt",
+        "spec": "CG-W6/1",
+        "status": "OK",
+        "verdict": "PASS",
+        "receiptDigest": "sha256:3b097a95eaccc4ce0716f889b91a1d732b6b1bd3a2a73b569be1fcdbb0b1d7e9",
+        "boundary": "Wave 6 is deterministic, offline reasoning over caller-supplied Stellar evidence. It does not contact Stellar RPC, Horizon, Soroban, anchors, DEXs, wallets or any network, and it never signs, submits or broadcasts. Outputs are decision and evidence signals only; VERIFIED ≠ SAFE; no settlement finality, asset truth, counterparty honesty, KYC/AML clearance or compliance certification is claimed.",
+        "critical": [],
+        "failed": []
+      }
+    },
+    {
+      "tool": "coreguard_evaluate_stellar_session_key",
+      "isError": true,
+      "error": null,
+      "summary": {}
+    },
+    {
+      "tool": "coreguard_describe_surface",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "type": "capability_badge",
+        "spec": "CG-CC/1",
+        "boundary": "Wave 3 is deterministic, offline reasoning over caller-supplied JSON: it checks structure, policy arithmetic and byte-level provenance, never truth, safety, identity or settlement. A finding is evidence for a human decision, not a verdict on a third party. VERIFIED ≠ SAFE; no network calls, no keys, no wall clock in any commitment."
+      }
+    },
+    {
+      "tool": "coreguard_authorize",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "spec": "CGCR/1",
+        "receiptId": "0x052d018d623a04167614dd15f0b4e7102b9dac85d8da39c460ce73ca9081ac0e"
+      }
+    },
+    {
+      "tool": "coreguard_verify_execution",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "spec": "AC-SDK/1",
+        "verdict": "VERIFIED",
+        "boundary": "execution verification never decides delivery conformity (DDE/1); VERIFIED ≠ SAFE; the actor is declared, never detected",
+        "risk": {
+          "classification": "CLEAN",
+          "violations": []
+        },
+        "driftNamed": []
+      }
+    },
+    {
+      "tool": "coreguard_verify_execution",
+      "isError": null,
+      "error": null,
+      "summary": {
+        "spec": "AC-SDK/1",
+        "verdict": "INVALID",
+        "boundary": "execution verification never decides delivery conformity (DDE/1); VERIFIED ≠ SAFE; the actor is declared, never detected",
+        "risk": {
+          "classification": "VIOLATIONS",
+          "violations": [
+            "POLICY_VIOLATION",
+            "SINGLE_USE_REUSE",
+            "VALUE_ESCALATION"
+          ]
+        },
+        "driftNamed": [
+          "total: approved 47000 -> executed 57000"
+        ]
+      }
+    }
+  ]
+}
