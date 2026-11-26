@@ -82,6 +82,7 @@ export const CLAIM_SOURCES = Object.freeze([
   { path: "docs/reputation-registry.json", read: (s) => s },
   { path: "docs/risk-findings.json", read: (s) => s },
   { path: "docs/adoption-milestones.json", read: (s) => (Array.isArray(s) ? { count: s.length } : s) },
+  { path: "docs/STELLAR-OWNER-SETTLEMENT-2026-11-26.json", read: (s) => s },
 ]);
 
 /**
@@ -269,6 +270,37 @@ export const CLAIMS = Object.freeze([
       binding: "sha256 over the exact XDR string + Ed25519 canonical JSON",
       rejectCodes: ["MALFORMED_RECEIPT", "MALFORMED_INPUT", "BAD_DIGEST", "BAD_SIGNATURE", "XDR_BINDING_MISMATCH", "NETWORK_MISMATCH", "POLICY_MISMATCH", "NOT_YET_VALID", "RECEIPT_EXPIRED", "VERIFIER_ERROR"],
     }),
+  },
+  {
+    id: "CL-STELLAR-OWNER-SETTLEMENT",
+    area: "integration",
+    claim: "A recorded owner-delegated Testnet signing and settlement proof exists: the saved artifact re-derives the Ed25519 signature, exact-byte CG-SG/1 binding, closed-ledger re-read and exact native balance deltas offline. It is not owner-held-key use, Mainnet settlement, legal finality, KYC/AML clearance or production readiness.",
+    status: "VERIFIED",
+    verificationLevel: "L1",
+    external: false,
+    evidence: [
+      "docs/OWNER-DECISION-2026-11-26-TESTNET-SETTLEMENT-SIGNING.md",
+      "scripts/stellar-owner-settlement.mjs",
+      "docs/STELLAR-OWNER-SETTLEMENT-2026-11-26.json",
+      "test/integrations/stellar-owner-settlement.test.mjs",
+    ],
+    recheck: "node scripts/stellar-owner-settlement.mjs --verify docs/STELLAR-OWNER-SETTLEMENT-2026-11-26.json",
+    derive: (src) => {
+      const s = src.settlement;
+      if (!s || s.status !== "SETTLEMENT_RECORDED" || s.network !== "testnet") return null;
+      return {
+        status: s.status,
+        network: s.network,
+        hash: s.transaction.hash,
+        ledger: s.transaction.ledger,
+        ledgerClosed: s.finality.ledgerClosed,
+        ownerHeldKey: s.authority.ownerHeldKey,
+        mainnet: s.authority.mainnet,
+        signatureVerified: s.signing.verified,
+        gateVerdict: s.gate.verificationVerdict,
+      };
+    },
+    deriveAssert: (v) => v && v.ledgerClosed === true && v.ownerHeldKey === false && v.mainnet === false && v.signatureVerified === true && v.gateVerdict === "VERIFIED",
   },
   {
     id: "CL-ATTACK-LAB",
@@ -487,6 +519,7 @@ export function buildRegistry() {
     findings: read(join(REPO, "docs", "risk-findings.json"), null),
     milestones: read(join(REPO, "docs", "adoption-milestones.json"), null),
     badge: read(join(REPO, "docs", "badge-registry.json"), null),
+    settlement: read(join(REPO, "docs", "STELLAR-OWNER-SETTLEMENT-2026-11-26.json"), null),
   };
   src.committedRegistryHead = readCommitted("docs/claims-registry.json") ? JSON.parse(readCommitted("docs/claims-registry.json")) : null;
 

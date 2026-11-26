@@ -81,6 +81,7 @@ const ALLOWED = new Set([
   "docs/SCF-46-RFP2-XDR-AUDIT-SUBMISSION-2026-11-13.md", // dated SCF RFP2 XDR audit submission, 2026-11-13 (verbatim historical suite claim)
   "docs/SCF-INTEREST-FORM-2026-11-16.md", // dated SCF interest form, 2026-11-16 (verbatim historical suite claim)
   "docs/releases/0.4.0.md", // published 0.4.0 release notes, 2026-11-25 (verbatim suite state at publish)
+  "docs/releases/0.5.0.md", // published 0.5.0 release notes, 2026-11-26 (verbatim suite state at publish)
   "docs/owner-execution/NPM-PUBLISH-READINESS-AND-STEPS.md", // 0.4.0 owner publish readiness instrument, 2026-11-25 (historical measured state)
 ]);
 

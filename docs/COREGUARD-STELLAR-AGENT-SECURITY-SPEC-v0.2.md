@@ -1,9 +1,9 @@
 # CoreGuard × Stellar Agent Security Gate — Specification v0.2 (CG-SG/1)
 
-**Status:** `SPEC / P1–P4 IMPLEMENTED OFFLINE / P5 OWNER-GATED / P6 NOT_BUILT`
+**Status:** `SPEC / P1–P4 IMPLEMENTED OFFLINE / P5 SYNTHETIC PROOF + P5B OWNER-DELEGATED TESTNET SETTLEMENT PROOF / P6 NOT_BUILT`
 **Date:** 2026-11-26
 **Supersedes:** `docs/COREGUARD-STELLAR-AGENTIC-INFRASTRUCTURE-BLUEPRINT-v0.1.md` §5–§7 as the implementation contract for `stellar-agent-gate`.
-**Owner gate:** this document does not authorize signing, broadcasting, custody of keys, a live Stellar RPC/Horizon dependency, an x402 settlement, a customer pilot, a signed-in third-party client run, or any production/security claim.
+**Owner gate:** this document does not authorize signing, broadcasting, custody of keys, a live Stellar RPC/Horizon dependency, an x402 settlement, a customer pilot, a signed-in third-party client run, or any production/security claim. The separate owner instrument `docs/OWNER-DECISION-2026-11-26-TESTNET-SETTLEMENT-SIGNING.md` is the only authority for the P5B Testnet-only proof; it does not amend P6 or this boundary.
 
 ## 0. Decision record (what the owner authorized and what that cannot create)
 
@@ -39,6 +39,7 @@ The module returns ALLOW / REFUSED / BOUND / VERIFIED / INVALID / UNKNOWN with n
 | P3 | Bind authorization to exact XDR bytes and observed projection | Byte drift and named field drift are refused; replay cannot reuse an authorization | `IMPLEMENTED` — `bindStellarAuthorization` |
 | P4 | Expose gate through MCP with input/output schemas | `tools/list` grows 94 → 99; every example executed against a real stdio child; generated artifacts regenerated | `IMPLEMENTED` — 5 CG-SG/1 tools, 12/12 smoke |
 | P5 | Documented Testnet run with a real RPC endpoint | Receipt, transaction hash, replay command, keys provenance and named boundaries recorded; still not production | `PROOF_RECORDED / SYNTHETIC` — real Testnet hash `ab879a1a…b5b09`, ledger `5925850`, ephemeral agent-generated keys; `docs/STELLAR-TESTNET-PROOF-2026-11-26.md`; not owner-held-key or production evidence |
+| P5B | Owner-authorized Testnet signing + settlement proof, outside the MCP surface | Prior recorded owner decision; agent-generated in-memory keys under delegation; real signature proof; exact-byte CG-SG/1 binding; Horizon success; independent re-read; closed ledger; exact source/destination deltas; secret never persisted | `PROOF_RECORDED / OWNER-DELEGATED TESTNET` — hash `c84d57b7…c0309`, closed ledger `5936704`, 1 subsequent ledger; `docs/STELLAR-OWNER-SETTLEMENT-2026-11-26.md`; not owner-held-key, Mainnet, P6 or production evidence |
 | P6 | Production pilot | Signed owner decision, named integrator, credentials, trust roots, SLA discussion, evidence and incident owner | `NOT_BUILT / OWNER-GATED` — never assumed |
 
 ## 3. Authority model and open decisions
@@ -132,6 +133,14 @@ All five have input/output schemas and a shared boundary string. The generated M
 
 The script was run once on 2026-11-26 with ephemeral agent-generated keys. The real hash `ab879a1a06e8fc2e4eb4f7bf96908dd688a6b06a0e9921f97038196ea87b5b09`, ledger `5925850`, endpoint, replay command and boundaries are recorded in `docs/STELLAR-TESTNET-PROOF-2026-11-26.md` and `docs/STELLAR-TESTNET-PROOF-2026-11-26.json`, including a separate Horizon re-read. If it is not re-run, no additional hash is claimed.
 
+## 7B. P5B owner-delegated Testnet settlement proof (not P6)
+
+`scripts/stellar-owner-settlement.mjs` is a separate operator-only runner. It is **not** an MCP tool, does not change the 99-tool / 72-skill published surface, and is excluded from `npm test` in live mode. It refuses to run without both (a) the committed owner-decision marker in `docs/OWNER-DECISION-2026-11-26-TESTNET-SETTLEMENT-SIGNING.md` and (b) the explicit `--owner-delegated-testnet-settlement` flag. Its keys are generated in memory under recorded delegation; no owner-held wallet file exists or is used here, and no secret is written, logged, printed or exported.
+
+The single executed run on 2026-11-26 recorded hash `c84d57b76b5de93444f41c72a29aca07525f3d3c84196fce03c2df01544c0309`, Testnet ledger `5936704` closed at `2026-11-26T15:32:43Z`, ledger hash `23e1a041b28cd4a5f9688c7ece3f040e4ad02ecdeb0b0ee4409fc169d2c8b95f`, one subsequent ledger, and exact native-XLM balances `10000.0000000 → 9998.9999900` (source) and `10000.0000000 → 10001.0000000` (destination) with a `100`-stroop fee. The signed envelope, 64-byte Ed25519 signature and all public chain bytes are in the JSON artifact; the offline `--verify` mode re-derives the gate, signature and finality fields without network access.
+
+This is **Testnet ledger-closed evidence only**. It does not prove owner-held-key use, transferable signing authority, Mainnet settlement, legal/financial finality, custody, sanctions/KYC/AML clearance, asset truth, audit, compliance, a customer/pilot, or production readiness. P6 remains `NOT_BUILT / OWNER-GATED`.
+
 ## 8. Claim discipline
 
 | Allowed now | Not allowed now |
@@ -140,6 +149,7 @@ The script was run once on 2026-11-26 with ephemeral agent-generated keys. The r
 | "CG-SG/1 provides offline, deterministic pre-execution gating and exact XDR byte binding." | "CoreGuard called Stellar RPC / Testnet / Mainnet" unless a recorded proof exists. |
 | "A named adversarial suite and 5 MCP tools were prepared and tested offline." | "Production ready", "audited", "compliant", "settlement final", "verified safe". |
 | "A manual Testnet proof script exists; any run will be recorded with its hash and boundaries." | Any customer, pilot, sponsor, funding, endorsement or adoption claim. |
+| "A recorded owner-delegated Testnet payment reached a closed Testnet ledger with an offline-verifiable signature and balance deltas." | "The owner's own key was used", "Mainnet settled", or "production signing is live". |
 | "`VERIFIED` means supplied bytes matched the bound bytes." | "`VERIFIED` means the payment settled or the recipient is safe." |
 
 ## 9. References
@@ -148,6 +158,9 @@ The script was run once on 2026-11-26 with ephemeral agent-generated keys. The r
 - Implementation: `packages/agent-commerce/stellar-gate.mjs`
 - Tests: `test/integrations/agent-commerce-stellar-gate.test.mjs`
 - Manual proof: `scripts/stellar-testnet-proof.mjs`
+- Owner decision: `docs/OWNER-DECISION-2026-11-26-TESTNET-SETTLEMENT-SIGNING.md`
+- Owner-delegated settlement runner: `scripts/stellar-owner-settlement.mjs`
+- Owner-delegated settlement proof: `docs/STELLAR-OWNER-SETTLEMENT-2026-11-26.md`
 - Release preparation: `docs/releases/0.5.0.md`
 - Status truth table: `docs/STATUS.md`
 - Existing commerce spec: `docs/AGENT-COMMERCE-SECURITY-SPEC-V1.md`

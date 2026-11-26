@@ -1,0 +1,185 @@
+{
+  "status": "SETTLEMENT_RECORDED",
+  "spec": "CG-SETTLE/1",
+  "network": "testnet",
+  "endpoint": "https://horizon-testnet.stellar.org",
+  "friendbot": "https://friendbot.stellar.org",
+  "networkPassphrase": "Test SDF Network ; September 2015",
+  "authority": {
+    "decision": "docs/OWNER-DECISION-2026-11-26-TESTNET-SETTLEMENT-SIGNING.md",
+    "marker": "DECISION-OWNER-AUTHORIZED-TESTNET-SETTLEMENT-2026-11-26",
+    "ownerQuote": "اعمل التسوية والتوقيع دا دا تفويض وصلاحية مني انا المالك",
+    "delegatedSigning": true,
+    "ownerHeldKey": false,
+    "mainnet": false,
+    "sourceOfAuthority": "recorded owner session message 2026-11-26"
+  },
+  "parties": {
+    "sourcePublicKey": "GC55WE4J4I5Q6JVZ4M26VDFLWFOQYQYOJ3KFBIY7IRD3NUFD6LUCD3WD",
+    "destinationPublicKey": "GBJJHUF7SSPAONUCAITLOCKX2SB6SF4EQXM4NGNCGZT5RV2ULMI4V7UL",
+    "keyOrigin": "agent-generated ephemeral keypairs under recorded owner delegation",
+    "keyDiscipline": "secret material used in-process only; never written, logged, printed or exported"
+  },
+  "signing": {
+    "algorithm": "ed25519",
+    "publicKey": "GC55WE4J4I5Q6JVZ4M26VDFLWFOQYQYOJ3KFBIY7IRD3NUFD6LUCD3WD",
+    "signatureHex": "c2811ae8f2ec0518f6a0e4469c87c1dc905ead6f0a7c57816ea3dcab78bdfac60ce19b0f4fc54f4bc2d38f5c89b731326784a4c8eacacfda5c6dac1fba416401",
+    "signatureBytes": 64,
+    "hash": "c84d57b76b5de93444f41c72a29aca07525f3d3c84196fce03c2df01544c0309",
+    "verified": true,
+    "checks": [
+      {
+        "id": "hash:derived",
+        "ok": true,
+        "detail": "derived transaction hash must match evidence hash"
+      },
+      {
+        "id": "signature:count",
+        "ok": true,
+        "detail": "exactly one signature is required"
+      },
+      {
+        "id": "signature:hex",
+        "ok": true,
+        "detail": "saved signature must match the signed envelope"
+      },
+      {
+        "id": "signature:ed25519",
+        "ok": true,
+        "detail": "Ed25519 signature must verify from the public key"
+      }
+    ]
+  },
+  "gate": {
+    "version": "CG-SG/1",
+    "boundary": "CG-SG/1 is deterministic and offline. It binds caller-supplied intent bytes to caller-supplied Stellar XDR envelope bytes and verifies caller-supplied submission evidence; it makes no Stellar RPC, Horizon, Friendbot, wallet, network or external call, never signs or submits, and proves no settlement finality, sanctions clearance, KYC/AML approval, balance, asset truth or safety. VERIFIED ≠ SAFE.",
+    "proposal": {
+      "network": "testnet",
+      "sourceAccount": "GC55WE4J4I5Q6JVZ4M26VDFLWFOQYQYOJ3KFBIY7IRD3NUFD6LUCD3WD",
+      "destination": "GBJJHUF7SSPAONUCAITLOCKX2SB6SF4EQXM4NGNCGZT5RV2ULMI4V7UL",
+      "asset": "native",
+      "amount": "1",
+      "memo": "cg-owner-settlement",
+      "sequence": "25497940936097793",
+      "envelopeXdr": "AAAAAgAAAAC72xOJ4jsPJrnjNeqMq7FdDEMOTtRQox9ER7bQo/LoIQAAAGQAWpY+AAAAAQAAAAEAAAAAawhQ+wAAAABrCFHNAAAAAQAAABNjZy1vd25lci1zZXR0bGVtZW50AAAAAAEAAAAAAAAAAQAAAABSk9C/lJ4HNoICJrcJV9SD6ReEhdnGmaI2Z9jXVFsRygAAAAAAAAAAAJiWgAAAAAAAAAABo/LoIQAAAEDCgRro8uwFGPag5Each8HckF6tbwp8V4Fuo9yreL36xgzhmw9PxU9LwtOPXIm3MTJnhKTI6srP2lxtrB+6QWQB",
+      "envelopeProjection": {
+        "network": "testnet",
+        "sourceAccount": "GC55WE4J4I5Q6JVZ4M26VDFLWFOQYQYOJ3KFBIY7IRD3NUFD6LUCD3WD",
+        "destination": "GBJJHUF7SSPAONUCAITLOCKX2SB6SF4EQXM4NGNCGZT5RV2ULMI4V7UL",
+        "asset": "native",
+        "amount": "1",
+        "memo": "cg-owner-settlement",
+        "sequence": "25497940936097793"
+      },
+      "nonce": "owner-settlement-c84d57b76b5de934",
+      "scopes": [
+        "pay"
+      ],
+      "agentScopes": [
+        "pay",
+        "read"
+      ],
+      "timeBounds": {
+        "minTime": "1795707131",
+        "maxTime": "1795707341"
+      },
+      "purpose": "owner-delegated Testnet signing and settlement proof"
+    },
+    "policy": {
+      "allowedNetworks": [
+        "testnet"
+      ],
+      "allowedAssets": [
+        "native"
+      ],
+      "allowedDestinations": [
+        "GBJJHUF7SSPAONUCAITLOCKX2SB6SF4EQXM4NGNCGZT5RV2ULMI4V7UL"
+      ],
+      "maxAmount": "5",
+      "requireMemo": true,
+      "requireNonce": true,
+      "requireTimeBounds": true,
+      "requiredScopes": [
+        "pay"
+      ],
+      "usedNonces": []
+    },
+    "pinnedNowSeconds": "1795707161",
+    "authorizationVerdict": "ALLOW",
+    "authorizationDigest": "sha256:4e4c0a902b304a150e4eb91660d414fcabbb874bf4816e59b5903f046761ad99",
+    "bindingStatus": "BOUND",
+    "envelopeDigest": "sha256:65de7ed567c2fbb08f1103bae0f83b66680ae73d8d4198412ea3dbd827f03811",
+    "evidence": {
+      "network": "testnet",
+      "envelopeXdr": "AAAAAgAAAAC72xOJ4jsPJrnjNeqMq7FdDEMOTtRQox9ER7bQo/LoIQAAAGQAWpY+AAAAAQAAAAEAAAAAawhQ+wAAAABrCFHNAAAAAQAAABNjZy1vd25lci1zZXR0bGVtZW50AAAAAAEAAAAAAAAAAQAAAABSk9C/lJ4HNoICJrcJV9SD6ReEhdnGmaI2Z9jXVFsRygAAAAAAAAAAAJiWgAAAAAAAAAABo/LoIQAAAEDCgRro8uwFGPag5Each8HckF6tbwp8V4Fuo9yreL36xgzhmw9PxU9LwtOPXIm3MTJnhKTI6srP2lxtrB+6QWQB",
+      "txHash": "c84d57b76b5de93444f41c72a29aca07525f3d3c84196fce03c2df01544c0309",
+      "successful": true,
+      "ledger": 5936704,
+      "resultXdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=",
+      "operation": {
+        "network": "testnet",
+        "sourceAccount": "GC55WE4J4I5Q6JVZ4M26VDFLWFOQYQYOJ3KFBIY7IRD3NUFD6LUCD3WD",
+        "destination": "GBJJHUF7SSPAONUCAITLOCKX2SB6SF4EQXM4NGNCGZT5RV2ULMI4V7UL",
+        "asset": "native",
+        "amount": "1",
+        "memo": "cg-owner-settlement",
+        "sequence": "25497940936097793"
+      }
+    },
+    "evidenceDigest": "sha256:bbf6a2b3422984c1f3fb625c7bb0bcfdf9c08b03b161ad33df4f71d43edef5c8",
+    "verificationVerdict": "VERIFIED",
+    "breaks": []
+  },
+  "transaction": {
+    "hash": "c84d57b76b5de93444f41c72a29aca07525f3d3c84196fce03c2df01544c0309",
+    "submittedHash": "c84d57b76b5de93444f41c72a29aca07525f3d3c84196fce03c2df01544c0309",
+    "ledger": 5936704,
+    "successful": true,
+    "createdAt": "2026-11-26T15:32:43Z",
+    "resultXdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=",
+    "envelopeXdr": "AAAAAgAAAAC72xOJ4jsPJrnjNeqMq7FdDEMOTtRQox9ER7bQo/LoIQAAAGQAWpY+AAAAAQAAAAEAAAAAawhQ+wAAAABrCFHNAAAAAQAAABNjZy1vd25lci1zZXR0bGVtZW50AAAAAAEAAAAAAAAAAQAAAABSk9C/lJ4HNoICJrcJV9SD6ReEhdnGmaI2Z9jXVFsRygAAAAAAAAAAAJiWgAAAAAAAAAABo/LoIQAAAEDCgRro8uwFGPag5Each8HckF6tbwp8V4Fuo9yreL36xgzhmw9PxU9LwtOPXIm3MTJnhKTI6srP2lxtrB+6QWQB",
+    "feeCharged": "100"
+  },
+  "finality": {
+    "ledgerClosed": true,
+    "ledgerSequence": 5936704,
+    "ledgerClosedAt": "2026-11-26T15:32:43Z",
+    "ledgerHash": "23e1a041b28cd4a5f9688c7ece3f040e4ad02ecdeb0b0ee4409fc169d2c8b95f",
+    "successfulTransactionCount": 14,
+    "failedTransactionCount": 2,
+    "latestLedger": 5936705,
+    "confirmations": 1,
+    "independentReRead": true,
+    "reReadAtUtc": "2026-11-26T15:32:51.016Z",
+    "reReadHash": "c84d57b76b5de93444f41c72a29aca07525f3d3c84196fce03c2df01544c0309",
+    "reReadLedger": 5936704,
+    "reReadSuccessful": true,
+    "reReadEnvelopeXdr": "AAAAAgAAAAC72xOJ4jsPJrnjNeqMq7FdDEMOTtRQox9ER7bQo/LoIQAAAGQAWpY+AAAAAQAAAAEAAAAAawhQ+wAAAABrCFHNAAAAAQAAABNjZy1vd25lci1zZXR0bGVtZW50AAAAAAEAAAAAAAAAAQAAAABSk9C/lJ4HNoICJrcJV9SD6ReEhdnGmaI2Z9jXVFsRygAAAAAAAAAAAJiWgAAAAAAAAAABo/LoIQAAAEDCgRro8uwFGPag5Each8HckF6tbwp8V4Fuo9yreL36xgzhmw9PxU9LwtOPXIm3MTJnhKTI6srP2lxtrB+6QWQB",
+    "reReadResultXdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=",
+    "reReadCreatedAt": "2026-11-26T15:32:43Z"
+  },
+  "balances": {
+    "asset": "native",
+    "amount": "1",
+    "amountStroops": "10000000",
+    "feeStroops": "100",
+    "feeReportedByHorizon": "100",
+    "sourceBefore": "10000.0000000",
+    "sourceAfter": "9998.9999900",
+    "expectedSourceAfter": "9998.9999900",
+    "destinationBefore": "10000.0000000",
+    "destinationAfter": "10001.0000000",
+    "expectedDestinationAfter": "10001.0000000",
+    "exact": true,
+    "feeNormalization": "Horizon fee_charged is accepted as integer stroops or 7-decimal XLM; this run normalized the reported value to stroops before computing the source delta"
+  },
+  "evidencePackDigest": "sha256:43d3163d7bc8020d967567a6610a9121e6a6762112c5457537a96d88e300b8df",
+  "integrity": {
+    "digest": "sha256:21349c1905e8bde4c7e0bf109047ac5bef3a10dda3110e0d22fd9d2beb757d4e",
+    "rule": "sha256 canonical JSON over status, network, authority, parties, signing, gate, transaction, finality, balances and evidencePackDigest; excludes recordedAtUtc and replay"
+  },
+  "replay": "node scripts/stellar-owner-settlement.mjs --verify docs/STELLAR-OWNER-SETTLEMENT-2026-11-26.json",
+  "boundary": "Owner-delegated Testnet settlement: proves a recorded Ed25519 signature, Testnet ledger-closed inclusion and exact balance deltas. It does not prove owner-held-key use, Mainnet settlement, legal/financial finality, custody, KYC/AML clearance, asset truth, safety, audit, compliance, a customer/pilot or production readiness. VERIFIED ≠ SAFE.",
+  "claim": "An owner-delegated ephemeral key signed a real Testnet payment; Horizon accepted it and a closed Testnet ledger contains the exact signed bytes with exact balance deltas. This is Testnet ledger-closed evidence only, not owner-held-key use, Mainnet settlement, production readiness, safety, compliance or legal finality.",
+  "recordedAtUtc": "2026-11-26T15:32:51.412Z"
+}
