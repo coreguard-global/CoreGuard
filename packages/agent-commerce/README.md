@@ -379,6 +379,28 @@ no `toolCalls`): `INVALID_SNAPSHOT`, `UNSUPPORTED_NETWORK`, `MISSING_ACCOUNT_ID`
 `UNKNOWN_PRESENTED_SIGNER`, `INVALID_LEVEL`, `INVALID_SOROBAN`,
 `SOROBAN_ENTRY_MISSING`, `SOROBAN_EXPECTED_MISSING`, `CURRENT_LEDGER_MISSING`.
 
+## Receipt-pointer profile: nachweis/v1
+
+A checkout may carry only `{ receipt_id, profile }`. For
+`profile: "nachweis/v1"`, the id names the execution record and `refId` leads to
+the decision it follows; the id is recomputable from the record, so an edited
+export fails instead of looking plausible.
+
+```js
+import { resolveNachweisExport } from "@coreguard/agent-commerce/profiles/nachweis-v1.mjs";
+
+const res = resolveNachweisExport(exportDoc, "3cbb6b2c…");
+// res.codes: [] on a clean record; otherwise RECORD_NOT_FOUND, HASH_MISMATCH,
+// UNEXPECTED_KIND, REF_MISSING, INTENT_HASH_MISMATCH, AMOUNT_DRIFT,
+// CURRENCY_DRIFT, RAIL_DRIFT, PAYEE_DRIFT, INVALID_RECEIPT_ID, NO_RECORDS
+// res.boundary: no signature, credential, revocation or lookup verification
+```
+
+It reproduces the reference record-id layout: the resolver's `recordHash()`
+matched all seven records of the public `nachweis-demo-allow` fixture. It does
+not verify signatures or the mandate credential, and there is no lookup by hash;
+the holder supplies the export. `VERIFIED != SAFE`.
+
 ## Boundaries (standing)
 
 - Synthetic demo data is the caller's; nothing here contacts any commerce
