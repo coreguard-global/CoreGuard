@@ -281,7 +281,7 @@ clone at `76b3a63`, node **v23.3.0** — a major outside our v24/v26 set. Unseed
 `agentbadge-external-seeded-run-2026-11-19`, so the seed carries no secret) with
 the clock at `2026-11-19T16:40:00Z`, run twice with a fresh `--out` each time:
 15/15 and exit 0 both times, receipt
-`urn:sha256:98bc587f2ced2054ff2271b79b4ec43dbcd2f4f5d6c138a6e33a291ec86f876b`
+`urn:sha256:98bc587f2ced2054ff2273b79b4ec43dbcd2f4f5d6c138a6e33a291ec86f876b`
 identical across both. That is byte-determinism produced on someone else's
 hardware: the canonicalization claim held on v23.
 

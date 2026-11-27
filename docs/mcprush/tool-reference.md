@@ -14669,7 +14669,7 @@ Verify caller-supplied x402 settlement evidence against a challenge. No network 
   "verdict": "VERIFIED",
   "issues": [],
   "challengeDigest": "5938fa55c4987269e3f7419a54771785424cae5f897a0e4d7d5fec38d23df326",
-  "settlementDigest": "5bcb69ba0a034e15c2271469392bacb71045fb36a5c90e2db1e992ef882b3a6f",
+  "settlementDigest": "5bcb69ba0a034e15c2273469392bacb71045fb36a5c90e2db1e992ef882b3a6f",
   "boundary": "deterministic offline verification/planning surface; no payment custody, no broadcast, no network calls; x402 settlement/telemetry/physical completion verified only from caller-supplied evidence; VERIFIED != SAFE. Settlement verified only from caller-supplied evidence; no network confirmation performed."
 }
 ```

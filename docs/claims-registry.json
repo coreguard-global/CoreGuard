@@ -50,11 +50,11 @@
       "recheck": "npm test",
       "external": false,
       "derived": {
-        "testsTotal": 2271
+        "testsTotal": 2273
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-BOUNDARY-CLEAN",
@@ -69,12 +69,12 @@
       "recheck": "npm run boundary:audit",
       "external": false,
       "derived": {
-        "filesScanned": 1724,
+        "filesScanned": 1728,
         "violations": 0
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-DOCS-NODE-EXECUTED",
@@ -97,7 +97,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-L1-CHAIN-CONFIRMED",
@@ -116,7 +116,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-L3-PROOFS",
@@ -134,7 +134,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-L4-RESEARCH",
@@ -153,7 +153,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-LIVE-CHAIN-AUTHORITY",
@@ -167,7 +167,7 @@
       "derived": null,
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-ADAPTERS-DRY-RUN",
@@ -188,7 +188,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-WEBHOOK-RECEIVER",
@@ -212,7 +212,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-WEBHOOK-DELIVERIES",
@@ -226,7 +226,7 @@
       "derived": null,
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-X402-GATE",
@@ -246,7 +246,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-X402-LIVE-PAYMENT",
@@ -265,7 +265,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-REPLAY-LAB",
@@ -289,7 +289,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-SANDBOX-OFFLINE",
@@ -310,7 +310,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-STELLAR-PRESIGN-RECEIPT",
@@ -346,7 +346,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-STELLAR-OWNER-SETTLEMENT",
@@ -375,7 +375,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-ATTACK-LAB",
@@ -396,7 +396,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-CONFORMANCE-EMPTY",
@@ -416,7 +416,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-BADGE-NOT-ISSUED",
@@ -435,7 +435,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-BADGE-VERIFIABLE",
@@ -483,7 +483,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-PRICES-LOCKED",
@@ -504,7 +504,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-REVENUE-ZERO",
@@ -523,7 +523,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-NAMED-INTEGRATOR",
@@ -541,7 +541,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-REPUTATION-UNPROVEN",
@@ -561,7 +561,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-RISK-FINDINGS",
@@ -581,7 +581,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-OWNER-SIGNOFF",
@@ -600,7 +600,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-INDEPENDENT-REVIEW",
@@ -614,7 +614,7 @@
       "derived": null,
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-BUILD-ADOPTION-INDEPENDENT",
@@ -636,7 +636,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-ADOPTION-EXTERNAL-VERIFIERS",
@@ -652,7 +652,7 @@
       "derived": {},
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-RELEASE-TRIGGER",
@@ -672,7 +672,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-CG-TAS-1",
@@ -692,7 +692,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     },
     {
       "id": "CL-PROV-CAMPAIGNS-1",
@@ -712,7 +712,7 @@
       },
       "deriveError": null,
       "downgraded": null,
-      "asOf": "2026-11-27T14:44:06Z"
+      "asOf": "2026-11-27T15:01:01Z"
     }
   ],
   "rules": [

@@ -397,9 +397,12 @@ const res = resolveNachweisExport(exportDoc, "3cbb6b2c…");
 ```
 
 It reproduces the reference record-id layout: the resolver's `recordHash()`
-matched all seven records of the public `nachweis-demo-allow` fixture. It does
-not verify signatures or the mandate credential, and there is no lookup by hash;
-the holder supplies the export. `VERIFIED != SAFE`.
+matched all seven records of the public `nachweis-demo-allow` fixture. A second
+implementation in `implementations/python/` (stdlib only) re-derives the same
+seven ids and the same drift codes from the committed fixture, and a parity
+test runs both. It is a port by the same author, not an independent audit. It
+does not verify signatures or the mandate credential, and there is no lookup by
+hash; the holder supplies the export. `VERIFIED != SAFE`.
 
 ## Boundaries (standing)
 
