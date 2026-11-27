@@ -50,6 +50,23 @@ const DIGEST_RE = /^sha256:[0-9a-f]{64}$/;
 const isObject = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 const sha256 = (buf) => `sha256:${createHash("sha256").update(buf).digest("hex")}`;
 
+/**
+ * CG-HANDOVER/1 steps_digest preimage, published for AER-1 handover bundles:
+ * step receipt ids in steps-array order, joined by one U+000A, no trailing
+ * newline. Refused receipts are not steps-array rows and are not covered.
+ */
+export const STEPS_DIGEST_RULE = "sha256(utf8(step ids joined by U+000A, in array order, no trailing newline))";
+
+export function normalizeDigest(value) {
+  return typeof value === "string" ? value.replace(/^sha256:/, "").toLowerCase() : null;
+}
+
+export function stepsDigestOf(bundle) {
+  const ids = Array.isArray(bundle?.steps) ? bundle.steps.map((s) => s?.id) : [];
+  if (ids.length === 0 || ids.some((id) => typeof id !== "string" || id.length === 0)) return null;
+  return createHash("sha256").update(ids.join("\n"), "utf8").digest("hex");
+}
+
 /** Deterministic JSON: member names sorted, no whitespace. */
 export function canonicalJson(value) {
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
@@ -60,6 +77,57 @@ export function canonicalJson(value) {
       .join(",")}}`;
   }
   return JSON.stringify(value);
+}
+
+/**
+ * draft-zambo-aer1-26 §3.1 canonical metadata block. Every member is a JSON
+ * string; member names are sorted by Unicode code point at every level; there
+ * is no whitespace outside strings. Both public bundles are ASCII here, so
+ * code-point and UTF-16 ordering coincide.
+ */
+export const METADATA_HASH_RULE = "sha256:utf8(canonical metadata block: created_at, id, output_hash, provenance_class, receipt_schema_version, tool{name,scope,version})";
+
+const byCodePoint = (a, b) => {
+  const x = Array.from(a);
+  const y = Array.from(b);
+  for (let i = 0; i < Math.min(x.length, y.length); i += 1) {
+    const d = x[i].codePointAt(0) - y[i].codePointAt(0);
+    if (d !== 0) return d;
+  }
+  return x.length - y.length;
+};
+
+export function metadataBlockOf(receipt) {
+  const tool = isObject(receipt?.tool_context) ? receipt.tool_context : {};
+  const block = {
+    created_at: receipt?.timestamp,
+    id: receipt?.id,
+    output_hash: receipt?.output_hash,
+    provenance_class: receipt?.provenance_class,
+    receipt_schema_version: receipt?.receipt_schema_version,
+    tool: {
+      name: tool.name,
+      scope: tool.scope,
+      version: tool.version,
+    },
+  };
+  return Object.keys(block).sort(byCodePoint).reduce((out, key) => {
+    const value = block[key];
+    out[key] = isObject(value)
+      ? Object.keys(value).sort(byCodePoint).reduce((nested, k) => {
+        nested[k] = value[k];
+        return nested;
+      }, {})
+      : value;
+    return out;
+  }, {});
+}
+
+export function metadataHashOf(receipt) {
+  const block = metadataBlockOf(receipt);
+  const values = Object.values(block).flatMap((v) => (isObject(v) ? Object.values(v) : [v]));
+  if (values.some((v) => typeof v !== "string")) return null;
+  return sha256(Buffer.from(canonicalJson(block), "utf8"));
 }
 
 /** Stable identity for a verdict, so two observers can compare reports. */
@@ -196,12 +264,18 @@ export function verifyHandover(text, { observer, readAt, expectedId, sourceUrl }
     "outside timestamp: no independent time source is consulted",
     "result correctness: a matching digest says the record is unchanged, not that the work was right",
   );
-  if (workflowReceipt?.metadataHash?.present && !workflowReceipt.metadataHash.preimageChecked) {
-    notEstablished.push("metadata_hash preimage: schema 0.4 requires the field, the public material does not define its preimage");
+  if (!workflowReceipt?.metadataHash?.present) {
+    notEstablished.push("metadata_hash: the workflow-close receipt does not carry the schema-0.4 field");
+  } else {
+    notEstablished.push("metadata_hash coverage: the canonical block binds six string members; it does not authenticate the issuer");
   }
   if (typeof bundle.steps_digest === "string") {
-    notEstablished.push("steps_digest preimage: the field is carried but its construction is not published");
-    notChecked.push({ scope: "steps_digest", reason: "outside_scope", detail: "no published preimage rule" });
+    add(
+      "steps_digest matches the published preimage rule (newline-joined receipt ids)",
+      stepsDigestOf(bundle) === normalizeDigest(bundle.steps_digest),
+      { declared: normalizeDigest(bundle.steps_digest), computed: stepsDigestOf(bundle) },
+    );
+    notEstablished.push("steps_digest coverage: receipt ids only, not output hashes, statuses or the Merkle root");
   }
 
   return finalize({
@@ -361,7 +435,14 @@ function verifyWorkflowReceipt(bundle, add, notChecked) {
     metadataFormatOk,
     { present: metadataPresent, found: metadataHash },
   );
-  if (!metadataPresent) {
+  const computedMetadataHash = metadataPresent ? metadataHashOf(receipt) : null;
+  const metadataOk = metadataFormatOk && computedMetadataHash === metadataHash;
+  if (metadataPresent) {
+    add("workflow-close metadata_hash matches the canonical metadata block", metadataOk, {
+      declared: metadataHash,
+      computed: computedMetadataHash,
+    });
+  } else {
     notChecked.push({ scope: "workflow-close metadata_hash", reason: "not_attempted", detail: "field absent" });
   }
   return {
@@ -372,7 +453,9 @@ function verifyWorkflowReceipt(bundle, add, notChecked) {
       present: metadataPresent,
       formatOk: metadataFormatOk,
       value: metadataHash,
-      preimageChecked: false,
+      preimageChecked: metadataPresent,
+      matched: metadataPresent ? metadataOk : null,
+      computed: computedMetadataHash,
     },
   };
 }

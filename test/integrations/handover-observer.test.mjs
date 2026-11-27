@@ -28,7 +28,9 @@ test("the 41-step handover recomputes from its own bytes", () => {
   assert.equal(v.merkle.ok, true);
   assert.equal(v.workflowReceipt.outcome, "verified");
   assert.equal(v.workflowReceipt.metadataHash.present, true);
-  assert.equal(v.workflowReceipt.metadataHash.preimageChecked, false);
+  assert.equal(v.workflowReceipt.metadataHash.preimageChecked, true);
+  assert.equal(v.workflowReceipt.metadataHash.matched, true);
+  assert.ok(!v.notChecked.some((n) => n.scope === "steps_digest" || n.scope === "workflow-close metadata_hash"));
   assert.equal(v.checks.filter((c) => !c.ok).length, 0);
 });
 
