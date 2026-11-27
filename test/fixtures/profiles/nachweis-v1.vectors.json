@@ -1,0 +1,557 @@
+{
+  "profile": "nachweis/v1",
+  "purpose": "Profile-resolution vector. The checkout carries only receipt_id and profile; the holder supplies the export. This checks that the id names a record that is recomputable, that refId reaches the decision, and that an edited execution field is named rather than accepted.",
+  "source": {
+    "repository": "prokura-network/prokura-verify",
+    "file": "fixtures/nachweis-demo-allow.json",
+    "license": "Apache-2.0",
+    "note": "Unmodified public demo export from the repository, including its signatures and proof. No secret material."
+  },
+  "export": {
+    "format": "nachweis/v1",
+    "exportedAt": "2026-11-26T15:59:57.985Z",
+    "subject": "01M8C9B5F57A16FPSDZP8G8M31",
+    "records": [
+      {
+        "id": "01M8C9B5C36GXGSMQHTFQBYK1N",
+        "prevHash": "5517f27a324ffd54791cdb384c5d5dbe631a2180b466d0956234c1c5bb049529",
+        "hash": "d7aa1c8e3720bae0071e505da1bdfa31e0a6582035775b96d27e2fa8d9785824",
+        "kind": "check",
+        "refId": null,
+        "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+        "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+        "principalId": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+        "intent": {
+          "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+          "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+          "amount": "12.00",
+          "currency": "EUR",
+          "payee": {
+            "type": "domain",
+            "value": "demo-store.prokura.network",
+            "name": "Demo Store"
+          },
+          "purpose": "software",
+          "reference": {
+            "description": "Field notebook c6c7"
+          },
+          "rail": "mollie",
+          "protocol": "mcp",
+          "nonce": "s3oOR4-AL8THqO8fA1ytYi2k",
+          "createdAt": "2026-11-26T15:59:45.899Z",
+          "agentSignature": "mps0xm038XkdaMP4izRRhoGx0Tb6NQoGyIdlzyOD-v16fwvYwkB9tSJ3bOYJnBiqB2fcRk8bhLMWzs71_YkvBQ=="
+        },
+        "intentHash": "sha256:66228af05a4c584202a4f03746c3fcac833c5dd6a1a61f9ebce3a563ed3e6762",
+        "decision": "allow",
+        "reasons": [
+          "OK"
+        ],
+        "stepUp": null,
+        "gateState": {
+          "now": "2026-11-26T15:59:45.982Z",
+          "spentThisPeriod": "0.00",
+          "seenInvoiceHashes": [],
+          "seenNonces": [],
+          "revocationBit": false,
+          "credentialProofValid": true,
+          "stepUpApproved": false
+        },
+        "rail": "mollie",
+        "railRef": null,
+        "railStatus": null,
+        "amount": "12.00",
+        "currency": "EUR",
+        "payee": {
+          "type": "domain",
+          "value": "demo-store.prokura.network",
+          "name": "Demo Store"
+        },
+        "createdAt": "2026-11-26T15:59:46.051Z",
+        "signature": "YAA7EfGy62B992LwhNaYpBS0Ko7sLvqmUmtKViRdggKrDGdQKLAa31bSDA9xAlibqpg-nbygJSQ4B0dvc1skDg==",
+        "v": 2,
+        "mandateSeq": 1,
+        "mandatePrevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "agentName": "prokura demo agent (scripted)"
+      },
+      {
+        "id": "01M8C9B5F57A16FPSDZP8G8M31",
+        "prevHash": "d7aa1c8e3720bae0071e505da1bdfa31e0a6582035775b96d27e2fa8d9785824",
+        "hash": "5ae6174ee39ae4724a54554d8986bd4de88ccb32a1c637441ce539be9d0769b6",
+        "kind": "pay",
+        "refId": null,
+        "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+        "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+        "principalId": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+        "intent": {
+          "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+          "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+          "amount": "12.00",
+          "currency": "EUR",
+          "payee": {
+            "type": "domain",
+            "value": "demo-store.prokura.network",
+            "name": "Demo Store"
+          },
+          "purpose": "software",
+          "reference": {
+            "description": "Field notebook c6c7"
+          },
+          "rail": "mollie",
+          "protocol": "mcp",
+          "nonce": "yQl-ZPg0xX-s_FT3_lgMZm3S",
+          "createdAt": "2026-11-26T15:59:46.096Z",
+          "agentSignature": "9KRa__ZkqSwL7WjAKNRK5wrMtqFISEs_w0u2JMRrB9dDNGSmF_b1zWc0yTsSiEoGctCo3_4uyFVHOWAFF1haCQ=="
+        },
+        "intentHash": "sha256:74d1ba1ccf8d3faa260b402fda1faa83ecc86bc8225bfbc053487d6d1ebf400f",
+        "decision": "allow",
+        "reasons": [
+          "OK"
+        ],
+        "stepUp": null,
+        "gateState": {
+          "now": "2026-11-26T15:59:46.109Z",
+          "spentThisPeriod": "0.00",
+          "seenInvoiceHashes": [],
+          "seenNonces": [],
+          "revocationBit": false,
+          "credentialProofValid": true,
+          "stepUpApproved": false
+        },
+        "rail": "mollie",
+        "railRef": null,
+        "railStatus": null,
+        "amount": "12.00",
+        "currency": "EUR",
+        "payee": {
+          "type": "domain",
+          "value": "demo-store.prokura.network",
+          "name": "Demo Store"
+        },
+        "createdAt": "2026-11-26T15:59:46.149Z",
+        "signature": "_hyP_TuCnGqbxltrZdjbxbN1QgLxwx7NLzeHz-tLnJM-xRh8IevhTKTod8sjluKCuhlaQ5o8OmMeBkUBDDN1Bg==",
+        "v": 2,
+        "mandateSeq": 2,
+        "mandatePrevHash": "d7aa1c8e3720bae0071e505da1bdfa31e0a6582035775b96d27e2fa8d9785824",
+        "agentName": "prokura demo agent (scripted)"
+      },
+      {
+        "id": "01M8C9B7AAHJBZ2CQJ2F708YGN",
+        "prevHash": "5ae6174ee39ae4724a54554d8986bd4de88ccb32a1c637441ce539be9d0769b6",
+        "hash": "3cbb6b2c1031230eb49f3f7169812d2cc9ffd9123ec140287739334bb4136e6b",
+        "kind": "execution",
+        "refId": "01M8C9B5F57A16FPSDZP8G8M31",
+        "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+        "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+        "principalId": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+        "intent": {
+          "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+          "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+          "amount": "12.00",
+          "currency": "EUR",
+          "payee": {
+            "type": "domain",
+            "value": "demo-store.prokura.network",
+            "name": "Demo Store"
+          },
+          "purpose": "software",
+          "reference": {
+            "description": "Field notebook c6c7"
+          },
+          "rail": "mollie",
+          "protocol": "mcp",
+          "nonce": "yQl-ZPg0xX-s_FT3_lgMZm3S",
+          "createdAt": "2026-11-26T15:59:46.096Z",
+          "agentSignature": "9KRa__ZkqSwL7WjAKNRK5wrMtqFISEs_w0u2JMRrB9dDNGSmF_b1zWc0yTsSiEoGctCo3_4uyFVHOWAFF1haCQ=="
+        },
+        "intentHash": "sha256:74d1ba1ccf8d3faa260b402fda1faa83ecc86bc8225bfbc053487d6d1ebf400f",
+        "decision": null,
+        "reasons": [],
+        "stepUp": null,
+        "gateState": null,
+        "rail": "mollie",
+        "railRef": "tr_m9oN7sH4j52BLxPKk87aJ",
+        "railStatus": "open",
+        "amount": "12.00",
+        "currency": "EUR",
+        "payee": {
+          "type": "domain",
+          "value": "demo-store.prokura.network",
+          "name": "Demo Store"
+        },
+        "createdAt": "2026-11-26T15:59:48.042Z",
+        "signature": "OBdVfk2zFRe12Mgm4M9bvzdRUT-U7ovODIqAxO_GrcKqxDBQairYdBwIPh8LuxPPsQbKTrmqBZn3KQOKyHThBw==",
+        "v": 2,
+        "mandateSeq": 3,
+        "mandatePrevHash": "5ae6174ee39ae4724a54554d8986bd4de88ccb32a1c637441ce539be9d0769b6",
+        "agentName": "prokura demo agent (scripted)"
+      },
+      {
+        "id": "01M8C9B7QRP2PPNHEK4XDRPT6P",
+        "prevHash": "3cbb6b2c1031230eb49f3f7169812d2cc9ffd9123ec140287739334bb4136e6b",
+        "hash": "d87faf507d9b4ad80c4631b060239edd1fb3420e44fb9dcd6724b079627a1be8",
+        "kind": "check",
+        "refId": null,
+        "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+        "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+        "principalId": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+        "intent": {
+          "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+          "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+          "amount": "80.00",
+          "currency": "EUR",
+          "payee": {
+            "type": "domain",
+            "value": "demo-store.prokura.network",
+            "name": "Demo Store"
+          },
+          "purpose": "software",
+          "reference": {
+            "description": "Demo workstation 3d34"
+          },
+          "rail": "mollie",
+          "protocol": "mcp",
+          "nonce": "dIkipaWlKHO8JhRTEAm_ydxX",
+          "createdAt": "2026-11-26T15:59:48.378Z",
+          "agentSignature": "9D7kNvctEd7_1VaeqyPvER1I5ENE16gQ2jSCyWZfNR14_wIMqJEAEH2lbb5HQDK__G7ZP5z2j_MerB38vuR8Bw=="
+        },
+        "intentHash": "sha256:efa51be5a84012d10470f087d8cd5609427d7d84e99b4d64ef49836fa7356538",
+        "decision": "step_up",
+        "reasons": [
+          "FOUR_EYES_REQUIRED"
+        ],
+        "stepUp": null,
+        "gateState": {
+          "now": "2026-11-26T15:59:48.402Z",
+          "spentThisPeriod": "12.00",
+          "seenInvoiceHashes": [],
+          "seenNonces": [],
+          "revocationBit": false,
+          "credentialProofValid": true,
+          "stepUpApproved": false
+        },
+        "rail": "mollie",
+        "railRef": null,
+        "railStatus": null,
+        "amount": "80.00",
+        "currency": "EUR",
+        "payee": {
+          "type": "domain",
+          "value": "demo-store.prokura.network",
+          "name": "Demo Store"
+        },
+        "createdAt": "2026-11-26T15:59:48.472Z",
+        "signature": "Rrw39RaMwXRS-XhwxOW_81P_BOqrpY37sxofEWVu-TI-ILnDKlLs1gSgu1the7iiQfEVwkMidm6-tCVvQTxgCg==",
+        "v": 2,
+        "mandateSeq": 4,
+        "mandatePrevHash": "3cbb6b2c1031230eb49f3f7169812d2cc9ffd9123ec140287739334bb4136e6b",
+        "agentName": "prokura demo agent (scripted)"
+      },
+      {
+        "id": "01M8C9B7T96VKEA4SC91A20SV7",
+        "prevHash": "d87faf507d9b4ad80c4631b060239edd1fb3420e44fb9dcd6724b079627a1be8",
+        "hash": "d57c5f03fdc4f23776b20103ea3bf6e08d3c559283ecc745a5aa20c9f002af32",
+        "kind": "pay",
+        "refId": null,
+        "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+        "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+        "principalId": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+        "intent": {
+          "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+          "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+          "amount": "80.00",
+          "currency": "EUR",
+          "payee": {
+            "type": "domain",
+            "value": "demo-store.prokura.network",
+            "name": "Demo Store"
+          },
+          "purpose": "software",
+          "reference": {
+            "description": "Demo workstation 3d34"
+          },
+          "rail": "mollie",
+          "protocol": "mcp",
+          "nonce": "Jyrsex2r4kFG7tU1jKivzg8r",
+          "createdAt": "2026-11-26T15:59:48.498Z",
+          "agentSignature": "JISz0wI4rioiqulXtu5Ye_lbtgqKziectKWsr6F8D3XBtHvX8i-JqEx_5mQ-CSRIB6v5khfyPNMNtSItr2o2BQ=="
+        },
+        "intentHash": "sha256:76a036d0d83f72d5c8fce37bd45acd8c90f4ef58e137c875f97c54d7dcc48bf7",
+        "decision": "step_up",
+        "reasons": [
+          "FOUR_EYES_REQUIRED"
+        ],
+        "stepUp": null,
+        "gateState": {
+          "now": "2026-11-26T15:59:48.510Z",
+          "spentThisPeriod": "12.00",
+          "seenInvoiceHashes": [],
+          "seenNonces": [],
+          "revocationBit": false,
+          "credentialProofValid": true,
+          "stepUpApproved": false
+        },
+        "rail": "mollie",
+        "railRef": null,
+        "railStatus": null,
+        "amount": "80.00",
+        "currency": "EUR",
+        "payee": {
+          "type": "domain",
+          "value": "demo-store.prokura.network",
+          "name": "Demo Store"
+        },
+        "createdAt": "2026-11-26T15:59:48.553Z",
+        "signature": "KZ95DIuOfRP8X2dFmjpYgMzo1I3edIbxhAixyQpNqarw81oeU4xOO0VjMOa1lCIU01nLQGcxwc4a0ohbbET2AQ==",
+        "v": 2,
+        "mandateSeq": 5,
+        "mandatePrevHash": "d87faf507d9b4ad80c4631b060239edd1fb3420e44fb9dcd6724b079627a1be8",
+        "agentName": "prokura demo agent (scripted)"
+      },
+      {
+        "id": "01M8C9B9CY6ESY1Q3JDGH7XYSJ",
+        "prevHash": "d57c5f03fdc4f23776b20103ea3bf6e08d3c559283ecc745a5aa20c9f002af32",
+        "hash": "84fb5a48e1716316ffdfb771e696cd45279afa5e68a0dad0c619965031ca921f",
+        "kind": "check",
+        "refId": null,
+        "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+        "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+        "principalId": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+        "intent": {
+          "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+          "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+          "amount": "12.00",
+          "currency": "EUR",
+          "payee": {
+            "type": "domain",
+            "value": "example.com"
+          },
+          "purpose": "software",
+          "reference": {
+            "description": "outside 5ff7"
+          },
+          "rail": "mollie",
+          "protocol": "mcp",
+          "nonce": "jfju6mouUai5niTB6dGsETQD",
+          "createdAt": "2026-11-26T15:59:50.120Z",
+          "agentSignature": "B_GvV9rK_7uuoeWJtmj28_kBx6BMyeyXbqdfU7f0iwPoZHLnnUZqHUYr06cZGxvEUmqkEjkRz714lCh9s8bhDA=="
+        },
+        "intentHash": "sha256:27544a1b8e217fa626aa6f9e9418aedbd624f66a3c633973b33ddcf01a24ec52",
+        "decision": "deny",
+        "reasons": [
+          "PAYEE_NOT_ALLOWED"
+        ],
+        "stepUp": null,
+        "gateState": {
+          "now": "2026-11-26T15:59:50.134Z",
+          "spentThisPeriod": "12.00",
+          "seenInvoiceHashes": [],
+          "seenNonces": [],
+          "revocationBit": false,
+          "credentialProofValid": true,
+          "stepUpApproved": false
+        },
+        "rail": "mollie",
+        "railRef": null,
+        "railStatus": null,
+        "amount": "12.00",
+        "currency": "EUR",
+        "payee": {
+          "type": "domain",
+          "value": "example.com"
+        },
+        "createdAt": "2026-11-26T15:59:50.174Z",
+        "signature": "jIG4JA8LMY-E7f9f6nIEzNhOEOqD4NrE0WWB9ajgSod_WXXf7_EU9MbdCWzwPx-86RCA0iSv12n8rkAlrimYAQ==",
+        "v": 2,
+        "mandateSeq": 6,
+        "mandatePrevHash": "d57c5f03fdc4f23776b20103ea3bf6e08d3c559283ecc745a5aa20c9f002af32",
+        "agentName": "prokura demo agent (scripted)"
+      },
+      {
+        "id": "01M8C9B9F958TJ6SCM74T1FGED",
+        "prevHash": "84fb5a48e1716316ffdfb771e696cd45279afa5e68a0dad0c619965031ca921f",
+        "hash": "1898f13c068b66ed5111da30f5913f14cea37e85e5955adfbc00f293d9f23d90",
+        "kind": "pay",
+        "refId": null,
+        "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+        "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+        "principalId": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+        "intent": {
+          "mandateId": "01M8C99TD64W7PVCKF0X97TESV",
+          "agentId": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+          "amount": "12.00",
+          "currency": "EUR",
+          "payee": {
+            "type": "domain",
+            "value": "example.com"
+          },
+          "purpose": "software",
+          "reference": {
+            "description": "outside 5ff7"
+          },
+          "rail": "mollie",
+          "protocol": "mcp",
+          "nonce": "pYS2DL04IxNhUC6aRYO1oMIZ",
+          "createdAt": "2026-11-26T15:59:50.196Z",
+          "agentSignature": "RP8l8dpSk4y2qp2_JK0CDpuKQ7wHU3LV1vAZE2ZACUDXSPOYRll6adrYp0lCweRFND7YD4O8UCNfFWpDh9I1AQ=="
+        },
+        "intentHash": "sha256:be9e58630fb74c7978955b7ddde1d3951458476afa6132202fc6100bb7ea096a",
+        "decision": "deny",
+        "reasons": [
+          "PAYEE_NOT_ALLOWED"
+        ],
+        "stepUp": null,
+        "gateState": {
+          "now": "2026-11-26T15:59:50.205Z",
+          "spentThisPeriod": "12.00",
+          "seenInvoiceHashes": [],
+          "seenNonces": [],
+          "revocationBit": false,
+          "credentialProofValid": true,
+          "stepUpApproved": false
+        },
+        "rail": "mollie",
+        "railRef": null,
+        "railStatus": null,
+        "amount": "12.00",
+        "currency": "EUR",
+        "payee": {
+          "type": "domain",
+          "value": "example.com"
+        },
+        "createdAt": "2026-11-26T15:59:50.249Z",
+        "signature": "o87s2Oa4c8jeoewZ-WE-1mP8L1-A6JA86-Xea5zl7iTotOZxAf4NQNOP7wtDsg_lwH-k5Cr2e_QO3pZo4jXYBg==",
+        "v": 2,
+        "mandateSeq": 7,
+        "mandatePrevHash": "84fb5a48e1716316ffdfb771e696cd45279afa5e68a0dad0c619965031ca921f",
+        "agentName": "prokura demo agent (scripted)"
+      }
+    ],
+    "credential": {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        "https://prokura.network/ns/v1"
+      ],
+      "id": "urn:ulid:01M8C99TD64W7PVCKF0X97TESV",
+      "type": [
+        "VerifiableCredential",
+        "AgentAuthorityCredential"
+      ],
+      "issuer": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+      "validFrom": "2026-11-26T15:59:02.021Z",
+      "validUntil": "2026-11-26T16:09:01.907Z",
+      "credentialStatus": {
+        "id": "https://api.prokura.network/v1/status/30#0",
+        "type": "BitstringStatusListEntry",
+        "statusPurpose": "revocation",
+        "statusListIndex": "0",
+        "statusListCredential": "https://api.prokura.network/v1/status/30"
+      },
+      "credentialSubject": {
+        "id": "did:key:z6MkgrAs4VVtpQppp5meEdbe7Tzhf9r8v8rc3UqwUT9S8SZS",
+        "principal": {
+          "id": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+          "legalName": "anonymous session"
+        },
+        "grantedBy": {
+          "name": "anonymous session",
+          "method": "demo-unsigned"
+        },
+        "scope": {
+          "currency": "EUR",
+          "capPerTx": "100.00",
+          "capPeriod": {
+            "amount": "150.00",
+            "period": "P1D"
+          },
+          "fourEyesAbove": "50.00",
+          "payees": [
+            {
+              "type": "domain",
+              "value": "demo-store.prokura.network",
+              "name": "Demo Store"
+            }
+          ],
+          "rails": [
+            "mollie"
+          ],
+          "purposes": [
+            "software",
+            "travel"
+          ]
+        },
+        "delegation": {
+          "subDelegate": false,
+          "maxDepth": 0,
+          "parent": null
+        },
+        "evidence": {
+          "retainDays": 3650,
+          "exportFormat": "nachweis/v1"
+        }
+      },
+      "proof": {
+        "type": "DataIntegrityProof",
+        "cryptosuite": "eddsa-rdfc-2022",
+        "verificationMethod": "did:web:s35b44a247b0a6a09ad.demo.prokura.network#key-2026-11",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "z2Yd6pJRBs6iRRwY3nFXtYHxbqkvqZ1NTTMip82DALJrXkqimA2xPxaKnXf8rkGGrZSmnDHDGerg8VjwBTjcAqhP1",
+        "created": "2026-11-26T15:59:02Z"
+      }
+    },
+    "issuerDidDocument": {
+      "@context": [
+        "https://www.w3.org/ns/did/v1",
+        "https://w3id.org/security/multikey/v1"
+      ],
+      "id": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+      "verificationMethod": [
+        {
+          "id": "did:web:s35b44a247b0a6a09ad.demo.prokura.network#key-2026-11",
+          "type": "Multikey",
+          "controller": "did:web:s35b44a247b0a6a09ad.demo.prokura.network",
+          "publicKeyMultibase": "z6MkqGbto7e7Fkqm56qHikcisJLTLhx7c2LW6n2db7etBJqK"
+        }
+      ],
+      "assertionMethod": [
+        "did:web:s35b44a247b0a6a09ad.demo.prokura.network#key-2026-11"
+      ],
+      "authentication": [
+        "did:web:s35b44a247b0a6a09ad.demo.prokura.network#key-2026-11"
+      ]
+    },
+    "server": "did:key:z6MksY9Gi8N1cbigCxWyR53eLdiTUUTaxq2A1c6mZe5Lea4L",
+    "proof": {
+      "type": "Ed25519Canonical",
+      "verificationMethod": "did:key:z6MksY9Gi8N1cbigCxWyR53eLdiTUUTaxq2A1c6mZe5Lea4L",
+      "signature": "Sg1yXEfS2J14KQXH7QSSrsxIjwE8kPFhm-GvgzmMvF3su16DvQbCRvQZs6GT1HJZop-tCvNHkwrmWnWVUZmsCw=="
+    }
+  },
+  "cases": [
+    {
+      "name": "allow-clean",
+      "receipt_id": "3cbb6b2c1031230eb49f3f7169812d2cc9ffd9123ec140287739334bb4136e6b",
+      "edit": null,
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "name": "edited-amount",
+      "receipt_id": "3cbb6b2c1031230eb49f3f7169812d2cc9ffd9123ec140287739334bb4136e6b",
+      "edit": {
+        "record": "execution",
+        "set": {
+          "amount": "12.01"
+        }
+      },
+      "expect": {
+        "ok": false,
+        "codes": [
+          "HASH_MISMATCH",
+          "AMOUNT_DRIFT"
+        ]
+      }
+    }
+  ]
+}
