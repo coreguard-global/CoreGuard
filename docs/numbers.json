@@ -2,13 +2,13 @@
   "schema": "CG-NUMBERS/1",
   "generatedBy": "scripts/public-numbers.mjs",
   "generatedFrom": "docs/state-snapshot.json",
-  "measuredAtUtc": "2026-11-27T16:49:19Z",
-  "measuredOnCommit": "6d3cf4c9069b9285de5c8b25feddf77e87c11dc2",
+  "measuredAtUtc": "2026-11-27T16:59:24Z",
+  "measuredOnCommit": "dd97378a4972c4606ea446a49604b3041249bf3e",
   "metrics": [
     {
       "id": "tests",
       "label": "Tests (full suite, machine-pinned)",
-      "value": 2297,
+      "value": 2298,
       "unit": "tests",
       "source": "docs/state-snapshot.json#testsTotal",
       "note": "Pass count of the last green `npm test`; the suite asserts this number."
@@ -56,7 +56,7 @@
     {
       "id": "commits-ahead",
       "label": "Commits ahead of v0.6.0",
-      "value": 647,
+      "value": 649,
       "unit": "commits",
       "source": "docs/state-snapshot.json#commitsAheadOfV060",
       "note": "History depth, not a quality signal."

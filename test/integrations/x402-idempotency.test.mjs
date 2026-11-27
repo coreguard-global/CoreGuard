@@ -164,6 +164,25 @@ test("artifact retention outlives the reservation so a late duplicate does not r
   assert.equal(fresh.g.attachArtifact({ ctx, purchaseId: "purchase-0008b", intentDigest: d, artifact: { id: "late" } }).code, "RESERVATION_EXPIRED");
 });
 
+test("a lapsed reservation stops saying PENDING: read and write agree the window is closed", () => {
+  const { g, tick } = gate({ maxTimeoutSeconds: 10, reservationTtlSeconds: 10, artifactRetentionSeconds: 30 });
+  const d = digest(500);
+  const first = g.reserve({ ctx, purchaseId: "purchase-0008c", intentDigest: d });
+  assert.equal(first.code, "RESERVED");
+
+  tick(11); // past expiresAt, still inside artifact retention
+  const lapsed = g.reserve({ ctx, purchaseId: "purchase-0008c", intentDigest: d });
+  assert.equal(lapsed.code, "RESERVATION_LAPSED");
+  assert.equal(lapsed.replay, false);
+  assert.equal(lapsed.artifact, null);
+  assert.equal(lapsed.state, "RESERVED");
+  assert.equal(lapsed.expiresAt, first.expiresAt);
+  assert.match(lapsed.detail, /new purchase id/);
+
+  const attach = g.attachArtifact({ ctx, purchaseId: "purchase-0008c", intentDigest: d, artifact: { id: "too-late" } });
+  assert.equal(attach.code, "RESERVATION_EXPIRED");
+});
+
 test("a settled purchase replays the original receipt, not a fresh signing permission", () => {
   const { g } = gate();
   const d = digest(500);

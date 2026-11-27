@@ -61,6 +61,7 @@
     "webhook": "node packages/webhook/index.mjs --self-check",
     "x402": "node packages/x402/index.mjs --self-check",
     "x402:idempotency": "node packages/x402/idempotency.mjs --self-check",
+    "x402:idempotency": "node packages/x402/idempotency.mjs --self-check",
     "quickstart": "node examples/platform-quickstart/quickstart.mjs",
     "integration:replay": "node scripts/integration-replay-lab.mjs --self-check",
     "partner:journey": "node scripts/partner-journey.mjs",

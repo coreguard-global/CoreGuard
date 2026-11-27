@@ -144,6 +144,9 @@ export function createPurchaseGate({
    * RESERVED    first caller; no artifact exists yet. Enter the signer.
    * PENDING     same authenticated owner + same digest, winner still signing.
    *             Wait on the row, do not error and do not sign.
+   * RESERVATION_LAPSED same owner + digest, but the winner's signing window
+   *             closed with no artifact. attachArtifact can no longer succeed;
+   *             waiting would be a lie. Start a new purchase id.
    * REPLAY      same owner + same digest; original artifact returned.
    * RECEIPT_REPLAY same owner + same digest; original receipt returned.
    * INTENT_MISMATCH same owner, different digest; both digests returned.
@@ -204,6 +207,14 @@ export function createPurchaseGate({
     }
     if (now >= row.retainedUntil) {
       return view(row, "EXPIRED", { detail: "artifact retention ended; choose a new purchase id" });
+    }
+    if (row.state === "RESERVED" && now >= row.expiresAt) {
+      // The write side refuses attachArtifact at exactly this point. Telling
+      // the duplicate to wait here would describe an artifact that can never
+      // arrive, so the two paths must agree on one boundary.
+      return view(row, "RESERVATION_LAPSED", {
+        detail: "winner's signing window closed without an artifact; choose a new purchase id",
+      });
     }
     if (row.state === "RESERVED") {
       return view(row, "PENDING", { detail: "winner has not produced the artifact yet" });
@@ -316,6 +327,22 @@ export function selfCheck() {
   const a3 = dedup.claim({ payloadDigest: d, payerVerified: "payer-B" });
   cases.push(["facilitator replays by payload digest for the verified payer", a1.code === "ACCEPTED" && a2.code === "REPLAY" && a2.result.settlement === "r1"]);
   cases.push(["facilitator conflict is opaque across payers", a3.code === "PAYER_CONFLICT" && a3.result === null]);
+  let lateClock = 1000;
+  const lateGate = createPurchaseGate({
+    authenticate: () => ({ owner: "buyer-L" }),
+    clock: () => lateClock,
+    maxTimeoutSeconds: 10,
+    reservationTtlSeconds: 10,
+    artifactRetentionSeconds: 30,
+  });
+  const lateDigest = intentDigestOf({ resource: "/v1/lapse", amount: 1 });
+  const lateCtx = {};
+  const lateFirst = lateGate.reserve({ ctx: lateCtx, purchaseId: "purchase-lapse", intentDigest: lateDigest });
+  lateClock += 11;
+  const lateDup = lateGate.reserve({ ctx: lateCtx, purchaseId: "purchase-lapse", intentDigest: lateDigest });
+  const lateAttach = lateGate.attachArtifact({ ctx: lateCtx, purchaseId: "purchase-lapse", intentDigest: lateDigest, artifact: { id: "late" } });
+  cases.push(["a lapsed read is not PENDING and agrees with the closed write window", lateFirst.code === "RESERVED" && lateDup.code === "RESERVATION_LAPSED" && lateDup.replay === false && lateAttach.code === "RESERVATION_EXPIRED"]);
+
   const failed = cases.filter(([, ok]) => !ok).map(([name]) => name);
   if (failed.length) {
     console.error(IDEMPOTENCY_SPEC + " SELF-CHECK FAIL\n" + failed.map((f) => "  - " + f).join("\n"));
