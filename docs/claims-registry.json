@@ -50,7 +50,7 @@
       "recheck": "npm test",
       "external": false,
       "derived": {
-        "testsTotal": 2284
+        "testsTotal": 2285
       },
       "deriveError": null,
       "downgraded": null,
@@ -69,7 +69,7 @@
       "recheck": "npm run boundary:audit",
       "external": false,
       "derived": {
-        "filesScanned": 1744,
+        "filesScanned": 1748,
         "violations": 0
       },
       "deriveError": null,
