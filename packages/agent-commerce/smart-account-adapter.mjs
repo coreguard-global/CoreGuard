@@ -103,8 +103,8 @@ const keyOf = (k) => String(k);
  *   masterWeight: 0,
  *   thresholds: { low: 1, medium: 2, high: 3 },
  *   signers: [
- *     { key: "G...", kind: "passkey", weight: 2 },
- *     { key: "G...", kind: "session_key", weight: 1 },
+ *     { key: "GAPASSKEY...", kind: "passkey", weight: 2 },
+ *     { key: "GBSESSION...", kind: "session_key", weight: 1 },
  *   ],
  * });
  * if (!res.ok) throw new Error(res.error.code); // e.g. THRESHOLD_ORDER

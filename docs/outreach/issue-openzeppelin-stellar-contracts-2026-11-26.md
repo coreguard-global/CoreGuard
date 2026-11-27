@@ -31,8 +31,8 @@ const mapped = fromSmartAccountSnapshot({
   masterWeight: 0,                       // master key disabled
   thresholds: { low: 1, medium: 2, high: 3 },
   signers: [
-    { key: "G...", kind: "passkey", weight: 2 },
-    { key: "G...", kind: "session_key", weight: 1 },
+    { key: "GAPASSKEY...", kind: "passkey", weight: 2 },
+    { key: "GBSESSION...", kind: "session_key", weight: 1 },
   ],
   soroban: {
     entry: { contractId: "C...", functionName: "transfer", argsDigest: "sha256:…",
