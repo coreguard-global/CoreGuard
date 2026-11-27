@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
 import {
   NACHWEIS_PROFILE, NACHWEIS_SPEC, NACHWEIS_BOUNDARY,
@@ -115,4 +116,41 @@ test("the resolver is pure: same input, same output, no files or network", () =>
   const b = resolveNachweisExport(JSON.parse(JSON.stringify({ records })), execution.hash);
   assert.equal(a.checks.receiptId, b.checks.receiptId);
   assert.equal(a.record.hash, b.record.hash);
+});
+
+// Pinned against the upstream public demo fixture. The file is a reduction of
+// prokura-network/prokura-verify fixtures/nachweis-demo-allow.json (Apache-2.0)
+// to the fields the record hash covers; values are unchanged. If this test
+// fails, either the hashing layout changed or the fixture was edited.
+const PINNED_DEMO = JSON.parse(
+  readFileSync(new URL("../fixtures/nachweis/demo-allow-reduced.json", import.meta.url), "utf8"),
+);
+
+const PINNED_IDS = [
+  "d7aa1c8e3720bae0071e505da1bdfa31e0a6582035775b96d27e2fa8d9785824",
+  "5ae6174ee39ae4724a54554d8986bd4de88ccb32a1c637441ce539be9d0769b6",
+  "3cbb6b2c1031230eb49f3f7169812d2cc9ffd9123ec140287739334bb4136e6b",
+  "d87faf507d9b4ad80c4631b060239edd1fb3420e44fb9dcd6724b079627a1be8",
+  "d57c5f03fdc4f23776b20103ea3bf6e08d3c559283ecc745a5aa20c9f002af32",
+  "84fb5a48e1716316ffdfb771e696cd45279afa5e68a0dad0c619965031ca921f",
+  "1898f13c068b66ed5111da30f5913f14cea37e85e5955adfbc00f293d9f23d90",
+];
+
+test("the pinned demo fixture reproduces all seven record ids", () => {
+  assert.equal(PINNED_DEMO.license, "Apache-2.0");
+  assert.equal(PINNED_DEMO.source, "prokura-network/prokura-verify");
+  assert.equal(PINNED_DEMO.records.length, 7);
+  assert.deepEqual(PINNED_DEMO.records.map((r) => recordHash(r)), PINNED_IDS);
+  assert.deepEqual(PINNED_DEMO.records.map((r) => r.hash), PINNED_IDS);
+});
+
+test("the pinned demo receipt resolves to the allow decision it follows", () => {
+  const res = resolveNachweisExport(PINNED_DEMO, "3cbb6b2c1031230eb49f3f7169812d2cc9ffd9123ec140287739334bb4136e6b");
+  assert.equal(res.ok, true, JSON.stringify(res.codes));
+  assert.deepEqual(res.codes, []);
+  assert.equal(res.checks.receiptId, "MATCH");
+  assert.equal(res.checks.intent, "MATCH");
+  assert.deepEqual(res.checks.drift, []);
+  assert.equal(res.decision.decision, "allow");
+  assert.deepEqual(res.decision.reasons, ["OK"]);
 });
