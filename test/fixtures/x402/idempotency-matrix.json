@@ -1211,6 +1211,119 @@
           "storedIntentDigest": null
         }
       ]
+    },
+    {
+      "name": "purchase-id-only-lapsed-window",
+      "gate": {
+        "clock": 1000,
+        "authMode": "ctx-owner",
+        "storeMode": "purchase-only",
+        "maxTimeoutSeconds": 10,
+        "reservationTtlSeconds": 10,
+        "artifactRetentionSeconds": 30
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "owner": "tenant-A"
+          },
+          "purchaseId": "purchase-0007b",
+          "intentDigest": "sha256:d1d0a6a4a0d79272286f8224f9e0ca93bdc8d4932319904815c91409a53e35eb"
+        },
+        {
+          "op": "reserve",
+          "at": 1011,
+          "ctx": {
+            "owner": "tenant-A"
+          },
+          "purchaseId": "purchase-0007b",
+          "intentDigest": "sha256:d1d0a6a4a0d79272286f8224f9e0ca93bdc8d4932319904815c91409a53e35eb"
+        },
+        {
+          "op": "attach",
+          "at": 1011,
+          "ctx": {
+            "owner": "tenant-A"
+          },
+          "purchaseId": "purchase-0007b",
+          "intentDigest": "sha256:d1d0a6a4a0d79272286f8224f9e0ca93bdc8d4932319904815c91409a53e35eb",
+          "artifact": {
+            "id": "never-arrives"
+          }
+        },
+        {
+          "op": "reserve",
+          "at": 1011,
+          "ctx": {
+            "owner": "tenant-B"
+          },
+          "purchaseId": "purchase-0007b",
+          "intentDigest": "sha256:d1d0a6a4a0d79272286f8224f9e0ca93bdc8d4932319904815c91409a53e35eb"
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1010,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0007b",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1030,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "RESERVATION_LAPSED",
+          "detail": "winner's signing window closed without an artifact; choose a new purchase id",
+          "expiresAt": 1010,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0007b",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1030,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "RESERVATION_EXPIRED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "OWNER_CONFLICT",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        }
+      ]
     }
   ]
 }

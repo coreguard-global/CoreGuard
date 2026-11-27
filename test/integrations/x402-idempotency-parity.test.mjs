@@ -15,7 +15,7 @@ const hasPython = spawnSync("python3", ["--version"], { encoding: "utf8" }).stat
 const node = (args) => spawnSync("node", [NODE_RUNNER, ...args], { cwd: ROOT, encoding: "utf8" });
 const python = (args) => spawnSync("python3", [PYTHON_HARNESS, ...args], { cwd: ROOT, encoding: "utf8" });
 
-test("CG-X402-IDEM/1: the two harnesses produce byte-identical output on the same 13-case matrix", { skip: !hasPython && "python3 not installed" }, () => {
+test("CG-X402-IDEM/1: the two harnesses produce byte-identical output on the same 14-case matrix", { skip: !hasPython && "python3 not installed" }, () => {
   const a = node([MATRIX, "--check"]);
   const b = python(["--matrix", MATRIX, "--check"]);
   assert.equal(a.status, 0, a.stderr);
@@ -26,8 +26,12 @@ test("CG-X402-IDEM/1: the two harnesses produce byte-identical output on the sam
   const out = JSON.parse(a.stdout);
   assert.equal(out.spec, "CG-X402-IDEM/1");
   assert.match(out.boundary, /VERIFIED ≠ SAFE/);
-  assert.equal(out.cases.length, 13);
+  assert.equal(out.cases.length, 14);
   const codes = out.cases.flatMap((c) => c.results.map((r) => r.code));
+  const unscoped = out.cases.find((c) => c.name === "purchase-id-only-lapsed-window");
+  assert.ok(unscoped, "the purchase-id-only lookup shape must be in the matrix");
+  const unscopedCodes = unscoped.results.map((r) => r.code);
+  assert.deepEqual(unscopedCodes, ["CONSTRUCTED", "RESERVED", "RESERVATION_LAPSED", "RESERVATION_EXPIRED", "OWNER_CONFLICT"]);
   assert.ok(codes.includes("RESERVATION_LAPSED"), "the reviewer's edge must be in the matrix");
   assert.ok(codes.includes("PAYER_CONFLICT"), "the facilitator boundary must be in the matrix");
   assert.ok(codes.includes("RECEIPT_REPLAY"), "the return-the-original path must be in the matrix");

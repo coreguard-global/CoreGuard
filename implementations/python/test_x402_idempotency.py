@@ -62,10 +62,10 @@ class X402IdempotencyPythonTest(unittest.TestCase):
         self.assertEqual(other["code"], "PAYER_CONFLICT")
         self.assertIsNone(other["result"])
 
-    def test_the_shared_matrix_pins_all_thirteen_cases_in_python(self):
+    def test_the_shared_matrix_pins_all_fourteen_cases_in_python(self):
         doc = json.loads(MATRIX.read_text(encoding="utf-8"))
         out = idem.run_matrix(doc)
-        self.assertEqual(len(out["cases"]), 13)
+        self.assertEqual(len(out["cases"]), 14)
         for case in out["cases"]:
             expected = next(c["expect"] for c in doc["cases"] if c["name"] == case["name"])
             self.assertEqual(case["results"], expected, case["name"])

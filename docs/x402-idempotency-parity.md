@@ -11,11 +11,13 @@ Both read the identical document at `test/fixtures/x402/idempotency-matrix.json`
 
 ## The matrix
 
-Thirteen named cases are pinned in the fixture: first reserve; seven duplicates waiting in `PENDING`; duplicate → artifact → replay of the original; authenticated owner only; explicit intent mismatch with both digests; distinct owners as distinct purchases; opaque conflict on a purchase-id-only store; construction failure when the reservation TTL is shorter than the scheme timeout; retention outliving the reservation; late attach refused; the lapsed-reservation read/write boundary found in review; receipt replay after settlement; and facilitator dedup gated on the verified payer.
+Fourteen named cases are pinned in the fixture: first reserve; seven duplicates waiting in `PENDING`; duplicate → artifact → replay of the original; authenticated owner only; explicit intent mismatch with both digests; distinct owners as distinct purchases; opaque conflict on a purchase-id-only store; construction failure when the reservation TTL is shorter than the scheme timeout; retention outliving the reservation; late attach refused; the lapsed-reservation read/write boundary found in review; receipt replay after settlement; facilitator dedup gated on the verified payer; and the purchase-id-only lookup shape under a lapsed window — opaque cross-owner conflict and the same read/write agreement in the deployment that has no owner in its key.
 
 Every case carries a pinned `expect` array of normalized results. Normalization keeps only comparable fields — `code`, `state`, TTLs, `replay`, artifact/receipt ids and payer-visible digests — and reduces artifacts and receipts to their ids. Both runners print one canonical JSON line with sorted keys, so the comparison is byte-level rather than "looks the same".
 
-At the pinned commit the two outputs are identical across 11,624 bytes and 13 cases, including `RESERVATION_LAPSED`, `RESERVATION_EXPIRED`, `OWNER_CONFLICT`, `RECEIPT_REPLAY` and `PAYER_CONFLICT`.
+At the pinned commit the two outputs are identical across 12,705 bytes and 14 cases, including `RESERVATION_LAPSED`, `RESERVATION_EXPIRED`, `OWNER_CONFLICT`, `RECEIPT_REPLAY` and `PAYER_CONFLICT`.
+
+Two precision notes belong with the matrix, because the spec text outlives the code. `PENDING` and `RESERVATION_LAPSED` are read views of one `RESERVED` row, before and after its expiry; the store holds `RESERVED`, `SIGNED` and `SETTLED` only. And the opaque conflict is a response-shape guarantee produced after the same lookups as the detailed path — constant-time behavior is a deployment property recorded as an implementation note, not a claim a conformance test can read off a response.
 
 ## Commands
 
