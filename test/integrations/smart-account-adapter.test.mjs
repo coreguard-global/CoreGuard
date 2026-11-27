@@ -161,3 +161,62 @@ test("the adapter runs with fetch disabled and its source contains no network cl
   assert.doesNotMatch(source, /\bfetch\s*\(/);
   assert.doesNotMatch(source, /XMLHttpRequest|WebSocket/);
 });
+
+test("the documented JSDoc and README examples execute and yield the promised calls", () => {
+  const source = readFileSync(SOURCE_PATH, "utf8");
+  const at = source.indexOf("@example");
+  assert.ok(at > 0, "the JSDoc @example block is missing");
+  const end = source.indexOf("*/", at);
+  const jsdocCode = source
+    .slice(at + "@example".length, end)
+    .split("\n")
+    .map((line) => line.replace(/^\s*\*\s?/, ""))
+    .join("\n")
+    .trim();
+
+  const logs = [];
+  const realLog = console.log;
+  console.log = (line) => logs.push(String(line));
+  let jsdoc;
+  try {
+    jsdoc = new Function("fromSmartAccountSnapshot", `${jsdocCode}\nreturn res;`)(fromSmartAccountSnapshot);
+  } finally {
+    console.log = realLog;
+  }
+  assert.equal(jsdoc.ok, true, JSON.stringify(jsdoc.error));
+  assert.deepEqual(jsdoc.toolCalls.map((c) => c.name), [
+    "coreguard_verify_stellar_smart_account_signers",
+    "coreguard_verify_stellar_multisig_thresholds",
+  ]);
+  assert.deepEqual(logs, jsdoc.toolCalls.map((c) => c.name), "the example must print the calls it returns");
+
+  const readme = readFileSync(fileURLToPath(new URL("../../packages/agent-commerce/README.md", import.meta.url)), "utf8");
+  const heading = "## Smart-account adapter (CG-W6/1)";
+  const start = readme.indexOf(heading);
+  assert.ok(start > 0, "the README adapter section is missing");
+  const open = readme.indexOf("```js", start);
+  const close = readme.indexOf("```", open + 5);
+  assert.ok(open > 0 && close > open, "the README adapter example fence is missing");
+  const readmeCode = readme
+    .slice(open + 5, close)
+    .split("\n")
+    .filter((line) => !line.trimStart().startsWith("import "))
+    .join("\n")
+    .trim();
+
+  const warnings = [];
+  const realWarn = console.warn;
+  console.warn = (line) => warnings.push(String(line));
+  let mapped;
+  let bad;
+  try {
+    ({ mapped, bad } = new Function("fromSmartAccountSnapshot", `${readmeCode}\nreturn { mapped, bad };`)(fromSmartAccountSnapshot));
+  } finally {
+    console.warn = realWarn;
+  }
+  assert.equal(mapped.ok, true, JSON.stringify(mapped.error));
+  assert.equal(mapped.toolCalls.length, 2);
+  assert.equal(bad.ok, false);
+  assert.equal(bad.error.code, "UNSUPPORTED_NETWORK");
+  assert.deepEqual(warnings, ["UNSUPPORTED_NETWORK"]);
+});
