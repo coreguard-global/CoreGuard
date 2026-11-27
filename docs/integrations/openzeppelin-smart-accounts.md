@@ -101,11 +101,12 @@ The rule gives you the signer set and the expiry; the policy client gives you
 the weights. If either source is missing, the honest result is `NOT_CHECKED`,
 not a pass.
 
-## Where this belongs
+## Status of the upstream suggestion
 
-- A short subsection in `packages/accounts/README.md` naming the fields above
-  and pointing at `get_context_rule` and the policy state — that is the doc
-  snippet.
-- The producer (reading RPC, listing rules, reading policy state) belongs in
-  `stellar/smart-account-kit`, which already owns those calls, not in the
-  contract repository and not duplicated here.
+OpenZeppelin closed [#997](https://github.com/OpenZeppelin/stellar-contracts/issues/997)
+as completed on 2026-11-27: the trait already documents what an off-chain
+reader needs, so a second list in `packages/accounts/README.md` would only be
+another thing to keep in sync. No docs PR was sent, and none will be.
+
+This page stays as an external note for our own integrators. It is not a
+proposal, and it should not be read as a gap in their documentation.

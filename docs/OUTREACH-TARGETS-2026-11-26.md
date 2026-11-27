@@ -54,9 +54,9 @@ Track: number of external payloads that ran through the tools; number of defects
 
 | Where | Thread | State | What happens next |
 |---|---|---|---|
-| OpenZeppelin Stellar Contracts | [#997](https://github.com/OpenZeppelin/stellar-contracts/issues/997) + [reply](https://github.com/OpenZeppelin/stellar-contracts/issues/997#issuecomment-7219929979) | open, unlabelled | maintainer decides between a docs subsection here and an example in `smart-account-kit` |
+| OpenZeppelin Stellar Contracts | [#997](https://github.com/OpenZeppelin/stellar-contracts/issues/997) + [reply](https://github.com/OpenZeppelin/stellar-contracts/issues/997#issuecomment-7219929979) + [closing reply](https://github.com/OpenZeppelin/stellar-contracts/issues/997#issuecomment-7221143550) | **closed as completed, 2026-11-27** | answered: the trait already documents the fields, so no README subsection and no docs PR from us; the field list stays an external integrator note. No follow-up queued. |
 | ACP | [#329 SEP](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/issues/329) + [profile-requirements reply](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/issues/329#issuecomment-7220171679) | proposal, awaiting sponsor | Prokura co-founder decides whether the vector belongs in ACP or `prokura-verify` |
-| stellar/smart-account-kit | [#41](https://github.com/stellar/smart-account-kit/issues/41) | open, enhancement requested (label needs a maintainer) | answer on whether a snapshot helper or a docs example is the right surface |
+| stellar/smart-account-kit | [#41](https://github.com/stellar/smart-account-kit/issues/41) | open, enhancement requested (label needs a maintainer) | answer on whether a snapshot helper or a docs example is the right surface. OZ's maintainer considered the example unnecessary in either repo; the question stands with this repo's maintainers, and we do not repost it. |
 | prokura-network/prokura-verify | [#4](https://github.com/prokura-network/prokura-verify/issues/4) | open, spec question | confirm the `receipt_id` traversal reading and where the vector lives |
 
 Every thread above is a technical question with a runnable artifact behind it. None asks for money, a partnership or a review; if the answer is "not useful", the thread closes.
