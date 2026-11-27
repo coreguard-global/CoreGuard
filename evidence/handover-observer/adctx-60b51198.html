@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handover 60b51198-98f… — CoreGuard observer</title>
+<style>
+  :root { color-scheme: light dark; --ink:#14161a; --muted:#5b6472; --line:#d9dee6; --ok:#0f7b46; --bad:#b3261e; --warn:#8a5a00; --paper:#fff; --wash:#f6f8fb; }
+  @media (prefers-color-scheme: dark) { :root { --ink:#e9edf3; --muted:#9aa5b4; --line:#2b323c; --ok:#56d394; --bad:#ff8a80; --warn:#e8b85c; --paper:#0f1216; --wash:#161b21; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--paper); }
+  main { max-width: 980px; margin: 0 auto; padding: 48px 24px 80px; }
+  .eyebrow { letter-spacing:.14em; text-transform:uppercase; font-size:12px; color:var(--muted); }
+  h1 { margin:.2em 0 .1em; font-size: clamp(28px,4vw,44px); letter-spacing:-.02em; }
+  .sub { color: var(--muted); margin-top: 0; }
+  .badges { display:flex; gap:10px; flex-wrap:wrap; margin: 22px 0 30px; }
+  .badge { border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-weight:650; font-size:14px; }
+  .badge.ok { color:var(--ok); border-color:currentColor; }
+  .badge.bad { color:var(--bad); border-color:currentColor; }
+  .badge.warn { color:var(--warn); border-color:currentColor; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin: 26px 0; }
+  .stat { background:var(--wash); border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
+  .stat b { display:block; font-size:30px; line-height:1.1; }
+  .stat span { color:var(--muted); font-size:13px; }
+  section { margin: 38px 0; }
+  h2 { font-size:19px; margin: 0 0 12px; }
+  code { font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+  td.num { width:42px; color:var(--muted); }
+  ul { padding-left: 20px; margin: 8px 0; }
+  ul.checks { list-style:none; padding:0; }
+  ul.checks li { padding:7px 0; border-bottom:1px solid var(--line); }
+  ul.checks span { display:inline-block; min-width:48px; font-size:11px; font-weight:750; letter-spacing:.06em; }
+  li.pass span { color: var(--ok); }
+  li.fail span { color: var(--bad); }
+  .note { background:var(--wash); border-left:3px solid var(--line); padding:14px 18px; border-radius:0 10px 10px 0; color:var(--muted); }
+  .decision { border:1px solid currentColor; border-radius:14px; padding:18px 20px; }
+  .decision.ok { color:var(--ok); } .decision.bad { color:var(--bad); } .decision.warn { color:var(--warn); }
+  .decision h2 { color:var(--ink); margin-bottom:6px; }
+  .decision p { margin:0 0 8px; color:var(--ink); }
+  footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">CoreGuard · independent handover observer · CG-HANDOVER/1</div>
+  <h1>Handover 60b51198…</h1>
+  <p class="sub">4 step receipts re-read from the published bundle and recomputed locally. Issuer verdicts are copied for comparison, not inherited.</p>
+
+  <div class="badges">
+    <span class="badge ok">record: verified</span>
+    <span class="badge ok">receiver policy: proceed</span>
+    <span class="badge">4/4 receipts verified</span>
+  </div>
+
+  <div class="grid">
+    <div class="stat"><b>4</b><span>step receipts</span></div>
+    <div class="stat"><b>4</b><span>bytes recomputed</span></div>
+    <div class="stat"><b>0</b><span>declared not checked</span></div>
+    <div class="stat"><b>5</b><span>limits carried</span></div>
+  </div>
+
+  <section class="decision ok">
+    <h2>Receiving-agent decision</h2>
+    <p><strong>proceed</strong> — from the policy below, applied to this verdict only.</p>
+    <ul><li>every receipt and every operation this policy requires verified</li></ul>
+  </section>
+
+  <section>
+    <h2>What was recomputed</h2>
+    <ul class="checks"><li class="pass"><span>PASS</span> bundle text has no duplicate member names</li>
+<li class="pass"><span>PASS</span> bundle carries an id</li>
+<li class="pass"><span>PASS</span> bundle id matches the id the caller asked for</li>
+<li class="pass"><span>PASS</span> bundle carries at least one step</li>
+<li class="pass"><span>PASS</span> step[1] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[1] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[1] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[1] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[1] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[1] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[1] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[2] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[2] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[2] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[2] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[2] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[2] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[2] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[3] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[3] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[3] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[3] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[3] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[3] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[3] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[4] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[4] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[4] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[4] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[4] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[4] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[4] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> workflow Merkle root recomputes under the declared construction</li>
+<li class="pass"><span>PASS</span> workflow-close receipt passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> workflow-close receipt carries a schema-0.4 metadata_hash with the published format</li>
+<li class="pass"><span>PASS</span> refused receipt ids are not also counted as steps</li>
+<li class="pass"><span>PASS</span> the issuer&#39;s not_checked list is preserved, not promoted</li></ul>
+  </section>
+
+  <section>
+    <h2>Step receipts</h2>
+    <table>
+      <thead><tr><th>#</th><th>Receipt</th><th>Tool</th><th>Recorded status</th><th>Observer outcome</th></tr></thead>
+      <tbody><tr>
+      <td class="num">1</td>
+      <td><code title="901ff099-27aa-464a-bec9-e222072df948">901ff099…</code></td>
+      <td>journal_log</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">2</td>
+      <td><code title="394394ce-4381-4f50-b28d-c761a1e2183f">394394ce…</code></td>
+      <td>journal_log</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">3</td>
+      <td><code title="f18f2269-ec3b-47fc-a73e-1dd71f6cf9b7">f18f2269…</code></td>
+      <td>journal_log</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">4</td>
+      <td><code title="2247f1e5-a8ea-4435-8f32-294508fa3530">2247f1e5…</code></td>
+      <td>prompt_shield</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Not checked, with reasons</h2>
+    <ul><li><strong>handover draft</strong> — outside_scope: the bundle declares no graph.aer</li>
+<li><strong>steps_digest</strong> — outside_scope: no published preimage rule</li></ul>
+  </section>
+
+  <section>
+    <h2>What this report does not establish</h2>
+    <ul><li>issuer identity: the bundle publishes no pinned signing key</li>
+<li>outside timestamp: no independent time source is consulted</li>
+<li>result correctness: a matching digest says the record is unchanged, not that the work was right</li>
+<li>metadata_hash preimage: schema 0.4 requires the field, the public material does not define its preimage</li>
+<li>steps_digest preimage: the field is carried but its construction is not published</li></ul>
+    <p class="note">A verified record means the saved bytes are unchanged and bound to this handover. It does not mean the delivery succeeded, the issuer is who it claims to be, or the work was correct.</p>
+  </section>
+
+  <section>
+    <h2>Issuer claims (not used as this verdict)</h2>
+    <p class="note">Issuer-reported; copied for comparison only. This observer does not inherit these claims.</p>
+    <ul>
+      <li>Issuer checked: 4</li>
+      <li>Issuer not checked: 0</li>
+      <li>Issuer not proven: outside timestamp; issuer identity; result correctness</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Bundle digest <code>sha256:5f3a41ab3e7004e555c31741ae4f25fe328596f34049904b18f54d7448aa4f41</code></p>
+    <p>Verdict digest <code>sha256:75634942367aa54dd729e4908743130b2fe47aaa30a367ca5e6ca5638c13317b</code></p>
+    <p>Observer <code>coreguard-observer:cli</code> · read at <code>2026-11-27T12:00:00.000Z</code> · report generated <code>2026-11-27T12:00:00.000Z</code></p>
+    <p>Source <code>local file</code></p>
+    <p>VERIFIED ≠ SAFE. No issuer key was pinned; no external time source was consulted.</p>
+  </footer>
+</main>
+</body>
+</html>

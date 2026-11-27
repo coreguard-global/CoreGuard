@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handover e2ef637d-663… — CoreGuard observer</title>
+<style>
+  :root { color-scheme: light dark; --ink:#14161a; --muted:#5b6472; --line:#d9dee6; --ok:#0f7b46; --bad:#b3261e; --warn:#8a5a00; --paper:#fff; --wash:#f6f8fb; }
+  @media (prefers-color-scheme: dark) { :root { --ink:#e9edf3; --muted:#9aa5b4; --line:#2b323c; --ok:#56d394; --bad:#ff8a80; --warn:#e8b85c; --paper:#0f1216; --wash:#161b21; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--paper); }
+  main { max-width: 980px; margin: 0 auto; padding: 48px 24px 80px; }
+  .eyebrow { letter-spacing:.14em; text-transform:uppercase; font-size:12px; color:var(--muted); }
+  h1 { margin:.2em 0 .1em; font-size: clamp(28px,4vw,44px); letter-spacing:-.02em; }
+  .sub { color: var(--muted); margin-top: 0; }
+  .badges { display:flex; gap:10px; flex-wrap:wrap; margin: 22px 0 30px; }
+  .badge { border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-weight:650; font-size:14px; }
+  .badge.ok { color:var(--ok); border-color:currentColor; }
+  .badge.bad { color:var(--bad); border-color:currentColor; }
+  .badge.warn { color:var(--warn); border-color:currentColor; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin: 26px 0; }
+  .stat { background:var(--wash); border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
+  .stat b { display:block; font-size:30px; line-height:1.1; }
+  .stat span { color:var(--muted); font-size:13px; }
+  section { margin: 38px 0; }
+  h2 { font-size:19px; margin: 0 0 12px; }
+  code { font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+  td.num { width:42px; color:var(--muted); }
+  ul { padding-left: 20px; margin: 8px 0; }
+  ul.checks { list-style:none; padding:0; }
+  ul.checks li { padding:7px 0; border-bottom:1px solid var(--line); }
+  ul.checks span { display:inline-block; min-width:48px; font-size:11px; font-weight:750; letter-spacing:.06em; }
+  li.pass span { color: var(--ok); }
+  li.fail span { color: var(--bad); }
+  .note { background:var(--wash); border-left:3px solid var(--line); padding:14px 18px; border-radius:0 10px 10px 0; color:var(--muted); }
+  .decision { border:1px solid currentColor; border-radius:14px; padding:18px 20px; }
+  .decision.ok { color:var(--ok); } .decision.bad { color:var(--bad); } .decision.warn { color:var(--warn); }
+  .decision h2 { color:var(--ink); margin-bottom:6px; }
+  .decision p { margin:0 0 8px; color:var(--ink); }
+  footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">CoreGuard · independent handover observer · CG-HANDOVER/1</div>
+  <h1>Handover e2ef637d…</h1>
+  <p class="sub">41 step receipts re-read from the published bundle and recomputed locally. Issuer verdicts are copied for comparison, not inherited.</p>
+
+  <div class="badges">
+    <span class="badge ok">record: verified</span>
+    <span class="badge warn">receiver policy: hold</span>
+    <span class="badge">41/41 receipts verified</span>
+  </div>
+
+  <div class="grid">
+    <div class="stat"><b>41</b><span>step receipts</span></div>
+    <div class="stat"><b>41</b><span>bytes recomputed</span></div>
+    <div class="stat"><b>1</b><span>declared not checked</span></div>
+    <div class="stat"><b>5</b><span>limits carried</span></div>
+  </div>
+
+  <section class="decision warn">
+    <h2>Receiving-agent decision</h2>
+    <p><strong>hold</strong> — from the policy below, applied to this verdict only.</p>
+    <ul><li>step 18 (d36b7021-90eb-4a1f-9ea4-60d5bc45540b) did not complete: refused</li>
+<li>step[18] receipt d36b7021-90eb-4a1f-9ea4-60d5bc45540b: recorded status is refused; the receipt bytes verify, the operation did not complete</li></ul>
+  </section>
+
+  <section>
+    <h2>What was recomputed</h2>
+    <ul class="checks"><li class="pass"><span>PASS</span> bundle text has no duplicate member names</li>
+<li class="pass"><span>PASS</span> bundle carries an id</li>
+<li class="pass"><span>PASS</span> bundle id matches the id the caller asked for</li>
+<li class="pass"><span>PASS</span> handover draft is one this build implements</li>
+<li class="pass"><span>PASS</span> bundle carries at least one step</li>
+<li class="pass"><span>PASS</span> step[1] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[1] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[1] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[1] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[1] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[1] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[1] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[2] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[2] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[2] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[2] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[2] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[2] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[2] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[3] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[3] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[3] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[3] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[3] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[3] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[3] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[4] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[4] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[4] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[4] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[4] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[4] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[4] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[5] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[5] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[5] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[5] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[5] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[5] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[5] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[6] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[6] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[6] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[6] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[6] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[6] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[6] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[7] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[7] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[7] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[7] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[7] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[7] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[7] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[8] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[8] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[8] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[8] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[8] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[8] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[8] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[9] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[9] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[9] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[9] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[9] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[9] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[9] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[10] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[10] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[10] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[10] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[10] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[10] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[10] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[11] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[11] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[11] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[11] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[11] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[11] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[11] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[12] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[12] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[12] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[12] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[12] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[12] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[12] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[13] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[13] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[13] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[13] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[13] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[13] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[13] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[14] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[14] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[14] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[14] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[14] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[14] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[14] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[15] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[15] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[15] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[15] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[15] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[15] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[15] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[16] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[16] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[16] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[16] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[16] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[16] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[16] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[17] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[17] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[17] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[17] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[17] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[17] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[17] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[18] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[18] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[18] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[18] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[18] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[18] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[18] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[19] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[19] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[19] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[19] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[19] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[19] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[19] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[20] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[20] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[20] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[20] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[20] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[20] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[20] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[21] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[21] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[21] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[21] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[21] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[21] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[21] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[22] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[22] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[22] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[22] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[22] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[22] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[22] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[23] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[23] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[23] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[23] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[23] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[23] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[23] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[24] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[24] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[24] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[24] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[24] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[24] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[24] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[25] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[25] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[25] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[25] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[25] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[25] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[25] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[26] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[26] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[26] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[26] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[26] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[26] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[26] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[27] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[27] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[27] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[27] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[27] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[27] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[27] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[28] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[28] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[28] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[28] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[28] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[28] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[28] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[29] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[29] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[29] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[29] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[29] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[29] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[29] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[30] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[30] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[30] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[30] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[30] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[30] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[30] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[31] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[31] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[31] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[31] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[31] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[31] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[31] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[32] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[32] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[32] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[32] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[32] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[32] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[32] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[33] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[33] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[33] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[33] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[33] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[33] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[33] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[34] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[34] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[34] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[34] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[34] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[34] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[34] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[35] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[35] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[35] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[35] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[35] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[35] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[35] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[36] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[36] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[36] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[36] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[36] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[36] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[36] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[37] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[37] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[37] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[37] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[37] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[37] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[37] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[38] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[38] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[38] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[38] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[38] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[38] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[38] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[39] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[39] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[39] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[39] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[39] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[39] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[39] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[40] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[40] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[40] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[40] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[40] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[40] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[40] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> step[41] names a receipt id</li>
+<li class="pass"><span>PASS</span> step[41] carries canonical_bytes_base64</li>
+<li class="pass"><span>PASS</span> step[41] carries the text form of the same bytes</li>
+<li class="pass"><span>PASS</span> step[41] base64 is canonical</li>
+<li class="pass"><span>PASS</span> step[41] text and base64 forms agree</li>
+<li class="pass"><span>PASS</span> step[41] output_hash matches the decoded bytes</li>
+<li class="pass"><span>PASS</span> step[41] passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> workflow Merkle root recomputes under the declared construction</li>
+<li class="pass"><span>PASS</span> workflow-close receipt passes the AER-1 parser</li>
+<li class="pass"><span>PASS</span> workflow-close receipt carries a schema-0.4 metadata_hash with the published format</li>
+<li class="pass"><span>PASS</span> refused receipt ids are not also counted as steps</li>
+<li class="pass"><span>PASS</span> the issuer&#39;s not_checked list is preserved, not promoted</li></ul>
+  </section>
+
+  <section>
+    <h2>Step receipts</h2>
+    <table>
+      <thead><tr><th>#</th><th>Receipt</th><th>Tool</th><th>Recorded status</th><th>Observer outcome</th></tr></thead>
+      <tbody><tr>
+      <td class="num">1</td>
+      <td><code title="78458662-51b0-4d4b-a05c-9aaa4655137c">78458662…</code></td>
+      <td>proof_loop_plan</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">2</td>
+      <td><code title="fd183d5c-855e-4b89-b832-5c924094451c">fd183d5c…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">3</td>
+      <td><code title="753da7ca-b069-4e70-bee8-fb7594280ad1">753da7ca…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">4</td>
+      <td><code title="cbb4142e-f69b-4102-9f34-cfd8d2960540">cbb4142e…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">5</td>
+      <td><code title="2477de3d-377d-4da3-92d4-b878566346d4">2477de3d…</code></td>
+      <td>proof_loop_check</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">6</td>
+      <td><code title="34dbe38b-a37e-416c-9c58-1b65ce8f9534">34dbe38b…</code></td>
+      <td>proof_loop_check</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">7</td>
+      <td><code title="c1715c48-46a8-4a3e-85f4-ae95012b94da">c1715c48…</code></td>
+      <td>proof_loop_fix</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">8</td>
+      <td><code title="894673b8-9d8f-45cc-b69d-3ac350c67762">894673b8…</code></td>
+      <td>proof_loop_check</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">9</td>
+      <td><code title="c5d8b169-4252-404c-b8c7-34990afb3012">c5d8b169…</code></td>
+      <td>proof_loop_fix</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">10</td>
+      <td><code title="3bb432b7-7f4c-4ff3-b5a1-469ea7dfd367">3bb432b7…</code></td>
+      <td>proof_loop_check</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">11</td>
+      <td><code title="bbc78caf-b648-44b8-a57d-1476a1b53434">bbc78caf…</code></td>
+      <td>proof_loop_check</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">12</td>
+      <td><code title="0f6cb3d2-c906-45c1-862c-5163048e5665">0f6cb3d2…</code></td>
+      <td>proof_loop_prove</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">13</td>
+      <td><code title="edb2a25d-90a9-4b1a-a18e-dbbe4ab04015">edb2a25d…</code></td>
+      <td>proof_loop_handover</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">14</td>
+      <td><code title="20fa5a54-51b0-48a7-9a4f-3a0b09590a7b">20fa5a54…</code></td>
+      <td>zambo_universal</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">15</td>
+      <td><code title="e53968e5-7030-475d-a4c1-cfaf1ebbe2a3">e53968e5…</code></td>
+      <td>live_price</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">16</td>
+      <td><code title="7f2f4c58-6740-450c-8099-26694d272bd4">7f2f4c58…</code></td>
+      <td>live_price</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">17</td>
+      <td><code title="d567563d-12a4-48cf-9804-1cec033f119f">d567563d…</code></td>
+      <td>live_price</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">18</td>
+      <td><code title="d36b7021-90eb-4a1f-9ea4-60d5bc45540b">d36b7021…</code></td>
+      <td>handover</td>
+      <td>refused</td>
+      <td>not_checked</td>
+    </tr>
+<tr>
+      <td class="num">19</td>
+      <td><code title="ae604ff9-aa3f-46a2-b764-494ec9c72cb3">ae604ff9…</code></td>
+      <td>prompt_shield</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">20</td>
+      <td><code title="bca5ec36-eb41-4e0e-bb53-84e414c77a2e">bca5ec36…</code></td>
+      <td>proof_loop_plan</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">21</td>
+      <td><code title="6da1d602-843f-4e2a-bc21-ad49190c4a53">6da1d602…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">22</td>
+      <td><code title="dc1c259c-7bcb-49e6-afb0-1f0ddbe4d383">dc1c259c…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">23</td>
+      <td><code title="fffe099e-4b53-409b-9edb-9a4f8a4a0663">fffe099e…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">24</td>
+      <td><code title="25270fe6-fe00-425c-9e7e-80f2c6891ca7">25270fe6…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">25</td>
+      <td><code title="16295236-f281-4a88-bfc9-8bee59ff380f">16295236…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">26</td>
+      <td><code title="ad7babb3-e297-41ac-863d-9591d71a8f39">ad7babb3…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">27</td>
+      <td><code title="095a959d-808a-439f-9d62-57db8013e4f1">095a959d…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">28</td>
+      <td><code title="7a417f8f-e62c-408f-ba0e-88ea6b2e1087">7a417f8f…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">29</td>
+      <td><code title="e9dbc800-876c-4523-a1bb-197000559053">e9dbc800…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">30</td>
+      <td><code title="53acd24e-f663-4d10-8919-37e1f26e88f6">53acd24e…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">31</td>
+      <td><code title="e7bdb0de-1d62-4ee4-b2d6-a72c1c2522db">e7bdb0de…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">32</td>
+      <td><code title="48967cb0-0d22-4500-9385-ae988759c11c">48967cb0…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">33</td>
+      <td><code title="86387f6b-a596-4014-9d09-17e7b58b5f9d">86387f6b…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">34</td>
+      <td><code title="a6eac43f-7f79-4084-b150-ec74c9ed6b19">a6eac43f…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">35</td>
+      <td><code title="1c6ab176-b110-448c-adfe-d2677cdb5491">1c6ab176…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">36</td>
+      <td><code title="6bba541c-5a4d-4389-b506-674686811036">6bba541c…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">37</td>
+      <td><code title="249302b7-2d9a-4f8d-8a99-e8e39b5152f3">249302b7…</code></td>
+      <td>proof_loop_do</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">38</td>
+      <td><code title="fa06ef2d-d725-4e23-87fb-f0a2e2b41b8d">fa06ef2d…</code></td>
+      <td>proof_loop_check</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">39</td>
+      <td><code title="d8e3d69f-0cef-4783-a17e-7202474208ea">d8e3d69f…</code></td>
+      <td>proof_loop_check</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">40</td>
+      <td><code title="44e561b7-2198-4c63-8ed1-d1737b28e72b">44e561b7…</code></td>
+      <td>proof_loop_check</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr>
+<tr>
+      <td class="num">41</td>
+      <td><code title="4160b01e-a9f4-4cb5-983c-31bfc168fb0a">4160b01e…</code></td>
+      <td>proof_loop_check</td>
+      <td>success</td>
+      <td>verified</td>
+    </tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Not checked, with reasons</h2>
+    <ul><li><strong>step[18] receipt d36b7021-90eb-4a1f-9ea4-60d5bc45540b</strong> — not_attempted: recorded status is refused; the receipt bytes verify, the operation did not complete</li>
+<li><strong>steps_digest</strong> — outside_scope: no published preimage rule</li></ul>
+  </section>
+
+  <section>
+    <h2>What this report does not establish</h2>
+    <ul><li>issuer identity: the bundle publishes no pinned signing key</li>
+<li>outside timestamp: no independent time source is consulted</li>
+<li>result correctness: a matching digest says the record is unchanged, not that the work was right</li>
+<li>metadata_hash preimage: schema 0.4 requires the field, the public material does not define its preimage</li>
+<li>steps_digest preimage: the field is carried but its construction is not published</li></ul>
+    <p class="note">A verified record means the saved bytes are unchanged and bound to this handover. It does not mean the delivery succeeded, the issuer is who it claims to be, or the work was correct.</p>
+  </section>
+
+  <section>
+    <h2>Issuer claims (not used as this verdict)</h2>
+    <p class="note">Issuer-reported; copied for comparison only. This observer does not inherit these claims.</p>
+    <ul>
+      <li>Issuer checked: 41</li>
+      <li>Issuer not checked: 1</li>
+      <li>Issuer not proven: outside timestamp; issuer identity; result correctness</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Bundle digest <code>sha256:9ff930d5e074ce193a5074ddfbc491eb0dbc86bc05a15e9eba5c1560e31f3720</code></p>
+    <p>Verdict digest <code>sha256:16b425972a46bda507f6efa2fd8e41e4658a547f32f253890e08831b79727012</code></p>
+    <p>Observer <code>coreguard-observer:cli</code> · read at <code>2026-11-27T12:00:00.000Z</code> · report generated <code>2026-11-27T12:00:00.000Z</code></p>
+    <p>Source <code>local file</code></p>
+    <p>VERIFIED ≠ SAFE. No issuer key was pinned; no external time source was consulted.</p>
+  </footer>
+</main>
+</body>
+</html>

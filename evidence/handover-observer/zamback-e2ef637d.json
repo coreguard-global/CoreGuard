@@ -1,0 +1,2281 @@
+{
+  "observerVersion": "CG-HANDOVER/1",
+  "readAt": "2026-11-27T12:00:00.000Z",
+  "source": {
+    "url": null,
+    "file": "/tmp/h1.json",
+    "bytes": 184950
+  },
+  "verdict": {
+    "observerVersion": "CG-HANDOVER/1",
+    "observer": "coreguard-observer:cli",
+    "readAt": "2026-11-27T12:00:00.000Z",
+    "sourceUrl": null,
+    "bundleDigest": "sha256:9ff930d5e074ce193a5074ddfbc491eb0dbc86bc05a15e9eba5c1560e31f3720",
+    "handover": {
+      "id": "e2ef637d-663e-4020-bdc9-c69fbb1fa4de",
+      "expectedId": "e2ef637d-663e-4020-bdc9-c69fbb1fa4de",
+      "draft": "draft-zambo-aer1-26",
+      "status": "accepted",
+      "kind": "zambo_handover",
+      "recipientType": "human",
+      "createdAt": "2026-11-18T00:08:28.989Z",
+      "stepCount": 41,
+      "refusedReceiptIds": [
+        "ae4be2a1-cdb4-442f-a291-2900c19e946d"
+      ],
+      "declaredNotChecked": [
+        "Step ae4be2a1-cdb4-442f-a291-2900c19e946d: tool did not complete successfully"
+      ]
+    },
+    "outcome": "verified",
+    "coverage": {
+      "steps": 41,
+      "receiptsVerified": 41,
+      "receiptsFailed": 0,
+      "operationsNotChecked": 1,
+      "declaredNotChecked": 1
+    },
+    "steps": [
+      {
+        "index": 1,
+        "receiptId": "78458662-51b0-4d4b-a05c-9aaa4655137c",
+        "tool": "proof_loop_plan",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:dea852066dba5942954b2211e94f6c347f9b0a4120fb870c84f1359074f49556",
+          "computed": "sha256:dea852066dba5942954b2211e94f6c347f9b0a4120fb870c84f1359074f49556",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 2,
+        "receiptId": "fd183d5c-855e-4b89-b832-5c924094451c",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:836488f3bb16be85f9f98ed22b7269ff34cfdf3b26b77ac5ecd89d54bb430b99",
+          "computed": "sha256:836488f3bb16be85f9f98ed22b7269ff34cfdf3b26b77ac5ecd89d54bb430b99",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 3,
+        "receiptId": "753da7ca-b069-4e70-bee8-fb7594280ad1",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:cd53f2003d5c27a9c2d1459099265174a84df634a3f6ddac983ddcf55258cd57",
+          "computed": "sha256:cd53f2003d5c27a9c2d1459099265174a84df634a3f6ddac983ddcf55258cd57",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 4,
+        "receiptId": "cbb4142e-f69b-4102-9f34-cfd8d2960540",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:bba78051e154d975da7159bd0c6be2bcabb92dc38d9ff34aeb97f99a6a3a78cc",
+          "computed": "sha256:bba78051e154d975da7159bd0c6be2bcabb92dc38d9ff34aeb97f99a6a3a78cc",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 5,
+        "receiptId": "2477de3d-377d-4da3-92d4-b878566346d4",
+        "tool": "proof_loop_check",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:9808fc6c4b4b3abdd641d2fb2d30de9fde8f076588fa4d58c548f43bd40e782f",
+          "computed": "sha256:9808fc6c4b4b3abdd641d2fb2d30de9fde8f076588fa4d58c548f43bd40e782f",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 6,
+        "receiptId": "34dbe38b-a37e-416c-9c58-1b65ce8f9534",
+        "tool": "proof_loop_check",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:0cf26cdc7b8084a5fc2244bb982d2e0d0bd347e2fabaef637b0d9163a60cd6fa",
+          "computed": "sha256:0cf26cdc7b8084a5fc2244bb982d2e0d0bd347e2fabaef637b0d9163a60cd6fa",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 7,
+        "receiptId": "c1715c48-46a8-4a3e-85f4-ae95012b94da",
+        "tool": "proof_loop_fix",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:954278e192db205c8cbe876fb59a3a53c2a6644a4bf163478b283f87fe66230a",
+          "computed": "sha256:954278e192db205c8cbe876fb59a3a53c2a6644a4bf163478b283f87fe66230a",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 8,
+        "receiptId": "894673b8-9d8f-45cc-b69d-3ac350c67762",
+        "tool": "proof_loop_check",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:0bf5b72fea19d3863abd3c2f607023d34ed4ab13d86cf0ca13cecb4ddd4dfaad",
+          "computed": "sha256:0bf5b72fea19d3863abd3c2f607023d34ed4ab13d86cf0ca13cecb4ddd4dfaad",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 9,
+        "receiptId": "c5d8b169-4252-404c-b8c7-34990afb3012",
+        "tool": "proof_loop_fix",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:282a51e60059b19cac5cee49124d53ac532dd5f9f78750538154125d14827753",
+          "computed": "sha256:282a51e60059b19cac5cee49124d53ac532dd5f9f78750538154125d14827753",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 10,
+        "receiptId": "3bb432b7-7f4c-4ff3-b5a1-469ea7dfd367",
+        "tool": "proof_loop_check",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:14ea302a48aa4c0f2c9d6e703efe53c5608a5f4d6fc88b01608567b735205ef6",
+          "computed": "sha256:14ea302a48aa4c0f2c9d6e703efe53c5608a5f4d6fc88b01608567b735205ef6",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 11,
+        "receiptId": "bbc78caf-b648-44b8-a57d-1476a1b53434",
+        "tool": "proof_loop_check",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:440a86d92b670660fa92914707e8bf3cabce19d0f395c37b8dbc4b25cf3cc8a2",
+          "computed": "sha256:440a86d92b670660fa92914707e8bf3cabce19d0f395c37b8dbc4b25cf3cc8a2",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 12,
+        "receiptId": "0f6cb3d2-c906-45c1-862c-5163048e5665",
+        "tool": "proof_loop_prove",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:3480d2ce20325e54b7ef5fd5916028602427a1480e147a6ead950af771d790aa",
+          "computed": "sha256:3480d2ce20325e54b7ef5fd5916028602427a1480e147a6ead950af771d790aa",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 13,
+        "receiptId": "edb2a25d-90a9-4b1a-a18e-dbbe4ab04015",
+        "tool": "proof_loop_handover",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:ce4dc5b83cc99f61219dbd71e2628ef823b942aa03bec71ab4cde75edb32945a",
+          "computed": "sha256:ce4dc5b83cc99f61219dbd71e2628ef823b942aa03bec71ab4cde75edb32945a",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 14,
+        "receiptId": "20fa5a54-51b0-48a7-9a4f-3a0b09590a7b",
+        "tool": "zambo_universal",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:45273d74c8a20e577486f17b9ee1fef0237b4282258de1f2ca052dd477700f73",
+          "computed": "sha256:45273d74c8a20e577486f17b9ee1fef0237b4282258de1f2ca052dd477700f73",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 15,
+        "receiptId": "e53968e5-7030-475d-a4c1-cfaf1ebbe2a3",
+        "tool": "live_price",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:ed161f19344f7a02426bfbf22e31969e659eb87645f1e93a84eac4b68c1cb36d",
+          "computed": "sha256:ed161f19344f7a02426bfbf22e31969e659eb87645f1e93a84eac4b68c1cb36d",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 16,
+        "receiptId": "7f2f4c58-6740-450c-8099-26694d272bd4",
+        "tool": "live_price",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:f6893d6e310a2c296fcffc2255a5eca6f79de8294699a50ecef364093ca9af74",
+          "computed": "sha256:f6893d6e310a2c296fcffc2255a5eca6f79de8294699a50ecef364093ca9af74",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 17,
+        "receiptId": "d567563d-12a4-48cf-9804-1cec033f119f",
+        "tool": "live_price",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:dcba8c90d31b4b0377d5b7003a63ef2bd28224a93bd2ba6787d2ee8633e287ea",
+          "computed": "sha256:dcba8c90d31b4b0377d5b7003a63ef2bd28224a93bd2ba6787d2ee8633e287ea",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 18,
+        "receiptId": "d36b7021-90eb-4a1f-9ea4-60d5bc45540b",
+        "tool": "handover",
+        "status": "refused",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:c95760cd86f3435315c54d38be9483af59c4d1ce3a2ba9c6c7f11b602e655334",
+          "computed": "sha256:c95760cd86f3435315c54d38be9483af59c4d1ce3a2ba9c6c7f11b602e655334",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "not_checked"
+      },
+      {
+        "index": 19,
+        "receiptId": "ae604ff9-aa3f-46a2-b764-494ec9c72cb3",
+        "tool": "prompt_shield",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "EXECUTED BY ZAMBO",
+        "digest": {
+          "claimed": "sha256:7e1bf9990a848d9c5720d65a79589a1ebccd2194ec2e4ccce3367437539d76f7",
+          "computed": "sha256:7e1bf9990a848d9c5720d65a79589a1ebccd2194ec2e4ccce3367437539d76f7",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 20,
+        "receiptId": "bca5ec36-eb41-4e0e-bb53-84e414c77a2e",
+        "tool": "proof_loop_plan",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "EXECUTED BY ZAMBO",
+        "digest": {
+          "claimed": "sha256:cb524080b60354e1f7218c0915c291eb91ef69db5beb3fd385cfc40bf8fdeab2",
+          "computed": "sha256:cb524080b60354e1f7218c0915c291eb91ef69db5beb3fd385cfc40bf8fdeab2",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 21,
+        "receiptId": "6da1d602-843f-4e2a-bc21-ad49190c4a53",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:7b68b7ab324c44c93884158361623110fd626993e01169811d4cb4e8747bb9a4",
+          "computed": "sha256:7b68b7ab324c44c93884158361623110fd626993e01169811d4cb4e8747bb9a4",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 22,
+        "receiptId": "dc1c259c-7bcb-49e6-afb0-1f0ddbe4d383",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:49b687ee19fca6bb15f39d74ac1f47e7ab9560aee6eb22345d389b8fb16176af",
+          "computed": "sha256:49b687ee19fca6bb15f39d74ac1f47e7ab9560aee6eb22345d389b8fb16176af",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 23,
+        "receiptId": "fffe099e-4b53-409b-9edb-9a4f8a4a0663",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:bd617a3c58d892db7c4c94a9d733529984e1c7da855244428a76f7ab152d382f",
+          "computed": "sha256:bd617a3c58d892db7c4c94a9d733529984e1c7da855244428a76f7ab152d382f",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 24,
+        "receiptId": "25270fe6-fe00-425c-9e7e-80f2c6891ca7",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:07756e6ebdca582f4998e5447f8b66bf40ef068aa1038ccb2c94e0c3adbd82a5",
+          "computed": "sha256:07756e6ebdca582f4998e5447f8b66bf40ef068aa1038ccb2c94e0c3adbd82a5",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 25,
+        "receiptId": "16295236-f281-4a88-bfc9-8bee59ff380f",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:98497763ed0c30dce7242064d1700ea9b517cb5256f9c7d705f34da7e14df474",
+          "computed": "sha256:98497763ed0c30dce7242064d1700ea9b517cb5256f9c7d705f34da7e14df474",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 26,
+        "receiptId": "ad7babb3-e297-41ac-863d-9591d71a8f39",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:b5b2fef0c6b19dc52f9bcf8fe544c3902a6dbecb5cea599e95de03f18afb865e",
+          "computed": "sha256:b5b2fef0c6b19dc52f9bcf8fe544c3902a6dbecb5cea599e95de03f18afb865e",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 27,
+        "receiptId": "095a959d-808a-439f-9d62-57db8013e4f1",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:1f2cc076ccbaff0d6348637e0d281f69e1abf373ee980f490b6c22c52c6192d9",
+          "computed": "sha256:1f2cc076ccbaff0d6348637e0d281f69e1abf373ee980f490b6c22c52c6192d9",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 28,
+        "receiptId": "7a417f8f-e62c-408f-ba0e-88ea6b2e1087",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:97c4751f49f490b7ab6fec21b3c5cd737ff1e89c80126249e58eb51f08de53e6",
+          "computed": "sha256:97c4751f49f490b7ab6fec21b3c5cd737ff1e89c80126249e58eb51f08de53e6",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 29,
+        "receiptId": "e9dbc800-876c-4523-a1bb-197000559053",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:905c4ca03832515eb582ab79ab77e1d284c9eb15e95b85214eedf7b846116d38",
+          "computed": "sha256:905c4ca03832515eb582ab79ab77e1d284c9eb15e95b85214eedf7b846116d38",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 30,
+        "receiptId": "53acd24e-f663-4d10-8919-37e1f26e88f6",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:775878707f0985c58cde8eeaf8854596b5ee84cc4e6999632b166f335c6368a3",
+          "computed": "sha256:775878707f0985c58cde8eeaf8854596b5ee84cc4e6999632b166f335c6368a3",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 31,
+        "receiptId": "e7bdb0de-1d62-4ee4-b2d6-a72c1c2522db",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:b03886cfc693fc9fcb8449fda8bf81e3818f5a5b4fe14bbcbdf3db5dc8585d90",
+          "computed": "sha256:b03886cfc693fc9fcb8449fda8bf81e3818f5a5b4fe14bbcbdf3db5dc8585d90",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 32,
+        "receiptId": "48967cb0-0d22-4500-9385-ae988759c11c",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:99db8a1df3875f1f50415ee05ad4bb9b145da9b0bf03e98ded7d47e0f7b10484",
+          "computed": "sha256:99db8a1df3875f1f50415ee05ad4bb9b145da9b0bf03e98ded7d47e0f7b10484",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 33,
+        "receiptId": "86387f6b-a596-4014-9d09-17e7b58b5f9d",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:84180c512017161e89ce851fbd0e98a0596fa3ba6c1e0e115c8354bbdaffcc6e",
+          "computed": "sha256:84180c512017161e89ce851fbd0e98a0596fa3ba6c1e0e115c8354bbdaffcc6e",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 34,
+        "receiptId": "a6eac43f-7f79-4084-b150-ec74c9ed6b19",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:2566d1b0c63a644f20593e19524b06b6fce6898c4e5fc2f2e9cf180fedacc452",
+          "computed": "sha256:2566d1b0c63a644f20593e19524b06b6fce6898c4e5fc2f2e9cf180fedacc452",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 35,
+        "receiptId": "1c6ab176-b110-448c-adfe-d2677cdb5491",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:c714d84a2c9e6797253da50da4094fe3f135ad140d0adc7b0549ef17a19a14e6",
+          "computed": "sha256:c714d84a2c9e6797253da50da4094fe3f135ad140d0adc7b0549ef17a19a14e6",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 36,
+        "receiptId": "6bba541c-5a4d-4389-b506-674686811036",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:0bccdf95ccf24bd787113dc5ef67539c26694b3f6909c764ad866444bb85aa9f",
+          "computed": "sha256:0bccdf95ccf24bd787113dc5ef67539c26694b3f6909c764ad866444bb85aa9f",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 37,
+        "receiptId": "249302b7-2d9a-4f8d-8a99-e8e39b5152f3",
+        "tool": "proof_loop_do",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "LOGGED BY AGENT",
+        "digest": {
+          "claimed": "sha256:8e65464c7eebcd213adfac839cec5bc74ba97a13b0382c685e5a5e5e5c01b822",
+          "computed": "sha256:8e65464c7eebcd213adfac839cec5bc74ba97a13b0382c685e5a5e5e5c01b822",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 38,
+        "receiptId": "fa06ef2d-d725-4e23-87fb-f0a2e2b41b8d",
+        "tool": "proof_loop_check",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "EXECUTED BY ZAMBO",
+        "digest": {
+          "claimed": "sha256:d48b2ea111e1cc75b85f5cccf36d71f7915a13c24dbd987ef8964476646b88f8",
+          "computed": "sha256:d48b2ea111e1cc75b85f5cccf36d71f7915a13c24dbd987ef8964476646b88f8",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 39,
+        "receiptId": "d8e3d69f-0cef-4783-a17e-7202474208ea",
+        "tool": "proof_loop_check",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "EXECUTED BY ZAMBO",
+        "digest": {
+          "claimed": "sha256:239cd470d700a5ddf55d4ca0318d8e5656f52242a846d2a3800df865551657f1",
+          "computed": "sha256:239cd470d700a5ddf55d4ca0318d8e5656f52242a846d2a3800df865551657f1",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 40,
+        "receiptId": "44e561b7-2198-4c63-8ed1-d1737b28e72b",
+        "tool": "proof_loop_check",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "EXECUTED BY ZAMBO",
+        "digest": {
+          "claimed": "sha256:9d50d07c500a071714dbb8143e502fc8162744c5bb293ee97c5add7f5c3fa27a",
+          "computed": "sha256:9d50d07c500a071714dbb8143e502fc8162744c5bb293ee97c5add7f5c3fa27a",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      },
+      {
+        "index": 41,
+        "receiptId": "4160b01e-a9f4-4cb5-983c-31bfc168fb0a",
+        "tool": "proof_loop_check",
+        "status": "success",
+        "schema": "0.4",
+        "provenanceClass": "EXECUTED BY ZAMBO",
+        "digest": {
+          "claimed": "sha256:2da9bf8bc6b9642537904fb78288f37a95f03cf7932c8f81dedf38c3fec00916",
+          "computed": "sha256:2da9bf8bc6b9642537904fb78288f37a95f03cf7932c8f81dedf38c3fec00916",
+          "ok": true
+        },
+        "idBound": true,
+        "outcome": "verified"
+      }
+    ],
+    "merkle": {
+      "declared": "seq-output-v1",
+      "root": "734a5cb52e453f33d5b0ca6a2cbba2760d49453df61b779d628ba1569f80bc1a",
+      "computed": "734a5cb52e453f33d5b0ca6a2cbba2760d49453df61b779d628ba1569f80bc1a",
+      "ok": true
+    },
+    "workflowReceipt": {
+      "id": "ff7b6cd3-871e-4fdc-9186-e6e60e0e36fd",
+      "schema": "0.4",
+      "outcome": "verified",
+      "metadataHash": {
+        "present": true,
+        "formatOk": true,
+        "value": "sha256:edd66244b6ffd7f5edd957b3890d2ad1f97bc3a2fce40c2b02de9c7bd7ca61be",
+        "preimageChecked": false
+      }
+    },
+    "issuerClaims": {
+      "receiptChecks": {
+        "checked": 41,
+        "not_checked": 1,
+        "scope": "checked counts this bundle's step receipts whose saved bytes verified; not_checked counts the entries in this bundle's not_checked list."
+      },
+      "notChecked": [
+        "Step ae4be2a1-cdb4-442f-a291-2900c19e946d: tool did not complete successfully"
+      ],
+      "notProven": [
+        "outside timestamp",
+        "issuer identity",
+        "result correctness"
+      ],
+      "statusSemantics": "Workflow state may be accepted on AI pickup; client_decision is authoritative for client approval.",
+      "note": "Issuer-reported; copied for comparison only. This observer does not inherit these claims."
+    },
+    "checks": [
+      {
+        "id": "bundle text has no duplicate member names",
+        "ok": true
+      },
+      {
+        "id": "bundle carries an id",
+        "ok": true
+      },
+      {
+        "id": "bundle id matches the id the caller asked for",
+        "ok": true,
+        "detail": {
+          "expected": "e2ef637d-663e-4020-bdc9-c69fbb1fa4de",
+          "found": "e2ef637d-663e-4020-bdc9-c69fbb1fa4de"
+        }
+      },
+      {
+        "id": "handover draft is one this build implements",
+        "ok": true,
+        "detail": {
+          "declared": "draft-zambo-aer1-26",
+          "supported": [
+            "draft-zambo-aer1-26"
+          ]
+        }
+      },
+      {
+        "id": "bundle carries at least one step",
+        "ok": true,
+        "detail": {
+          "steps": 41
+        }
+      },
+      {
+        "id": "step[1] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[1] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[1] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[1] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[1] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[1] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:dea852066dba5942954b2211e94f6c347f9b0a4120fb870c84f1359074f49556",
+          "computed": "sha256:dea852066dba5942954b2211e94f6c347f9b0a4120fb870c84f1359074f49556"
+        }
+      },
+      {
+        "id": "step[1] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[2] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[2] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[2] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[2] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[2] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[2] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:836488f3bb16be85f9f98ed22b7269ff34cfdf3b26b77ac5ecd89d54bb430b99",
+          "computed": "sha256:836488f3bb16be85f9f98ed22b7269ff34cfdf3b26b77ac5ecd89d54bb430b99"
+        }
+      },
+      {
+        "id": "step[2] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[3] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[3] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[3] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[3] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[3] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[3] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:cd53f2003d5c27a9c2d1459099265174a84df634a3f6ddac983ddcf55258cd57",
+          "computed": "sha256:cd53f2003d5c27a9c2d1459099265174a84df634a3f6ddac983ddcf55258cd57"
+        }
+      },
+      {
+        "id": "step[3] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[4] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[4] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[4] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[4] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[4] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[4] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:bba78051e154d975da7159bd0c6be2bcabb92dc38d9ff34aeb97f99a6a3a78cc",
+          "computed": "sha256:bba78051e154d975da7159bd0c6be2bcabb92dc38d9ff34aeb97f99a6a3a78cc"
+        }
+      },
+      {
+        "id": "step[4] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[5] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[5] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[5] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[5] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[5] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[5] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:9808fc6c4b4b3abdd641d2fb2d30de9fde8f076588fa4d58c548f43bd40e782f",
+          "computed": "sha256:9808fc6c4b4b3abdd641d2fb2d30de9fde8f076588fa4d58c548f43bd40e782f"
+        }
+      },
+      {
+        "id": "step[5] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[6] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[6] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[6] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[6] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[6] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[6] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:0cf26cdc7b8084a5fc2244bb982d2e0d0bd347e2fabaef637b0d9163a60cd6fa",
+          "computed": "sha256:0cf26cdc7b8084a5fc2244bb982d2e0d0bd347e2fabaef637b0d9163a60cd6fa"
+        }
+      },
+      {
+        "id": "step[6] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[7] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[7] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[7] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[7] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[7] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[7] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:954278e192db205c8cbe876fb59a3a53c2a6644a4bf163478b283f87fe66230a",
+          "computed": "sha256:954278e192db205c8cbe876fb59a3a53c2a6644a4bf163478b283f87fe66230a"
+        }
+      },
+      {
+        "id": "step[7] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[8] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[8] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[8] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[8] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[8] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[8] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:0bf5b72fea19d3863abd3c2f607023d34ed4ab13d86cf0ca13cecb4ddd4dfaad",
+          "computed": "sha256:0bf5b72fea19d3863abd3c2f607023d34ed4ab13d86cf0ca13cecb4ddd4dfaad"
+        }
+      },
+      {
+        "id": "step[8] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[9] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[9] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[9] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[9] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[9] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[9] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:282a51e60059b19cac5cee49124d53ac532dd5f9f78750538154125d14827753",
+          "computed": "sha256:282a51e60059b19cac5cee49124d53ac532dd5f9f78750538154125d14827753"
+        }
+      },
+      {
+        "id": "step[9] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[10] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[10] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[10] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[10] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[10] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[10] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:14ea302a48aa4c0f2c9d6e703efe53c5608a5f4d6fc88b01608567b735205ef6",
+          "computed": "sha256:14ea302a48aa4c0f2c9d6e703efe53c5608a5f4d6fc88b01608567b735205ef6"
+        }
+      },
+      {
+        "id": "step[10] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[11] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[11] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[11] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[11] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[11] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[11] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:440a86d92b670660fa92914707e8bf3cabce19d0f395c37b8dbc4b25cf3cc8a2",
+          "computed": "sha256:440a86d92b670660fa92914707e8bf3cabce19d0f395c37b8dbc4b25cf3cc8a2"
+        }
+      },
+      {
+        "id": "step[11] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[12] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[12] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[12] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[12] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[12] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[12] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:3480d2ce20325e54b7ef5fd5916028602427a1480e147a6ead950af771d790aa",
+          "computed": "sha256:3480d2ce20325e54b7ef5fd5916028602427a1480e147a6ead950af771d790aa"
+        }
+      },
+      {
+        "id": "step[12] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[13] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[13] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[13] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[13] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[13] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[13] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:ce4dc5b83cc99f61219dbd71e2628ef823b942aa03bec71ab4cde75edb32945a",
+          "computed": "sha256:ce4dc5b83cc99f61219dbd71e2628ef823b942aa03bec71ab4cde75edb32945a"
+        }
+      },
+      {
+        "id": "step[13] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[14] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[14] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[14] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[14] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[14] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[14] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:45273d74c8a20e577486f17b9ee1fef0237b4282258de1f2ca052dd477700f73",
+          "computed": "sha256:45273d74c8a20e577486f17b9ee1fef0237b4282258de1f2ca052dd477700f73"
+        }
+      },
+      {
+        "id": "step[14] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[15] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[15] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[15] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[15] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[15] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[15] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:ed161f19344f7a02426bfbf22e31969e659eb87645f1e93a84eac4b68c1cb36d",
+          "computed": "sha256:ed161f19344f7a02426bfbf22e31969e659eb87645f1e93a84eac4b68c1cb36d"
+        }
+      },
+      {
+        "id": "step[15] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[16] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[16] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[16] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[16] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[16] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[16] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:f6893d6e310a2c296fcffc2255a5eca6f79de8294699a50ecef364093ca9af74",
+          "computed": "sha256:f6893d6e310a2c296fcffc2255a5eca6f79de8294699a50ecef364093ca9af74"
+        }
+      },
+      {
+        "id": "step[16] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[17] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[17] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[17] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[17] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[17] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[17] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:dcba8c90d31b4b0377d5b7003a63ef2bd28224a93bd2ba6787d2ee8633e287ea",
+          "computed": "sha256:dcba8c90d31b4b0377d5b7003a63ef2bd28224a93bd2ba6787d2ee8633e287ea"
+        }
+      },
+      {
+        "id": "step[17] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[18] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[18] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[18] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[18] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[18] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[18] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:c95760cd86f3435315c54d38be9483af59c4d1ce3a2ba9c6c7f11b602e655334",
+          "computed": "sha256:c95760cd86f3435315c54d38be9483af59c4d1ce3a2ba9c6c7f11b602e655334"
+        }
+      },
+      {
+        "id": "step[18] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[19] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[19] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[19] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[19] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[19] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[19] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:7e1bf9990a848d9c5720d65a79589a1ebccd2194ec2e4ccce3367437539d76f7",
+          "computed": "sha256:7e1bf9990a848d9c5720d65a79589a1ebccd2194ec2e4ccce3367437539d76f7"
+        }
+      },
+      {
+        "id": "step[19] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[20] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[20] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[20] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[20] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[20] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[20] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:cb524080b60354e1f7218c0915c291eb91ef69db5beb3fd385cfc40bf8fdeab2",
+          "computed": "sha256:cb524080b60354e1f7218c0915c291eb91ef69db5beb3fd385cfc40bf8fdeab2"
+        }
+      },
+      {
+        "id": "step[20] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[21] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[21] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[21] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[21] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[21] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[21] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:7b68b7ab324c44c93884158361623110fd626993e01169811d4cb4e8747bb9a4",
+          "computed": "sha256:7b68b7ab324c44c93884158361623110fd626993e01169811d4cb4e8747bb9a4"
+        }
+      },
+      {
+        "id": "step[21] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[22] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[22] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[22] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[22] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[22] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[22] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:49b687ee19fca6bb15f39d74ac1f47e7ab9560aee6eb22345d389b8fb16176af",
+          "computed": "sha256:49b687ee19fca6bb15f39d74ac1f47e7ab9560aee6eb22345d389b8fb16176af"
+        }
+      },
+      {
+        "id": "step[22] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[23] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[23] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[23] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[23] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[23] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[23] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:bd617a3c58d892db7c4c94a9d733529984e1c7da855244428a76f7ab152d382f",
+          "computed": "sha256:bd617a3c58d892db7c4c94a9d733529984e1c7da855244428a76f7ab152d382f"
+        }
+      },
+      {
+        "id": "step[23] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[24] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[24] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[24] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[24] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[24] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[24] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:07756e6ebdca582f4998e5447f8b66bf40ef068aa1038ccb2c94e0c3adbd82a5",
+          "computed": "sha256:07756e6ebdca582f4998e5447f8b66bf40ef068aa1038ccb2c94e0c3adbd82a5"
+        }
+      },
+      {
+        "id": "step[24] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[25] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[25] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[25] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[25] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[25] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[25] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:98497763ed0c30dce7242064d1700ea9b517cb5256f9c7d705f34da7e14df474",
+          "computed": "sha256:98497763ed0c30dce7242064d1700ea9b517cb5256f9c7d705f34da7e14df474"
+        }
+      },
+      {
+        "id": "step[25] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[26] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[26] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[26] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[26] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[26] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[26] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:b5b2fef0c6b19dc52f9bcf8fe544c3902a6dbecb5cea599e95de03f18afb865e",
+          "computed": "sha256:b5b2fef0c6b19dc52f9bcf8fe544c3902a6dbecb5cea599e95de03f18afb865e"
+        }
+      },
+      {
+        "id": "step[26] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[27] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[27] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[27] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[27] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[27] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[27] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:1f2cc076ccbaff0d6348637e0d281f69e1abf373ee980f490b6c22c52c6192d9",
+          "computed": "sha256:1f2cc076ccbaff0d6348637e0d281f69e1abf373ee980f490b6c22c52c6192d9"
+        }
+      },
+      {
+        "id": "step[27] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[28] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[28] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[28] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[28] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[28] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[28] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:97c4751f49f490b7ab6fec21b3c5cd737ff1e89c80126249e58eb51f08de53e6",
+          "computed": "sha256:97c4751f49f490b7ab6fec21b3c5cd737ff1e89c80126249e58eb51f08de53e6"
+        }
+      },
+      {
+        "id": "step[28] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[29] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[29] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[29] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[29] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[29] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[29] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:905c4ca03832515eb582ab79ab77e1d284c9eb15e95b85214eedf7b846116d38",
+          "computed": "sha256:905c4ca03832515eb582ab79ab77e1d284c9eb15e95b85214eedf7b846116d38"
+        }
+      },
+      {
+        "id": "step[29] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[30] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[30] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[30] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[30] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[30] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[30] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:775878707f0985c58cde8eeaf8854596b5ee84cc4e6999632b166f335c6368a3",
+          "computed": "sha256:775878707f0985c58cde8eeaf8854596b5ee84cc4e6999632b166f335c6368a3"
+        }
+      },
+      {
+        "id": "step[30] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[31] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[31] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[31] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[31] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[31] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[31] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:b03886cfc693fc9fcb8449fda8bf81e3818f5a5b4fe14bbcbdf3db5dc8585d90",
+          "computed": "sha256:b03886cfc693fc9fcb8449fda8bf81e3818f5a5b4fe14bbcbdf3db5dc8585d90"
+        }
+      },
+      {
+        "id": "step[31] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[32] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[32] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[32] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[32] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[32] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[32] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:99db8a1df3875f1f50415ee05ad4bb9b145da9b0bf03e98ded7d47e0f7b10484",
+          "computed": "sha256:99db8a1df3875f1f50415ee05ad4bb9b145da9b0bf03e98ded7d47e0f7b10484"
+        }
+      },
+      {
+        "id": "step[32] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[33] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[33] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[33] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[33] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[33] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[33] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:84180c512017161e89ce851fbd0e98a0596fa3ba6c1e0e115c8354bbdaffcc6e",
+          "computed": "sha256:84180c512017161e89ce851fbd0e98a0596fa3ba6c1e0e115c8354bbdaffcc6e"
+        }
+      },
+      {
+        "id": "step[33] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[34] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[34] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[34] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[34] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[34] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[34] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:2566d1b0c63a644f20593e19524b06b6fce6898c4e5fc2f2e9cf180fedacc452",
+          "computed": "sha256:2566d1b0c63a644f20593e19524b06b6fce6898c4e5fc2f2e9cf180fedacc452"
+        }
+      },
+      {
+        "id": "step[34] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[35] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[35] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[35] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[35] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[35] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[35] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:c714d84a2c9e6797253da50da4094fe3f135ad140d0adc7b0549ef17a19a14e6",
+          "computed": "sha256:c714d84a2c9e6797253da50da4094fe3f135ad140d0adc7b0549ef17a19a14e6"
+        }
+      },
+      {
+        "id": "step[35] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[36] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[36] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[36] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[36] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[36] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[36] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:0bccdf95ccf24bd787113dc5ef67539c26694b3f6909c764ad866444bb85aa9f",
+          "computed": "sha256:0bccdf95ccf24bd787113dc5ef67539c26694b3f6909c764ad866444bb85aa9f"
+        }
+      },
+      {
+        "id": "step[36] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[37] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[37] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[37] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[37] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[37] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[37] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:8e65464c7eebcd213adfac839cec5bc74ba97a13b0382c685e5a5e5e5c01b822",
+          "computed": "sha256:8e65464c7eebcd213adfac839cec5bc74ba97a13b0382c685e5a5e5e5c01b822"
+        }
+      },
+      {
+        "id": "step[37] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[38] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[38] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[38] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[38] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[38] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[38] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:d48b2ea111e1cc75b85f5cccf36d71f7915a13c24dbd987ef8964476646b88f8",
+          "computed": "sha256:d48b2ea111e1cc75b85f5cccf36d71f7915a13c24dbd987ef8964476646b88f8"
+        }
+      },
+      {
+        "id": "step[38] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[39] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[39] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[39] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[39] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[39] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[39] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:239cd470d700a5ddf55d4ca0318d8e5656f52242a846d2a3800df865551657f1",
+          "computed": "sha256:239cd470d700a5ddf55d4ca0318d8e5656f52242a846d2a3800df865551657f1"
+        }
+      },
+      {
+        "id": "step[39] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[40] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[40] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[40] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[40] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[40] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[40] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:9d50d07c500a071714dbb8143e502fc8162744c5bb293ee97c5add7f5c3fa27a",
+          "computed": "sha256:9d50d07c500a071714dbb8143e502fc8162744c5bb293ee97c5add7f5c3fa27a"
+        }
+      },
+      {
+        "id": "step[40] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "step[41] names a receipt id",
+        "ok": true
+      },
+      {
+        "id": "step[41] carries canonical_bytes_base64",
+        "ok": true
+      },
+      {
+        "id": "step[41] carries the text form of the same bytes",
+        "ok": true
+      },
+      {
+        "id": "step[41] base64 is canonical",
+        "ok": true
+      },
+      {
+        "id": "step[41] text and base64 forms agree",
+        "ok": true
+      },
+      {
+        "id": "step[41] output_hash matches the decoded bytes",
+        "ok": true,
+        "detail": {
+          "claimed": "sha256:2da9bf8bc6b9642537904fb78288f37a95f03cf7932c8f81dedf38c3fec00916",
+          "computed": "sha256:2da9bf8bc6b9642537904fb78288f37a95f03cf7932c8f81dedf38c3fec00916"
+        }
+      },
+      {
+        "id": "step[41] passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "workflow Merkle root recomputes under the declared construction",
+        "ok": true,
+        "detail": {
+          "declared": "seq-output-v1",
+          "computed": "734a5cb52e453f33d5b0ca6a2cbba2760d49453df61b779d628ba1569f80bc1a",
+          "failed": []
+        }
+      },
+      {
+        "id": "workflow-close receipt passes the AER-1 parser",
+        "ok": true,
+        "detail": {
+          "code": null,
+          "failed": []
+        }
+      },
+      {
+        "id": "workflow-close receipt carries a schema-0.4 metadata_hash with the published format",
+        "ok": true,
+        "detail": {
+          "present": true,
+          "found": "sha256:edd66244b6ffd7f5edd957b3890d2ad1f97bc3a2fce40c2b02de9c7bd7ca61be"
+        }
+      },
+      {
+        "id": "refused receipt ids are not also counted as steps",
+        "ok": true,
+        "detail": {
+          "refused": [
+            "ae4be2a1-cdb4-442f-a291-2900c19e946d"
+          ]
+        }
+      },
+      {
+        "id": "the issuer's not_checked list is preserved, not promoted",
+        "ok": true,
+        "detail": {
+          "entries": 1
+        }
+      }
+    ],
+    "notChecked": [
+      {
+        "scope": "step[18] receipt d36b7021-90eb-4a1f-9ea4-60d5bc45540b",
+        "reason": "not_attempted",
+        "detail": "recorded status is refused; the receipt bytes verify, the operation did not complete"
+      },
+      {
+        "scope": "steps_digest",
+        "reason": "outside_scope",
+        "detail": "no published preimage rule"
+      }
+    ],
+    "notEstablished": [
+      "issuer identity: the bundle publishes no pinned signing key",
+      "outside timestamp: no independent time source is consulted",
+      "result correctness: a matching digest says the record is unchanged, not that the work was right",
+      "metadata_hash preimage: schema 0.4 requires the field, the public material does not define its preimage",
+      "steps_digest preimage: the field is carried but its construction is not published"
+    ],
+    "verdictDigest": "sha256:16b425972a46bda507f6efa2fd8e41e4658a547f32f253890e08831b79727012"
+  },
+  "decision": {
+    "receiverVersion": "CG-HANDOVER-RECEIVER/1",
+    "decision": "hold",
+    "reasons": [
+      "step 18 (d36b7021-90eb-4a1f-9ea4-60d5bc45540b) did not complete: refused",
+      "step[18] receipt d36b7021-90eb-4a1f-9ea4-60d5bc45540b: recorded status is refused; the receipt bytes verify, the operation did not complete"
+    ],
+    "policy": {
+      "requireWorkflowReceipt": true,
+      "requireAllStepsSuccessful": true,
+      "requireMerkle": true
+    },
+    "carries": [
+      "outcome",
+      "verdictDigest",
+      "notEstablished"
+    ]
+  }
+}
