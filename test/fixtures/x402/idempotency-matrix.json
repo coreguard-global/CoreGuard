@@ -1,0 +1,1216 @@
+{
+  "spec": "CG-X402-IDEM/1",
+  "note": "Shared scenario matrix. The Node runner (scripts/x402-matrix-run.mjs) and the Python harness (implementations/python/x402_idempotency.py) execute this exact file; test/integrations/x402-idempotency-parity.test.mjs compares the canonical JSON byte for byte.",
+  "digests": {
+    "d500": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490",
+    "d501": "sha256:ac789c03df5f369d53956157e4523ad93a80244d9ef4507f9fba2bbcee1fd453",
+    "dLapse": "sha256:d1d0a6a4a0d79272286f8224f9e0ca93bdc8d4932319904815c91409a53e35eb"
+  },
+  "cases": [
+    {
+      "name": "first-reserve",
+      "gate": {
+        "clock": 1000
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0001",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0001",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        }
+      ]
+    },
+    {
+      "name": "seven-duplicates-pending",
+      "gate": {
+        "clock": 1000
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0002",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0002",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1001,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0002",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1002,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0002",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1003,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0002",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1004,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0002",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1005,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0002",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1006,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0002",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0002",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "PENDING",
+          "detail": "winner has not produced the artifact yet",
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0002",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "PENDING",
+          "detail": "winner has not produced the artifact yet",
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0002",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "PENDING",
+          "detail": "winner has not produced the artifact yet",
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0002",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "PENDING",
+          "detail": "winner has not produced the artifact yet",
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0002",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "PENDING",
+          "detail": "winner has not produced the artifact yet",
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0002",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "PENDING",
+          "detail": "winner has not produced the artifact yet",
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0002",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "PENDING",
+          "detail": "winner has not produced the artifact yet",
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0002",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        }
+      ]
+    },
+    {
+      "name": "duplicate-then-artifact-then-replay",
+      "gate": {
+        "clock": 1000
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0003",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0003",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "attach",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0003",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490",
+          "artifact": {
+            "id": "artifact-7"
+          }
+        },
+        {
+          "op": "reserve",
+          "at": 1001,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0003",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "attach",
+          "at": 1001,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0003",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490",
+          "artifact": {
+            "id": "artifact-8"
+          }
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0003",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "PENDING",
+          "detail": "winner has not produced the artifact yet",
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0003",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": "artifact-7",
+          "code": "SIGNED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": "artifact-7",
+          "code": "REPLAY",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0003",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "SIGNED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "ARTIFACT_ALREADY_ATTACHED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        }
+      ]
+    },
+    {
+      "name": "authenticated-owner-only",
+      "gate": {
+        "clock": 1000,
+        "owner": "buyer-A"
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok",
+            "owner": "someone-else"
+          },
+          "purchaseId": "purchase-0004",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "owner": "buyer-A"
+          },
+          "purchaseId": "purchase-0004",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0004",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "UNAUTHENTICATED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        }
+      ]
+    },
+    {
+      "name": "intent-mismatch-digests",
+      "gate": {
+        "clock": 1000
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0005",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "attach",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0005",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490",
+          "artifact": {
+            "id": "artifact-1"
+          }
+        },
+        {
+          "op": "reserve",
+          "at": 1001,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0005",
+          "intentDigest": "sha256:ac789c03df5f369d53956157e4523ad93a80244d9ef4507f9fba2bbcee1fd453"
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0005",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": "artifact-1",
+          "code": "SIGNED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "INTENT_MISMATCH",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": "sha256:ac789c03df5f369d53956157e4523ad93a80244d9ef4507f9fba2bbcee1fd453",
+          "purchaseId": "purchase-0005",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "SIGNED",
+          "storedIntentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        }
+      ]
+    },
+    {
+      "name": "distinct-owners-are-distinct-purchases",
+      "gate": {
+        "clock": 1000,
+        "authMode": "ctx-owner"
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "owner": "tenant-A"
+          },
+          "purchaseId": "purchase-0006",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "owner": "tenant-B"
+          },
+          "purchaseId": "purchase-0006",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "attach",
+          "at": 1000,
+          "ctx": {
+            "owner": "tenant-A"
+          },
+          "purchaseId": "purchase-0006",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490",
+          "artifact": {
+            "id": "artifact-A"
+          }
+        },
+        {
+          "op": "reserve",
+          "at": 1001,
+          "ctx": {
+            "owner": "tenant-A"
+          },
+          "purchaseId": "purchase-0006",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1001,
+          "ctx": {
+            "owner": "tenant-B"
+          },
+          "purchaseId": "purchase-0006",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0006",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0006",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": "artifact-A",
+          "code": "SIGNED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": "artifact-A",
+          "code": "REPLAY",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0006",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "SIGNED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "PENDING",
+          "detail": "winner has not produced the artifact yet",
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0006",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        }
+      ]
+    },
+    {
+      "name": "unscoped-store-is-opaque",
+      "gate": {
+        "clock": 1000,
+        "authMode": "ctx-owner",
+        "storeMode": "purchase-only"
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "owner": "tenant-A"
+          },
+          "purchaseId": "purchase-0007",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "attach",
+          "at": 1000,
+          "ctx": {
+            "owner": "tenant-A"
+          },
+          "purchaseId": "purchase-0007",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490",
+          "artifact": {
+            "id": "secret-artifact"
+          }
+        },
+        {
+          "op": "reserve",
+          "at": 1001,
+          "ctx": {
+            "owner": "tenant-B"
+          },
+          "purchaseId": "purchase-0007",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0007",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": "secret-artifact",
+          "code": "SIGNED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "OWNER_CONFLICT",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        }
+      ]
+    },
+    {
+      "name": "ttl-construction-rejects-short-reservation",
+      "gate": {
+        "clock": 1000,
+        "maxTimeoutSeconds": 120,
+        "reservationTtlSeconds": 60
+      },
+      "expectThrow": true,
+      "steps": [],
+      "expect": [
+        {
+          "code": "THROW"
+        }
+      ]
+    },
+    {
+      "name": "retention-outlives-reservation",
+      "gate": {
+        "clock": 1000,
+        "maxTimeoutSeconds": 10,
+        "reservationTtlSeconds": 10,
+        "artifactRetentionSeconds": 30
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0008",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "attach",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0008",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490",
+          "artifact": {
+            "id": "artifact-9"
+          }
+        },
+        {
+          "op": "reserve",
+          "at": 1015,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0008",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "reserve",
+          "at": 1031,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0008",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1010,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0008",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1030,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": "artifact-9",
+          "code": "SIGNED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": "artifact-9",
+          "code": "REPLAY",
+          "detail": null,
+          "expiresAt": 1010,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0008",
+          "receipt": null,
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1030,
+          "state": "SIGNED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "EXPIRED",
+          "detail": "artifact retention ended; choose a new purchase id",
+          "expiresAt": 1010,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0008",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1030,
+          "state": "SIGNED",
+          "storedIntentDigest": null
+        }
+      ]
+    },
+    {
+      "name": "late-attach-refused",
+      "gate": {
+        "clock": 1000,
+        "maxTimeoutSeconds": 10,
+        "reservationTtlSeconds": 10,
+        "artifactRetentionSeconds": 30
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0008b",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "attach",
+          "at": 1011,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0008b",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490",
+          "artifact": {
+            "id": "too-late"
+          }
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1010,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0008b",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1030,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "RESERVATION_EXPIRED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        }
+      ]
+    },
+    {
+      "name": "lapsed-read-matches-closed-write",
+      "gate": {
+        "clock": 1000,
+        "maxTimeoutSeconds": 10,
+        "reservationTtlSeconds": 10,
+        "artifactRetentionSeconds": 30
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0008c",
+          "intentDigest": "sha256:d1d0a6a4a0d79272286f8224f9e0ca93bdc8d4932319904815c91409a53e35eb"
+        },
+        {
+          "op": "reserve",
+          "at": 1011,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0008c",
+          "intentDigest": "sha256:d1d0a6a4a0d79272286f8224f9e0ca93bdc8d4932319904815c91409a53e35eb"
+        },
+        {
+          "op": "attach",
+          "at": 1011,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0008c",
+          "intentDigest": "sha256:d1d0a6a4a0d79272286f8224f9e0ca93bdc8d4932319904815c91409a53e35eb",
+          "artifact": {
+            "id": "never-arrives"
+          }
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1010,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0008c",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1030,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "RESERVATION_LAPSED",
+          "detail": "winner's signing window closed without an artifact; choose a new purchase id",
+          "expiresAt": 1010,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0008c",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1030,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "RESERVATION_EXPIRED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        }
+      ]
+    },
+    {
+      "name": "settled-receipt-replay",
+      "gate": {
+        "clock": 1000
+      },
+      "steps": [
+        {
+          "op": "reserve",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0009",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        },
+        {
+          "op": "attach",
+          "at": 1000,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0009",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490",
+          "artifact": {
+            "id": "artifact-10"
+          }
+        },
+        {
+          "op": "settle",
+          "at": 1001,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0009",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490",
+          "receipt": {
+            "id": "receipt-1",
+            "outcome": "OBSERVED"
+          }
+        },
+        {
+          "op": "reserve",
+          "at": 1002,
+          "ctx": {
+            "token": "ok"
+          },
+          "purchaseId": "purchase-0009",
+          "intentDigest": "sha256:fc3551f51cd85b8cdf020d3195f9bd1d088464eb3610de70b3de6f4852306490"
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "RESERVED",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0009",
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "RESERVED",
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": "artifact-10",
+          "code": "SIGNED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "SETTLED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": "receipt-1",
+          "replay": null,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": "artifact-10",
+          "code": "RECEIPT_REPLAY",
+          "detail": null,
+          "expiresAt": 1090,
+          "incomingIntentDigest": null,
+          "purchaseId": "purchase-0009",
+          "receipt": "receipt-1",
+          "replay": true,
+          "result": null,
+          "retainedUntil": 1150,
+          "state": "SETTLED",
+          "storedIntentDigest": null
+        }
+      ]
+    },
+    {
+      "name": "facilitator-dedup-payer-opacity",
+      "gate": {
+        "clock": 1000
+      },
+      "steps": [
+        {
+          "op": "dedup",
+          "at": 1000,
+          "payload": {
+            "payload": "signed"
+          },
+          "payerVerified": "payer-A",
+          "result": {
+            "settlement": "r1"
+          }
+        },
+        {
+          "op": "dedup",
+          "at": 1001,
+          "payload": {
+            "payload": "signed"
+          },
+          "payerVerified": "payer-A"
+        },
+        {
+          "op": "dedup",
+          "at": 1002,
+          "payload": {
+            "payload": "signed"
+          },
+          "payerVerified": "payer-B"
+        }
+      ],
+      "expect": [
+        {
+          "code": "CONSTRUCTED"
+        },
+        {
+          "artifact": null,
+          "code": "ACCEPTED",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": false,
+          "result": "r1",
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "REPLAY",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": true,
+          "result": "r1",
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        },
+        {
+          "artifact": null,
+          "code": "PAYER_CONFLICT",
+          "detail": null,
+          "expiresAt": null,
+          "incomingIntentDigest": null,
+          "purchaseId": null,
+          "receipt": null,
+          "replay": false,
+          "result": null,
+          "retainedUntil": null,
+          "state": null,
+          "storedIntentDigest": null
+        }
+      ]
+    }
+  ]
+}
