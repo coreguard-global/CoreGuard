@@ -379,6 +379,9 @@ no `toolCalls`): `INVALID_SNAPSHOT`, `UNSUPPORTED_NETWORK`, `MISSING_ACCOUNT_ID`
 `UNKNOWN_PRESENTED_SIGNER`, `INVALID_LEVEL`, `INVALID_SOROBAN`,
 `SOROBAN_ENTRY_MISSING`, `SOROBAN_EXPECTED_MISSING`, `CURRENT_LEDGER_MISSING`.
 
+Runnable offline example with a synthetic snapshot and all three results
+printed: [`examples/smart-account-adapter/run.mjs`](../../examples/smart-account-adapter/run.mjs).
+
 ## Receipt-pointer profile: nachweis/v1
 
 A checkout may carry only `{ receipt_id, profile }`. For
