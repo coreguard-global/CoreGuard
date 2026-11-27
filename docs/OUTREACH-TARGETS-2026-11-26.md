@@ -49,3 +49,29 @@ This is a target list with the honest angle for each venue and the rules that ke
 ## How to measure without vanity metrics
 
 Track: number of external payloads that ran through the tools; number of defects found in our checks; number of fixes shipped because of an external report. Do not track stars, impressions or "leads". A defect found by a stranger is worth more than a thousand impressions, and it is the only number that survives scrutiny.
+
+## Live threads (updated 2026-11-27)
+
+| Where | Thread | State | What happens next |
+|---|---|---|---|
+| OpenZeppelin Stellar Contracts | [#997](https://github.com/OpenZeppelin/stellar-contracts/issues/997) + [reply](https://github.com/OpenZeppelin/stellar-contracts/issues/997#issuecomment-7219929979) | open, unlabelled | maintainer decides between a docs subsection here and an example in `smart-account-kit` |
+| ACP | [#329 SEP](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/issues/329) + [profile-requirements reply](https://github.com/agentic-commerce-protocol/agentic-commerce-protocol/issues/329#issuecomment-7220171679) | proposal, awaiting sponsor | Prokura co-founder decides whether the vector belongs in ACP or `prokura-verify` |
+| stellar/smart-account-kit | [#41](https://github.com/stellar/smart-account-kit/issues/41) | open, enhancement requested (label needs a maintainer) | answer on whether a snapshot helper or a docs example is the right surface |
+| prokura-network/prokura-verify | [#4](https://github.com/prokura-network/prokura-verify/issues/4) | open, spec question | confirm the `receipt_id` traversal reading and where the vector lives |
+
+Every thread above is a technical question with a runnable artifact behind it. None asks for money, a partnership or a review; if the answer is "not useful", the thread closes.
+
+## Venues deliberately not used
+
+- **coinbase/x402** — issues are disabled and `CONTRIBUTING.md` explicitly calls out batch-generated PRs; a promotional entry would be noise. Any contribution there starts from the spec and a single high-quality PR, not from an issue asking to be noticed.
+- **stellar/anchor-platform** — no `CONTRIBUTING.md` and an active security backlog; the honest entry is a private conformance gap list from real payloads, offered to the maintainers first, not a public issue.
+- **Freighter / wallet repos** — the wallet draft in [`OUTREACH-3-DRAFTS-2026-11-26.md`](./OUTREACH-3-DRAFTS-2026-11-26.md) waits for a named maintainer or a support channel that accepts technical payloads.
+
+## What can be offered without pitching
+
+If a maintainer replies with interest, the deliverable is already built or one commit away:
+
+- a field list for an off-chain verifier (OZ smart accounts, SEP-24 records, x402 settlement evidence);
+- a deterministic vector with an expected verdict and a tamper case, runnable in their CI;
+- an adapter that consumes their snapshot shape, with a named refusal vocabulary and no network calls;
+- a resolution rule for a profile pointer (`receipt_id` + `profile`) that recomputes instead of trusting.
