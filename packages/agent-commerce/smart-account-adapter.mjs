@@ -86,10 +86,29 @@ const int = (v) => {
 const keyOf = (k) => String(k);
 
 /**
- * @param {object} snapshot caller-supplied account snapshot
+ * @param {object} snapshot caller-supplied account snapshot; see the field
+ *   list above. `signers[].key` accepts `key`, `publicKey` or `address`;
+ *   `presentedSigners` defaults to the full signer set; `soroban` is optional
+ *   and adds the third tool call.
  * @param {{ level?: "low"|"medium"|"high"|"LOW"|"MEDIUM"|"HIGH" }} [options]
+ *   `level` selects which threshold the second tool checks (default `high`).
  * @returns {{ok: true, spec, network, accountId, snapshotDigest, inputs, toolCalls} |
  *           {ok: false, spec, error: {code, detail, field?}}}
+ *   A refusal is data, not a throw: read `error.code` from the list above and
+ *   treat the snapshot as unusable. `toolCalls` is absent on refusal.
+ * @example
+ * const res = fromSmartAccountSnapshot({
+ *   network: "testnet",
+ *   accountId: "C...",
+ *   masterWeight: 0,
+ *   thresholds: { low: 1, medium: 2, high: 3 },
+ *   signers: [
+ *     { key: "G...", kind: "passkey", weight: 2 },
+ *     { key: "G...", kind: "session_key", weight: 1 },
+ *   ],
+ * });
+ * if (!res.ok) throw new Error(res.error.code); // e.g. THRESHOLD_ORDER
+ * for (const call of res.toolCalls) console.log(call.name);
  */
 export function fromSmartAccountSnapshot(snapshot, options = {}) {
   if (!isObj(snapshot)) return refuse("INVALID_SNAPSHOT", "snapshot must be an object", "snapshot");

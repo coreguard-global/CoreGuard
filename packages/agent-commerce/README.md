@@ -354,7 +354,14 @@ const mapped = fromSmartAccountSnapshot({
 });
 // mapped.toolCalls -> 2 calls (3 when `soroban` is supplied)
 // mapped.snapshotDigest -> changes if a weight, kind or ledger changes
+
+const bad = fromSmartAccountSnapshot({ network: "devnet" });
+if (!bad.ok) console.warn(bad.error.code); // UNSUPPORTED_NETWORK
 ```
+
+Two outcomes, never an exception: `{ ok: true, toolCalls }` or
+`{ ok: false, error: { code, detail, field? } }` — a refused snapshot produces no
+`toolCalls`, so a caller cannot accidentally send half-mapped evidence.
 
 Snapshot fields: `network` (`testnet` | `mainnet` | `futurenet`), `accountId`,
 `masterWeight`, `thresholds { low, medium, high }`, `signers[]` with
