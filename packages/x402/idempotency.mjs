@@ -150,9 +150,14 @@ export function createPurchaseGate({
    * REPLAY      same owner + same digest; original artifact returned.
    * RECEIPT_REPLAY same owner + same digest; original receipt returned.
    * INTENT_MISMATCH same owner, different digest; both digests returned.
+   * PENDING and RESERVATION_LAPSED are READ VIEWS of one RESERVED row, before
+   *             and after expiresAt. The store holds RESERVED, SIGNED and
+   *             SETTLED only; no sweeper writes the derived answers.
    * OWNER_CONFLICT  asserted owner is not the row's owner — opaque. No digest,
-   *             no state, no artifact, no timing hint: the gate itself must not
-   *             become a cross-tenant oracle. Note this case can only arise if
+   *             no state, no artifact. The response has the same shape as the
+   *             detailed path and is produced after the same lookups; constant
+   *             time is a deployment property, not something this gate claims.
+   *             Note this case can only arise if
    *             an integrator looks up by purchase id without the authenticated
    *             owner; the primary key here is (owner, purchaseId), so a
    *             different owner is ordinarily a DIFFERENT purchase and
