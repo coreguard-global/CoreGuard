@@ -23,6 +23,7 @@ import { fileURLToPath } from "node:url";
 
 import { verifyHandover } from "./observer.mjs";
 import { decide } from "./receiver.mjs";
+import { buildDecisionTrace } from "./trace.mjs";
 import { renderReport } from "./render.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -68,7 +69,7 @@ async function readSource({ url, file }) {
 async function main() {
   const a = args(process.argv.slice(2));
   if (a.help) {
-    console.log("usage: handover-observer --url <https> | --file <path> [--expected-id <id>] [--observer <name>] [--out <json>] [--html <page>] [--read-at <rfc3339>]");
+    console.log("usage: handover-observer --url <https> | --file <path> [--expected-id <id>] [--observer <name>] [--out <json>] [--html <page>] [--trace <json>] [--read-at <rfc3339>]");
     return 0;
   }
 
@@ -90,6 +91,7 @@ async function main() {
     sourceUrl: source.sourceUrl,
   });
   const decision = decide(verdict);
+  const trace = buildDecisionTrace(verdict, decision);
 
   const record = {
     observerVersion: verdict.observerVersion,
@@ -106,6 +108,12 @@ async function main() {
     console.log(`verdict: ${a.out}`);
   } else {
     process.stdout.write(json);
+  }
+
+  if (typeof a.trace === "string") {
+    mkdirSync(dirname(resolve(process.cwd(), a.trace)), { recursive: true });
+    writeFileSync(resolve(process.cwd(), a.trace), `${JSON.stringify(trace, null, 2)}\n`);
+    console.log(`trace:   ${a.trace}`);
   }
 
   if (typeof a.html === "string") {

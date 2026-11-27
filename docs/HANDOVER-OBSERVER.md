@@ -66,6 +66,18 @@ it is the boundary that makes the verified state worth something.
 Observer-only states: `unavailable` (nothing judged), `unsupported` (draft or
 schema not implemented), `inconclusive` (judged, evidence insufficient).
 
+## Decision trace
+
+The verdict says what the record is; the trace says what a receiver did with it.
+`CG-HANDOVER-TRACE/1` records both decisions — `decision_before` from the
+issuer's summary alone, `decision_after` from the verdict — with the basis, the
+`verdict_digest`, the first named reason that moved it, and `simulated: true`
+because the receiver is a published policy, not an independent agent.
+
+On the two records: zamback `proceed → hold` (step 18 refused, operation
+`not_checked`), adctx `proceed → proceed`. The second result matters as much as
+the first: a trace that only fires on disagreement is a demo.
+
 ## Reproduce
 
 ```text

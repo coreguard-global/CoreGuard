@@ -1,0 +1,41 @@
+{
+  "trace_version": "CG-HANDOVER-TRACE/1",
+  "handover_id": "60b51198-98fa-40c1-be0c-5566eded0feb",
+  "verdict_digest": "sha256:75634942367aa54dd729e4908743130b2fe47aaa30a367ca5e6ca5638c13317b",
+  "verdict_outcome": "verified",
+  "observer": "coreguard-observer:cli",
+  "read_at": "2026-11-27T12:00:00.000Z",
+  "receiver": "policy-simulation:receiver.mjs",
+  "policy": {
+    "baseline": "issuer_summary",
+    "after": {
+      "requireWorkflowReceipt": true,
+      "requireAllStepsSuccessful": true,
+      "requireMerkle": true
+    }
+  },
+  "decision_before": {
+    "decision": "proceed",
+    "basis": "issuer summary only: status=accepted, receipt_checks.checked=4, not_checked=0 (listed but not interpreted)"
+  },
+  "decision_after": {
+    "decision": "proceed",
+    "reasons": [
+      "every receipt and every operation this policy requires verified"
+    ]
+  },
+  "changed": false,
+  "reason": null,
+  "action_taken": "proceed",
+  "simulated": true,
+  "limits": [
+    "the receiver is a published policy, not an independent agent",
+    "decision_before reads the issuer summary and does not recompute the record",
+    "a changed decision is evidence about this policy, not about a third party's behaviour",
+    "issuer identity: the bundle publishes no pinned signing key",
+    "outside timestamp: no independent time source is consulted",
+    "result correctness: a matching digest says the record is unchanged, not that the work was right",
+    "metadata_hash preimage: schema 0.4 requires the field, the public material does not define its preimage",
+    "steps_digest preimage: the field is carried but its construction is not published"
+  ]
+}

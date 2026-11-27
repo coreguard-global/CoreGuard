@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 import { verifyHandover, verdictDigest, canonicalJson } from "../../packages/handover-observer/observer.mjs";
 import { decide } from "../../packages/handover-observer/receiver.mjs";
+import { buildDecisionTrace } from "../../packages/handover-observer/trace.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const FIXTURES = join(HERE, "..", "fixtures", "handover");
@@ -112,4 +113,23 @@ test("a bundle with no graph.aer is judged and the missing draft is recorded", (
   assert.equal(v.handover.draft, null);
   assert.ok(v.notChecked.some((n) => n.scope === "handover draft"));
   assert.equal(v.outcome, "verified");
+});
+
+test("the decision trace records both decisions, the verdict digest and the mover", () => {
+  const z = verifyHandover(ZAMBACk, OBSERVER);
+  const zTrace = buildDecisionTrace(z, decide(z));
+  assert.equal(zTrace.trace_version, "CG-HANDOVER-TRACE/1");
+  assert.equal(zTrace.verdict_digest, z.verdictDigest);
+  assert.equal(zTrace.decision_before.decision, "proceed");
+  assert.equal(zTrace.decision_after.decision, "hold");
+  assert.equal(zTrace.changed, true);
+  assert.match(zTrace.reason, /step 18/);
+  assert.equal(zTrace.simulated, true);
+
+  const a = verifyHandover(ADCTX, OBSERVER);
+  const aTrace = buildDecisionTrace(a, decide(a));
+  assert.equal(aTrace.decision_before.decision, "proceed");
+  assert.equal(aTrace.decision_after.decision, "proceed");
+  assert.equal(aTrace.changed, false);
+  assert.equal(aTrace.reason, null);
 });
